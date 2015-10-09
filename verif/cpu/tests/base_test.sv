@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : draft_test.sv
+// FILE NAME      : base_test.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,29 +9,25 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_DRAFT_TEST
-`define INC_DRAFT_TEST
+`ifndef INC_BASE_TEST
+`define INC_BASE_TEST
 
-class draft_test extends base_test; 
+class base_test extends cpu_base_component; 
 
-  cpu_draft_seq draft_seq;
+  cpu_env env;
 
   function new (virtual wishbone_if wbi_intf, virtual wishbone_if wbd_intf, reset_if rst_intf);
     super(wbi_intf, wbd_intf, rst_intf);
+    env = new(wbi_intf, wbd_intf, rst_intf);  
   endfunction 
 
   virutal function void build_phase();
-    $display("[%0t][TEST][BUILD] Phase started", $time);
-    draft_seq = new();
-    env.seq_q.push_back(draft_seq);
-    super.build_phase();
-    $display ("[%0t][TEST][BUILD] Phase ended", $time);   
   endfunction
 
-  task run_phase();
-    $display("[%0t][TEST][RUN] Phase started", $time);
-    super.run_phase();
-    $display ("[%0t][TEST][RUN] Phase ended", $time);    
+  virtual task run_phase();
+    $display("[%0t][BASE TEST][RUN] Phase started", $time);
+    env.run_phase();
+    $display ("[%0t][BASE TEST][RUN] Phase ended", $time);  
   endtask
 
   virutal function void report_phase();
