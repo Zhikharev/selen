@@ -20,6 +20,12 @@ class cpu_draft_seq extends base_seq;
 
   task body();
     $display("[%0t][SEQ] Start of 'cpu_draft_seq'", $time);
+    repeat(10) begin
+    	req = new();
+    	assert(req.randomize())
+    	else $fatal("Randomization failed!")
+    	req_q.push_back(req);
+   	end
     $display ("[%0t][SEQ] End of 'cpu_draft_seq'", $time);  
   endtask 
 

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : base_seq.sv
+// FILE NAME      : cpu_wbd_driver.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,21 +9,19 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_BASE_SEQ
-`define INC_BASE_SEQ
+`ifndef INC_CPU_WBD_DRIVER
+`define INC_CPU_WBD_DRIVER
 
-class base_seq;
+class cpu_wbd_driver; 
+  
+  virtual wishbone_if wbd_intf vif;
 
-	rv32_transaction req; 
-	rv32_transaction req_q[$];
-
-  function new ();
+  function new (virtual wishbone_if wbd_if);
+  	this.vif = wbd_if;
   endfunction 
 
-  virtual task body();
-  	$fatal("User must implement body method!")
-  endtask 
-
+  task run_phase();
+  endtask
 endclass
 
 `endif

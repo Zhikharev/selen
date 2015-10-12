@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : base_seq.sv
+// FILE NAME      : cpu_wbi_monitor.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,21 +9,19 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_BASE_SEQ
-`define INC_BASE_SEQ
+`ifndef INC_CPU_WBI_MONITOR
+`define INC_CPU_WBI_MONITOR
 
-class base_seq;
+class cpu_wbi_monitor 
+  
+  virtual wishbone_if wbi_intf vif;
 
-	rv32_transaction req; 
-	rv32_transaction req_q[$];
-
-  function new ();
+  function new (virtual wishbone_if wbi_if);
+  	this.vif = wbi_if;
   endfunction 
 
-  virtual task body();
-  	$fatal("User must implement body method!")
-  endtask 
-
+  task run_phase();
+  endtask
 endclass
 
 `endif

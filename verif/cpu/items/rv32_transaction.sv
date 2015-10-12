@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : base_seq.sv
+// FILE NAME      : rv32_transaction.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,20 +9,37 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_BASE_SEQ
-`define INC_BASE_SEQ
+`ifndef INC_RV32_TRANSACTION
+`define INC_RV32_TRANSACTION
 
-class base_seq;
+class rv32_transaction; 
 
-	rv32_transaction req; 
-	rv32_transaction req_q[$];
+  rand rv32_opcode opcode;
 
   function new ();
   endfunction 
 
-  virtual task body();
-  	$fatal("User must implement body method!")
-  endtask 
+  function string sprint();
+  	string str;
+  	
+  	// TODO
+
+  	return(str);
+  endfunction
+
+  function void decode(bit [31:0] data);
+
+  	// TODO
+
+  endfunction
+
+  function bit [31:0] encode();
+  	bit [31:0] instr;
+
+  	// TODO
+
+  	return(instr);
+  endfunction
 
 endclass
 

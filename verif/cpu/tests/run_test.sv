@@ -9,8 +9,8 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_DRAFT_TEST
-`define INC_DRAFT_TEST
+`ifndef INC_RUN_TEST
+`define INC_RUN_TEST
 
 program run_test ( 
 	wishbone_if wbi_intf, 
