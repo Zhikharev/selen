@@ -14,7 +14,7 @@
 
 class cpu_wbd_monitor; 
   
-  virtual wishbone_if wbd_intf vif;
+  virtual wishbone_if vif;
 
   function new (virtual wishbone_if wbd_if);
   	this.vif = wbd_if;

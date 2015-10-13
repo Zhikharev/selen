@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : cpu_wbd_driver.sv
+// FILE NAME      : rst_if.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,19 +9,10 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_CPU_WBD_DRIVER
-`define INC_CPU_WBD_DRIVER
+`ifndef INC_RST_IF
+`define INC_RST_IF
 
-class cpu_wbd_driver; 
-  
-  virtual wishbone_if vif;
-
-  function new (virtual wishbone_if wbd_if);
-  	this.vif = wbd_if;
-  endfunction 
-
-  task run_phase();
-  endtask
-endclass
+interface reset_if (logic clk, logic rst);
+endinterface
 
 `endif

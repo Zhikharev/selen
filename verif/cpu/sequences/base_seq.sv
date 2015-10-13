@@ -21,7 +21,7 @@ class base_seq;
   endfunction 
 
   virtual task body();
-  	$fatal("User must implement body method!")
+  	$fatal("User must implement body method!");
   endtask 
 
 endclass
