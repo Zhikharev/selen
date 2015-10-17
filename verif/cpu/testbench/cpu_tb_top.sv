@@ -28,6 +28,8 @@ module cpu_tb_top ();
 		.wbd_intf (wbd_intf)
 	);
 
+	run_test run_test(wbi_intf, wbd_intf, rst_intf);	
+
 endmodule
 
 `endif

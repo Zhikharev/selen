@@ -14,7 +14,7 @@
 
 class cpu_wbi_driver; 
   
-  virtual wishbone_if wbi_intf vif;
+  virtual wishbone_if vif;
 
   base_seq seq_q[$];
 
@@ -26,10 +26,10 @@ class cpu_wbi_driver;
     $display("[%0t][WBI DRV][[RUN] Phase started", $time);
     foreach(seq_q[i]) begin
     	base_seq seq;
-    	if(!$cast(seq, seq.q[i]) $fatal("Cast failed!");
+    	if(!$cast(seq, seq_q[i])) $fatal("Cast failed!");
     	seq.body();
     	foreach(seq.req_q[i]) begin
-    		r32v_transaction req;
+    		rv32_transaction req;
     		if(!$cast(req, seq.req_q[i])) $fatal("Cast failed");
     		drive_item(req);
     	end
@@ -37,7 +37,7 @@ class cpu_wbi_driver;
     $display("[%0t][WBI DRV][[RUN] Phase started", $time);
   endtask
 
-  task drive_item(r32v_transaction item);
+  task drive_item(rv32_transaction item);
   	// TODO
   endtask
 

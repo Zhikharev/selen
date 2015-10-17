@@ -24,18 +24,18 @@ program run_test (
   		case(TESTNAME)
   			"draft_test": begin
   				draft_test test;
-  				test = new(wbi_intf, wbd_intf. rst_intf);
+  				test = new(wbi_intf, wbd_intf, rst_intf);
   				test.build_phase();
   				test.run_phase();
   				test.report_phase();
   			end
   			default: begin
-  				$fatal("Undefined TESTNAME")
+  				$fatal("Undefined TESTNAME");
   			end
   		endcase
   	end
-  	else
-  		$fatal("Undefined TESTNAME")
+  	else begin 
+      $fatal("Undefined TESTNAME");
   	end
   end
 endprogram

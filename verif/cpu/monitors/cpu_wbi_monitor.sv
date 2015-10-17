@@ -12,9 +12,9 @@
 `ifndef INC_CPU_WBI_MONITOR
 `define INC_CPU_WBI_MONITOR
 
-class cpu_wbi_monitor 
+class cpu_wbi_monitor; 
   
-  virtual wishbone_if wbi_intf vif;
+  virtual wishbone_if vif;
 
   function new (virtual wishbone_if wbi_if);
   	this.vif = wbi_if;
