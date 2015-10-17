@@ -1,15 +1,15 @@
-/*
-###########################################################
-#
-# Author: Sokolovskii Artem
-#
-# Project: MEPHI CPU
-# Filename: COMM.v
-# Descriptions: 
-#					Top level memory commutator.
-###########################################################
-*/
-module COMM(
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME      : comm.v
+// PROJECT        : Selen
+// AUTHOR         : Sokolovskii Artem
+// AUTHOR'S EMAIL : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION    : Top level memory commutator.
+// ----------------------------------------------------------------------------
+
+module comm(
 	input sys_clk,
 	input sys_rst,
 
@@ -65,7 +65,7 @@ module COMM(
 	wire 	[15:0]	rom_addr_o;
 	wire  [31:0]	rom_data_i;
 	
-	commutator comm( sys_clk, sys_rst, cpu_inst_stb_i, cpu_inst_ack_o, cpu_inst_addr_i, cpu_inst_data_o, 
+	commutator com( sys_clk, sys_rst, cpu_inst_stb_i, cpu_inst_ack_o, cpu_inst_addr_i, cpu_inst_data_o, 
 								cpu_data_stb_i,	cpu_data_ack_o, cpu_data_we_i, cpu_data_addr_i, cpu_data_data_i, cpu_data_data_o,
 								io_stb_o, io_ack_i,io_we_o, io_addr_o, io_data_i, io_data_o,
 								dma_stb_i, dma_ack_o, dma_we_i, dma_addr_i, dma_data_i, dma_data_o,
@@ -74,10 +74,10 @@ module COMM(
 								rom_stb_o, rom_ack_i, rom_addr_o, rom_data_i								
 	);
 	
-	RAM ram( sys_clk, ram_stb_o, ram_ack_i, ram_addr_o, ram_data_i,
+	ram ram1( sys_clk, ram_stb_o, ram_ack_i, ram_addr_o, ram_data_i,
 					  ram2_stb_o, ram2_ack_i, ram2_we_o, ram2_addr_o, ram2_data_o, ram2_data_i
 	);
 	
-	ROM rom( sys_clk, sys_rst, rom_stb_o, rom_ack_i, rom_addr_o, rom_data_i);
+	rom rom1( sys_clk, sys_rst, rom_stb_o, rom_ack_i, rom_addr_o, rom_data_i);
 
 endmodule
