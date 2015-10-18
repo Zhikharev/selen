@@ -19,13 +19,13 @@ class cpu_env extends cpu_base_component;
 
   base_seq seq_q[$];
 
-  function new (virtual wishbone_if wbi_intf, virtual wishbone_if wbd_intf, reset_if rst_intf);
-    super(wbi_intf, wbd_intf, rst_intf);
+  function new (virtual wishbone_if wbi_intf, virtual wishbone_if wbd_intf, virtual reset_if rst_intf);
+    super.new(wbi_intf, wbd_intf, rst_intf);
     wbi_agent = new(wbi_intf, wbd_intf, rst_intf);
     wbd_agent = new(wbi_intf, wbd_intf, rst_intf);
   endfunction 
 
-  virutal function void build_phase();
+  function void build_phase();
     $display("[%0t][ENV][BUILD] Phase started", $time);
     wbi_agent.driver.seq_q = this.seq_q;
     $display ("[%0t][ENV][BUILD] Phase ended", $time);   
@@ -40,7 +40,7 @@ class cpu_env extends cpu_base_component;
     $display ("[%0t][ENV][RUN] Phase ended", $time);    
   endtask
 
-  virutal function void report_phase();
+  function void report_phase();
     $display("[%0t][REPORT] Phase started", $time);
     $display ("[%0t][REPORT] Phase ended", $time);   
   endfunction

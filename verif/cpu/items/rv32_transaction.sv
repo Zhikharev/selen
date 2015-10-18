@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : cpu_base_component.sv
+// FILE NAME      : rv32_transaction.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,20 +9,38 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_CPU_BASE_COMPONENT
-`define INC_CPU_BASE_COMPONENT
+`ifndef INC_RV32_TRANSACTION
+`define INC_RV32_TRANSACTION
 
-class cpu_base_component; 
-  
-	virtual wishbone_if wbi_intf;
-	virtual wishbone_if wbd_intf;
-	virtual reset_if    rst_intf;
+class rv32_transaction; 
 
-  function new (virtual wishbone_if wbi_if, virtual wishbone_if wbd_if,  virtual reset_if rst_if);
-    this.wbi_intf = wbi_if;
-    this.wbd_intf = wbd_if;
-    this.rst_intf = rst_if;
+  rand rv32_opcode opcode;
+
+  function new ();
   endfunction 
+
+  function string sprint();
+  	string str;
+  	
+  	// TODO
+
+  	return(str);
+  endfunction
+
+  function void decode(bit [31:0] data);
+
+  	// TODO
+
+  endfunction
+
+  function bit [31:0] encode();
+  	bit [31:0] instr;
+
+  	// TODO
+
+  	return(instr);
+  endfunction
+
 endclass
 
 `endif

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : wishborne_if.sv
+// FILE NAME      : cpu_wbi_monitor.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,10 +9,19 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_WISHBORNE_IF
-`define INC_WISHBORNE_IF
+`ifndef INC_CPU_WBI_MONITOR
+`define INC_CPU_WBI_MONITOR
 
-interface wishborne_if (logic clk, logic rst);
-endinterface
+class cpu_wbi_monitor; 
+  
+  virtual wishbone_if vif;
+
+  function new (virtual wishbone_if wbi_if);
+  	this.vif = wbi_if;
+  endfunction 
+
+  task run_phase();
+  endtask
+endclass
 
 `endif
