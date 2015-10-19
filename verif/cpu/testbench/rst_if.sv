@@ -12,7 +12,8 @@
 `ifndef INC_RST_IF
 `define INC_RST_IF
 
-interface reset_if (logic clk, logic rst);
+interface reset_if (input logic clk);
+	logic rst;
 endinterface
 
 `endif

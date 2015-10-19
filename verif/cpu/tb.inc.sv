@@ -1,5 +1,5 @@
 
-`include "testbench/wishborne_if.sv"
+`include "testbench/wishbone_if.sv"
 `include "testbench/rst_if.sv"
 
 `include "base/cpu_base_component.sv"

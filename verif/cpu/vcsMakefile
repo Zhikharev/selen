@@ -51,10 +51,9 @@ VLOG_OPTS = +incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +system
 
 ELAB = $(VCS_HOME)/bin/vcs
 
-ELAB_OPTS = -l elaborate.log -CFLAGS -DVCS $(UVM_HOME)/src/dpi/uvm_dpi.cc
+#ELAB_OPTS = -l elaborate.log -CFLAGS -DVCS $(UVM_HOME)/src/dpi/uvm_dpi.cc
 
 SIM_OPTS  = $(VCS_SET_SEED)
-
 
 analyze:
 	$(VLOG) $(ARCH_OPTS) $(VLOG_OPTS) $(RTL_SRC) $(SV_SRC)

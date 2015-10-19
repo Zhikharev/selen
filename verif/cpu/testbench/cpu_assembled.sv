@@ -15,8 +15,8 @@
 module cpu_assembled (
 	input 				clk,
 	input 				rst,
-	wishborne_if 	wbi_intf,
-	wishborne_if 	wbd_intf
+	wishbone_if 	wbi_intf,
+	wishbone_if 	wbd_intf
 );
 
 	// Instantiate CPU DUT here

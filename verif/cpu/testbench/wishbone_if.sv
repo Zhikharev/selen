@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : wishborne_if.sv
+// FILE NAME      : wishbone_if.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,10 +9,10 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_WISHBORNE_IF
-`define INC_WISHBORNE_IF
+`ifndef INC_WISHBONE_IF
+`define INC_WISHBONE_IF
 
-interface wishborne_if (logic clk, logic rst);
+interface wishbone_if (input logic clk, input logic rst);
 endinterface
 
 `endif

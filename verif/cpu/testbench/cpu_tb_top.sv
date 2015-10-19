@@ -14,11 +14,16 @@
 
 module cpu_tb_top ();
 
-	bit clk;
+	logic clk;
+
+	initial begin
+		clk = 0;
+		forever #10 clk = !clk;
+	end
 
 	reset_if   rst_intf (clk);
-	wisbone_if wbi_intf (clk, rst_intf.rst);
-	wisbone_if wbd_intf (clk, rst_intf.rst);
+	wishbone_if wbi_intf (clk, rst_intf.rst);
+	wishbone_if wbd_intf (clk, rst_intf.rst);
 
 	cpu_assembled dut
 	(
