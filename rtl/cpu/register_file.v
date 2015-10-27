@@ -29,9 +29,7 @@ end
 always @(negedge clk)
 begin
 	if(reset) begin
-		for(i = 0; i<32; i=i+1)begin
-	 	      loc_regs[i] <=0;
-		end
+		
 	end
 	else begin
 		loc_srca <= loc_regs[adr_srca];
