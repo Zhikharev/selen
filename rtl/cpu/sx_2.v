@@ -5,22 +5,27 @@ module sx_2 (
 	output[31:0] data_out
 );
 reg[31:0] loc;
+localparam BP =2'b00;
+localparam LH =2'b01;
+localparam LB =2'b10;
+
+
 always @*
 begin
 	if(s_u) begin
 		case(cntr)
-			2'b00: loc = data_in;
-			2'b01: loc = {{16{data_in[15]}},data_in};//lw				
-			2'b10: loc = {{24{data_in[7]}},data_in};//lh
-			2'b11: loc = 31'bz;
+			BP: loc = data_in;
+			LH: loc = {{16{data_in[15]}},data_in};//lw				
+			LB: loc = {{24{data_in[7]}},data_in};//lh
+			default: loc = loc;
 		endcase
 	end
 	else  begin
 		case(cntr)
-			2'b00: loc = data_in;
-			2'b01: loc = {{16{1'b0}},data_in};//lw				
-			2'b10: loc = {{24{1'b0}},data_in};//lh
-			2'b11: loc = 31'bz;
+			BP: loc = data_in;
+			LH: loc = {{16{1'b0}},data_in};//lw				
+			LB: loc = {{24{1'b0}},data_in};//lh
+			default: loc = loc;
 		endcase
 			
 	end

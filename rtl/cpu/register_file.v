@@ -6,6 +6,7 @@ module reg_file (
 	input[4:0] adr_wrt,
 	input[4:0] adr_srca,
 	input[4:0] adr_srcb,
+	input [1:0] reg_be,
 	output[31:0] out_srca,
 	output[31:0] out_srcb 
 );
@@ -42,7 +43,7 @@ begin
 	loc_regs[5'b0] <= 31'b0;
 end	
 assign out_srca = loc_srca;
-assign out_srcb = loc_srcb;
+assign out_srcb = reg_be[1] (reg_be[0] ? {{16{1'b0}},loc_srcb[15:0]}:{{24{1'b0}},loc_srcb[7:0]}) ? loc_srcb;
 
 endmodule
 
