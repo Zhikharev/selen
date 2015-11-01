@@ -11,7 +11,8 @@ class R_type:
         "SLL",
         "SRL",
         "SUB",
-        "SRA"
+        "SRA",
+        "AM"
     ]
     funct3 = {
         "ADD" : "000",
@@ -23,11 +24,13 @@ class R_type:
         "SLL" : "110",
         "SRL" : "111",
         "SUB" : "000",
-        "SRA" : "001"
+        "SRA" : "001",
+        "AM" : "010"
     }
     funct7 = {
         "SUB" : "0100000",
-        "SRA" : "0100000"
+        "SRA" : "0100000",
+        "AM" : "0100000"
     }
     def getCode(self, line):
         elements = line.split(" ")
