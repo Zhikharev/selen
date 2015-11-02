@@ -1,486 +1,278 @@
-/*******************************************************************************
-*     This file is owned and controlled by Xilinx and must be used solely      *
-*     for design, simulation, implementation and creation of design files      *
-*     limited to Xilinx devices or technologies. Use with non-Xilinx           *
-*     devices or technologies is expressly prohibited and immediately          *
-*     terminates your license.                                                 *
-*                                                                              *
-*     XILINX IS PROVIDING THIS DESIGN, CODE, OR INFORMATION "AS IS" SOLELY     *
-*     FOR USE IN DEVELOPING PROGRAMS AND SOLUTIONS FOR XILINX DEVICES.  BY     *
-*     PROVIDING THIS DESIGN, CODE, OR INFORMATION AS ONE POSSIBLE              *
-*     IMPLEMENTATION OF THIS FEATURE, APPLICATION OR STANDARD, XILINX IS       *
-*     MAKING NO REPRESENTATION THAT THIS IMPLEMENTATION IS FREE FROM ANY       *
-*     CLAIMS OF INFRINGEMENT, AND YOU ARE RESPONSIBLE FOR OBTAINING ANY        *
-*     RIGHTS YOU MAY REQUIRE FOR YOUR IMPLEMENTATION.  XILINX EXPRESSLY        *
-*     DISCLAIMS ANY WARRANTY WHATSOEVER WITH RESPECT TO THE ADEQUACY OF THE    *
-*     IMPLEMENTATION, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OR           *
-*     REPRESENTATIONS THAT THIS IMPLEMENTATION IS FREE FROM CLAIMS OF          *
-*     INFRINGEMENT, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A    *
-*     PARTICULAR PURPOSE.                                                      *
-*                                                                              *
-*     Xilinx products are not intended for use in life support appliances,     *
-*     devices, or systems.  Use in such applications are expressly             *
-*     prohibited.                                                              *
-*                                                                              *
-*     (c) Copyright 1995-2015 Xilinx, Inc.                                     *
-*     All rights reserved.                                                     *
-*******************************************************************************/
-// You must compile the wrapper file fifo.v when simulating
-// the core, fifo. When compiling the wrapper file, be sure to
-// reference the XilinxCoreLib Verilog simulation library. For detailed
-// instructions, please refer to the "CORE Generator Help".
+/////////////////////////////////////////////////////////////////////
+////                                                             ////
+////  Universal FIFO Single Clock                                ////
+////                                                             ////
+////                                                             ////
+////  Author: Rudolf Usselmann                                   ////
+////          rudi@asics.ws                                      ////
+////                                                             ////
+////                                                             ////
+////  D/L from: http://www.opencores.org/cores/generic_fifos/    ////
+////                                                             ////
+/////////////////////////////////////////////////////////////////////
+////                                                             ////
+//// Copyright (C) 2000-2002 Rudolf Usselmann                    ////
+////                         www.asics.ws                        ////
+////                         rudi@asics.ws                       ////
+////                                                             ////
+//// This source file may be used and distributed without        ////
+//// restriction provided that this copyright statement is not   ////
+//// removed from the file and that any derivative work contains ////
+//// the original copyright notice and the associated disclaimer.////
+////                                                             ////
+////     THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY     ////
+//// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED   ////
+//// TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS   ////
+//// FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL THE AUTHOR      ////
+//// OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,         ////
+//// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES    ////
+//// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE   ////
+//// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR        ////
+//// BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF  ////
+//// LIABILITY, WHETHER IN  CONTRACT, STRICT LIABILITY, OR TORT  ////
+//// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT  ////
+//// OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE         ////
+//// POSSIBILITY OF SUCH DAMAGE.                                 ////
+////                                                             ////
+/////////////////////////////////////////////////////////////////////
 
-// The synthesis directives "translate_off/translate_on" specified below are
-// supported by Xilinx, Mentor Graphics and Synplicity synthesis
-// tools. Ensure they are correct for your synthesis tool(s).
+//  CVS Log
+//
+//  $Id: generic_fifo_dc.v,v 1.1.1.1 2002-09-25 05:42:02 rudi Exp $
+//
+//  $Date: 2002-09-25 05:42:02 $
+//  $Revision: 1.1.1.1 $
+//  $Author: rudi $
+//  $Locker:  $
+//  $State: Exp $
+//
+// Change History:
+//               $Log: not supported by cvs2svn $
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/*
+
+Description
+===========
+
+I/Os
+----
+rd_clk	Read Port Clock
+wr_clk	Write Port Clock
+rst	low active, either sync. or async. master reset (see below how to select)
+clr	synchronous clear (just like reset but always synchronous), high active
+re	read enable, synchronous, high active
+we	read enable, synchronous, high active
+din	Data Input
+dout	Data Output
+
+full	Indicates the FIFO is full (driven at the rising edge of wr_clk)
+empty	Indicates the FIFO is empty (driven at the rising edge of rd_clk)
+
+full_n	Indicates if the FIFO has space for N entries (driven of wr_clk)
+empty_n	Indicates the FIFO has at least N entries (driven of rd_clk)
+
+level		indicates the FIFO level:
+		2'b00	0-25%	 full
+		2'b01	25-50%	 full
+		2'b10	50-75%	 full
+		2'b11	%75-100% full
+
+Status Timing
+-------------
+All status outputs are registered. They are asserted immediately
+as the full/empty condition occurs, however, there is a 2 cycle
+delay before they are de-asserted once the condition is not true
+anymore.
+
+Parameters
+----------
+The FIFO takes 3 parameters:
+dw	Data bus width
+aw	Address bus width (Determines the FIFO size by evaluating 2^aw)
+n	N is a second status threshold constant for full_n and empty_n
+	If you have no need for the second status threshold, do not
+	connect the outputs and the logic should be removed by your
+	synthesis tool.
+
+Synthesis Results
+-----------------
+In a Spartan 2e a 8 bit wide, 8 entries deep FIFO, takes 85 LUTs and runs
+at about 116 MHz (IO insertion disabled). The registered status outputs
+are valid after 2.1NS, the combinatorial once take out to 6.5 NS to be
+available.
+
+Misc
+----
+This design assumes you will do appropriate status checking externally.
+
+IMPORTANT ! writing while the FIFO is full or reading while the FIFO is
+empty will place the FIFO in an undefined state.
+
+*/
 
 
-module fifo(
-  rst,
-  wr_clk,
-  rd_clk,
-  din,
-  wr_en,
-  rd_en,
-  dout,
-  full,
-  empty
-);
+// Selecting Sync. or Async Reset
+// ------------------------------
+// Uncomment one of the two lines below. The first line for
+// synchronous reset, the second for asynchronous reset
 
-input rst;
-input wr_clk;
-input rd_clk;
-input [15 : 0] din;
-input wr_en;
-input rd_en;
-output [15 : 0] dout;
-output full;
-output empty;
+`define DC_FIFO_ASYNC_RESET				// Uncomment for Syncr. reset
+//`define DC_FIFO_ASYNC_RESET	or negedge rst		// Uncomment for Async. reset
 
-// synthesis translate_off
 
-  FIFO_GENERATOR_V9_3 #(
-    .C_ADD_NGC_CONSTRAINT(0),
-    .C_APPLICATION_TYPE_AXIS(0),
-    .C_APPLICATION_TYPE_RACH(0),
-    .C_APPLICATION_TYPE_RDCH(0),
-    .C_APPLICATION_TYPE_WACH(0),
-    .C_APPLICATION_TYPE_WDCH(0),
-    .C_APPLICATION_TYPE_WRCH(0),
-    .C_AXI_ADDR_WIDTH(32),
-    .C_AXI_ARUSER_WIDTH(1),
-    .C_AXI_AWUSER_WIDTH(1),
-    .C_AXI_BUSER_WIDTH(1),
-    .C_AXI_DATA_WIDTH(64),
-    .C_AXI_ID_WIDTH(4),
-    .C_AXI_RUSER_WIDTH(1),
-    .C_AXI_TYPE(0),
-    .C_AXI_WUSER_WIDTH(1),
-    .C_AXIS_TDATA_WIDTH(64),
-    .C_AXIS_TDEST_WIDTH(4),
-    .C_AXIS_TID_WIDTH(8),
-    .C_AXIS_TKEEP_WIDTH(4),
-    .C_AXIS_TSTRB_WIDTH(4),
-    .C_AXIS_TUSER_WIDTH(4),
-    .C_AXIS_TYPE(0),
-    .C_COMMON_CLOCK(0),
-    .C_COUNT_TYPE(0),
-    .C_DATA_COUNT_WIDTH(10),
-    .C_DEFAULT_VALUE("BlankString"),
-    .C_DIN_WIDTH(16),
-    .C_DIN_WIDTH_AXIS(1),
-    .C_DIN_WIDTH_RACH(32),
-    .C_DIN_WIDTH_RDCH(64),
-    .C_DIN_WIDTH_WACH(32),
-    .C_DIN_WIDTH_WDCH(64),
-    .C_DIN_WIDTH_WRCH(2),
-    .C_DOUT_RST_VAL("0"),
-    .C_DOUT_WIDTH(16),
-    .C_ENABLE_RLOCS(0),
-    .C_ENABLE_RST_SYNC(1),
-    .C_ERROR_INJECTION_TYPE(0),
-    .C_ERROR_INJECTION_TYPE_AXIS(0),
-    .C_ERROR_INJECTION_TYPE_RACH(0),
-    .C_ERROR_INJECTION_TYPE_RDCH(0),
-    .C_ERROR_INJECTION_TYPE_WACH(0),
-    .C_ERROR_INJECTION_TYPE_WDCH(0),
-    .C_ERROR_INJECTION_TYPE_WRCH(0),
-    .C_FAMILY("spartan6"),
-    .C_FULL_FLAGS_RST_VAL(1),
-    .C_HAS_ALMOST_EMPTY(0),
-    .C_HAS_ALMOST_FULL(0),
-    .C_HAS_AXI_ARUSER(0),
-    .C_HAS_AXI_AWUSER(0),
-    .C_HAS_AXI_BUSER(0),
-    .C_HAS_AXI_RD_CHANNEL(0),
-    .C_HAS_AXI_RUSER(0),
-    .C_HAS_AXI_WR_CHANNEL(0),
-    .C_HAS_AXI_WUSER(0),
-    .C_HAS_AXIS_TDATA(0),
-    .C_HAS_AXIS_TDEST(0),
-    .C_HAS_AXIS_TID(0),
-    .C_HAS_AXIS_TKEEP(0),
-    .C_HAS_AXIS_TLAST(0),
-    .C_HAS_AXIS_TREADY(1),
-    .C_HAS_AXIS_TSTRB(0),
-    .C_HAS_AXIS_TUSER(0),
-    .C_HAS_BACKUP(0),
-    .C_HAS_DATA_COUNT(0),
-    .C_HAS_DATA_COUNTS_AXIS(0),
-    .C_HAS_DATA_COUNTS_RACH(0),
-    .C_HAS_DATA_COUNTS_RDCH(0),
-    .C_HAS_DATA_COUNTS_WACH(0),
-    .C_HAS_DATA_COUNTS_WDCH(0),
-    .C_HAS_DATA_COUNTS_WRCH(0),
-    .C_HAS_INT_CLK(0),
-    .C_HAS_MASTER_CE(0),
-    .C_HAS_MEMINIT_FILE(0),
-    .C_HAS_OVERFLOW(0),
-    .C_HAS_PROG_FLAGS_AXIS(0),
-    .C_HAS_PROG_FLAGS_RACH(0),
-    .C_HAS_PROG_FLAGS_RDCH(0),
-    .C_HAS_PROG_FLAGS_WACH(0),
-    .C_HAS_PROG_FLAGS_WDCH(0),
-    .C_HAS_PROG_FLAGS_WRCH(0),
-    .C_HAS_RD_DATA_COUNT(0),
-    .C_HAS_RD_RST(0),
-    .C_HAS_RST(1),
-    .C_HAS_SLAVE_CE(0),
-    .C_HAS_SRST(0),
-    .C_HAS_UNDERFLOW(0),
-    .C_HAS_VALID(0),
-    .C_HAS_WR_ACK(0),
-    .C_HAS_WR_DATA_COUNT(0),
-    .C_HAS_WR_RST(0),
-    .C_IMPLEMENTATION_TYPE(2),
-    .C_IMPLEMENTATION_TYPE_AXIS(1),
-    .C_IMPLEMENTATION_TYPE_RACH(1),
-    .C_IMPLEMENTATION_TYPE_RDCH(1),
-    .C_IMPLEMENTATION_TYPE_WACH(1),
-    .C_IMPLEMENTATION_TYPE_WDCH(1),
-    .C_IMPLEMENTATION_TYPE_WRCH(1),
-    .C_INIT_WR_PNTR_VAL(0),
-    .C_INTERFACE_TYPE(0),
-    .C_MEMORY_TYPE(1),
-    .C_MIF_FILE_NAME("BlankString"),
-    .C_MSGON_VAL(1),
-    .C_OPTIMIZATION_MODE(0),
-    .C_OVERFLOW_LOW(0),
-    .C_PRELOAD_LATENCY(1),
-    .C_PRELOAD_REGS(0),
-    .C_PRIM_FIFO_TYPE("1kx18"),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL(2),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL_AXIS(1022),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL_RACH(1022),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL_RDCH(1022),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL_WACH(1022),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL_WDCH(1022),
-    .C_PROG_EMPTY_THRESH_ASSERT_VAL_WRCH(1022),
-    .C_PROG_EMPTY_THRESH_NEGATE_VAL(3),
-    .C_PROG_EMPTY_TYPE(0),
-    .C_PROG_EMPTY_TYPE_AXIS(0),
-    .C_PROG_EMPTY_TYPE_RACH(0),
-    .C_PROG_EMPTY_TYPE_RDCH(0),
-    .C_PROG_EMPTY_TYPE_WACH(0),
-    .C_PROG_EMPTY_TYPE_WDCH(0),
-    .C_PROG_EMPTY_TYPE_WRCH(0),
-    .C_PROG_FULL_THRESH_ASSERT_VAL(1021),
-    .C_PROG_FULL_THRESH_ASSERT_VAL_AXIS(1023),
-    .C_PROG_FULL_THRESH_ASSERT_VAL_RACH(1023),
-    .C_PROG_FULL_THRESH_ASSERT_VAL_RDCH(1023),
-    .C_PROG_FULL_THRESH_ASSERT_VAL_WACH(1023),
-    .C_PROG_FULL_THRESH_ASSERT_VAL_WDCH(1023),
-    .C_PROG_FULL_THRESH_ASSERT_VAL_WRCH(1023),
-    .C_PROG_FULL_THRESH_NEGATE_VAL(1020),
-    .C_PROG_FULL_TYPE(0),
-    .C_PROG_FULL_TYPE_AXIS(0),
-    .C_PROG_FULL_TYPE_RACH(0),
-    .C_PROG_FULL_TYPE_RDCH(0),
-    .C_PROG_FULL_TYPE_WACH(0),
-    .C_PROG_FULL_TYPE_WDCH(0),
-    .C_PROG_FULL_TYPE_WRCH(0),
-    .C_RACH_TYPE(0),
-    .C_RD_DATA_COUNT_WIDTH(10),
-    .C_RD_DEPTH(1024),
-    .C_RD_FREQ(1),
-    .C_RD_PNTR_WIDTH(10),
-    .C_RDCH_TYPE(0),
-    .C_REG_SLICE_MODE_AXIS(0),
-    .C_REG_SLICE_MODE_RACH(0),
-    .C_REG_SLICE_MODE_RDCH(0),
-    .C_REG_SLICE_MODE_WACH(0),
-    .C_REG_SLICE_MODE_WDCH(0),
-    .C_REG_SLICE_MODE_WRCH(0),
-    .C_SYNCHRONIZER_STAGE(2),
-    .C_UNDERFLOW_LOW(0),
-    .C_USE_COMMON_OVERFLOW(0),
-    .C_USE_COMMON_UNDERFLOW(0),
-    .C_USE_DEFAULT_SETTINGS(0),
-    .C_USE_DOUT_RST(1),
-    .C_USE_ECC(0),
-    .C_USE_ECC_AXIS(0),
-    .C_USE_ECC_RACH(0),
-    .C_USE_ECC_RDCH(0),
-    .C_USE_ECC_WACH(0),
-    .C_USE_ECC_WDCH(0),
-    .C_USE_ECC_WRCH(0),
-    .C_USE_EMBEDDED_REG(0),
-    .C_USE_FIFO16_FLAGS(0),
-    .C_USE_FWFT_DATA_COUNT(0),
-    .C_VALID_LOW(0),
-    .C_WACH_TYPE(0),
-    .C_WDCH_TYPE(0),
-    .C_WR_ACK_LOW(0),
-    .C_WR_DATA_COUNT_WIDTH(10),
-    .C_WR_DEPTH(1024),
-    .C_WR_DEPTH_AXIS(1024),
-    .C_WR_DEPTH_RACH(16),
-    .C_WR_DEPTH_RDCH(1024),
-    .C_WR_DEPTH_WACH(16),
-    .C_WR_DEPTH_WDCH(1024),
-    .C_WR_DEPTH_WRCH(16),
-    .C_WR_FREQ(1),
-    .C_WR_PNTR_WIDTH(10),
-    .C_WR_PNTR_WIDTH_AXIS(10),
-    .C_WR_PNTR_WIDTH_RACH(4),
-    .C_WR_PNTR_WIDTH_RDCH(10),
-    .C_WR_PNTR_WIDTH_WACH(4),
-    .C_WR_PNTR_WIDTH_WDCH(10),
-    .C_WR_PNTR_WIDTH_WRCH(4),
-    .C_WR_RESPONSE_LATENCY(1),
-    .C_WRCH_TYPE(0)
-  )
-  inst (
-    .RST(rst),
-    .WR_CLK(wr_clk),
-    .RD_CLK(rd_clk),
-    .DIN(din),
-    .WR_EN(wr_en),
-    .RD_EN(rd_en),
-    .DOUT(dout),
-    .FULL(full),
-    .EMPTY(empty),
-    .BACKUP(),
-    .BACKUP_MARKER(),
-    .CLK(),
-    .SRST(),
-    .WR_RST(),
-    .RD_RST(),
-    .PROG_EMPTY_THRESH(),
-    .PROG_EMPTY_THRESH_ASSERT(),
-    .PROG_EMPTY_THRESH_NEGATE(),
-    .PROG_FULL_THRESH(),
-    .PROG_FULL_THRESH_ASSERT(),
-    .PROG_FULL_THRESH_NEGATE(),
-    .INT_CLK(),
-    .INJECTDBITERR(),
-    .INJECTSBITERR(),
-    .ALMOST_FULL(),
-    .WR_ACK(),
-    .OVERFLOW(),
-    .ALMOST_EMPTY(),
-    .VALID(),
-    .UNDERFLOW(),
-    .DATA_COUNT(),
-    .RD_DATA_COUNT(),
-    .WR_DATA_COUNT(),
-    .PROG_FULL(),
-    .PROG_EMPTY(),
-    .SBITERR(),
-    .DBITERR(),
-    .M_ACLK(),
-    .S_ACLK(),
-    .S_ARESETN(),
-    .M_ACLK_EN(),
-    .S_ACLK_EN(),
-    .S_AXI_AWID(),
-    .S_AXI_AWADDR(),
-    .S_AXI_AWLEN(),
-    .S_AXI_AWSIZE(),
-    .S_AXI_AWBURST(),
-    .S_AXI_AWLOCK(),
-    .S_AXI_AWCACHE(),
-    .S_AXI_AWPROT(),
-    .S_AXI_AWQOS(),
-    .S_AXI_AWREGION(),
-    .S_AXI_AWUSER(),
-    .S_AXI_AWVALID(),
-    .S_AXI_AWREADY(),
-    .S_AXI_WID(),
-    .S_AXI_WDATA(),
-    .S_AXI_WSTRB(),
-    .S_AXI_WLAST(),
-    .S_AXI_WUSER(),
-    .S_AXI_WVALID(),
-    .S_AXI_WREADY(),
-    .S_AXI_BID(),
-    .S_AXI_BRESP(),
-    .S_AXI_BUSER(),
-    .S_AXI_BVALID(),
-    .S_AXI_BREADY(),
-    .M_AXI_AWID(),
-    .M_AXI_AWADDR(),
-    .M_AXI_AWLEN(),
-    .M_AXI_AWSIZE(),
-    .M_AXI_AWBURST(),
-    .M_AXI_AWLOCK(),
-    .M_AXI_AWCACHE(),
-    .M_AXI_AWPROT(),
-    .M_AXI_AWQOS(),
-    .M_AXI_AWREGION(),
-    .M_AXI_AWUSER(),
-    .M_AXI_AWVALID(),
-    .M_AXI_AWREADY(),
-    .M_AXI_WID(),
-    .M_AXI_WDATA(),
-    .M_AXI_WSTRB(),
-    .M_AXI_WLAST(),
-    .M_AXI_WUSER(),
-    .M_AXI_WVALID(),
-    .M_AXI_WREADY(),
-    .M_AXI_BID(),
-    .M_AXI_BRESP(),
-    .M_AXI_BUSER(),
-    .M_AXI_BVALID(),
-    .M_AXI_BREADY(),
-    .S_AXI_ARID(),
-    .S_AXI_ARADDR(),
-    .S_AXI_ARLEN(),
-    .S_AXI_ARSIZE(),
-    .S_AXI_ARBURST(),
-    .S_AXI_ARLOCK(),
-    .S_AXI_ARCACHE(),
-    .S_AXI_ARPROT(),
-    .S_AXI_ARQOS(),
-    .S_AXI_ARREGION(),
-    .S_AXI_ARUSER(),
-    .S_AXI_ARVALID(),
-    .S_AXI_ARREADY(),
-    .S_AXI_RID(),
-    .S_AXI_RDATA(),
-    .S_AXI_RRESP(),
-    .S_AXI_RLAST(),
-    .S_AXI_RUSER(),
-    .S_AXI_RVALID(),
-    .S_AXI_RREADY(),
-    .M_AXI_ARID(),
-    .M_AXI_ARADDR(),
-    .M_AXI_ARLEN(),
-    .M_AXI_ARSIZE(),
-    .M_AXI_ARBURST(),
-    .M_AXI_ARLOCK(),
-    .M_AXI_ARCACHE(),
-    .M_AXI_ARPROT(),
-    .M_AXI_ARQOS(),
-    .M_AXI_ARREGION(),
-    .M_AXI_ARUSER(),
-    .M_AXI_ARVALID(),
-    .M_AXI_ARREADY(),
-    .M_AXI_RID(),
-    .M_AXI_RDATA(),
-    .M_AXI_RRESP(),
-    .M_AXI_RLAST(),
-    .M_AXI_RUSER(),
-    .M_AXI_RVALID(),
-    .M_AXI_RREADY(),
-    .S_AXIS_TVALID(),
-    .S_AXIS_TREADY(),
-    .S_AXIS_TDATA(),
-    .S_AXIS_TSTRB(),
-    .S_AXIS_TKEEP(),
-    .S_AXIS_TLAST(),
-    .S_AXIS_TID(),
-    .S_AXIS_TDEST(),
-    .S_AXIS_TUSER(),
-    .M_AXIS_TVALID(),
-    .M_AXIS_TREADY(),
-    .M_AXIS_TDATA(),
-    .M_AXIS_TSTRB(),
-    .M_AXIS_TKEEP(),
-    .M_AXIS_TLAST(),
-    .M_AXIS_TID(),
-    .M_AXIS_TDEST(),
-    .M_AXIS_TUSER(),
-    .AXI_AW_INJECTSBITERR(),
-    .AXI_AW_INJECTDBITERR(),
-    .AXI_AW_PROG_FULL_THRESH(),
-    .AXI_AW_PROG_EMPTY_THRESH(),
-    .AXI_AW_DATA_COUNT(),
-    .AXI_AW_WR_DATA_COUNT(),
-    .AXI_AW_RD_DATA_COUNT(),
-    .AXI_AW_SBITERR(),
-    .AXI_AW_DBITERR(),
-    .AXI_AW_OVERFLOW(),
-    .AXI_AW_UNDERFLOW(),
-    .AXI_AW_PROG_FULL(),
-    .AXI_AW_PROG_EMPTY(),
-    .AXI_W_INJECTSBITERR(),
-    .AXI_W_INJECTDBITERR(),
-    .AXI_W_PROG_FULL_THRESH(),
-    .AXI_W_PROG_EMPTY_THRESH(),
-    .AXI_W_DATA_COUNT(),
-    .AXI_W_WR_DATA_COUNT(),
-    .AXI_W_RD_DATA_COUNT(),
-    .AXI_W_SBITERR(),
-    .AXI_W_DBITERR(),
-    .AXI_W_OVERFLOW(),
-    .AXI_W_UNDERFLOW(),
-    .AXI_B_INJECTSBITERR(),
-    .AXI_W_PROG_FULL(),
-    .AXI_W_PROG_EMPTY(),
-    .AXI_B_INJECTDBITERR(),
-    .AXI_B_PROG_FULL_THRESH(),
-    .AXI_B_PROG_EMPTY_THRESH(),
-    .AXI_B_DATA_COUNT(),
-    .AXI_B_WR_DATA_COUNT(),
-    .AXI_B_RD_DATA_COUNT(),
-    .AXI_B_SBITERR(),
-    .AXI_B_DBITERR(),
-    .AXI_B_OVERFLOW(),
-    .AXI_B_UNDERFLOW(),
-    .AXI_AR_INJECTSBITERR(),
-    .AXI_B_PROG_FULL(),
-    .AXI_B_PROG_EMPTY(),
-    .AXI_AR_INJECTDBITERR(),
-    .AXI_AR_PROG_FULL_THRESH(),
-    .AXI_AR_PROG_EMPTY_THRESH(),
-    .AXI_AR_DATA_COUNT(),
-    .AXI_AR_WR_DATA_COUNT(),
-    .AXI_AR_RD_DATA_COUNT(),
-    .AXI_AR_SBITERR(),
-    .AXI_AR_DBITERR(),
-    .AXI_AR_OVERFLOW(),
-    .AXI_AR_UNDERFLOW(),
-    .AXI_AR_PROG_FULL(),
-    .AXI_AR_PROG_EMPTY(),
-    .AXI_R_INJECTSBITERR(),
-    .AXI_R_INJECTDBITERR(),
-    .AXI_R_PROG_FULL_THRESH(),
-    .AXI_R_PROG_EMPTY_THRESH(),
-    .AXI_R_DATA_COUNT(),
-    .AXI_R_WR_DATA_COUNT(),
-    .AXI_R_RD_DATA_COUNT(),
-    .AXI_R_SBITERR(),
-    .AXI_R_DBITERR(),
-    .AXI_R_OVERFLOW(),
-    .AXI_R_UNDERFLOW(),
-    .AXIS_INJECTSBITERR(),
-    .AXI_R_PROG_FULL(),
-    .AXI_R_PROG_EMPTY(),
-    .AXIS_INJECTDBITERR(),
-    .AXIS_PROG_FULL_THRESH(),
-    .AXIS_PROG_EMPTY_THRESH(),
-    .AXIS_DATA_COUNT(),
-    .AXIS_WR_DATA_COUNT(),
-    .AXIS_RD_DATA_COUNT(),
-    .AXIS_SBITERR(),
-    .AXIS_DBITERR(),
-    .AXIS_OVERFLOW(),
-    .AXIS_UNDERFLOW(),
-    .AXIS_PROG_FULL(),
-    .AXIS_PROG_EMPTY()
-  );
+module fifo(rd_clk, wr_clk, rst, clr, din, we, dout, re,
+			full, empty, full_n, empty_n, level );
 
-// synthesis translate_on
+parameter dw=8;
+parameter aw=8;
+parameter n=32;
+parameter max_size = 1<<aw;
+
+input			rd_clk, wr_clk, rst, clr;
+input	[dw-1:0]	din;
+input			we;
+output	[dw-1:0]	dout;
+input			re;
+output			full; 
+output			empty;
+output			full_n;
+output			empty_n;
+output	[1:0]		level;
+
+////////////////////////////////////////////////////////////////////
+//
+// Local Wires
+//
+
+reg	[aw:0]		wp;
+wire	[aw:0]		wp_pl1;
+reg	[aw:0]		rp;
+wire	[aw:0]		rp_pl1;
+reg	[aw:0]		wp_s, rp_s;
+wire	[aw:0]		diff;
+reg	[aw:0]		diff_r1, diff_r2;
+reg			re_r, we_r;
+reg			full, empty, full_n, empty_n;
+reg	[1:0]		level;
+
+////////////////////////////////////////////////////////////////////
+//
+// Memory Block
+//
+
+generic_dpram  #(aw,dw) u0(
+	.rclk(		rd_clk		),
+	.rrst(		!rst		),
+	.rce(		1'b1		),
+	.oe(		1'b1		),
+	.raddr(		rp[aw-1:0]	),
+	.do(		dout		),
+	.wclk(		wr_clk		),
+	.wrst(		!rst		),
+	.wce(		1'b1		),
+	.we(		we		),
+	.waddr(		wp[aw-1:0]	),
+	.di(		din		)
+	);
+
+////////////////////////////////////////////////////////////////////
+//
+// Read/Write Pointers Logic
+//
+
+always @(posedge wr_clk `DC_FIFO_ASYNC_RESET)
+	if(!rst)	wp <= #1 {aw+1{1'b0}};
+	else
+	if(clr)		wp <= #1 {aw+1{1'b0}};
+	else
+	if(we)		wp <= #1 wp_pl1;
+
+assign wp_pl1 = wp + { {aw{1'b0}}, 1'b1};
+
+always @(posedge rd_clk `DC_FIFO_ASYNC_RESET)
+	if(!rst)	rp <= #1 {aw+1{1'b0}};
+	else
+	if(clr)		rp <= #1 {aw+1{1'b0}};
+	else
+	if(re)		rp <= #1 rp_pl1;
+
+assign rp_pl1 = rp + { {aw{1'b0}}, 1'b1};
+
+////////////////////////////////////////////////////////////////////
+//
+// Synchronization Logic
+//
+
+// write pointer
+always @(posedge rd_clk)	wp_s <= #1 wp;
+
+// read pointer
+always @(posedge wr_clk)	rp_s <= #1 rp;
+
+////////////////////////////////////////////////////////////////////
+//
+// Registered Full & Empty Flags
+//
+
+always @(posedge rd_clk)
+	empty <= #1 (wp_s == rp) | (re & (wp_s == rp_pl1));
+
+always @(posedge wr_clk)
+	full <= #1 ((wp[aw-1:0] == rp_s[aw-1:0]) & (wp[aw] != rp_s[aw])) |
+	(we & (wp_pl1[aw-1:0] == rp_s[aw-1:0]) & (wp_pl1[aw] != rp_s[aw]));
+
+////////////////////////////////////////////////////////////////////
+//
+// Registered Full_n & Empty_n Flags
+//
+
+assign diff = wp-rp;
+
+always @(posedge rd_clk)
+	re_r <= #1 re;
+
+always @(posedge rd_clk)
+	diff_r1 <= #1 diff;
+
+always @(posedge rd_clk)
+	empty_n <= #1 (diff_r1 < n) | ((diff_r1==n) & (re | re_r));
+
+always @(posedge wr_clk)
+	we_r <= #1 we;
+
+always @(posedge wr_clk)
+	diff_r2 <= #1 diff;
+
+always @(posedge wr_clk)
+	full_n <= #1 (diff_r2 > max_size-n) | ((diff_r2==max_size-n) & (we | we_r));
+
+always @(posedge wr_clk)
+	level <= #1 {2{diff[aw]}} | diff[aw-1:aw-2];
+
+
+////////////////////////////////////////////////////////////////////
+//
+// Sanity Check
+//
+
+// synopsys translate_off
+always @(posedge wr_clk)
+	if(we & full)
+		$display("%m WARNING: Writing while fifo is FULL (%t)",$time);
+
+always @(posedge rd_clk)
+	if(re & empty)
+		$display("%m WARNING: Reading while fifo is EMPTY (%t)",$time);
+// synopsys translate_on
 
 endmodule
+
