@@ -85,9 +85,11 @@ module commutator
 	reg			[31:0] 		m_data_o;
 	
 	//FIFO
-	wire full;
-	wire empty;
+	wire full, full_n;
+	wire empty, empty_n;
 	wire [15:0] fifo_master1_addr;
+	wire re;
+	wire [1:0] level;
 	
 	reg	 			reg_master1_wb_ack_o;
 	reg [31:0]		reg_master1_wb_data_o;
@@ -131,7 +133,11 @@ module commutator
 
 	
 	
-	fifo fifo1(sys_rst, sys_clk, sys_clk, master1_wb_addr_i, ~empty, ~full, fifo_master1_addr, full, empty);
+	//fifo fifo1(sys_clk, sys_rst, master1_wb_addr_i, fifo_master1_addr, master1_wb_stb_i, ~empty, full, empty);
+	
+	fifo fifo (sys_clk, sys_clk, sys_rst, clr, master1_wb_addr_i, master1_wb_stb_i, fifo_master1_addr, re, full, empty, full_n, empty_n, level );
+	assign re = empty_n;
+	
 	//overflow
 	assign master1_wb_stall_o = full;
 
