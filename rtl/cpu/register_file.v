@@ -11,7 +11,7 @@ module reg_file (
 	output[31:0] out_srcb 
 );
 integer i;
-reg [4:0] loc_regs [31:0];
+reg [31:0] loc_regs [0:31];
 reg[31:0] loc_srca, loc_srcb;	
 always@(posedge clk)
 begin
@@ -22,7 +22,12 @@ begin
 	end
 	else begin
 		if(we)begin
-			loc_regs[adr_wrt] <= data_in;			
+			if(adr_wrt != 0) begin 
+				loc_regs[adr_wrt] <= data_in;			
+			end
+			else begin 
+				loc_regs[5'b0] <= 31'b0;
+			end
 		end
 	end
 end
@@ -38,12 +43,8 @@ begin
 	end
 
 end
-always @*
-begin
-	loc_regs[5'b0] <= 31'b0;
-end	
 assign out_srca = loc_srca;
-assign out_srcb = reg_be[1] (reg_be[0] ? {{16{1'b0}},loc_srcb[15:0]}:{{24{1'b0}},loc_srcb[7:0]}) ? loc_srcb;
+assign out_srcb = reg_be[1] ? (reg_be[0] ? {{16{1'b0}},loc_srcb[15:0]}:{{24{1'b0}},loc_srcb[7:0]}):loc_srcb;
 
 endmodule
 

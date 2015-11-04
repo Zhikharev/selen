@@ -1,40 +1,33 @@
 module cpu_cntr(
-	input[6:0] opcode,
+	input[1:0] fnct7,
 	input[2:0] fnct,
-	input [1:0] fnct7,
-	output mux_1,
-	output mux_2_1,
-	output mux_2_2,
-	output mux_3,
-	output mux_4,
-	output[1:0] mux_5,
-	output mux_6,
-	output[1:0] sx_2_cntr,
-	output[3:0] alu_cntr,
-	output s_u_alu,
-	output s_u_sx,
-	output we_r,
-	output we_m,
-	output brch,
-	output[1:0] reg_be,
-	output lw,
+	input[6:0] opcode,
+	output[1:0] be_mem,
+	output we_mem,
+	output we_reg,
+	output[1:0] be_reg,
+	output[1:0] brn_type,
+	output[2:0] sx_cntl,
+	output[2:0] alu_cntr,
+	output alu_s_u,
+	output mux9,
+	output mux8,
+	output mux7,
+	output mux6,
+	output mux5,
+	output mux4,
+	output mux4_2,
+	output mux3,
+	output mux2,
+	output mux1,
+	//////
+	output hz_cntr 
+
 );
-reg locm_1,locm_2_1,locm_2_2,locm_3,locm_4,locm_6;
-reg [1:0] loc_sx_2_cntr,locm_5,loc_reg_be;
-reg[3:0] loc_alu_cntr;
-reg loc_s_u_alu,loc_s_u_sx,loc_we_r,loc_wr_m,loc_brch,loc_lw;
-
-localparam R = 7'b11;
-localparam R_I = 7'b1000011;
-localparam I = 7'b0000111;
-localparam S = 7'b0001111;
-localparam SB = 7'b0010011;
-localparam UJ = 7'b0001011;
-
 localparam ADD = 4'b0000;
 localparam SLT = 4'b0001;
-localparam AND  = 4'b0010;
-localparam XOR = 4'b0011;
+localparam SLTU = 4'b0010;
+localparam AND  = 4'b0011;
 localparam OR = 4'b0100;
 localparam XOR = 4'b0101;
 localparam SLL = 4'b0110;
@@ -47,273 +40,379 @@ localparam BP =2'b00;
 localparam LH =2'b01;
 localparam LB =2'b10;
 
+localparam R = 7'b0000011;
+localparam R_I = 7'b1000011;
+localparam U = 7'b0100011;
+localparam SB = 7'b0010011;
+localparam UJ = 7'b0001011;
+localparam S = 7'b0001111;
+localparam I = 7'b0000111;
 
+localparam FULL = 2'b00;
+localparam HALF = 2'b01;
+localparam BYTE = 2'b10;
+localparam UPPER = 2'b11;
+
+localparam SIGN = 1'b1;
+localparam UNSIGN = 1'b0;
+
+localparam EQ = 2'b00;
+localparam NE = 2'b01;
+localparam LT = 2'b10;
+localparam GE = 2'b11;
+
+
+
+reg loc9,loc8,loc7,loc6,loc5,loc4,loc4_2,loc3,loc2,loc1;
+reg we_mem_loc,we_reg_loc;
+reg s_u_loc;
+reg[1:0]be_mem_loc,be_reg_loc;
+reg[2:0] brn_loc,sx_loc;
+reg[3:0]alu_loc;
+reg hz_loc;
+////// always for muxs and,be and sx
 always @*
 begin
-	case(opcode) 
+
+	///////R type 
+	case(opcode)
 		R:begin
-			locm_1 = 1'b0;
-			locm_2_1 =1'bx;
-			locm_2_2 = 1'b0;
-			locm_3 = 1'b0;
-			locm_4 = 1'b0;	
-			locm_5 = 2'b11;
-			loc_we_r = 1'b1;
-			locm_6 = 1'bx;
-			loc_we_m =1'b0;
-		end	
+			loc9 = 1'b0;
+			loc8 = 1'b0;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'b1;
+			loc4 = 1'b1;
+			loc4_2 = 1'b1;
+			loc3 = 1'bx;
+			loc2 = 1'b0;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b1;
+			be_mem_loc = 2'bxx;
+			be_reg_loc = FULL;	
+		end
 		R_I:begin
-			locm_1 = 1'b0;
-			locm_2_1 =1'bx;
-			locm_2_2 = 1'b0;
-			locm_3 = 1'b1;
-			locm_4 = 1'b0;	
-			locm_5 = 2'b11;
-			loc_we_r = 1'b1;
-			locm_6 = 1'bx;
-			loc_we_m =1'b0;
+			loc9 = 1'b0;
+			loc8 = 1'b1;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'b1;
+			loc4 = 1'b1;
+			loc4_2 = 1'b1;
+			loc3 = 1'bx;
+			loc2 = 1'b0;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b1;
+			be_mem_loc = FULL;
+			be_reg_loc = FULL;		
 		end
-		I:begin
-			if(fnct == 3'b0)begin
-				locm_1 = 1'b1;
-				locm_5 = 2'b01;	
-				locm_6 = 1'b0;
-			end
-			else begin
-				locm_1 = 1'b0;
-				locm_5 = 2'b11;
-				locm_6 = 1'bx;
-			end
-			locm_2_1 =1'bx;
-			locm_2_2 = 1'b0;
-			locm_3 = 1'b1;
-			locm_4 = 1'b1;	
-			loc_we_r = 1'b1;
-			loc_we_m =1'b0;
-		end
-		UJ:begin//// problems are there now
-			locm_1 = 1'b0;
-			locm_2_1 =1'bx;
-			locm_2_2 = 1'bx;
-			locm_3 = 1'bx;
-			locm_4 = 1'bx;	
-			locm_5 = 2'b11;
-			loc_we_r = 1'b1;
-			locm_6 = 1'b1;//
-			loc_we_m =1'b0;
+		U:begin///////////////
+			loc9 = 1'b0;
+			loc8 = 1'b1;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'b1;
+			loc4 = 1'b1;
+			loc4_2 = 1'b1;
+			loc3 = 1'bx;
+			loc2 = 1'b0;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b1;
+			be_mem_loc = FULL;
+			be_reg_loc = FULL;		
 		end
 		SB:begin
-			locm_1 = 1'bx;
-			locm_2_1 =1'b1;
-			locm_2_2 = 1'b1;
-			locm_3 = 1'b0;
-			locm_4 = 1'bx;	
-			locm_5 = 2'b10;
-			loc_we_r = 1'b0;
-			locm_6 = 1'b0;//
-			loc_we_m =1'b0;
+			loc9 = 1'bx;
+			loc8 = 1'b0;
+			loc7 = 1'b1;
+			loc6 = 1'bx;
+			loc5 = 1'bx;
+			loc4 = 1'b1;
+			loc4_2 = 1'b1;
+			loc3 = 1'bx;
+			loc2 = 1'b0;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b1;
+			be_mem_loc = FULL;
+			be_reg_loc = FULL;		
 		end
-		S:begin
-			loc_we_m =1'b0;
-			locm_1 = 1'b1;
-			locm_2_1 =1'b1;//
-			locm_2_2 = 1'b1;//
-			locm_3 = 1'b1;
-			locm_4 = 1'b1;	
-			locm_5 = 2'b11;
-			loc_we_r = 1'b1;
-			locm_6 = 1'b0;//
+		UJ:begin
+			loc9 = 1'bx;
+			loc8 = 1'bx;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'b0;
+			loc4 = 1'bx;
+			loc4_2 = 1'bx;
+			loc3 = 1'bx;
+			loc2 = 1'b1;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b1;
+			be_mem_loc = FULL;
+			be_reg_loc = FULL;		
+
 		end
-	endcase 	
-	
-end
-always @*
-begin
-//// for R type begin
-	if((fnct7 == 7'b0)&&(opcode == R))begin
-		loc_s_u_se = 1'bx;
-		loc_sx_2 = 2'b00;
-		case(fnct)
-			3'b000: begin
-				loc_alu_cntr = ADD;
-				loc_s_u_alu = 1'b1;
+		I:begin
+			if(fnct == 3'b000)begin
+				loc9 = 1'bx;
+				loc8 = 1'bx;
+				loc7 = 1'b1;
+				loc6 = 1'bx;
+				loc5 = 1'b0;
+				loc4 = 1'b0;
+				loc4_2 = 1'b0;
+				loc3 = 1'b0;
+				loc2 = 1'b0;
+				we_mem_loc = 1'b0;
+				we_reg_loc = 1'b1;
+				be_mem_loc = FULL;
+				be_reg_loc = FULL;		
 			end
-			3'b001:begin 
-				loc_alu_cntr = SLT;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b010:begin 
-				loc_alu_cntr = SLTU;
-				loc_s_u_alu = 1'b0;
-			end	
-			3'b011:begin 
-				loc_alu_cntr = AND;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b100:begin 
-				loc_alu_cntr = OR;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b101:begin 
-				loc_alu_cntr = XOR;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b110:begin 
-				loc_alu_cntr = SLL;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b111:begin 
-				loc_alu_cntr = SRL;
-				loc_s_u_alu = 1'b1;
-			end	
-		endcase
-	end
-	if((fnct7==7'b0100000)&&(opcode == R))begin
-				loc_s_u_se = 1'bx;
-				loc_sx_2 = 2'b00;
+			else begin	
+				loc9 = 1'b1;
+				loc8 = 1'b1;
+				loc7 = 1'b0;
+				loc6 = 1'bx;
+				loc5 = 1'b1;
+				loc4 = 1'b1;
+				loc4_2 = 1'b1;
+				loc3 = 1'bx;
+				loc2 = 1'b0;
 				case(fnct)
-					3'b000:begin 
-						loc_alu_cntr = SUB;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b001:begin 
-						loc_alu_cntr = SRA;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b010:begin 
-						loc_alu_cntr = AM;
-						loc_s_u_alu = 1'b1;
-					end	
-
-
-				endcase	
-////end
-/// for R_T type begin
-if(opcode == R_I)begin
-		loc_s_u_se = 1'bx;
-		loc_sx_2 = 2'b00;
-		case(fnct)
-			3'b000: begin
-				loc_alu_cntr = ADD;
-				loc_s_u_alu = 1'b1;
-			end
-			3'b001:begin 
-				loc_alu_cntr = SLT;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b010:begin 
-				loc_alu_cntr = AND;
-				loc_s_u_alu = 1'b0;
-			end	
-			3'b011:begin 
-				loc_alu_cntr = OR;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b100:begin 
-				loc_alu_cntr = XOR;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b101:begin 
-				loc_alu_cntr = SLL;
-				loc_s_u_alu = 1'b1;
-			end	
-			3'b110:begin 
-				loc_alu_cntr = SRL;
-				loc_s_u_alu = 1'b1;
-			end	
-			if((fnct7 == 7'b0)&&(opcode == R_I))begin
-				case(fnct)
-					3'b000: begin
-						loc_alu_cntr = ADD;
-						loc_s_u_alu = 1'b1;
+					3'b001:begin
+						//LW
+						//////////////////////////hazard 
+						be_mem_loc = FULL;
+						sx_loc ={SIGN,FULL};
 					end
-					3'b001:begin 
-						loc_alu_cntr = SLT;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b010:begin 
-						loc_alu_cntr = AND;
-						loc_s_u_alu = 1'b0;
-					end	
-					3'b011:begin 
-						loc_alu_cntr = OR;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b100:begin 
-						loc_alu_cntr = XOR;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b101:begin 
-						loc_alu_cntr = SLL;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b110:begin 
-						loc_alu_cntr = SRL;
-						loc_s_u_alu = 1'b1;
-					end	
-					3'b111:begin 
-						loc_alu_cntr = SRA
-						loc_s_u_alu = 1'b1;
-					end	
-			
+					3'b010:begin
+						//LH
+						be_mem_loc = HALF;
+						sx_loc ={SIGN,HALF};
+					end
+					3'b011:begin
+						//LHU
+						be_mem_loc = HALF;
+						be_reg_loc = {UNSIGN,HALF};
+					end
+					3'b100:begin
+						//LB
+						be_mem_loc = BYTE;
+						be_reg_loc = {SIGN,BYTE};
+					end
+					3'b101:begin
+						//LBU
+						be_mem_loc = BYTE;
+						be_reg_loc = {UNSIGN,BYTE};
+					end
 				endcase
 			end
+		end	
+		S:begin
+			loc9 = 1'bx;
+			loc8 = 1'bx;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'b0;
+			loc4 = 1'bx;
+			loc4_2 = 1'bx;
+			loc3 = 1'bx;
+			loc2 = 1'b1;
+			we_mem_loc = 1'b1;
+			we_reg_loc = 1'b0;
+			case(fnct)
+				3'b001:begin
+					be_reg_loc = FULL;
+				end
+				3'b010:begin
+					be_reg_loc = HALF;
+				end
+				3'b011:begin
+					be_reg_loc = BYTE;
+				end
+			endcase
+		end
+	endcase
 
-		endcase
-	end
-///end
-/// I type begin
-	if((opcode == I)) begin
-		loc_alu_cntr = ADD;
-		case(fnct)
-			3'b000:begin
-				loc_se_2_cntr = 2'bx;
-				loc_s_u_sx = 1'bx; 
-			end   
-			3'b001:begin
-				loc_se_2_cntr = BP;
-				loc_s_u_sx = 1'bx; 
-			end   	
-			3'b010:begin
-				loc_se_2_cntr = LH;
-				loc_s_u_sx = 1'b1; 
-			end   
-			3'b011:begin
-				loc_se_2_cntr = LH;
-				loc_s_u_sx = 1'b0; 
+end
+///// always for alu controll
+always @* 
+begin
+	case(opcode)
+		R:begin
+			if(fnct7 == 2'b00)begin
+				case(fnct)
+					3'b000: begin
+						alu_loc = ADD;
+						s_u_loc = SIGN;
+					end
+					3'b001: begin
+						alu_loc = SLT;
+					end
+					3'b010: begin
+						alu_loc = SLTU;
+					end
+					3'b011: begin
+						alu_loc = AND;
+						s_u_loc = SIGN;
+					end
+					3'b100: begin
+						alu_loc = OR;
+						s_u_loc = SIGN;
+					end
+					3'b101: begin
+						alu_loc = XOR;
+						s_u_loc = SIGN;
+					end
+					3'b110: begin
+						alu_loc = SLL;
+						s_u_loc = SIGN;
+					end
+					3'b111: begin
+						alu_loc = SRL;
+						s_u_loc = SIGN;
+					end
+				endcase
+			end		
+			else begin
+				case(fnct)
+					3'b000:begin
+						alu_loc = SUB;
+						s_u_loc = SIGN;
+					end
+					3'b001:begin
+						alu_loc = SRA;
+						s_u_loc = SIGN;
+					end
+					3'b010:begin
+						alu_loc = AM;
+						s_u_loc = SIGN;
+					end	
+					endcase
 			end
-			3'b100:begin
-				loc_se_2_cntr = LB;
-				loc_s_u_sx = 1'b1; 
-			end
-			3'b101:begin
-				loc_se_2_cntr = LB;
-				loc_s_u_sx = 1'b0; 
-			end
-			default: loc_se_2_cntr = BP;
-		endcase
-	end
-///emd
-///SB type begin
-	if(opcode == SB)begin
-		loc_alu_cntr = SUB;
-		case(fnct)
-			3'b011: loc_s_u_alu = 1'b0;
-			3'b101: loc_s_u_alu = 1'b0;
-			default: loc_s_u_alu = 1'b1;
-		endcase;
-	end
-///end
-//S type begin
-	if(opcode == S)begin
-		case(fnct)
-			3'b001: loc_reg_be = 2'b01;
-			3'b010: loc_reg_be = 2'b11;
-			3'b011: loc_reg_be = 2'b10;
-		endcase
-	end
-//end
+		end/////end R type
+		R_I:begin
+			case(fnct)
+				3'b000: begin
+					alu_loc = ADD;
+					s_u_loc = SIGN;
+				end
+				3'b001: begin
+					alu_loc = SLT;
+				end
+				3'b010: begin
+					alu_loc = AND;
+				end
+				3'b011: begin
+					alu_loc = OR;
+					s_u_loc = SIGN;
+				end
+				3'b100: begin
+					alu_loc = XOR;
+					s_u_loc = SIGN;
+				end
+				3'b101: begin
+					alu_loc = SLL;
+					s_u_loc = SIGN;
+				end
+				3'b110: begin
+					alu_loc = SRL;
+					s_u_loc = SIGN;
+				end
+				3'b111: begin
+					alu_loc = SRA;
+					s_u_loc = SIGN;
+				end
+			endcase
+		end/////end R_I
+		U:begin
+		end
+		SB:begin
+			case(fnct)
+				3'b000: begin
+					///// BEQ
+					alu_loc = SUB;
+					s_u_loc = SIGN;
+					brn_loc = EQ;
+				end
+				3'b001: begin
+					////BNE
+					alu_loc = SUB;
+					s_u_loc = SIGN;
+					brn_loc = NE;
+				end
+				3'b010: begin
+					////BLT
+					alu_loc = SUB;
+					s_u_loc = SIGN;
+					brn_loc = LT;
+				end
+				3'b011: begin
+					/////BLTU
+					alu_loc = SUB;
+					s_u_loc = UNSIGN;
+					brn_loc = LT;
+				end
+				3'b100: begin
+					////BGE
+					alu_loc = SUB;
+					s_u_loc = SIGN;
+					brn_loc = GE;
+				end
+				3'b101: begin
+					///BGEU
+					alu_loc = SUB;
+					s_u_loc = SIGN;
+					brn_loc = GE;
+				end
+				default: begin
+				
+				end
+			endcase
+		end
+		UJ:begin
+			
+		end
+		I:begin
+			case(fnct)
+				3'b000:begin
+				end
+				default:begin
+					alu_loc = ADD;
+					s_u_loc = SIGN;
+				end
+			endcase
+		end
+		S:begin
+			case(fnct)
+				3'b000:begin
+				end
+				default:begin
+					alu_loc = ADD;
+					s_u_loc = SIGN;
+				end
+			endcase
+		end
+	endcase
 end
 
-
+assign mux9 = loc9;
+assign mux8 = loc8;
+assign mux7 = loc7;
+assign mux6 = loc6;
+assign mux5 = loc5;
+assign mux4 = loc4;
+assign mux4_2 = loc4_2;
+assign mux3 = loc3;
+assign mux2 = loc2;
+assign mux1 = loc1;
+assign we_mem = we_mem_loc;
+assign we_reg = we_reg_loc;
+assign be_mem = be_mem_loc;
+assign be_reg = be_reg_loc;
+assign brn_type = brn_loc;
+assign sx_cntl = sx_loc;
+assign alu_cntr = alu_loc;
+assign alu_s_u = s_u_loc;
+assign hz_cntr = hz_loc;
 endmodule
