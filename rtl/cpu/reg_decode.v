@@ -1,4 +1,4 @@
-module reg_fetch(
+module reg_decode(
 	input[31:0] instr_in,
 	input [31:0] pc_in,//pc +4 
 	input clk,
