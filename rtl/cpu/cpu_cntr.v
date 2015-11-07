@@ -10,18 +10,22 @@ module cpu_cntr(
 	output[2:0] sx_cntl,
 	output[2:0] alu_cntr,
 	output alu_s_u,
+	output mux10,
 	output mux9,
 	output mux8,
+	output mux8_2,
+	output mux8_3,
 	output mux7,
 	output mux6,
 	output mux5,
 	output mux4,
 	output mux4_2,
 	output mux3,
-	output mux2,
+//	output mux2,
 	output mux1,
 	//////
-	output hz_cntr 
+	output[1:0] cnd,
+	output rubish;//not right comand 
 
 );
 localparam ADD = 4'b0000;
@@ -42,7 +46,8 @@ localparam LB =2'b10;
 
 localparam R = 7'b0000011;
 localparam R_I = 7'b1000011;
-localparam U = 7'b0100011;
+localparam U_LUI = 7'b0100011;
+localparam U_AUIPC = 7'b0110011;
 localparam SB = 7'b0010011;
 localparam UJ = 7'b0001011;
 localparam S = 7'b0001111;
@@ -61,116 +66,172 @@ localparam NE = 2'b01;
 localparam LT = 2'b10;
 localparam GE = 2'b11;
 
+localparam lw_cmd = 2'b11;
+localparam st_cmd = 2'b10;
+localparam jpm_cmd = 2'b01;
+localparam other = 2'b00;
 
-
-reg loc9,loc8,loc7,loc6,loc5,loc4,loc4_2,loc3,loc2,loc1;
+reg loc10,loc9,loc8,loc8_2,loc8_3,loc7,loc6,loc5,loc4,loc4_2,loc3,/*loc2,*/loc1;
 reg we_mem_loc,we_reg_loc;
 reg s_u_loc;
 reg[1:0]be_mem_loc,be_reg_loc;
+reg[1:0] cmd_loc;
 reg[2:0] brn_loc,sx_loc;
 reg[3:0]alu_loc;
-reg hz_loc;
+reg rubish_loc;
+reg rubish_alu_loc;
 ////// always for muxs and,be and sx
 always @*
 begin
-
 	///////R type 
 	case(opcode)
 		R:begin
+			loc10 = 1'b0;
 			loc9 = 1'b0;
 			loc8 = 1'b0;
+			loc8_2 = 1'b0;
+			loc8_3 = 1'b0;
 			loc7 = 1'bx;
 			loc6 = 1'bx;
 			loc5 = 1'b1;
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
-			loc3 = 1'bx;
-			loc2 = 1'b0;
+			loc3 = 1'b0;
+			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
-			be_reg_loc = FULL;	
+			be_reg_loc = FULL;
+			cmd_loc = other;
+			rubish_loc = 1'b0;
 		end
 		R_I:begin
+			loc10 = 1'b0;
 			loc9 = 1'b0;
 			loc8 = 1'b1;
+			loc8_2 = 1'b0;
+			loc8_3 = 1'b0;
 			loc7 = 1'bx;
 			loc6 = 1'bx;
 			loc5 = 1'b1;
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
-			loc3 = 1'bx;
-			loc2 = 1'b0;
+			loc3 = 1'b0;
+			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
-			be_mem_loc = FULL;
-			be_reg_loc = FULL;		
+			be_mem_loc = 2'bxx;;
+			be_reg_loc = FULL;
+			cmd_loc = other;
+			rubish_loc = 1'b0;
 		end
-		U:begin///////////////
-			loc9 = 1'b0;
-			loc8 = 1'b1;
+		U_LUI:begin///////////////
+			loc10 = 1'b1;
+			loc9 = 1'bx;
+			loc8 = 1'bx;
+			loc8_2 = 1'bx;
+			loc8_3 = 1'bx;
 			loc7 = 1'bx;
 			loc6 = 1'bx;
 			loc5 = 1'b1;
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
-			loc3 = 1'bx;
-			loc2 = 1'b0;
+			loc3 = 1'b0;
+			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
-			be_mem_loc = FULL;
-			be_reg_loc = FULL;		
+			be_mem_loc = 2'bxx;
+			be_reg_loc = FULL;
+			cmd_loc = other;
+			rubish_loc = 1'b0;
+		end
+		U_AUIPC:begin
+			loc10 = 1'b0
+			loc9 = 1'b0;
+			loc8 = 1'bx;
+			loc8_2 = 1'b1;
+			loc8_3 = 1'b1;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'b1;
+			loc4 = 1'b1;
+			loc4_2 = 1'b1;
+			loc3 = 1'b0;
+			//loc2 = 1'b0;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b1;
+			be_mem_loc = 2'bxx;
+			be_reg_loc = FULL;
+			cmd_loc = other;
+			rubish_loc = 1'b0;
 		end
 		SB:begin
+			loc10 = 1'b0;
 			loc9 = 1'bx;
 			loc8 = 1'b0;
+			loc8_2 = 1'b0;
+			loc8_3 = 1'b0;
 			loc7 = 1'b1;
-			loc6 = 1'bx;
+			loc6 = 1'b0;
 			loc5 = 1'bx;
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
-			loc3 = 1'bx;
-			loc2 = 1'b0;
+			loc3 = 1'b0;
+			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
-			we_reg_loc = 1'b1;
-			be_mem_loc = FULL;
-			be_reg_loc = FULL;		
+			we_reg_loc = 1'b0;
+			be_mem_loc = 1'bxx;
+			be_reg_loc = 1'bxx;
+			cmd_loc = other;
+			rubish_loc = 1'b0;
 		end
-		UJ:begin
+		UJ:begin//jal
+			loc10 = 1'bx;
 			loc9 = 1'bx;
 			loc8 = 1'bx;
+			loc8_2 = 1'bx;
+			loc8_3 = 1'bx;
 			loc7 = 1'bx;
 			loc6 = 1'bx;
 			loc5 = 1'b0;
 			loc4 = 1'bx;
 			loc4_2 = 1'bx;
-			loc3 = 1'bx;
-			loc2 = 1'b1;
+			loc3 = 1'b1;
+			//loc2 = 1'b1;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = FULL;
-			be_reg_loc = FULL;		
-
+			be_reg_loc = FULL;
+			cmd_loc = jmp_cmd;
+			rubish_loc = 1'b0;
 		end
 		I:begin
 			if(fnct == 3'b000)begin
+				loc10 = 1'bx;
 				loc9 = 1'bx;
 				loc8 = 1'bx;
+				loc8_2 = 1'bx;
+				loc8_3 = 1'bx;
 				loc7 = 1'b1;
 				loc6 = 1'bx;
 				loc5 = 1'b0;
 				loc4 = 1'b0;
 				loc4_2 = 1'b0;
 				loc3 = 1'b0;
-				loc2 = 1'b0;
+				//loc2 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
 				be_mem_loc = FULL;
-				be_reg_loc = FULL;		
+				be_reg_loc = FULL;
+				cmd_loc = jmp_cmd;
+				rubish_loc = 1'b0;
 			end
 			else begin	
+				loc10 = 1'b0;
 				loc9 = 1'b1;
 				loc8 = 1'b1;
+				loc8_2 = 1'b0;
+				loc8_3 = 1'b0;
 				loc7 = 1'b0;
 				loc6 = 1'bx;
 				loc5 = 1'b1;
@@ -178,10 +239,11 @@ begin
 				loc4_2 = 1'b1;
 				loc3 = 1'bx;
 				loc2 = 1'b0;
+				cmd_loc = lw_cmd;
+				rubish_loc = 1'b0;
 				case(fnct)
 					3'b001:begin
 						//LW
-						//////////////////////////hazard 
 						be_mem_loc = FULL;
 						sx_loc ={SIGN,FULL};
 					end
@@ -193,24 +255,27 @@ begin
 					3'b011:begin
 						//LHU
 						be_mem_loc = HALF;
-						be_reg_loc = {UNSIGN,HALF};
+						sx_loc = {UNSIGN,HALF};
 					end
 					3'b100:begin
 						//LB
 						be_mem_loc = BYTE;
-						be_reg_loc = {SIGN,BYTE};
+						sx_loc = {SIGN,BYTE};
 					end
 					3'b101:begin
 						//LBU
 						be_mem_loc = BYTE;
-						be_reg_loc = {UNSIGN,BYTE};
+						sx_loc = {UNSIGN,BYTE};
 					end
 				endcase
 			end
-		end	
+		end
 		S:begin
+			loc10 = 1'b0;
 			loc9 = 1'bx;
 			loc8 = 1'bx;
+			loc8_2 = 1'b0;
+			loc8_3 = 1'b0;
 			loc7 = 1'bx;
 			loc6 = 1'bx;
 			loc5 = 1'b0;
@@ -220,6 +285,8 @@ begin
 			loc2 = 1'b1;
 			we_mem_loc = 1'b1;
 			we_reg_loc = 1'b0;
+			cmd_loc = st_cmd;
+			rubish_loc = 1'b0;
 			case(fnct)
 				3'b001:begin
 					be_reg_loc = FULL;
@@ -231,6 +298,26 @@ begin
 					be_reg_loc = BYTE;
 				end
 			endcase
+		end
+		default: begin/// defualt is don't write to reg and mem 
+			loc10 = 1'bx;
+			loc9 = 1'bx;
+			loc8 = 1'bx;
+			loc8_2 = 1'bx;
+			loc8_3 = 1'bx;
+			loc7 = 1'bx;
+			loc6 = 1'bx;
+			loc5 = 1'bx;
+			loc4 = 1'bx;
+			loc4_2 = 1'bx;
+			loc3 = 1'bx;
+			//loc2 = 1'b0;
+			we_mem_loc = 1'b0;
+			we_reg_loc = 1'b0;
+			be_mem_loc = 2'bxx;
+			be_reg_loc = 2'bxx;
+			cmd_loc = 2'bxx;
+			rubish_loc = 1'b1;
 		end
 	endcase
 
@@ -287,7 +374,12 @@ begin
 					3'b010:begin
 						alu_loc = AM;
 						s_u_loc = SIGN;
-					end	
+					end
+					default: begin
+						alu_loc = SUB;
+						s_u_loc = SIGN;
+						rubish_alu_loc = 1'b1;
+					end
 					endcase
 			end
 		end/////end R type
@@ -326,6 +418,7 @@ begin
 			endcase
 		end/////end R_I
 		U:begin
+			alu_loc = SLL;// don't care 
 		end
 		SB:begin
 			case(fnct)
@@ -366,7 +459,9 @@ begin
 					brn_loc = GE;
 				end
 				default: begin
-				
+					alu_loc = SUB;
+					s_u_loc = SIGN;
+					rubish_alu_loc =1'b1;
 				end
 			endcase
 		end
@@ -386,6 +481,7 @@ begin
 		S:begin
 			case(fnct)
 				3'b000:begin
+					rubish_alu_loc =1'b1;
 				end
 				default:begin
 					alu_loc = ADD;
@@ -395,9 +491,11 @@ begin
 		end
 	endcase
 end
-
+assign mux10 = loc10;
 assign mux9 = loc9;
 assign mux8 = loc8;
+assign mux8_2 = loc8_2;
+assign mux8_3 = loc8_3;
 assign mux7 = loc7;
 assign mux6 = loc6;
 assign mux5 = loc5;
@@ -414,5 +512,6 @@ assign brn_type = brn_loc;
 assign sx_cntl = sx_loc;
 assign alu_cntr = alu_loc;
 assign alu_s_u = s_u_loc;
-assign hz_cntr = hz_loc;
+assign cmd = cmd_loc;
+assign rubish = (rubish_loc)? (1'b1):(rubish_alu_loc);
 endmodule
