@@ -1,3 +1,4 @@
+#BEQ $1 $2 label
 import Registers
 class SB_type:
     opcode = "0010011"
@@ -32,8 +33,8 @@ class SB_type:
         result += self.funct3[elements[0]]
         result += addr[1:5][::-1]
         result += addr[11]
-        result += self.opcode;
-        return result;
+        result += self.opcode
+        return result
 
 
 
