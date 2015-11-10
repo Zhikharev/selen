@@ -1,30 +1,40 @@
 module hazard_unit(
 	input reset,
-	input brnch,
-	input lw,////from cntr nit
+	input[1:0] cmd_in,
+	input done_in,
 	input[4:0] rs1E,
 	input[4:0] rs2E,
 	input[4:0] rdM,
 	input[4:0] rdW,
+	input[4:0] rdE,
+	input[4:0] rs1D,
+	input[4:0] rs2D,
 	input we_regM,
 	input we_regW,
+	input mux1,
 	
 	output bp1M,
 	output bp2W,
 	output bp3M,
 	output bp4W,
 	output mux2,
+	output hzu2cntr,
 	
 	output flashD,
 	output flashE,
 	output flashM,
 	output flashW,
-
+			
 	output enbD,
 	output endE,
 	output enbM,
 	output enbW
 );
+localparam lw_cmd = 2'b11;
+localparam st_cmd = 2'b10;
+localparam jmp_cmd = 2'b01;
+localparam other = 2'b00;
+reg hz2ctrl_loc;
 reg mux2_loc;
 reg flashD_loc;
 reg flashE_loc;
@@ -37,6 +47,7 @@ reg enbW_loc;
 always @*
 begin
 	if(reset)begin
+		hz2ctrl_loc = 1'b0;
 		flashD_loc = 1'b1;
 		flashE_loc = 1'b1;
 		flashM_loc = 1'b1;
@@ -46,13 +57,28 @@ begin
 		enbE_loc = 1'b0;
 		enbM_loc = 1'b0;
 		enbW_loc = 1'b0;
-		if(brnch)begin
-			enbD_loc = 1'b1;
-			enbE_loc = 1'b1;
+		enbD_loc = 1'b0;
+		if(mux1)begin
+			flashD_loc = 1'b1;
+			flashE_loc = 1'b1;
+			flashM_loc = 1'b1;
 		end
-		if(lw)begin
-			enbD_loc = 1'b1;
+		if((cmd_in == lw_cmd)&&((rs1D == rdE)||(rs2D == rdE)))begin
 			mux2_loc = 1'b1;
+			enbD_loc = 1'b1;
+			flashE_loc = 1'b1;
+		end
+		if((cmd_in == jmp_cmd)&&(we_regW))begin
+			enbE_loc = 1'b1;
+			enbM_loc = 1'b1;
+			enbW_loc = 1'b1;
+			enbD_loc = 1'b1;
+			if(done_in)begin
+				hz2ctrl_loc = 1'b1;
+			end
+			else begin
+				hz2ctrl_loc =1'b0;
+			end
 		end
 	end
 end
@@ -92,7 +118,6 @@ begin
 		bp4W_loc = 1'b0;
 	end
 end
-
 assign bp1M = bp1M_loc;
 assign bp3M= bp3M_loc;
 assign bp2W = bp2W_loc;
@@ -106,4 +131,5 @@ assign enbD = enbD_loc;
 assign enbE = enbE_loc;
 assign enbM = enbM_loc;
 assign enbW = enbW_loc;
+assign hz2ctrr = hz2ctrl_loc;
 endmodule 

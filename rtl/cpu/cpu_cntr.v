@@ -1,7 +1,8 @@
-module cpu_cntr(
+module cpu_ctrl(
 	input[1:0] fnct7,
 	input[2:0] fnct,
 	input[6:0] opcode,
+	input hz2ctrl,
 	output[1:0] be_mem,
 	output we_mem,
 	output we_reg,
@@ -21,11 +22,10 @@ module cpu_cntr(
 	output mux4,
 	output mux4_2,
 	output mux3,
-//	output mux2,
 	output mux1,
 	//////
-	output[1:0] cnd,
-	output rubish;//not right comand 
+	output[1:0] cmd,
+	output rubish//not right comand 
 
 );
 localparam ADD = 4'b0000;
@@ -68,10 +68,10 @@ localparam GE = 2'b11;
 
 localparam lw_cmd = 2'b11;
 localparam st_cmd = 2'b10;
-localparam jpm_cmd = 2'b01;
+localparam jmp_cmd = 2'b01;
 localparam other = 2'b00;
 
-reg loc10,loc9,loc8,loc8_2,loc8_3,loc7,loc6,loc5,loc4,loc4_2,loc3,/*loc2,*/loc1;
+reg loc10,loc9,loc8,loc8_2,loc8_3,loc7,loc6,loc5,loc4,loc4_2,loc3,loc1;
 reg we_mem_loc,we_reg_loc;
 reg s_u_loc;
 reg[1:0]be_mem_loc,be_reg_loc;
@@ -97,7 +97,6 @@ begin
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
 			loc3 = 1'b0;
-			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
@@ -117,7 +116,6 @@ begin
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
 			loc3 = 1'b0;
-			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;;
@@ -137,7 +135,6 @@ begin
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
 			loc3 = 1'b0;
-			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
@@ -146,7 +143,7 @@ begin
 			rubish_loc = 1'b0;
 		end
 		U_AUIPC:begin
-			loc10 = 1'b0
+			loc10 = 1'b0;
 			loc9 = 1'b0;
 			loc8 = 1'bx;
 			loc8_2 = 1'b1;
@@ -157,7 +154,6 @@ begin
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
 			loc3 = 1'b0;
-			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
@@ -177,11 +173,10 @@ begin
 			loc4 = 1'b1;
 			loc4_2 = 1'b1;
 			loc3 = 1'b0;
-			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b0;
-			be_mem_loc = 1'bxx;
-			be_reg_loc = 1'bxx;
+			be_mem_loc = 2'bxx;
+			be_reg_loc = 2'bxx;
 			cmd_loc = other;
 			rubish_loc = 1'b0;
 		end
@@ -193,17 +188,19 @@ begin
 			loc8_3 = 1'bx;
 			loc7 = 1'bx;
 			loc6 = 1'bx;
-			loc5 = 1'b0;
 			loc4 = 1'bx;
 			loc4_2 = 1'bx;
 			loc3 = 1'b1;
-			//loc2 = 1'b1;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = FULL;
 			be_reg_loc = FULL;
 			cmd_loc = jmp_cmd;
 			rubish_loc = 1'b0;
+			if(hz2ctrl) begin
+				loc5 = 1'b0;
+			end
+			else loc5 = 1'b1;
 		end
 		I:begin
 			if(fnct == 3'b000)begin
@@ -214,19 +211,21 @@ begin
 				loc8_3 = 1'bx;
 				loc7 = 1'b1;
 				loc6 = 1'bx;
-				loc5 = 1'b0;
 				loc4 = 1'b0;
 				loc4_2 = 1'b0;
 				loc3 = 1'b0;
-				//loc2 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
 				be_mem_loc = FULL;
 				be_reg_loc = FULL;
 				cmd_loc = jmp_cmd;
 				rubish_loc = 1'b0;
+				if(hz2ctrl) begin
+					loc5 = 1'b0;
+				end
+				else loc5 = 1'b1;
 			end
-			else begin	
+			else begin
 				loc10 = 1'b0;
 				loc9 = 1'b1;
 				loc8 = 1'b1;
@@ -238,7 +237,7 @@ begin
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'bx;
-				loc2 = 1'b0;
+				//loc2 = 1'b0;
 				cmd_loc = lw_cmd;
 				rubish_loc = 1'b0;
 				case(fnct)
@@ -282,7 +281,6 @@ begin
 			loc4 = 1'bx;
 			loc4_2 = 1'bx;
 			loc3 = 1'bx;
-			loc2 = 1'b1;
 			we_mem_loc = 1'b1;
 			we_reg_loc = 1'b0;
 			cmd_loc = st_cmd;
@@ -311,13 +309,13 @@ begin
 			loc4 = 1'bx;
 			loc4_2 = 1'bx;
 			loc3 = 1'bx;
-			//loc2 = 1'b0;
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b0;
 			be_mem_loc = 2'bxx;
 			be_reg_loc = 2'bxx;
 			cmd_loc = 2'bxx;
 			rubish_loc = 1'b1;
+			brn_loc = 3'b111;
 		end
 	endcase
 
@@ -417,8 +415,11 @@ begin
 				end
 			endcase
 		end/////end R_I
-		U:begin
+		U_LUI:begin
 			alu_loc = SLL;// don't care 
+		end
+		U_AUIPC:begin
+			alu_loc = ADD;
 		end
 		SB:begin
 			case(fnct)
@@ -502,7 +503,7 @@ assign mux5 = loc5;
 assign mux4 = loc4;
 assign mux4_2 = loc4_2;
 assign mux3 = loc3;
-assign mux2 = loc2;
+//assign mux2 = loc2;
 assign mux1 = loc1;
 assign we_mem = we_mem_loc;
 assign we_reg = we_reg_loc;

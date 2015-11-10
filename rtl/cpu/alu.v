@@ -65,7 +65,7 @@ begin
 end
 assign result = loc_result;
 assign cnd[0] = (loc_result == 31'b0) ? 1'b1:1'b0; // for branches but it might be useless becose I'd like use branch predicter
-assign cnd[1] = (loc_result == 31'b0) ? 1'b1 : 1'b0;  
+assign cnd[1] = (loc_result[31] == 1'b0) ? 1'b1 : 1'b0;//
 
 
 endmodule 
