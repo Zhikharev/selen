@@ -398,7 +398,7 @@ hazard_unit(
 );
 ///// ############### area with pc (fetch)
 assign b_mux1 = out_mux4 + out_mux4_2; //sign adder
-assign b_mux3 = {{11{inst_data_in[31]}},inst_data_in[31],instr_data_in[19:12],inst_data_in[20],inst_data_in[30:21]};//sing extension for 20 imm
+assign b_mux3 = {{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]};//sing extension for 20 imm
 assign a_mux2 = out_mux3;
 assign b_mux2 = pc;
 assign b_mux4_2 = pc;
@@ -417,7 +417,7 @@ assign out_mux4 = s_mux4 ? b_mux4 : a_mux4; // mux4
 //// ################ decode 
 /////begining of sign extenshion 
 
-assign a_mux6 = {{19{regD2ctrl}},regD2ctrl[31],regD2ctrl[7],regDctrl[31:25],regDctrl[11:8]};
+assign a_mux6 = {{19{regD2ctrl}},regD2ctrl[31],regD2ctrl[7],regD2ctrl[31:25],regD2ctrl[11:8]};
 assign b_mux6 = {{20{regD2ctrl}},regD2ctrl[31:25],regD2ctrl[11:7]};
 assign b_mux7 = out_mux6;
 //// sign extension end 
