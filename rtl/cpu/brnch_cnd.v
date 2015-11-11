@@ -1,4 +1,4 @@
-module brnch_cndM(
+module brch_cnd(
 		input[1:0] brnch_typeM,
 		input[1:0] cndM,
 		output mux1

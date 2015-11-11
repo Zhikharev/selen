@@ -1,9 +1,16 @@
 module hazard_unit(
 	input reset,
-	input[1:0] cmd_in,
+	input[1:0] cmd_inD,
+	input[1:0] cmd_inE,
+	input[1:0] cmd_inM,
+	input[1:0] cmd_inW,
 	input done_in,
 	input[4:0] rs1E,
 	input[4:0] rs2E,
+	input[4:0] rs1M,
+	input[4:0] rs2M,
+	input[4:0] rs1W,
+	input[4:0] rs2W,
 	input[4:0] rdM,
 	input[4:0] rdW,
 	input[4:0] rdE,
@@ -63,12 +70,12 @@ begin
 			flashE_loc = 1'b1;
 			flashM_loc = 1'b1;
 		end
-		if((cmd_in == lw_cmd)&&((rs1D == rdE)||(rs2D == rdE)))begin
+		if((cmd_inE == lw_cmd)&&((rs1D == rdE)||(rs2D == rdE)))begin
 			mux2_loc = 1'b1;
 			enbD_loc = 1'b1;
 			flashE_loc = 1'b1;
 		end
-		if((cmd_in == jmp_cmd)&&(we_regW))begin
+		if((cmd_inE == jmp_cmd)&&(we_regW))begin
 			enbE_loc = 1'b1;
 			enbM_loc = 1'b1;
 			enbW_loc = 1'b1;

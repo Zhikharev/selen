@@ -14,8 +14,10 @@ module reg_mem(
 	input clk,
 	input enbM,
 	input flashM,
-	input mux5M,
-	input[4:0] rsM,
+	input[4:0] rs1M,
+	input[4:0] rs2M,
+	input[1:0] cmdE,
+	input[19:0] imm20,
 
 	output[31:0] resultM_out,
 	output[31:0] srcbM_out,
@@ -29,7 +31,11 @@ module reg_mem(
 	output brch_typeM_out,
 	output mux9M_out,
 	output mux5M_out,
-	output mux10M_out
+	output mux10M_out,
+	output[4:0] rs1M_out,
+	output[1:0] cmdM_out,
+	output[4:0] rs2M_out,
+	output[19:0] imm20_out
 );
 reg [31:0] resultM_loc;
 reg [31:0] srcbM_loc;
@@ -45,6 +51,9 @@ reg mux9M_loc;
 reg mux5_loc;
 reg rsM_loc;
 reg mux10M_loc;
+reg[4:0] rs1M_loc;
+reg[4:0] rs2M_loc;
+reg[19:0] imm20_loc;
 always @(posedge clk)
 begin
 	if(flashM) begin
@@ -59,9 +68,11 @@ begin
 		we_regM_loc <= 1'b0;
 		brch_typeM_loc <= 1'b0;
 		mux9M_loc <= 1'b0;
-		mux5_loc <= 1'b0;
-		rsM_loc <= 5'b0;
+		rdM_loc <= 5'b0;
 		mux10M_loc <= 1'b0;
+		rs1M_loc <= 5'b0;
+		rs2M_loc <= 5'b0;
+		imm20_loc <= 20'b0;
 	end
 	else begin
 		if(enbM)begin
@@ -75,9 +86,11 @@ begin
 			we_regM_loc <= we_regM_loc;
 			brch_typeM_loc <= brch_typeM_loc;
 			mux9M_loc <= mux9M_loc;
-			mux5_loc <= mux5_loc;
 			mux10M_loc <= mux10M_loc;
-			rsM_loc <= rsM_loc;
+			rdM_loc <= rdM_loc;
+			rs1M_loc <= rs1M_loc;
+			rs2M_loc <= rs2M_loc;
+			imm20_loc <= imm20_loc;
 		end
 		else begin
 			resultM_loc <= resultM;
@@ -90,12 +103,16 @@ begin
 			we_regM_loc <= we_regM;
 			brch_typeM_loc <= brch_typeM;
 			mux9M_loc <= mux9M;
-			mux5_loc <= mux5M;
 			mux10M_loc <= mux10M;
-			rsM_loc <= rsM;
+			rdM_loc <= rdM;
+			rs1M_loc <= rs1M;
+			rs2M_loc <= rs2M;
+			imm20_loc <= imm20;
 		end
 	end
 end
+assign rs1M_out = rs1M_loc;
+assign rs2M_out = rs2M_loc;
 assign resultM_out = resultM_loc;
 assign cndM_out = cndM_loc;
 assign addrM_out = addrM_loc;
@@ -105,7 +122,7 @@ assign be_regM_out = be_regM_loc;
 assign we_regM_out = we_regM_out;
 assign brch_typeM_out = brch_typeM_loc;
 assign mux9M_out = mux9M_loc;
-assign mux5_out = mux5_loc;
 assign mux10M_out = mux10M_loc;
 assign rsM_out = rsM_loc;
+assign imm20_out = imm20_loc;
 endmodule

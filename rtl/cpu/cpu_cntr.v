@@ -22,7 +22,7 @@ module cpu_ctrl(
 	output mux4,
 	output mux4_2,
 	output mux3,
-	output mux1,
+	//output mux1,
 	//////
 	output[1:0] cmd,
 	output rubish//not right comand 
