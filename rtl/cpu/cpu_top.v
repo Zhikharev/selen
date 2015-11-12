@@ -1,4 +1,4 @@
-module top (
+module cpu_top (
 	//instruction 
 	output inst_cyc_out,
 	output inst_stb_out,
