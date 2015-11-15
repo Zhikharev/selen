@@ -1,29 +1,29 @@
 import Registers
 from SB_type import Addr2Bin
-class I_math_type:
+class I_shamt_type:
     opcode = "1000011"
     codes = [
-        "ADDI",
-        "SLTI",
-        "ANDI",
-        "ORI",
-        "XORI"
+        "SLLI",
+        "SRLI",
+        "SRAI"
     ]
     funct3 = {
-        "ADDI" : "000",
-        "SLTI" : "001",
-        "ANDI" : "010",
-        "ORI" : "011",
-        "XORI" : "100"
+        "SLLI" : "101",
+        "SRLI" : "110",
+        "SRAI" : "111"
+    }
+    imm = {
+        "SLLI" : "0000000",
+        "SRLI" : "0000000",
+        "SRAI" : "0100000"
     }
 
     def getCode(self, line):
         elements = line.split(" ")
         result = ""
         if elements[0] in self.codes:
-            imm = int(elements[-1])
-            imm = Addr2Bin(imm, 12)
-            result += imm
+            result += self.imm[elements[0]]
+            result += Addr2Bin(int(elements[-1]), 5)
             registers = Registers.Registers()
             result += registers.getAddress(elements[-2])
             result += self.funct3[elements[0]]
