@@ -1,5 +1,5 @@
 import Registers
-from Service import Addr2Bin
+import Service
 class I_shamt_type:
     opcode = "1000011"
     codes = [
@@ -22,12 +22,15 @@ class I_shamt_type:
         elements = line.split(" ")
         result = ""
         if elements[0] in self.codes:
+            elements = Service.DeleteCommas(elements)
             result += self.imm[elements[0]]
-            result += Addr2Bin(int(elements[-1]), 5)
+            result += Service.Addr2Bin(Service.Str2Num(elements[-1]), 5)
             registers = Registers.Registers()
             result += registers.getAddress(elements[-2])
             result += self.funct3[elements[0]]
             result += registers.getAddress(elements[1])
             result += self.opcode
+        else:
+             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + line)
 
         return result

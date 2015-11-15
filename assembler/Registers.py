@@ -68,3 +68,5 @@ class Registers:
     def getAddress(self, reg):
         if reg in self.registers:
             return self.registers[reg]
+        else:
+             Service.ERROR("Error: " + Service.RegNotFound + "in line: " + line)

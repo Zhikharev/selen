@@ -1,6 +1,6 @@
 #BEQ $1 $2 label
 import Registers
-from Service import Addr2Bin
+import Service
 class SB_type:
     opcode = "0010011"
     codes = [
@@ -21,18 +21,22 @@ class SB_type:
     }
     def getCode(self, line, labels):
         elements = line.split(" ")
-        #Надо проверить есть ли elements[0] в self.codes
         result = ""
-        #Тут возможна ошибка (надо проеверять есть ли метка в labels)
-        addr = labels[elements[3]]
-        addr = Addr2Bin(addr, 13)
-        addr = addr[::-1]
-        result += addr[12] + addr[5:11][::-1]
-        registers = Registers.Registers()
-        result += registers.getAddress(elements[2])
-        result += registers.getAddress(elements[1])
-        result += self.funct3[elements[0]]
-        result += addr[1:5][::-1]
-        result += addr[11]
-        result += self.opcode
+        if elements[0] in self.codes:
+            #Тут возможна ошибка (надо проеверять есть ли метка в labels)
+            elements = Service.DeleteCommas(elements)
+            addr = labels[elements[3]]
+            addr = Service.Addr2Bin(addr, 13)
+            addr = addr[::-1]
+            result += addr[12] + addr[5:11][::-1]
+            registers = Registers.Registers()
+            result += registers.getAddress(elements[2])
+            result += registers.getAddress(elements[1])
+            result += self.funct3[elements[0]]
+            result += addr[1:5][::-1]
+            result += addr[11]
+            result += self.opcode
+        else:
+             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + line)
+
         return result

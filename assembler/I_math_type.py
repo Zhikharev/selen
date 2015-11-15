@@ -1,5 +1,5 @@
 import Registers
-from Service import Addr2Bin
+import Service
 class I_math_type:
     opcode = "1000011"
     codes = [
@@ -21,13 +21,16 @@ class I_math_type:
         elements = line.split(" ")
         result = ""
         if elements[0] in self.codes:
-            imm = int(elements[-1])
-            imm = Addr2Bin(imm, 12)
+            elements = Service.DeleteCommas(elements)
+            imm = Service.Str2Num(elements[-1])
+            imm = Service.Addr2Bin(imm, 12)
             result += imm
             registers = Registers.Registers()
             result += registers.getAddress(elements[-2])
             result += self.funct3[elements[0]]
             result += registers.getAddress(elements[1])
             result += self.opcode
+        else:
+             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + line)
 
         return result
