@@ -1,5 +1,5 @@
 import Registers
-from SB_type import Addr2Bin
+from Service import Addr2Bin
 class I_math_type:
     opcode = "1000011"
     codes = [

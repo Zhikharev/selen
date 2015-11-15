@@ -1,6 +1,6 @@
 #LW Rd 16(Rs1)
 import Registers
-from SB_type import Addr2Bin
+from Service import Addr2Bin
 class Load_type:
     opcode = "0000111"
     codes = [

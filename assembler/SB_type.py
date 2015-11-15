@@ -1,5 +1,6 @@
 #BEQ $1 $2 label
 import Registers
+from Service import Addr2Bin
 class SB_type:
     opcode = "0010011"
     codes = [
@@ -35,22 +36,3 @@ class SB_type:
         result += addr[11]
         result += self.opcode
         return result
-
-
-
-def Addr2Bin(num, length):
-    i = bin(num)
-    if (num < 0):
-        i = i[3:]
-    else:
-        i = i[2:]
-    #if len(i) > length: # Проверка на превышения лимита
-        #ERROR("Ошибка при переводе числа " + num + ". Превышен лимит знаков")
-
-    i = i.zfill(length-1)
-    if num < 0:
-        i = '1' + i
-    else:
-        i = '0' + i
-
-    return i;

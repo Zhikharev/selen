@@ -1,6 +1,6 @@
 # SW Rs1 8(Rs2)
 import Registers
-from SB_type import Addr2Bin
+from Service import Addr2Bin
 class Store_type:
     opcode = "0001111"
     codes = [
