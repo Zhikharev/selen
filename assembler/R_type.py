@@ -1,4 +1,5 @@
 import Registers
+import Service
 class R_type:
     opcode = "0000011"
     codes = [
@@ -36,6 +37,7 @@ class R_type:
         elements = line.split(" ")
         result = ""
         if elements[0] in self.codes:
+            elements = Service.DeleteCommas(elements)
             result = self.funct7.get(elements[0], "0000000")
             registers = Registers.Registers()
             result += registers.getAddress(elements[-1])
@@ -43,5 +45,7 @@ class R_type:
             result += self.funct3[elements[0]]
             result += registers.getAddress(elements[1])
             result += self.opcode
+        else:
+             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + line)
 
         return result
