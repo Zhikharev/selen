@@ -1,3 +1,4 @@
+import Service
 class Registers:
     registers = {
     "$0" : "00000",
@@ -69,4 +70,4 @@ class Registers:
         if reg in self.registers:
             return self.registers[reg]
         else:
-             Service.ERROR("Error: " + Service.RegNotFound + "in line: " + line)
+             Service.ERROR("Error: " + Service.RegNotFound + "register: " + reg)
