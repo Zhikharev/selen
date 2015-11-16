@@ -6,10 +6,10 @@ module cpu_ctrl(
 	output[1:0] be_mem,
 	output we_mem,
 	output we_reg,
-	output[1:0] be_reg,
+	//output[1:0] be_reg,
 	output[1:0] brn_type,
 	output[2:0] sx_cntl,
-	output[2:0] alu_cntr,
+	output[3:0] alu_cntr,
 	output alu_s_u,
 	output mux10,
 	output mux9,
@@ -508,7 +508,7 @@ assign mux1 = loc1;
 assign we_mem = we_mem_loc;
 assign we_reg = we_reg_loc;
 assign be_mem = be_mem_loc;
-assign be_reg = be_reg_loc;
+//assign be_reg = be_reg_loc;
 assign brn_type = brn_loc;
 assign sx_cntl = sx_loc;
 assign alu_cntr = alu_loc;

@@ -1,7 +1,6 @@
 module sx_2 (
-	input[1:0] cntr,
+	input[2:0] ctrl,
 	input[31:0] data_in,
-	input s_u,///1 respect to sign operations
 	output[31:0] data_out
 );
 reg[31:0] loc;
@@ -12,16 +11,16 @@ localparam LB =2'b10;
 
 always @*
 begin
-	if(s_u) begin
-		case(cntr)
+	if(ctrl[2]) begin
+		case(ctrl[1:0])
 			BP: loc = data_in;
 			LH: loc = {{16{data_in[15]}},data_in};//lw				
 			LB: loc = {{24{data_in[7]}},data_in};//lh
 			default: loc = loc;
 		endcase
 	end
-	else  begin
-		case(cntr)
+	else begin
+		case(ctrl[1:0])
 			BP: loc = data_in;
 			LH: loc = {{16{1'b0}},data_in};//lw				
 			LB: loc = {{24{1'b0}},data_in};//lh

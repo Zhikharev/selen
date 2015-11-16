@@ -4,6 +4,7 @@ module reg_decode(
 	input clk,
 	input enb,
 	input flash,
+	
 	output[31:0] instr_out,
 	output [31:0] pc_out//pc +4
 );
