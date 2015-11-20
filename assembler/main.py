@@ -7,14 +7,23 @@ import I_shamt_type
 
 import Service
 
+data = "";
 file_addr = input("Input file address: ")
 pfile = open(file_addr);
 code = Service.SplitToDierctives(pfile)
-if ".code" not in code:
-    Service.ERROR("Code not found error!");
+if ".CODE" not in code:
+    Service.ERROR("CODE not found error!");
 
-code[".code"] = code[".code"][:-1].split('\n')
-if ".data" in code:
-    code[".data"] = code[".data"][:-1].split('\n')
+code[".CODE"] = code[".CODE"][:-1].split('\n')
+if ".DATA" in code:
+    code[".DATA"] = code[".DATA"][:-1].split('\n')
+    code[".DATA"] = Service.ParseData(code[".DATA"])
+    data = code[".DATA"]
 
-print(code[".code"], code[".data"])
+s = Service.GetLabels(code[".CODE"])
+code[".CODE"] = s[0];
+code = code[".CODE"]
+labels = s[1]
+print(code)
+print(data)
+print(labels)

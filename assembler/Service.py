@@ -69,6 +69,7 @@ def SplitToDierctives(ofile):
     curr_d = "";
     for line in ofile:
         line = line.strip() + '\n'
+        line = line.upper();
         if line.startswith('#') :
             continue;
 
@@ -78,15 +79,15 @@ def SplitToDierctives(ofile):
 
         if line.startswith('.'): # Нахождение директив
             # Обработка .code и .data
-            if line.startswith('.code'):
-                curr_d = ".code"
-                if ".code" not in directs:
-                    directs[".code"] = '';
+            if line.startswith('.CODE'):
+                curr_d = ".CODE"
+                if ".CODE" not in directs:
+                    directs[".CODE"] = '';
 
-            if line.startswith('.data'):
-                curr_d = ".data"
-                if ".data" not in directs:
-                    directs[".data"] = '';
+            if line.startswith('.DATA'):
+                curr_d = ".DATA"
+                if ".DATA" not in directs:
+                    directs[".DATA"] = '';
 
         else:
             if curr_d != '':
@@ -94,7 +95,39 @@ def SplitToDierctives(ofile):
                     directs[curr_d] += line
 
             elif len(line) > 1:
-                curr_d = '.code'
+                curr_d = '.CODE'
                 directs[curr_d] = line
 
     return directs;
+#Функция для получения меток и удаления их из кода
+def GetLabels(code):
+    ncode = [];
+    labels = {};
+    addr = 0;
+    for line in code:
+        if ":" in line:
+            line_elements = line.split(":")
+            labels[line_elements[0]] = addr;
+            if len(line_elements[1]) > 3:
+                ncode.append(line_elements[1].strip())
+
+        else:
+            ncode.append(line)
+
+        addr += 4;
+
+    return [ncode, labels]
+
+#Функция для обработки директивы .DATA
+def ParseData(data):
+    keys = {}
+    for line in data:
+        line_elements = line.split(" ")
+        if len(line_elements) == 2:
+            data_num = Str2Num(line_elements[1])
+            keys[line_elements[0]] = data_num
+
+        else:
+            ERROR("ERROR while DATA parsing in line: " + line);
+
+    return keys
