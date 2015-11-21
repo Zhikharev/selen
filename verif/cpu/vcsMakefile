@@ -1,6 +1,6 @@
 # Main path variables
 GIT_HOME 	=
-RTL_PATH    = $(GIT_HOME)/
+RTL_PATH    = $(GIT_HOME)/rtl/cpu
 TB_PATH     = $(GIT_HOME)/verif/cpu
 MODEL       = $(GIT_HOME)/
 
