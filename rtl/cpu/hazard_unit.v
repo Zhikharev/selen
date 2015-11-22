@@ -29,7 +29,7 @@ module hazard_unit(
 	output bp3M,
 	output bp4W,
 	output mux2,
-	output hzu2ctrl,
+	output hz2ctrl,
 	
 	output flashD,
 	output flashE,
@@ -37,7 +37,7 @@ module hazard_unit(
 	output flashW,
 			
 	output enbD,
-	output endE,
+	output enbE,
 	output enbM,
 	output enbW
 );
@@ -58,18 +58,23 @@ reg enbW_loc;
 always @*
 begin
 	if(reset)begin
-		hz2ctrl_loc = 1'b0;
+		//hz2ctrl_loc = 1'b0;
 		flashD_loc = 1'b1;
 		flashE_loc = 1'b1;
 		flashM_loc = 1'b1;
 		flashW_loc = 1'b1;
 	end
 	else begin
+		//hz2ctrl_loc = 1'b0;
+		flashD_loc = 1'b0;
+		flashE_loc = 1'b0;
+		flashM_loc = 1'b0;
+		flashW_loc = 1'b0;
 		enbE_loc = 1'b0;
 		enbM_loc = 1'b0;
 		enbW_loc = 1'b0;
 		enbD_loc = 1'b0;
-		if(mux1)begin
+		if(~mux1)begin
 			flashD_loc = 1'b1;
 			flashE_loc = 1'b1;
 			flashM_loc = 1'b1;

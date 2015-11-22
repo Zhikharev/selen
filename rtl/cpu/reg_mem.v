@@ -31,7 +31,6 @@ module reg_mem(
 	output we_regM_out,
 	output[1:0] brch_typeM_out,
 	output mux9M_out,
-	output mux5M_out,
 	output mux10M_out,
 	output[4:0] rs1M_out,
 	output[1:0] cmdM_out,
@@ -49,7 +48,6 @@ reg we_memM_loc;
 reg we_regM_loc;
 reg[1:0] brch_typeM_loc;
 reg mux9M_loc;
-reg mux5_loc;
 reg rsM_loc;
 reg mux10M_loc;
 reg[1:0] cmdM_loc;
@@ -77,10 +75,12 @@ begin
 		imm20M_loc <= 20'b0;
 		cmdM_loc <= 2'b0;
 		sx_2M_loc <= 3'b0;
+		
 	end
 	else begin
 		if(enbM)begin
 			resultM_loc <= resultM_loc;
+			srcbM_loc <= srcbM_loc;
 			cndM_loc <= cndM_loc;
 			addrM_loc <= addrM_loc;
 			rdM_loc <= rdM_loc;
@@ -100,6 +100,7 @@ begin
 		else begin
 			resultM_loc <= resultM;
 			cndM_loc <= cndM;
+			srcbM_loc <= srcbM;
 			addrM_loc <= addrM;
 			rdM_loc <= rdM;
 			be_memM_loc <= be_memM;
@@ -120,6 +121,7 @@ end
 assign rs1M_out = rs1M_loc;
 assign rs2M_out = rs2M_loc;
 assign resultM_out = resultM_loc;
+assign srcbM_out = srcbM_loc;
 assign cndM_out = cndM_loc;
 assign addrM_out = addrM_loc;
 assign be_memM_out = be_memM_loc;

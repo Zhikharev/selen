@@ -6,7 +6,6 @@ module cpu_ctrl(
 	output[1:0] be_mem,
 	output we_mem,
 	output we_reg,
-	//output[1:0] be_reg,
 	output[1:0] brn_type,
 	output[2:0] sx_cntl,
 	output[3:0] alu_cntr,
@@ -22,8 +21,6 @@ module cpu_ctrl(
 	output mux4,
 	output mux4_2,
 	output mux3,
-	//output mux1,
-	//////
 	output[1:0] cmd,
 	output rubish//not right comand 
 
@@ -61,10 +58,10 @@ localparam UPPER = 2'b11;
 localparam SIGN = 1'b1;
 localparam UNSIGN = 1'b0;
 
-localparam EQ = 2'b00;
-localparam NE = 2'b01;
-localparam LT = 2'b10;
-localparam GE = 2'b11;
+localparam EQ = 3'b100;
+localparam NE = 3'b101;
+localparam LT = 3'b110;
+localparam GE = 3'b111;
 
 localparam lw_cmd = 2'b11;
 localparam st_cmd = 2'b10;
@@ -74,7 +71,7 @@ localparam other = 2'b00;
 reg loc10,loc9,loc8,loc8_2,loc8_3,loc7,loc6,loc5,loc4,loc4_2,loc3,loc1;
 reg we_mem_loc,we_reg_loc;
 reg s_u_loc;
-reg[1:0]be_mem_loc,be_reg_loc;
+reg[1:0]be_mem_loc;
 reg[1:0] cmd_loc;
 reg[2:0] brn_loc,sx_loc;
 reg[3:0]alu_loc;
@@ -100,9 +97,9 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
-			be_reg_loc = FULL;
 			cmd_loc = other;
 			rubish_loc = 1'b0;
+			sx_loc = {SIGN,FULL};
 		end
 		R_I:begin
 			loc10 = 1'b0;
@@ -110,7 +107,7 @@ begin
 			loc8 = 1'b1;
 			loc8_2 = 1'b0;
 			loc8_3 = 1'b0;
-			loc7 = 1'bx;
+			loc7 = 1'b0;
 			loc6 = 1'bx;
 			loc5 = 1'b1;
 			loc4 = 1'b1;
@@ -119,8 +116,8 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;;
-			be_reg_loc = FULL;
 			cmd_loc = other;
+			sx_loc = {SIGN,FULL};
 			rubish_loc = 1'b0;
 		end
 		U_LUI:begin///////////////
@@ -138,8 +135,8 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
-			be_reg_loc = FULL;
 			cmd_loc = other;
+			sx_loc = {SIGN,FULL};
 			rubish_loc = 1'b0;
 		end
 		U_AUIPC:begin
@@ -157,14 +154,14 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = 2'bxx;
-			be_reg_loc = FULL;
 			cmd_loc = other;
+			sx_loc = {SIGN,FULL};
 			rubish_loc = 1'b0;
 		end
 		SB:begin
 			loc10 = 1'b0;
 			loc9 = 1'bx;
-			loc8 = 1'b0;
+			loc8 = 1'b1;
 			loc8_2 = 1'b0;
 			loc8_3 = 1'b0;
 			loc7 = 1'b1;
@@ -176,8 +173,8 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b0;
 			be_mem_loc = 2'bxx;
-			be_reg_loc = 2'bxx;
 			cmd_loc = other;
+			sx_loc = 3'bxxx;
 			rubish_loc = 1'b0;
 		end
 		UJ:begin//jal
@@ -194,9 +191,9 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b1;
 			be_mem_loc = FULL;
-			be_reg_loc = FULL;
 			cmd_loc = jmp_cmd;
 			rubish_loc = 1'b0;
+			sx_loc = 3'bxxx;
 			if(hz2ctrl) begin
 				loc5 = 1'b0;
 			end
@@ -214,10 +211,10 @@ begin
 				loc4 = 1'b0;
 				loc4_2 = 1'b0;
 				loc3 = 1'b0;
+				sx_loc = 3'bxxx;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
 				be_mem_loc = FULL;
-				be_reg_loc = FULL;
 				cmd_loc = jmp_cmd;
 				rubish_loc = 1'b0;
 				if(hz2ctrl) begin
@@ -236,7 +233,7 @@ begin
 				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
-				loc3 = 1'bx;
+				loc3 = 1'b0;
 				//loc2 = 1'b0;
 				cmd_loc = lw_cmd;
 				rubish_loc = 1'b0;
@@ -287,13 +284,13 @@ begin
 			rubish_loc = 1'b0;
 			case(fnct)
 				3'b001:begin
-					be_reg_loc = FULL;
+					sx_loc = {SIGN,FULL};
 				end
 				3'b010:begin
-					be_reg_loc = HALF;
+					sx_loc = {SIGN,HALF};
 				end
 				3'b011:begin
-					be_reg_loc = BYTE;
+					sx_loc = {SIGN,BYTE};
 				end
 			endcase
 		end
@@ -312,10 +309,9 @@ begin
 			we_mem_loc = 1'b0;
 			we_reg_loc = 1'b0;
 			be_mem_loc = 2'bxx;
-			be_reg_loc = 2'bxx;
 			cmd_loc = 2'bxx;
 			rubish_loc = 1'b1;
-			brn_loc = 3'b111;
+			sx_loc = {SIGN,FULL};
 		end
 	endcase
 
@@ -325,6 +321,7 @@ always @*
 begin
 	case(opcode)
 		R:begin
+			brn_loc = 3'b0xx;
 			if(fnct7 == 2'b00)begin
 				case(fnct)
 					3'b000: begin
@@ -376,12 +373,12 @@ begin
 					default: begin
 						alu_loc = SUB;
 						s_u_loc = SIGN;
-						rubish_alu_loc = 1'b1;
 					end
 					endcase
 			end
 		end/////end R type
 		R_I:begin
+			brn_loc = 3'b0xx;
 			case(fnct)
 				3'b000: begin
 					alu_loc = ADD;
@@ -427,42 +424,42 @@ begin
 					///// BEQ
 					alu_loc = SUB;
 					s_u_loc = SIGN;
-					brn_loc = EQ;
+					brn_loc = {1'b1,EQ};
 				end
 				3'b001: begin
 					////BNE
 					alu_loc = SUB;
 					s_u_loc = SIGN;
-					brn_loc = NE;
+					brn_loc = {1'b1,NE};
 				end
 				3'b010: begin
 					////BLT
 					alu_loc = SUB;
 					s_u_loc = SIGN;
-					brn_loc = LT;
+					brn_loc = {1'b1,LT};
 				end
 				3'b011: begin
 					/////BLTU
 					alu_loc = SUB;
 					s_u_loc = UNSIGN;
-					brn_loc = LT;
+					brn_loc = {1'b1,LT};
 				end
 				3'b100: begin
 					////BGE
 					alu_loc = SUB;
 					s_u_loc = SIGN;
-					brn_loc = GE;
+					brn_loc = {1'b1,GE};
 				end
 				3'b101: begin
 					///BGEU
 					alu_loc = SUB;
 					s_u_loc = SIGN;
-					brn_loc = GE;
+					brn_loc = {1'b1,GE};
 				end
 				default: begin
 					alu_loc = SUB;
 					s_u_loc = SIGN;
-					rubish_alu_loc =1'b1;
+					rubish_loc =1'b1;
 				end
 			endcase
 		end
@@ -503,16 +500,14 @@ assign mux5 = loc5;
 assign mux4 = loc4;
 assign mux4_2 = loc4_2;
 assign mux3 = loc3;
-//assign mux2 = loc2;
 assign mux1 = loc1;
 assign we_mem = we_mem_loc;
 assign we_reg = we_reg_loc;
 assign be_mem = be_mem_loc;
-//assign be_reg = be_reg_loc;
 assign brn_type = brn_loc;
 assign sx_cntl = sx_loc;
 assign alu_cntr = alu_loc;
 assign alu_s_u = s_u_loc;
 assign cmd = cmd_loc;
-assign rubish = (rubish_loc)? (1'b1):(rubish_alu_loc);
+assign rubish = rubish_loc;
 endmodule

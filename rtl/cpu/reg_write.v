@@ -12,9 +12,11 @@ module reg_write(
 	input[1:0] cmdW,
 	input[19:0] imm20W,
 	input[2:0] sx_2W_ctrl,
+	input mux10W,
 	
 	output we_regW_out,
 	output mux9W_out,
+	output mux10W_out,
 	output[31:0] resultW_out,
 	output[4:0] rdW_out,
 	output[31:0] memW_out,
@@ -34,6 +36,7 @@ reg [4:0] rs2W_loc;
 reg[1:0] cmdW_loc;
 reg[19:0] imm20W_loc;
 reg[2:0] sx_2W_loc;
+reg mux10_loc;
 always @(posedge clk)
 begin
 	if(flashW)begin
@@ -47,6 +50,7 @@ begin
 		cmdW_loc <=2'b0;
 		imm20W_loc <=20'b0;
 		sx_2W_loc <= 3'b0;
+		mux10_loc <= 1'b0;
 	end
 	else begin
 		if(enbW)begin
@@ -60,6 +64,7 @@ begin
 			cmdW_loc <= cmdW_loc;
 			imm20W_loc <= imm20W_loc;
 			sx_2W_loc <= sx_2W_loc;
+			mux10_loc <= mux10_loc;
 		end
 		else begin
 			we_regW_loc <= we_regW;
@@ -72,13 +77,15 @@ begin
 			cmdW_loc <= cmdW;
 			imm20W_loc <= imm20W;
 			sx_2W_loc <= sx_2W_ctrl;
+			mux10_loc <= mux10W;
 		end
 	end
 end
 assign rs1W_out = rs1W_loc;
 assign rs2W_out = rs2W_loc;
 assign we_regW_out = we_regW_loc;
-assign mux9W_out = mux9W;
+assign mux9W_out = mux9W_loc;
+assign mux10W_out = mux10_loc;
 assign resultW_out = resultW_loc;
 assign memW_out = memW_loc;
 assign rdW_out = rdW_loc;

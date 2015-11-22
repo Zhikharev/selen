@@ -138,7 +138,7 @@ begin
 			mux10E_loc <= mux10E;
 			cmdE_loc <= cmdE;
 			imm_or_addr_loc <= imm_or_addr;
-			sx_2E_loc <= sx_2E_loc;
+			sx_2E_loc <= sx_2E_ctrl;
 		end
 	end
 end
@@ -163,5 +163,5 @@ assign mux8_3E_out = mux8_3E_loc;
 assign mux10E_out = mux10E_loc;
 assign cmdE_out = cmdE_loc;
 assign imm_or_addr_out = imm_or_addr_loc;
-assign sx_2E_out = sx_2E_loc;
+assign sx_2E_ctrl_out = sx_2E_loc;
 endmodule

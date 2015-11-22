@@ -9,7 +9,7 @@ module cpu_top (
 	//data
 	output data_stb_out,
 	output data_we_out,
-	output[3:0] data_be_out,
+	output[1:0] data_be_out,
 	input data_ack_in,
 	output[31:0] data_addr_out,
 	output[31:0] data_data_out,
@@ -24,6 +24,7 @@ module cpu_top (
 
 ///wires of multiplecsers
 wire hz2enbD;
+wire hz2flashD;
 wire[31:0] regD2ctrl;
 wire[31:0] a_mux1;
 wire[31:0] b_mux1;
@@ -50,6 +51,7 @@ reg[31:0] pc;
 ////// end of wires of multiplecser
 //// 							end of fetch stage
 ///// 							wires of decode 
+wire hz2flashE;
 wire[31:0] srca2regE;
 wire[31:0] srcb2regE;
 wire ctrl2hz;
@@ -61,21 +63,20 @@ wire ctrl2regE_mux9;
 wire ctrl2regE_mux8_3;
 wire ctrl2regE_mux8_2;
 wire ctrl2regE_mux8;
-wire ctrl2_mux7;
-wire ctrl2_mux6;
-wire ctrl2_mux5;
-wire ctrl2_mux4_2;
-wire ctrl2_mux4;
-wire ctrl2_mux3;
-wire ctrl2_mux1;
+//wire ctrl2_mux7;
+//wire ctrl2_mux6;
+//wire ctrl2_mux5;
+//wire ctrl2_mux4_2;
+//wire ctrl2_mux4;
+//wire ctrl2_mux3;
+//wire ctrl2_mux1;
 wire[1:0] ctrl2regE_cmd;
 wire[3:0] ctrl2regE_alu_ctrl;
-wire ctrl2regE_sign_alu;
+wire ctrl2regE_alu_sign;
 wire[1:0]ctrl2regE_brch_type;
 wire ctrl2regE_we_mem;
 wire ctrl2regE_we_reg;
 wire[1:0] ctrl2regE_be_mem;
-wire[2:0] ctrl2regE_sx;
 wire ctrl_rubish;
 wire[31:0] regD2regE_pc;
 
@@ -100,11 +101,12 @@ wire s_mux6;
 ////							end of decode stage 
 ////							 exeqution 
 wire hz2enbE;
+
 wire[31:0] address;
 wire[2:0] regE2regM_sx;
-wire regE2_mux8;
-wire regE2_mux8_2;
-wire regE2_mux8_3;
+//wire regE2_mux8;
+//wire regE2_mux8_2;
+//wire regE2_mux8_3;
 wire[3:0] regE2_alu_ctrl;
 wire regE2_alu_sign;
 wire[31:0] regE2a_bpmux2;
@@ -167,6 +169,7 @@ wire[1:0] regE2regM_cmd;
 ////						end of exe
 //// 						memory stage 
 wire hz2enbW;
+wire hz2flashM;
 wire[1:0] regM2cnd;
 wire [31:0] result2mem;
 wire regM2regW_mux10;
@@ -174,6 +177,7 @@ wire[1:0] regM2regW_cmd;
 wire regM2regW_mux9;
 wire[19:0] regM2regW_imm20;
 wire[19:0] regM2b_mux10_imm20;
+//wire regM2regW_mux10;
 wire[4:0] regM2regW_rs1;
 wire[4:0] regM2ergW_rs2;
 wire[4:0] regM2regW_rd;
@@ -181,7 +185,6 @@ wire[31:0] regM2bpmux;
 wire[31:0] mem2regW;
 wire[31:0] regM2mem_result;
 wire[1:0] regM2_cnd_type;
-wire[31:0] regM2regW_result;
 wire[1:0] regM2brch_cnd;
 //wire regM2mem_we_mem;
 //wire[1:0] regM2mem_be_mem;
@@ -200,7 +203,7 @@ wire[31:0] a_mux9;
 wire[31:0] b_mux9;
 wire[31:0] out_mux9;
 wire s_mux9;
-
+wire hz2flashW;
 
 wire[31:0] a_mux10;
 wire[31:0] b_mux10;
@@ -237,7 +240,7 @@ reg_decode reg_decode(
 	.pc_in(b_mux1),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
-	.flash(hz2regD_flash),
+	.flash(hz2flashD),
 	.instr_out(regD2ctrl),
 	.pc_out(regD2regE_pc)//pc +4
 );
@@ -270,10 +273,10 @@ cpu_ctrl cpu_ctrl(
 	.mux8(ctrl2regE_mux8),
 	.mux8_2(ctrl2regE_mux8_2),
 	.mux8_3(ctrl2regE_mux8_3),
-	.mux7(ctrl2_mux7),
-	.mux6(ctrl2_mux6),
-	.mux5(ctrl2_mux5),
-	.mux4(ctrl2_mux4),
+	.mux7(s_mux7),
+	.mux6(s_mux6),
+	.mux5(s_mux5),
+	.mux4(s_mux4),
 	.mux4_2(s_mux4_2),
 	.mux3(s_mux3),
 	.cmd(ctrl2regE_cmd),
@@ -288,7 +291,7 @@ reg_exe reg_exe(
 	.pcE(b_mux1),//pc+4;
 	.imm20E(regD2ctrl[31:12]),
 	.imm_or_addr(out_mux7),
-	.s_u_alu(ctrl2regE_sign_alu),
+	.s_u_alu(ctrl2regE_alu_sign),
 	.alu_ctrl(ctrl2regE_alu_ctrl),
 	.be_memE(ctrl2regE_be_mem),
 	.we_memE(ctrl2regE_we_mem),
@@ -297,13 +300,13 @@ reg_exe reg_exe(
 	.mux9E(ctrl2regE_mux9),
 	.mux8E(ctrl2regE_mux8),
 	.mux8_2E(ctrl2regE_mux8_2),
-	.mux8_3E(ctrl2regE_mux_3),
-	.mux10E(ctrl2regE_mux10D),
+	.mux8_3E(ctrl2regE_mux8_3),
+	.mux10E(ctrl2regE_mux10),
 	.clk(sys_clk),
 	.enbE(hz2enbE),
-	.flashE(hz2reg_flashE),
+	.flashE(hz2flashE),
 	.cmdE(ctrl2regE_cmd),
-	.sx_2E_ctrl(ctrl2regE_sx),
+	.sx_2E_ctrl(ctrl2regE_sx_ctrl),
 	
 	.srcaE_out(regE2a_bpmux2),
 	.srcbE_out(regE2a_bpmux4),
@@ -319,9 +322,9 @@ reg_exe reg_exe(
 	.we_regE_out(regE2regM_we_reg),
 	.brch_typeE_out(regE2regM_brch_type),
 	.mux9E_out(regE2regM_mux9),
-	.mux8E_out(regE2_mux8),
-	.mux8_2E_out(regE2_mux8_2),
-	.mux8_3E_out(regE2_mux8_3),
+	.mux8E_out(s_mux8),
+	.mux8_2E_out(s_mux8_2),
+	.mux8_3E_out(s_mux8_3),
 	.mux10E_out(regE2regM_mux10),
 	.cmdE_out(regE2regM_cmd),
 	.imm_or_addr_out(regE2b_sign_adder),
@@ -355,7 +358,7 @@ reg_mem reg_mem(
 	.cmdM(regE2regM_cmd),
 	.imm20M(regE2regM_imm20),
 	.sx_2M_ctrl(regE2regM_sx),
-
+	
 	.resultM_out(regM2mem_result),
 	.srcbM_out(regM2bpmux),
 	.cndM_out(regM2brch_cnd),
@@ -368,12 +371,12 @@ reg_mem reg_mem(
 	.we_regM_out(regM2regW_we_reg),
 	.brch_typeM_out(regM2_cnd_type),
 	.mux9M_out(regM2regW_mux9),
-	.mux5M_out(regM2regW_mux5),
+//	.mux5M_out(regM2regW_mux5),
 	.mux10M_out(regM2regW_mux10),
 	.cmdM_out(regM2regW_cmd),
 	.imm20M_out(regM2regW_imm20),
 	.sx_2M_ctrl_out(regM2regW_sx)
-);
+	);
 brch_cnd brch_cnd(
 	.brnch_typeM(regM2_cnd_type),
 	.cndM(regM2brch_cnd),
@@ -382,11 +385,12 @@ brch_cnd brch_cnd(
 reg_write reg_write(
 	.we_regW(regM2regW_we_reg),
 	.mux9W(regM2regW_mux9),
-	.resultW(regM2regW_result),
+	.mux10W(regM2regW_mux10),
+	.resultW(regM2mem_result),
 	.rdW(regM2regW_rd),
 	.memW(mem2regW),
 	.clk(sys_clk),
-	.flashW(hz2regW_flash),
+	.flashW(hz2flashW),
 	.enbW(hz2enbW),
 	.rs1W(regM2regW_rs1),
 	.rs2W(regM2regW_rs2),
@@ -395,7 +399,8 @@ reg_write reg_write(
 	.sx_2W_ctrl(regM2regW_sx),
 	
 	.we_regW_out(regW2out_we_reg),
-	.mux9W_out(regW2mux9),
+	.mux9W_out(s_mux9),
+	.mux10W_out(s_mux10),
 	.resultW_out(regW2a_mux9),
 	.rdW_out(regW2out_rd),
 	.memW_out(regW2b_mux9),
@@ -441,7 +446,7 @@ hazard_unit hazard_unit(
 	.bp3M(s_bpmux3),
 	.bp4W(s_bpmux4),
 	.mux2(s_mux2),
-	.hzu2ctrl(hz2ctrl),
+	.hz2ctrl(hz2ctrl),
 	
 	.flashD(hz2flashD),
 	.flashE(hz2flashE),
@@ -449,7 +454,7 @@ hazard_unit hazard_unit(
 	.flashW(hz2flashW),
 			
 	.enbD(hz2enbD),
-	.endE(hz2enbE),
+	.enbE(hz2enbE),
 	.enbM(hz2enbM),
 	.enbW(hz2enbW)
 );
