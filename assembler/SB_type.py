@@ -1,4 +1,4 @@
-#BEQ $1 $2 label
+#BEQ $Rs1, $Rs2, label
 import Registers
 import Service
 class SB_type:

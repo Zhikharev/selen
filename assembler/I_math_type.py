@@ -1,3 +1,4 @@
+#ADDI $Rd, $Rs1, imm 
 import Registers
 import Service
 class I_math_type:

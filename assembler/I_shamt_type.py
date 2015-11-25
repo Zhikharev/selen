@@ -1,3 +1,4 @@
+#SLLI $Rd, Rs1, imm
 import Registers
 import Service
 class I_shamt_type:
@@ -24,7 +25,7 @@ class I_shamt_type:
         if elements[0] in self.codes:
             elements = Service.DeleteCommas(elements)
             result += self.imm[elements[0]]
-            result += Service.Addr2Bin(Service.Str2Num(elements[-1]), 5)
+            result += Service.Addr2BinU(Service.Str2Num(elements[-1]), 5)
             registers = Registers.Registers()
             result += registers.getAddress(elements[-2])
             result += self.funct3[elements[0]]

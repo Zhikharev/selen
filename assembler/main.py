@@ -4,8 +4,17 @@ import Load_type
 import Store_type
 import I_math_type
 import I_shamt_type
+import JAL_instruction
+import JALR_instruction
 
 import Service
+
+labels = {'metka': 217556 }
+JAL = JAL_instruction.JAL_instruction()
+JALR = JALR_instruction.JALR_instruction()
+x = JALR.getCode('JALR $7, 15($0)')
+print(x)
+print(len(x))
 
 data = "";
 file_addr = input("Input file address: ")
