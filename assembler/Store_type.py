@@ -1,4 +1,4 @@
-# SW Rs1 8(Rs2)
+#SW Rs1, 8(Rs2)
 import Registers
 import Service
 class Store_type:
