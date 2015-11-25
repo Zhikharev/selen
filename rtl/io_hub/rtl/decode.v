@@ -66,10 +66,10 @@ module decode(
 			state_reg  = byte_0;
 			data_ready = 1'b0;
 		end else begin
-			if ((receive) & (state_reg == byte_1)) dout[7:0] 	<= rx_byte; 
-			if ((receive) & (state_reg == byte_2)) dout[15:8]	<= rx_byte;
-			if ((receive) & (state_reg == byte_3)) dout[23:16]	<= rx_byte;
-			if ((receive) & (state_reg == byte_0)) dout[31:24] 	<= rx_byte;
+			if ((receive) & (state_reg == byte_0)) dout[7:0] 	<= rx_byte; 
+			if ((receive) & (state_reg == byte_1)) dout[15:8]	<= rx_byte;
+			if ((receive) & (state_reg == byte_2)) dout[23:16]	<= rx_byte;
+			if ((receive) & (state_reg == byte_3)) dout[31:24] 	<= rx_byte;
 			
 			if ((state_reg == byte_3) & (state_next == byte_0)) data_ready <= 1'b1;
 			if ((state_reg == byte_0) & (state_next == byte_0)) data_ready <= 1'b0;
