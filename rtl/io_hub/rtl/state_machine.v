@@ -71,17 +71,17 @@ module state_mashine (
 								if (din == 32'h00000004) state_next <= state_addr_end;
 								if (din == 32'h00000005) state_next <= state_data;
 							 end
-			state_start		 :	if (dready)	state_next <= state_0;
-			state_finish	 : 	if (dready)	state_next <= state_0;
+			state_start		 :	state_next <= state_0;
+			state_finish	 : 	state_next <= state_0;
 								
 			state_addr_first :	if (dready)	state_next <= state_addr_first1;
-			state_addr_first1:	if (dready)	state_next <= state_0;
+			state_addr_first1:	state_next <= state_0;
 								
 			state_addr_end	 :	if (dready)	state_next <= state_addr_end1;
-			state_addr_end1	 :	if (dready)	state_next <= state_0;
+			state_addr_end1	 :	state_next <= state_0;
 								
 			state_data		 :	if (dready)	state_next <= state_data1;								
-			state_data1		 :	if (dready)	state_next <= state_0;
+			state_data1		 :	state_next <= state_0;
 								
 			default: state_next <= state_0;
 		endcase	
