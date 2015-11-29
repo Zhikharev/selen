@@ -17,6 +17,8 @@ module #(parameter HDR_WIDTH = 2, parameter  ) system_tb_top ();
 	logic clk;
 	logic rst;
 
+	uart_if uart_intf;
+
 	reg [31:0] prog_mem [0:31];
 
 	initial begin
@@ -24,9 +26,13 @@ module #(parameter HDR_WIDTH = 2, parameter  ) system_tb_top ();
 		forever #10 clk = !clk;
 	end
 
-	// UART interface here
-
-	// DUT instantiate here
+	selen_top selen_top 
+	(
+		.sys_clk 	(sys_clk),
+		.sys_rst 	(sys_rst),
+		.uart_rx 	(uart_intf.rx),
+		.uart_tx 	(uart_intf.tx)
+	);
 
 	task reset();
 		rst = 1;
@@ -50,7 +56,7 @@ module #(parameter HDR_WIDTH = 2, parameter  ) system_tb_top ();
 		#1000ns;
 	endtask
 
-	initial readmemh("prog.bin", prog_mem);
+	initial readmemh("bin_example.bin", prog_mem);
 
 	initial begin
 		$display("%0t TEST START", $time());
