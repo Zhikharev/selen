@@ -60,6 +60,7 @@ module selen_top
 	wire  				io_wb_ack;
 	wire [31:0] 	io_wb_data_i;
 
+	wire          dma_Wb_cyc;
 	wire 					dma_wb_stb;
 	wire          dma_wb_we;
 	wire [1:0]    dma_wb_be;
@@ -140,25 +141,26 @@ module selen_top
 
 	io_top iohub
 	(
-		.sys_clk,
-		.sys_rst,
+		.sys_clk 		(sys_clk),
+		.sys_rst 		(sys_rst),
 		
-		.rx,
-		.tx,
+		.rx 				(uart_rx),
+		.tx 				(uart_tx),
 		
-		.io_stb_i,
-		.io_ack_o,
-		.io_we_i,
-		.io_addr_i,
-		.io_data_o,
-		.io_data_i,
+		.io_stb_i 	(io_wb_stb),
+		.io_ack_o 	(io_wb_ack),
+		.io_we_i 		(io_wb_we), 
+		.io_addr_i 	(io_wb_addr),
+		.io_data_o 	(io_wb_data_o),
+		.io_data_i 	(io_wb_data_i),
 		
-		.dma_cyc_i,
-		.dma_stb_o,
-		.dma_ack_i, 
-		.dma_we_o,
-		.dma_addr_o,
-		.dma_data_o
+		.dma_cyc_i 	(dma_Wb_cyc),
+		.dma_stb_o 	(dma_wb_stb),
+		.dma_ack_i	(dma_wb_ack), 
+		.dma_we_o 	(dma_wb_we),
+		.dma_addr_o (dma_wb_data),
+		.dma_data_i (dma_wb_data_i),
+		.dma_data_o (dma_wb_data_o)
 );
 
 
