@@ -117,17 +117,38 @@ def GetLabels(code):
         addr += 4;
 
     return [ncode, labels]
-
+#.data
+#name value
+#name1 [value1,value2,value3...]
+#name2[20]
 #Функция для обработки директивы .DATA
 def ParseData(data):
+    dataD = "";
     keys = {}
     for line in data:
-        line_elements = line.split(" ")
-        if len(line_elements) == 2:
-            data_num = Str2Num(line_elements[1])
-            keys[line_elements[0]] = data_num
-
+        if "[" not in line:
+            line = line.split(" ")
+            if len(line) == 2:
+                keys[line[0]] = int(len(dataD)/8)
+                dataD += Addr2Bin(Str2Num(line[1]), 32)
+            else:
+                ERROR("Error while .data parsing in line: " + line)
+        elif " " not in line:
+            if "[" in line:
+                line = line.split("[")
+                if len(line) == 2:
+                    num = Str2Num(line[1][:-1])
+                    for i in range(num):
+                        keys[line[0] + "["+ str(i) + "]"] = int(len(dataD)/8)
+                        dataD += Addr2Bin(0, 32)
         else:
-            ERROR("ERROR while DATA parsing in line: " + line);
+            line = line.split(" ")
+            if len(line) == 2:
+                if line[1].startswith("[") and line[1].endswith("]"):
+                    line[1] = line[1][1:-1]
+                    line[1] = line[1].split(",")
+                    for i in range(len(line[1])):
+                        keys[line[0] + "["+ str(i) + "]"] = int(len(dataD)/8)
+                        dataD += Addr2Bin(Str2Num(line[1][i]), 32)
 
-    return keys
+    return [keys, dataD]
