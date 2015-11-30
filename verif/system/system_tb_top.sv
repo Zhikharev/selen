@@ -12,6 +12,36 @@
 `ifndef INC_SYSTEM_TB_TOP
 `define INC_SYSTEM_TB_TOP
 
+`include "cpu/alu.v"
+`include "cpu/brnch_cnd.v"
+`include "cpu/cpu_cntr.v"
+`include "cpu/hazard_unit.v"
+`include "cpu/reg_decode.v"
+`include "cpu/reg_exe.v"
+`include "cpu/reg_mem.v"
+`include "cpu/reg_write.v"
+`include "cpu/register_file.v"
+`include "cpu/sx_1.v"
+`include "cpu/sx_2.v"
+`include "cpu/cpu_top.v"
+
+`include "memory_commutator/rtl/comm.v"
+`include "memory_commutator/rtl/commutator.v"
+`include "memory_commutator/rtl/fifo.v"
+`include "memory_commutator/rtl/generic_dpram.v"
+`include "memory_commutator/rtl/ram.v"
+`include "memory_commutator/rtl/rom.v"
+`include "memory_commutator/rtl/wb_comm.v"
+
+`include "io_hub/rtl/decode.v"
+`include "io_hub/rtl/fifo.v"
+`include "io_hub/rtl/io_hub.v"
+`include "io_hub/rtl/io_top.v"
+`include "io_hub/rtl/state_machine.v"
+`include "io_hub/rtl/uart.v"
+
+`include "uart_interface.sv"
+
 module #(parameter HDR_WIDTH = 2, parameter  ) system_tb_top ();
 
 	logic clk;
