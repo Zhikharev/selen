@@ -9,5 +9,5 @@ SoC contains:
 
 Target platfrom FPGA Spartan-6.
 
-We introduce assembler for RISC-V ISA, which supports our custom commands.
+We introduce assembler for RISC-V ISA, which supports our custom instructions.
 
