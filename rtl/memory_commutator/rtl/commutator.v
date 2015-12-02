@@ -40,6 +40,7 @@ module commutator
 	output  	[31:0] 		slave4_wb_data_o,
 	
 	// DMA
+	output 					master3_wb_cyc_o,
 	input    				master3_wb_stb_i,
 	output	 	 			master3_wb_ack_o, 
 	input  					master3_wb_we_i,
@@ -75,6 +76,9 @@ module commutator
 
 	parameter M_IO_h = 16'h0400;
 	parameter M_IO_l = 16'hFFFF;
+	
+	parameter DEPTH = 3;
+	parameter SIZE	= 16;
 	
 	reg 					m_stb_i;
 	reg						m_ack_o; 
@@ -115,18 +119,24 @@ module commutator
 	assign master1_wb_data_o	= reg_master1_wb_data_o;
 	assign master2_wb_ack_o		= reg_master2_wb_ack_o; 
 	assign master2_wb_data_o	= reg_master2_wb_data_o;
+	
 	assign slave4_wb_stb_o		= reg_slave4_wb_stb_o;
 	assign slave4_wb_we_o		= reg_slave4_wb_we_o;
 	assign slave4_wb_addr_o		= reg_slave4_wb_addr_o;	
 	assign slave4_wb_data_o		= reg_slave4_wb_data_o;
+	
 	assign master3_wb_ack_o		= reg_master3_wb_ack_o;
 	assign master3_wb_data_o	= reg_master3_wb_data_o;
+	assign master3_wb_cyc_o		= master1_wb_cyc_i;
+	
 	assign slave1_wb_stb_o		= reg_slave1_wb_stb_o;
 	assign slave1_wb_addr_o		= reg_slave1_wb_addr_o;
+	
 	assign slave2_wb_stb_o		= reg_slave2_wb_stb_o;
 	assign slave2_wb_we_o		= reg_slave2_wb_we_o;
 	assign slave2_wb_addr_o		= reg_slave2_wb_addr_o;
 	assign slave2_wb_data_o		= reg_slave2_wb_data_o;
+	
 	assign slave3_wb_stb_o		= reg_slave3_wb_stb_o;
 	assign slave3_wb_addr_o		= reg_slave3_wb_addr_o;
 	
@@ -135,7 +145,23 @@ module commutator
 	
 	//fifo fifo1(sys_clk, sys_rst, master1_wb_addr_i, fifo_master1_addr, master1_wb_stb_i, ~empty, full, empty);
 	
-	fifo fifo (sys_clk, sys_clk, sys_rst, clr, master1_wb_addr_i, master1_wb_stb_i, fifo_master1_addr, re, full, empty, full_n, empty_n, level );
+	//fifo fifo (sys_clk, sys_clk, sys_rst, clr, master1_wb_addr_i, master1_wb_stb_i, fifo_master1_addr, re, full, empty, full_n, empty_n, level );
+	
+	fifo 
+	#(
+		.DEPTH(DEPTH),
+		.SIZE(SIZE)
+	) 
+	fifo
+	(
+		.clk(sys_clk),
+		.wr_en(master1_wb_stb_i),
+		.din(master1_wb_addr_i),		
+		.rd_en(1),
+		.dout(fifo_master1_addr),		
+		.empty(empty),
+		.full(full)
+	);
 	assign re = empty_n;
 	
 	//overflow

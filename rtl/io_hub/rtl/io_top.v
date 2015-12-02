@@ -1,6 +1,17 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME      : io_top.v
+// PROJECT        : Selen
+// AUTHOR         : Sokolovskii Artem
+// AUTHOR'S EMAIL : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION    : Top level I/O Hub.
+// ----------------------------------------------------------------------------
+
 module io_top(
-		input clk,
-		input rst,
+		input sys_clk,
+		input sys_rst,
 		
 		//UART
 		input rx,
@@ -11,8 +22,8 @@ module io_top(
 		output 	 			io_ack_o,
 		input         		io_we_i,
 		input 	[15:0] 		io_addr_i,
-		output 	[31:0] 		io_data_o,
 		output 	[31:0] 		io_data_i,
+		output 	[31:0] 		io_data_o,
 		
 		// DMA
 		input 				dma_cyc_i,
@@ -20,6 +31,7 @@ module io_top(
 		input				dma_ack_i, 
 		output 				dma_we_o,
 		output	[15:0] 		dma_addr_o,
+		output 	[31:0] 		dma_data_i,
 		output 	[31:0]		dma_data_o
 );
 
@@ -32,16 +44,16 @@ module io_top(
 	wire [31:0] addr_end_reg;
 	
 	decode decode(
-		.clk(clk),
-		.rst(rst),
+		.clk(sys_clk),
+		.rst(sys_rst),
 		.rx(rx),
 		.dout(dout),
 		.data_ready(data_ready)
 	);
 		
 	state_mashine state_mashine(
-		.clk(clk),
-		.rst(rst),
+		.clk(sys_clk),
+		.rst(sys_rst),
 		.dready(data_ready),
 		.din(dout),
 		.data(data),
@@ -51,8 +63,8 @@ module io_top(
 	);
 	
 	io_hub io_hub(
-		.clk(clk),
-		.rst(rst),
+		.clk(sys_clk),
+		.rst(sys_rst),
 		.data(data),
 		.status_reg(status_reg),
 		.addr_first_reg(addr_first_reg),

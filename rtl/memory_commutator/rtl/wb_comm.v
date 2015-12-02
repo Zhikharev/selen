@@ -39,6 +39,7 @@ module wb_comm(
 	output  	[31:0] 		io_data_o,
 	
 	// DMA
+	output 					dma_cyc_o,
 	input    				dma_stb_i,
 	output 	 				dma_ack_o, 
 	input  					dma_we_i,

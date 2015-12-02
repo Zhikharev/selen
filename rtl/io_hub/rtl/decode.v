@@ -1,3 +1,14 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME      : decode.v
+// PROJECT        : Selen
+// AUTHOR         : Sokolovskii Artem
+// AUTHOR'S EMAIL : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION    : collects bytes at 4-byte packets
+// ----------------------------------------------------------------------------
+
 module decode(
 	input clk,
 	input rst,
@@ -37,22 +48,7 @@ module decode(
 		.is_transmitting(), // Low when transmit line is idle.
 		.recv_error(recv_error) // Indicates error in receiving packet.
     );
-
-	/*fifo 
-	#(
-		.DEPTH(DEPTH),
-		.SIZE(SIZE)
-	) 
-	fifo
-	(
-		.clk(clk),
-		.wr_en(receive),
-		.din(rx_byte),		
-		.rd_en(1),
-		.dout(d_fifo_out),		
-		.empty(empty),
-		.full(full)
-	);*/
+	
 	
 	localparam byte_0 = 0;
 	localparam byte_1 = 1;
