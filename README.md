@@ -7,4 +7,7 @@ SoC contains:
 - RAM, ROM plugs
 - IO hub with UART
 
-Target platfrom FPGA Spartan-6
+Target platfrom FPGA Spartan-6.
+
+We introduce assembler for RISC-V ISA, which supports our custom commands.
+
