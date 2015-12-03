@@ -60,7 +60,7 @@ module selen_top
 	wire  				io_wb_ack;
 	wire [31:0] 	io_wb_data_i;
 
-	wire          dma_Wb_cyc;
+	wire          dma_wb_cyc;
 	wire 					dma_wb_stb;
 	wire          dma_wb_we;
 	wire [1:0]    dma_wb_be;
@@ -113,7 +113,8 @@ module selen_top
 		.io_addr_o 				(io_wb_addr),
 		.io_data_i 				(io_wb_data_o),
 		.io_data_o 				(io_wb_data_i),
-	
+
+		.dma_cyc_o        (dma_wb_cyc)	
 		.dma_stb_i 				(dma_wb_stb),
 		.dma_ack_o 				(dma_wb_ack), 
 		.dma_we_i 				(dma_wb_we),
@@ -154,7 +155,7 @@ module selen_top
 		.io_data_o 	(io_wb_data_o),
 		.io_data_i 	(io_wb_data_i),
 		
-		.dma_cyc_i 	(dma_Wb_cyc),
+		.dma_cyc_i 	(dma_wb_cyc),
 		.dma_stb_o 	(dma_wb_stb),
 		.dma_ack_i	(dma_wb_ack), 
 		.dma_we_o 	(dma_wb_we),
