@@ -1,3 +1,40 @@
-typedef enum int {
-	ADD
-} rv32_opcode;
+typedef enum int{
+    ADD,
+    SLT,
+    SLTU,
+    AND,
+    OR,
+    XOR,
+    SLL,
+    SRL,
+    SUB,
+    SRA,
+    AM,
+    ADDI,
+    SLTI,
+    ANDI,
+    ORI,
+    XORI,
+    SLLI,
+    SRLI,
+    SRAI,
+    LUI,
+    AUIPC,
+    JALR,
+    LW,
+    LH,
+    LHU,
+    LB,
+    LBU,
+    BEQ,
+    BNE,
+    BLT,
+    BLTU,
+    BGE,
+    BGEU,
+    SW,
+    SH,
+    SB,
+    JAL
+}opcode_type;
+

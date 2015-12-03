@@ -1,3 +1,4 @@
+#XOR $Rd, $Rs1, $Rs2
 import Registers
 import Service
 class R_type:

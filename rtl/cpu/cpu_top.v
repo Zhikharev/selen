@@ -90,7 +90,7 @@ wire s_mux5;
 
 wire[31:0] out_mux7;
 wire[11:0] a_mux7;
-wire[11:0] b_mux7;
+wire[31:0] b_mux7;
 wire s_mux7;
 
 wire[31:0] out_mux6;
@@ -484,9 +484,9 @@ assign b_mux6 = {{20{regD2ctrl}},regD2ctrl[31:25],regD2ctrl[11:7]};
 assign b_mux7 = out_mux6;
 //// sign extension end 
 
-assign out_mux6 = (s_mux6)? b_mux6:a_mux6;
+assign out_mux6 = (s_mux6)?b_mux6:a_mux6;
 assign out_mux5 = (s_mux5)?b_mux5:a_mux5;
-assign out_mux7 = (s_mux7)? {{19{b_mux7[12]}},b_mux7}:{{19{a_mux7[12]}},a_mux7};///mux end sign extension
+assign out_mux7 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension
 //// ################ end of decode
 /////################ exe phase 
 assign out_mux8 = s_mux8 ? b_mux8 : a_mux8; // mux8

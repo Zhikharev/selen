@@ -1,21 +1,13 @@
-#LW Rd, 16(Rs1)
+#JALR $Rd, 8($Rs1)
 import Registers
 import Service
-class Load_type:
+class JALR_instruction:
     opcode = "0000111"
     codes = [
-        "LW",
-        "LH",
-        "LHU",
-        "LB",
-        "LBU"
+        "JALR"
     ]
     funct3 = {
-        "LW" : "001",
-        "LH" : "010",
-        "LHU" : "011",
-        "LB" : "100",
-        "LBU" : "101"
+        "JALR" : "000",
     }
     def getCode(self, line):
         elements = line.split(" ")
@@ -34,6 +26,5 @@ class Load_type:
             result += registers.getAddress(elements[1])
             result += self.opcode
         else:
-             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + line)
-
+             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + lines)
         return result
