@@ -26,6 +26,26 @@ module cpu_top (
 wire hz2enbD;
 wire hz2flashD;
 wire[31:0] regD2ctrl;
+wire[31:0] a_mux1;
+wire[31:0] b_mux1;
+wire[31:0] out_mux1;
+wire s_mux1;
+wire[31:0] a_mux3;
+wire[31:0] b_mux3;
+wire[31:0] out_mux3;
+wire s_mux3;
+wire[31:0] a_mux2;
+wire[31:0] b_mux2;
+wire[31:0] out_mux2;
+wire s_mux2;
+wire[31:0] a_mux4_2;
+wire[31:0] b_mux4_2;
+wire[31:0] out_mux4_2;
+wire s_mux4_2;
+wire [31:0] a_mux4;
+wire [31:0] b_mux4;
+wire[31:0] out_mux4;
+wire s_mux4;
 wire hz2ctrl;
 reg[31:0] pc;
 ////// end of wires of multiplecser
@@ -174,6 +194,7 @@ wire[31:0] b_bpmux5;
 wire[31:0] out_bpmux5;
 wire s_bpmux5;
 wire[2:0] regM2regW_sx;
+wire[31:0] regM2a_mux1;
 wire[4:0] regM2regW_rs2;
 wire hz2enbM;
 ////					end of mem
@@ -203,27 +224,16 @@ wire[19:0] regW2b_mux10_imm20;
 
 ////					end of out 
 //################################### modules 
-////mem_block
-mem_block mem_block (
-	.clk(sys_clk),
-	.rst(sys_rst),
-	.mux1(s_mux1),
-	.mux2(s_mux2),
-	.mux3(s_mux3),
-	.mux4(s_mux4),
-	.mux4_2(s_mux4_2),
-	.stb(inst_stb_out),
-	.akn_in(inst_ack_in),
-	.cyc(inst_cyc_out),
-	.inst(inst_data_out),
-	.reg_in(srca2regE),
-	.imm12_in(out_mux7),
-	.imm20_in({{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
-	.stall_in(inst_stall_in),
-	.pc_stop(mem_ctrl2hz),
-	.addr_in(regM2a_mux1)
-);
-
+//// program counter 
+always @(posedge sys_clk)
+begin
+	if(sys_rst) begin
+		pc <= 31'b0;
+	end
+	else begin
+		pc <= out_mux2;
+	end
+end
 //////
 reg_decode reg_decode(
 	.instr_in(inst_data_in),
@@ -278,7 +288,7 @@ reg_exe reg_exe(
 	.rs1E(regD2ctrl[19:15]),
 	.rs2E(regD2ctrl[24:20]),
 	.rdE(regD2ctrl[11:7]),
-	.pcE(),//pc+4//problem;
+	.pcE(b_mux1),//pc+4;
 	.imm20E(regD2ctrl[31:12]),
 	.imm_or_addr(out_mux7),
 	.s_u_alu(ctrl2regE_alu_sign),
@@ -449,9 +459,21 @@ hazard_unit hazard_unit(
 	.enbW(hz2enbW)
 );
 ///// ############### area with pc (fetch)
-
-
-
+assign b_mux1 = out_mux4 + out_mux4_2; //sign adder
+assign b_mux3 = {{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]};//sing extension for 20 imm
+assign a_mux2 = out_mux3;
+assign b_mux2 = pc;
+assign b_mux4_2 = pc;
+assign a_mux4_2 = srca2regE;////
+assign a_mux4 = sxD2mux4;
+assign b_mux4 = 31'b100;
+assign a_mux1 = address;
+assign inst_addr_out = pc;
+assign out_mux1 = s_mux1 ? b_mux1 : a_mux1; // mux1
+assign out_mux2 = s_mux2 ? b_mux2 : a_mux2; // mux2
+assign out_mux3 = s_mux3 ? b_mux3 : a_mux3; // mux3
+assign out_mux4_2 = s_mux4_2 ? b_mux4_2 : a_mux4_2; // mux4_2
+assign out_mux4 = s_mux4 ? b_mux4 : a_mux4; // mux4
 
 //// ################ end of fetch
 //// ################ decode 

@@ -1,4 +1,4 @@
-module mem_ctr(
+module mem_ctrl(
 	input akn_in,
 	output cyc_out,
 	output stb_out,
@@ -8,7 +8,8 @@ module mem_ctr(
 	output wrt_enb,
 	input rst,
 	input clk,
-	input stall_in
+	input stall_in,
+	output pc_stop
 );
 localparam S0 = 2'b00;
 localparam S1 = 2'b01;
@@ -87,4 +88,5 @@ assign stb_out = stb_loc;
 assign cyc_out = cyc_loc;
 assign wrt_enb = wrt_enb_loc;
 assign rd_enb = rd_enb_loc;
+assign pc_stop = (state == S2) ? 1'b1 : 1'b0;
 endmodule

@@ -67,8 +67,6 @@ begin
 		enbM_loc = 1'b0;
 		enbW_loc = 1'b0;
 		enbD_loc = 1'b0;
-		//hz2ctrl_loc = 1'b0;
-		mux2_loc = 1'b0;
 	end
 	else begin
 		//hz2ctrl_loc = 1'b0;
@@ -100,19 +98,11 @@ begin
 			end
 		end
 	end
-	if(~stall_in)begin
+	if(stall_in)begin
 		mux2_loc = 1'b1;
-		enbE_loc = 1'b1;
-		enbM_loc = 1'b1;
-		enbW_loc = 1'b1;
-		enbD_loc = 1'b1;
 	end
-	if(~ack_in)begin
-		mux2_loc = 1'b1;
-		enbE_loc = 1'b1;
-		enbM_loc = 1'b1;
-		enbW_loc = 1'b1;
-		enbD_loc = 1'b1;
+	else begin
+		mux2_loc = 1'b0;
 	end
 end
 ///// forwarding liters are here for mux are not for stages 

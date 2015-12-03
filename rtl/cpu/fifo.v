@@ -20,17 +20,27 @@ begin
 		rd_pntr <= 4'b0;
 	end
 	else begin
-		if(wrt_enb)begin
-			wrt_pntr <= wrt_pntr +1;
+		if(full) begin
+			wrt_pntr <= 1'b0;
 		end
 		else begin
-			wrt_pntr <= wrt_pntr;
+			if(wrt_enb)begin
+				wrt_pntr <= wrt_pntr +1;
+			end
+			else begin
+				wrt_pntr <= wrt_pntr;
+			end
 		end
-		if(rd_enb)begin
-			rd_pntr <= rd_pntr +1;
+		if(empty)begin
+			rd_pntr <= 1'b0;
 		end
-		else begin
-			rd_pntr <= rd_pntr;
+		else begin 
+			if(rd_enb)begin
+				rd_pntr <= rd_pntr +1;
+			end
+			else begin
+				rd_pntr <= rd_pntr;
+			end
 		end
 	end
 end
