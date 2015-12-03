@@ -21,6 +21,9 @@ class cpu_wbi_monitor;
   endfunction 
 
   task run_phase();
+  	forever begin
+  		@(vif.mon);
+  	end
   endtask
 endclass
 

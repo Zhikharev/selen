@@ -22,6 +22,22 @@ interface wishbone_if (input logic clk, input logic rst);
 	logic [31:0] 	data_in;
 	logic [31:0] 	data_out;
 	logic 				stall;
+
+	clocking drv @(posedge clk);
+	endclocking
+
+	clocking mon @(negedge clk);
+		input cyc;
+		input stb;
+		input we;
+		input be;
+		input addr;
+		input ack;
+		input data_in;
+		input data_out;
+		input stall;
+	endclocking
+
 endinterface
 
 `endif

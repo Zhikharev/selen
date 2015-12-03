@@ -34,12 +34,44 @@ class cpu_wbi_driver;
     		drive_item(req);
     	end
     end
-    $display("[%0t][WBI DRV][[RUN] Phase started", $time);
+    $display("[%0t][WBI DRV][[RUN] Phase ended", $time);
   endtask
 
   task drive_item(rv32_transaction item);
-  	// TODO
+    forever begin
+      @(vif.drv);
+      if(vif.rst) begin
+        reset_interface();
+      end
+      else begin
+        // TODO: сделать конвейерную отработку, cyc
+        if(vif.stb) begin
+          int delay;
+          std::randomize(delay with {delay >= 0; delay < 10});
+          repeat(delay) begin 
+            clear_interface();
+            @(vif.drv);
+          end
+          vif.data_in <= item.encode();
+          vif.ack <= 1'b1;
+        end
+        else begin
+          clear_interface();
+        end
+      end
+    end
   endtask
+
+  task reset_interface();
+    vif.ack     <= 0;
+    vif.data_in <= 0;
+    vif.stall   <= 0;
+  endtask
+
+  task clear_interface();
+    vif.ack <= 0;
+  endtask
+
 
 endclass
 
