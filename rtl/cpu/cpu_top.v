@@ -438,7 +438,7 @@ hazard_unit hazard_unit(
 	.we_regW(regW2out_we_reg),
 	.we_regM(regM2regW_we_reg),
 	.mux1(s_mux1),
-	.stal_in(inst_stal_in),
+	.stall_in(inst_stall_in),
 	.ack_in(inst_ack_in),
 	
 	.bp1M(s_bpmux1),

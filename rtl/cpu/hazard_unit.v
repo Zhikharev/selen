@@ -21,7 +21,7 @@ module hazard_unit(
 	input we_regM,
 	input we_regW,
 	input mux1,
-	input stal_in,
+	input stall_in,
 	input ack_in,
 	
 	output bp1M,
@@ -63,6 +63,12 @@ begin
 		flashE_loc = 1'b1;
 		flashM_loc = 1'b1;
 		flashW_loc = 1'b1;
+		enbE_loc = 1'b0;
+		enbM_loc = 1'b0;
+		enbW_loc = 1'b0;
+		enbD_loc = 1'b0;
+		//hz2ctrl_loc = 1'b0;
+		mux2_loc = 1'b0;
 	end
 	else begin
 		//hz2ctrl_loc = 1'b0;
@@ -70,10 +76,7 @@ begin
 		flashE_loc = 1'b0;
 		flashM_loc = 1'b0;
 		flashW_loc = 1'b0;
-		enbE_loc = 1'b0;
-		enbM_loc = 1'b0;
-		enbW_loc = 1'b0;
-		enbD_loc = 1'b0;
+		
 		if(~mux1)begin
 			flashD_loc = 1'b1;
 			flashE_loc = 1'b1;
@@ -97,7 +100,7 @@ begin
 			end
 		end
 	end
-	if(~stal_in)begin
+	if(~stall_in)begin
 		mux2_loc = 1'b1;
 		enbE_loc = 1'b1;
 		enbM_loc = 1'b1;

@@ -10,6 +10,8 @@ module reg_decode(
 );
 reg[31:0] instr_out_loc;
 reg[31:0] pc_out_loc;
+
+
 always @(posedge clk)
 begin
 	
