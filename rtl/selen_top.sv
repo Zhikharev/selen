@@ -14,10 +14,10 @@
 
 module selen_top 
 (
-	input sys_clk,
-	input sys_rst,
-	input uart_rx,
-	input uart_tx
+	input  sys_clk,
+	input  sys_rst,
+	input  uart_rx,
+	output uart_tx
 );
 
 	wire 					cpu_wbi_cyc;
@@ -72,7 +72,7 @@ module selen_top
 	cpu_top cpu 
 	(
 		.sys_clk 				(sys_clk),
-		.sys_rst 				(sys_rst)
+		.sys_rst 				(sys_rst),
 		.inst_cyc_out 	(cpu_wbi_cyc),
 		.inst_stb_out 	(cpu_wbi_stb),
 		.inst_addr_out 	(cpu_wbi_addr),
@@ -114,7 +114,7 @@ module selen_top
 		.io_data_i 				(io_wb_data_o),
 		.io_data_o 				(io_wb_data_i),
 
-		.dma_cyc_o        (dma_wb_cyc)	
+		.dma_cyc_o        (dma_wb_cyc),	
 		.dma_stb_i 				(dma_wb_stb),
 		.dma_ack_o 				(dma_wb_ack), 
 		.dma_we_i 				(dma_wb_we),

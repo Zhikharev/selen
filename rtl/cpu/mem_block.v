@@ -70,7 +70,7 @@ wire fifo2mem_full;
 wire fifo2mem_empty;
 wire mem2fifo_rd_enb;
 wire mem2fifo_wrt_enb;
-fifo fifo(
+cpu_fifo fifo(
 	.data_in(pc),
 	.data_out(inst),
 	.rst(rst),
