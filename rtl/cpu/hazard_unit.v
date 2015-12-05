@@ -80,6 +80,7 @@ begin
 		enbM_loc = 1'b0;
 		enbW_loc = 1'b0;
 		enbD_loc = 1'b0;
+		mux2_loc = 1'b0;
 	end
 	else begin
 		//hz2ctrl_loc = 1'b0;
@@ -111,12 +112,12 @@ begin
 			end
 		end
 	end
-//	if(stall_in)begin
-//		mux2_loc = 1'b1;
-//	end
-//	else begin
-//		mux2_loc = 1'b0;
-//	end
+	if((stall_in)||(~ack_in))begin
+		mux2_loc = 1'b1;
+	end
+	else begin
+		mux2_loc = 1'b0;
+	end
 end
 ///// forwarding liters are here for mux are not for stages 
 reg bp1M_loc;
@@ -126,32 +127,40 @@ reg bp3M_loc;
 
 always @*
 begin
-	if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
+	if(reset)begin
 		bp1M_loc = 1'b0;
-	end
-	else begin
-		bp1M_loc = 1'b1;
-	end
-
-	if((rs2E != 5'b0)&&(rs2E == rdM)&&(we_regM == 1'b1))begin
+		bp2W_loc = 1'b0;
+		bp4W_loc = 1'b0;
 		bp3M_loc = 1'b0;
 	end
 	else begin
-		bp3M_loc = 1'b1;
-	end
+		if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
+			bp1M_loc = 1'b0;
+		end
+		else begin
+			bp1M_loc = 1'b1;
+		end
 
-	if((rs1E != 5'b0)&&(rs1E == rdW)&&(we_regW== 1'b1))begin
-		bp2W_loc = 1'b1;
-	end
-	else begin
-		bp2W_loc = 1'b0;
-	end
+		if((rs2E != 5'b0)&&(rs2E == rdM)&&(we_regM == 1'b1))begin
+			bp3M_loc = 1'b0;
+		end
+		else begin
+			bp3M_loc = 1'b1;
+		end
 
-	if((rs2E != 5'b0)&&(rs2E == rdW)&&(we_regW== 1'b1))begin
-		bp4W_loc = 1'b1;
-	end
-	else begin
-		bp4W_loc = 1'b0;
+		if((rs1E != 5'b0)&&(rs1E == rdW)&&(we_regW== 1'b1))begin
+			bp2W_loc = 1'b1;
+		end
+		else begin
+			bp2W_loc = 1'b0;
+		end
+
+		if((rs2E != 5'b0)&&(rs2E == rdW)&&(we_regW== 1'b1))begin
+			bp4W_loc = 1'b1;
+		end
+		else begin
+			bp4W_loc = 1'b0;
+		end
 	end
 end
 assign bp1M = bp1M_loc;
@@ -162,7 +171,7 @@ assign flashD = flashD_loc;
 assign flashE = flashE_loc;
 assign flashM = flashM_loc;
 assign flashW = flashW_loc;
-assign mux2 = ((mem_ctrl)||(stall_in))?1'b1:1'b0;//mux2_loc;
+assign mux2 = mux2_loc;//mux2_loc;
 assign enbD = enbD_loc;
 assign enbE = enbE_loc;
 assign enbM = enbM_loc;

@@ -41,16 +41,12 @@ wire s_mux2;
 wire s_mux3;
 wire s_mux4;
 wire s_mux4_2;
-wire[31:0] pc_next;
-wire mem_ctrl2hz;
-wire[31:0] fifo2regD;
+wire[31:0] mem_block2regD_inst;
 wire[31:0] inst_data_out;
 wire[31:0] regM2a_mux1;
 wire hz2enbD;
 wire hz2flashD;
-wire[31:0] regD2ctrl;
 wire hz2ctrl;
-reg[31:0] pc;
 ////// end of wires of multiplecser
 //// 							end of fetch stage
 ///// 							wires of decode 
@@ -66,8 +62,6 @@ wire ctrl2regE_mux9;
 wire ctrl2regE_mux8_3;
 wire ctrl2regE_mux8_2;
 wire ctrl2regE_mux8;
-//wire ctrl2_mux7;
-//wire ctrl2_mux6;
 //wire ctrl2_mux5;
 //wire ctrl2_mux4_2;
 //wire ctrl2_mux4;
@@ -82,7 +76,7 @@ wire ctrl2regE_we_reg;
 wire[1:0] ctrl2regE_be_mem;
 wire ctrl_rubish;
 wire[31:0] regD2regE_pc;
-
+wire[31:0] regD2ctrl;
 wire reg2hz;
 ////end of ctrl wires
 ///// wires of mux
@@ -226,33 +220,34 @@ wire[19:0] regW2b_mux10_imm20;
 
 ////					end of out 
 //################################### modules 
-////mem_block
+///mem_block
 mem_block mem_block (
-	.clk(sys_clk),
 	.rst(sys_rst),
+	.clk(sys_clk),
+	
 	.mux1(s_mux1),
 	.mux2(s_mux2),
 	.mux3(s_mux3),
 	.mux4(s_mux4),
 	.mux4_2(s_mux4_2),
-	.stb(inst_stb_out),
-	.akn_in(inst_ack_in),
-	.cyc(inst_cyc_out),
-	.reg_in(srca2regE),
-	.imm12_in(out_mux7),
-	.imm20_in({{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
-	.stall_in(inst_stall_in),
-	.pc_stop(mem_ctrl2hz),
-	.addr_in(regM2a_mux1),
-	.pc_next(pc_next),
-	.inst_out(fifo2regD),
+	.stall(inst_stall_in),
+	
+	.ack_in(inst_ack_in),
 	.inst_in(inst_data_in),
-	.addr_out(inst_addr_out)
+	.inst_out(mem_block2regD_inst),
+	.imm_20({{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
+	.imm_12(out_mux7),
+	.reg_in(srca2regE),
+	.brch_address(regM2a_mux1),
+
+	.inst_addr(inst_addr_out),
+	.cyc(inst_cyc_out),
+	.stb(inst_stb_out)
 );
 
 //////
 reg_decode reg_decode(
-	.instr_in(fifo2regD),
+	.instr_in(inst_data_in),
 	.pc_in(pc_next),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
@@ -273,6 +268,7 @@ reg_file reg_file (
 	.done(reg2hz)
 );
 cpu_ctrl cpu_ctrl(
+	.rst(sys_rst),
 	.fnct7(regD2ctrl[31:30]),
 	.fnct(regD2ctrl[14:12]),
 	.opcode(regD2ctrl[6:0]),
@@ -396,7 +392,8 @@ reg_mem reg_mem(
 brch_cnd brch_cnd(
 	.brnch_typeM(regM2_cnd_type),
 	.cndM(regM2brch_cnd),
-	.mux1(s_mux1)
+	.mux1(s_mux1),
+	.rst(sys_rst)
 );
 reg_write reg_write(
 	.we_regW(regM2regW_we_reg),
@@ -491,7 +488,7 @@ assign b_mux7 = out_mux6;
 
 assign out_mux6 = (s_mux6)?b_mux6:a_mux6;
 assign out_mux5 = (s_mux5)?b_mux5:a_mux5;
-assign 	 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension
+assign out_mux7 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension
 //// ################ end of decode
 /////################ exe phase 
 assign out_mux8 = s_mux8 ? b_mux8 : a_mux8; // mux8
@@ -529,7 +526,6 @@ assign b_mux9 = regW2b_mux9;
 assign b_mux10 = {regW2b_mux10_imm20,{11{1'b1}}};
 assign out_mux10 = (s_mux10)? b_mux10:a_mux10;
 //// ################ end of mem
-assign inst_addr_out = pc;
 assign mem2regW = data_data_in;//data_data_in
 assign data_addr_out = regM2mem_result; //data_addr_out
 //assign data_we_out = regM2mem_we_mem;

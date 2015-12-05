@@ -13,7 +13,8 @@
 module brch_cnd(
 		input[1:0] brnch_typeM,
 		input[1:0] cndM,
-		output mux1
+		output mux1,
+		input rst
 );
 localparam EQ = 2'b00;
 localparam NE = 2'b01;
@@ -56,6 +57,6 @@ begin
 		end
 endcase
 end
-assign mux1 = loc1;
+assign mux1 = (rst)? 1'b1:loc1;
 
 endmodule
