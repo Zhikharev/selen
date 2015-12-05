@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: cpu_top.v
+# Descriptions:
+# 	module solves hazard. Provides forwarding of data and stall and flash of stage registers 
+###########################################################
+*/
+
 module hazard_unit(
 	input reset,
 	input[1:0] cmd_inD,

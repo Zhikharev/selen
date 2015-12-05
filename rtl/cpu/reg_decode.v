@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: reg_decode.v
+# Descriptions:
+# 	register has been implemented in the begining of cpu 
+###########################################################
+*/
+
 module reg_decode(
 	input[31:0] instr_in,
 	input [31:0] pc_in,//pc +4 

@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: reg_exe.v
+# Descriptions:
+# 	register of execution stage  
+###########################################################
+*/
+
 module reg_exe(
 	input[31:0] srcaE,
 	input [31:0] srcbE,

@@ -1,3 +1,27 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: alu.v
+# Descriptions:
+# 	Arithmetic/logical unit 
+	peforms
+		additional 
+		set less then
+		set less then unsign (sign don't care )
+		 AND
+		 OR
+		 XOR
+		 logical shift left
+		 logical shift right
+		 Substraction
+		 shift right arithmetic 
+		 avaradge mean 
+###########################################################
+*/
+
 module alu (
 	input[31:0]srca,// upper 
 	input[31:0]srcb,// lower

@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: cpu_ctrl.v
+# Descriptions:
+# 	module controlls data path inside CPU 
+###########################################################
+*/
+
 module cpu_ctrl(
 	input[1:0] fnct7,
 	input[2:0] fnct,

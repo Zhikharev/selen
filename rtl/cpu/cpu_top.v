@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: cpu_top.v
+# Descriptions:
+# 	there are connections betwine all inner blocks of cpu
+###########################################################
+*/
+
 module cpu_top (
 	//instruction 
 	output inst_cyc_out,
@@ -479,16 +491,16 @@ assign b_mux7 = out_mux6;
 
 assign out_mux6 = (s_mux6)?b_mux6:a_mux6;
 assign out_mux5 = (s_mux5)?b_mux5:a_mux5;
-assign out_mux7 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension
+assign 	 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension
 //// ################ end of decode
 /////################ exe phase 
 assign out_mux8 = s_mux8 ? b_mux8 : a_mux8; // mux8
 assign out_mux8_2 = s_mux8_2 ? b_mux8_2 : a_mux8_2; // mux8_2
 assign out_mux8_3 = s_mux8_3 ? b_mux8_3 : a_mux8_3; // mux8_3
-//assign out_bpmux1 = s_bpmux1 ? b_bpmux1 : a_bpmux1; // bpmux1
-//assign out_bpmux2 = s_bpmux2 ? b_bpmux2 : a_bpmux2; // bpmux2
-//assign out_bpmux3 = s_bpmux3 ? b_bpmux3 : a_bpmux3; // bpmux3
-//assign out_bpmux4_2 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
+assign out_bpmux1 = s_bpmux1 ? b_bpmux1 : a_bpmux1; // bpmux1
+assign out_bpmux2 = s_bpmux2 ? b_bpmux2 : a_bpmux2; // bpmux2
+assign out_bpmux3 = s_bpmux3 ? b_bpmux3 : a_bpmux3; // bpmux3
+assign out_bpmux4_2 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
 
 assign a_bpmux1 = regM2mem_result;
 assign b_bpmux1 = out_bpmux2;

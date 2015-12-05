@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: reg_mem.v
+# Descriptions:
+# 	register of memory stage  
+###########################################################
+*/
+
 module reg_mem(
 	input [31:0] resultM,
 	input[31:0] srcbM,

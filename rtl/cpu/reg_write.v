@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: reg_write.v
+# Descriptions:
+# 	register of write stage  
+###########################################################
+*/
+
 module reg_write(
 	input we_regW,
 	input mux9W,

@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: brnch_cnd.v
+# Descriptions:
+# 	module is used for detection is branch taken or not 
+###########################################################
+*/
+
 module brch_cnd(
 		input[1:0] brnch_typeM,
 		input[1:0] cndM,
