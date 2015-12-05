@@ -21,7 +21,8 @@
 `include "reg_mem.v"
 `include "reg_write.v"
 `include "register_file.v"
-`include "sx_1.v"
+//`include "sx_1.v"
+`include "mem_block.v"
 `include "sx_2.v"
 `include "cpu_top.v"
 

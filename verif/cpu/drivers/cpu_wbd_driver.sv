@@ -31,7 +31,7 @@ class cpu_wbd_driver;
           int delay;
           bit [31:0] data;
 
-          std::randomize(delay with {delay >= 0; delay < 10});
+          std::randomize(delay) with {delay >= 0 && delay < 10;};
           std::randomize(data);
 
           repeat(delay) begin 
