@@ -7,7 +7,8 @@ module fifo(
 	output empty,
 	input wrt_enb,
 	input rd_enb,
-	input stall_in 
+	input stall_in,
+	input brch
 );
 reg[3:0] wrt_pntr;
 reg[3:0] rd_pntr;
@@ -15,7 +16,7 @@ reg[31:0] data [0:15];
 reg[31:0] data_out_loc;
 always@(posedge clk)
 begin
-	if(rst)begin
+	if((rst)||(~brch))begin
 		wrt_pntr <=4'b0;
 		rd_pntr <= 4'b0;
 	end

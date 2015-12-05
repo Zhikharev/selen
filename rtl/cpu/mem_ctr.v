@@ -88,5 +88,5 @@ assign stb_out = stb_loc;
 assign cyc_out = cyc_loc;
 assign wrt_enb = wrt_enb_loc;
 assign rd_enb = rd_enb_loc;
-assign pc_stop = (state == S2) ? 1'b1 : 1'b0;
+assign pc_stop = ((full)||(state == S2)) ? 1'b1 : 1'b0;
 endmodule

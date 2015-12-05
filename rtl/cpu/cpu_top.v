@@ -23,6 +23,17 @@ module cpu_top (
 //// 							fetch phase 
 
 ///wires of multiplecsers
+/////wires for mem block
+wire s_mux1;
+wire s_mux2;
+wire s_mux3;
+wire s_mux4;
+wire s_mux4_2;
+wire[31:0] pc_next;
+wire mem_ctrl2hz;
+wire[31:0] fifo2regD;
+wire[31:0] inst_data_out;
+wire[31:0] regM2a_mux1;
 wire hz2enbD;
 wire hz2flashD;
 wire[31:0] regD2ctrl;
@@ -215,19 +226,22 @@ mem_block mem_block (
 	.stb(inst_stb_out),
 	.akn_in(inst_ack_in),
 	.cyc(inst_cyc_out),
-	.inst(inst_data_out),
 	.reg_in(srca2regE),
 	.imm12_in(out_mux7),
 	.imm20_in({{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
 	.stall_in(inst_stall_in),
 	.pc_stop(mem_ctrl2hz),
-	.addr_in(regM2a_mux1)
+	.addr_in(regM2a_mux1),
+	.pc_next(pc_next),
+	.inst_out(fifo2regD),
+	.inst_in(inst_data_in),
+	.addr_out(inst_addr_out)
 );
 
 //////
 reg_decode reg_decode(
-	.instr_in(inst_data_in),
-	.pc_in(b_mux1),//pc +4 
+	.instr_in(fifo2regD),
+	.pc_in(pc_next),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
 	.flash(hz2flashD),
@@ -430,6 +444,7 @@ hazard_unit hazard_unit(
 	.mux1(s_mux1),
 	.stall_in(inst_stall_in),
 	.ack_in(inst_ack_in),
+	.mem_ctrl(mem_ctrl2hz),
 	
 	.bp1M(s_bpmux1),
 	.bp2W(s_bpmux2),
@@ -470,10 +485,10 @@ assign out_mux7 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux 
 assign out_mux8 = s_mux8 ? b_mux8 : a_mux8; // mux8
 assign out_mux8_2 = s_mux8_2 ? b_mux8_2 : a_mux8_2; // mux8_2
 assign out_mux8_3 = s_mux8_3 ? b_mux8_3 : a_mux8_3; // mux8_3
-assign out_bpmux1 = s_bpmux1 ? b_bpmux1 : a_bpmux1; // bpmux1
-assign out_bpmux2 = s_bpmux2 ? b_bpmux2 : a_bpmux2; // bpmux2
-assign out_bpmux3 = s_bpmux3 ? b_bpmux3 : a_bpmux3; // bpmux3
-assign out_bpmux4_2 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
+//assign out_bpmux1 = s_bpmux1 ? b_bpmux1 : a_bpmux1; // bpmux1
+//assign out_bpmux2 = s_bpmux2 ? b_bpmux2 : a_bpmux2; // bpmux2
+//assign out_bpmux3 = s_bpmux3 ? b_bpmux3 : a_bpmux3; // bpmux3
+//assign out_bpmux4_2 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
 
 assign a_bpmux1 = regM2mem_result;
 assign b_bpmux1 = out_bpmux2;
@@ -488,7 +503,7 @@ assign b_mux8_2 = {regE2regM_imm20,{11{1'b0}}};
 assign a_mux8 = out_bpmux3;
 assign b_mux8 = regE2b_sign_adder;
 assign a_mux8_3 = out_mux8;
-assign b_nux8_3 = regE2b_sign_adder;
+assign b_mux8_3 = regE2b_sign_adder;
 
 assign address = regE2a_sign_adder + regE2b_sign_adder;////address adder
 

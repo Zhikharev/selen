@@ -23,6 +23,7 @@ module hazard_unit(
 	input mux1,
 	input stall_in,
 	input ack_in,
+	input mem_ctrl,
 	
 	output bp1M,
 	output bp2W,
@@ -98,12 +99,12 @@ begin
 			end
 		end
 	end
-	if(stall_in)begin
-		mux2_loc = 1'b1;
-	end
-	else begin
-		mux2_loc = 1'b0;
-	end
+//	if(stall_in)begin
+//		mux2_loc = 1'b1;
+//	end
+//	else begin
+//		mux2_loc = 1'b0;
+//	end
 end
 ///// forwarding liters are here for mux are not for stages 
 reg bp1M_loc;
@@ -149,10 +150,11 @@ assign flashD = flashD_loc;
 assign flashE = flashE_loc;
 assign flashM = flashM_loc;
 assign flashW = flashW_loc;
-assign mux2 = mux2_loc;
+assign mux2 = ((mem_ctrl)||(stall_in))?1'b1:1'b0;//mux2_loc;
 assign enbD = enbD_loc;
 assign enbE = enbE_loc;
 assign enbM = enbM_loc;
 assign enbW = enbW_loc;
 assign hz2ctrl = hz2ctrl_loc;
+
 endmodule 
