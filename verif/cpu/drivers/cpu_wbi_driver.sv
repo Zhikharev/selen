@@ -47,7 +47,7 @@ class cpu_wbi_driver;
         // TODO: сделать конвейерную отработку, cyc
         if(vif.stb) begin
           int delay;
-          std::randomize(delay with {delay >= 0; delay < 10});
+          std::randomize(delay) with {delay >= 0 && delay < 10;};//corrections
           repeat(delay) begin 
             clear_interface();
             @(vif.drv);
