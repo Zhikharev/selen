@@ -77,12 +77,22 @@ mem_ctrl mem_ctrl (
 	.stall_in(stall_in),
 	.pc_stop(pc_stop)
 );
+<<<<<<< HEAD
 
 //wire rst_brch;
 fifo fifo(
 	.data_in(inst_in),
 	.data_out(inst_out),
 	//.rst(rst_brnch),
+=======
+wire fifo2mem_full;
+wire fifo2mem_empty;
+wire mem2fifo_rd_enb;
+wire mem2fifo_wrt_enb;
+cpu_fifo fifo(
+	.data_in(pc),
+	.data_out(inst),
+>>>>>>> df106d2c0768c39f06f8a9f5ab3e8aa65028bbbb
 	.rst(rst),
 	.brch(mux1),
 	.clk(clk),
