@@ -21,10 +21,10 @@
 `include "cpu/reg_mem.v"
 `include "cpu/reg_write.v"
 `include "cpu/register_file.v"
-`include "cpu/sx_1.v"
+//`include "cpu/sx_1.v"
 `include "cpu/sx_2.v"
-`include "cpu/fifo.v"
-`include "cpu/mem_ctr.v"
+//`include "cpu/fifo.v"
+//`include "cpu/mem_ctr.v"
 `include "cpu/mem_block.v"
 `include "cpu/cpu_top.v"
 

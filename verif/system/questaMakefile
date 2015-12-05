@@ -1,16 +1,16 @@
 # Main path variables
-GIT_HOME 	=
-RTL_PATH    = $(GIT_HOME)/
+GIT_HOME 	=	/home/selen
+RTL_PATH    = $(GIT_HOME)/rtl/
 TB_PATH     = $(GIT_HOME)/verif/system
 MODEL       = $(GIT_HOME)/
 
 # RTL and SV files
 RTL_SRC    = 
-SV_SRC     = $(TB_PATH)/tb.inc.sv
+SV_SRC     = $(TB_PATH)/system_tb_top.sv
 TOP        = system_tb_top
 
 SEED = random
-SIM_OPTS='-c'
+
 
 # Model files
 MODEL_SRC = $(MODEL)/alu.c $(MODEL)/model.c
