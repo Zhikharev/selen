@@ -1,3 +1,15 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: sx_2.v
+# Descriptions:
+# 	controlleble sign extension for providing instruction working witn hot full word (2 bytes or 1 byte, half and byte responsible)
+###########################################################
+*/
+
 module sx_2 (
 	input[2:0] ctrl,
 	input[31:0] data_in,

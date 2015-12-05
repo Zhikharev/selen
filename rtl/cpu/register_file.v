@@ -1,3 +1,17 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: reg_file.v
+# Descriptions:
+# 	register files include 1 write potr and 2 port for reading 
+	amount of register cells is 32
+	bitwise of register's cell 4 bytes 
+###########################################################
+*/
+
 module reg_file (
 	input clk,
 	input reset,

@@ -1,108 +1,74 @@
+/*
+###########################################################
+#
+# Author: Bolotnokov Alexsandr 
+#
+# Project:SELEN
+# Filename: mem_block.v
+# Descriptions:
+# 	block provide interaction betwine cpu amd memory   
+###########################################################
+*/
 
 module mem_block(
-	input clk,
 	input rst,
+	input clk,
+	
 	input mux1,
 	input mux2,
 	input mux3,
 	input mux4,
 	input mux4_2,
-	output stb,
-	input akn_in,
-	output cyc,
-	output[31:0] addr_out,
-	output[31:0] inst_in,
+	input stall,
+	
+	input ack_in,
+	input[31:0] inst_in,
 	output[31:0] inst_out,
-	input[31:0] reg_in,
-	input[31:0] imm12_in,
-	input[31:0] imm20_in,
-	input stall_in,
-	output pc_stop,
-	input[31:0]addr_in,
-	output[31:0] pc_next,
-	output[31:0] pc2mem
+	input[31:0] imm_20,
+	input [31:0] imm_12,
+	input [31:0] reg_in,
+	input[31:0] brch_address,
+
+	output[31:0] inst_addr,
+	output cyc,
+	output stb
 );
+
 reg[31:0] pc;
-reg[31:0] out_pc_loc;
+wire[31:0] pc_next;
+//wire[31:0] a_mux3;
+//wire[31:0] b_mux3;
+wire[31:0] out_mux3;
+//wire[31:0] a_mux1;
+//wire[31:0] b_mux1;
+wire[31:0] out_mux1;
+//wire[31:0] a_mux4;
+//wire[31:0] b_mux4;
+wire[31:0] out_mux4;
+//wire[31:0] a_mux4_2;
+//wire[31:0] b_mux4_2;
+wire[31:0] out_mux4_2;
+
+wire [31:0] adder;
 always@(posedge clk)
 begin
 	if(rst)begin
 		pc <= 31'b0;
 	end
 	else begin
-		if(mux2)begin
-			pc <= pc;
-		end
-		else begin
-			if(mux3)begin
-				pc <= imm20_in;
-			end
-			else begin
-				if(mux1)begin
-					if((mux4_2)&&(mux4))begin
-						pc <= pc +4;
-						out_pc_loc <= pc + 8;
-					end
-					if((~mux4_2)&&(mux4))begin
-						pc <= pc + reg_in;
-					end
-					if((mux4_2)&&(~mux4))begin
-						pc <= pc + imm12_in;
-					end
-					if((~mux4_2)&&(~mux4))begin
-						pc <= imm12_in + reg_in;
-					end
-				end
-				else begin
-					pc<=addr_in;
-				end
-			end
-		end
+		pc <= pc_next;
 	end
 end
-wire fifo2mem_full;
-wire fifo2mem_empty;
-wire mem2fifo_rd_enb;
-wire mem2fifo_wrt_enb;
-mem_ctrl mem_ctrl (
-	.akn_in(akn_in),
-	.cyc_out(cyc),
-	.stb_out(stb),
-	.full(fifo2mem_full),
-	.empty(fifo2mem_empty),
-	.rd_enb(mem2fifo_rd_enb),
-	.wrt_enb(mem2fifo_wrt_enb),
-	.rst(rst),
-	.clk(clk),
-	.stall_in(stall_in),
-	.pc_stop(pc_stop)
-);
-<<<<<<< HEAD
+assign cyc = ((stall)||(~ack_in))? 1'b0:1'b1;
+assign stb = ((stall)||(~ack_in))? 1'b0:1'b1;
 
-//wire rst_brch;
-fifo fifo(
-	.data_in(inst_in),
-	.data_out(inst_out),
-	//.rst(rst_brnch),
-=======
-wire fifo2mem_full;
-wire fifo2mem_empty;
-wire mem2fifo_rd_enb;
-wire mem2fifo_wrt_enb;
-cpu_fifo fifo(
-	.data_in(pc),
-	.data_out(inst),
->>>>>>> df106d2c0768c39f06f8a9f5ab3e8aa65028bbbb
-	.rst(rst),
-	.brch(mux1),
-	.clk(clk),
-	.full(fifo2mem_full),
-	.empty(fifo2mem_empty),
-	.wrt_enb(mem2fifo_wrt_enb),
-	.rd_enb(mem2fifo_rd_enb),
-	.stall_in(stall_in) 
-);
-assign addr_out = pc;
-assign pc_next = out_pc_loc;
+assign out_mux4_2 = (mux4_2)? pc : reg_in;
+assign out_mux4 = (mux4)? 31'b100 : imm_12;
+assign pc_next = (mux2)? pc : out_mux3;//mux2
+assign out_mux3 = (mux3)? imm_20 : out_mux1;
+assign out_mux1 = (mux1) ? adder : brch_address;
+assign adder = out_mux4 + out_mux4_2;
+
+assign inst_addr = pc;
+ 
 endmodule
-
