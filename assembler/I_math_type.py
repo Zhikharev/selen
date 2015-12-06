@@ -2,7 +2,7 @@
 import Registers
 import Service
 class I_math_type:
-    opcode = "0100011"
+    opcode = "1000011"
     codes = [
         "ADDI",
         "SLTI",
