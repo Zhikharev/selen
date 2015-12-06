@@ -141,6 +141,10 @@ def ParseData(data):
                     for i in range(num):
                         keys[line[0] + "["+ str(i) + "]"] = int(len(dataD)/8)
                         dataD += Addr2Bin(0, 32)
+                else:
+                    ERROR("Error while .data parsing in line: " + line)
+            else:
+                ERROR("Error while .data parsing in line: " + line)
         else:
             line = line.split(" ")
             if len(line) == 2:
@@ -150,5 +154,21 @@ def ParseData(data):
                     for i in range(len(line[1])):
                         keys[line[0] + "["+ str(i) + "]"] = int(len(dataD)/8)
                         dataD += Addr2Bin(Str2Num(line[1][i]), 32)
+                else:
+                    ERROR("Error while .data parsing in line: " + line)
+            else:
+                ERROR("Error while .data parsing in line: " + line)
 
     return [keys, dataD]
+
+#Функция для чтения конфигурационного файла
+def readConfig(file_addr):
+    cfg = open(file_addr)
+    result = {}
+    for line in cfg:
+        line = line.split("=")
+        line[0] = line[0].strip()
+        line[1] = line[1].strip()
+        result[line[0]] = line[1];
+
+    return result;

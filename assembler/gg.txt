@@ -1,0 +1,7 @@
+.data
+arr [1,2,3,4,5,6]
+.code
+metka: ADD $1 $0 $0
+ADD $2 $0 $0
+label:
+ADD $3 $0 $0

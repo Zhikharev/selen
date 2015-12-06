@@ -1,8 +1,8 @@
-#ADDI $Rd, $Rs1, imm 
+#ADDI $Rd, $Rs1, imm
 import Registers
 import Service
 class I_math_type:
-    opcode = "1000011"
+    opcode = "0100011"
     codes = [
         "ADDI",
         "SLTI",

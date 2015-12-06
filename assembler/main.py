@@ -16,6 +16,10 @@ S_t = Store_type.Store_type()
 Im_t = I_math_type.I_math_type()
 Is_t = I_shamt_type.I_shamt_type()
 
+cfg = Service.readConfig("config.cfg")
+start_addr = 0;
+if "start_addr" in cfg:
+    start_addr = Service.Str2Num(cfg["start_addr"])
 data = "";
 file_addr = input("Input file address: ")
 pfile = open(file_addr);
@@ -29,8 +33,6 @@ if ".DATA" in code:
     code[".DATA"] = Service.ParseData(code[".DATA"])
     dataK = code[".DATA"][0]
     dataD = code[".DATA"][1]
-
-print(dataK, dataD)
 
 s = Service.GetLabels(code[".CODE"])
 code[".CODE"] = s[0];
