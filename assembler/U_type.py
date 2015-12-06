@@ -1,3 +1,4 @@
+#LUI Rd, 0xABF4
 import Registers
 import Service
 class U_type:
@@ -20,4 +21,3 @@ class U_type:
         else:
             Service.ERROR("Error: " + Service.InstNotFound + "in line: " + line)
         return result;
-        

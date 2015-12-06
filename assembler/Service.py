@@ -61,7 +61,7 @@ def WriteBinary(ofile, data):
     cur = 0
     while cur < len(data):
         c = int(data[cur:cur+8], 2)
-        file.write(bytes(chr(c), 'iso8859-1'))
+        ofile.write(bytes(chr(c), 'iso8859-1'))
         cur += 8
 #Функция разделения файла по директивам
 def SplitToDierctives(ofile):
