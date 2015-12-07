@@ -24,6 +24,7 @@ class draft_test extends base_test;
     $display("[%0t][TEST][BUILD] Phase started", $time);
     draft_seq = new();
     env.seq_q.push_back(draft_seq);
+    env.build_phase();
     $display ("[%0t][TEST][BUILD] Phase ended", $time);   
   endfunction
 

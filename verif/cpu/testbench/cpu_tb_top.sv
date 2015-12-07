@@ -16,9 +16,17 @@ module cpu_tb_top ();
 
 	logic clk;
 
+  initial $timeformat(-9, 1, "ns", 4);
+
 	initial begin
 		clk = 0;
-		forever #10 clk = !clk;
+		forever #10ns clk = !clk;
+	end
+
+	initial begin
+		rst_intf.rst = 1'b1;
+		repeat(5) @(posedge clk);
+		rst_intf.rst = 1'b0;
 	end
 
 	reset_if   rst_intf (clk);

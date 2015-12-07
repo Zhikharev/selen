@@ -45,7 +45,7 @@ class cpu_env extends cpu_base_component;
     $display("[%0t][REPORT] Phase started", $time);
     $display ("[%0t][REPORT] Phase ended", $time);   
   endfunction
-
+  
 endclass
 
 `endif

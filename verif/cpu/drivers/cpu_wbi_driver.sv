@@ -18,7 +18,10 @@ class cpu_wbi_driver;
 
   base_seq seq_q[$];
   rv32_transaction common_q[$];
+
+  int active_req;
   int max_active_req = 5;
+
   semaphore sem;
 
   function new (virtual wishbone_if wbi_if);
@@ -43,7 +46,6 @@ class cpu_wbi_driver;
   endfunction
 
   task run_phase();
-    int active_req;
     $display("[%0t][WBI DRV][[RUN] Phase started", $time);
     fork
       process_req();
