@@ -28,6 +28,7 @@ class cpu_env extends cpu_base_component;
   function void build_phase();
     $display("[%0t][ENV][BUILD] Phase started", $time);
     wbi_agent.driver.seq_q = this.seq_q;
+    wbi_agent.driver.build_phase();
     $display ("[%0t][ENV][BUILD] Phase ended", $time);   
   endfunction
 
