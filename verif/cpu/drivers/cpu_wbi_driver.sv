@@ -31,29 +31,33 @@ class cpu_wbi_driver;
 
   function void build_phase();
     $display("[%0t][WBI DRV][BUILD] Phase started", $time);
-    $display("[%0t] Planning common instruction queue...", $time());
-    foreach(seq_q[i]) begin
-      base_seq seq;
-      if(!$cast(seq, seq_q[i])) $fatal("Cast failed!");
-      seq.body();
-      foreach(seq.req_q[i]) begin
-        rv32_transaction req;
-        if(!$cast(req, seq.req_q[i])) $fatal("Cast failed");
-        common_q.push_back(req);
-      end
-    end
     $display ("[%0t][WBI DRV][BUILD] Phase ended", $time);   
   endfunction
 
   task run_phase();
     $display("[%0t][WBI DRV][[RUN] Phase started", $time);
+    foreach(seq_q[i]) begin
+      base_seq seq;
+      if(!$cast(seq, seq_q[i])) $fatal("Cast failed!");
+      seq.body();
+      $display("[%0t] Planning common instruction queue...", $time());
+      foreach(seq.req_q[i]) begin
+        rv32_transaction req;
+        if(!$cast(req, seq.req_q[i])) $fatal("Cast failed");
+        common_q.push_back(req);
+      end
+      drive_items();
+    end
+    $display("[%0t][WBI DRV][[RUN] Phase ended", $time);
+  endtask
+
+  task drive_items();
     fork
       process_req();
       process_ack();
     join_any
     wait(active_req == 0);
     disable fork;
-    $display("[%0t][WBI DRV][[RUN] Phase ended", $time);
   endtask
 
   task process_req();
