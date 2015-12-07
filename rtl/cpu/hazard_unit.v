@@ -41,6 +41,7 @@ module hazard_unit(
 	output bp2W,
 	output bp3M,
 	output bp4W,
+	output bp5M,
 	output mux2,
 	output hz2ctrl,
 	
@@ -124,7 +125,7 @@ reg bp1M_loc;
 reg bp2W_loc;
 reg bp4W_loc;
 reg bp3M_loc;
-
+reg bp5M_loc;
 always @*
 begin
 	if(reset)begin
@@ -132,6 +133,7 @@ begin
 		bp2W_loc = 1'b0;
 		bp4W_loc = 1'b0;
 		bp3M_loc = 1'b0;
+		bp5M_loc = 1'b0;
 	end
 	else begin
 		if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
@@ -167,6 +169,7 @@ assign bp1M = bp1M_loc;
 assign bp3M= bp3M_loc;
 assign bp2W = bp2W_loc;
 assign bp4W = bp4W_loc;
+assign bp5M = bp5M_loc;
 assign flashD = flashD_loc;
 assign flashE = flashE_loc;
 assign flashM = flashM_loc;

@@ -121,15 +121,15 @@ begin
 				loc8 = 1'b0;
 				loc8_2 = 1'b0;
 				loc8_3 = 1'b0;
-				loc7 = 1'bx;
-				loc6 = 1'bx;
+				loc7 = 1'b1;
+				loc6 = 1'b1;
 				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'bxx;
+				be_mem_loc = 2'b00;
 				cmd_loc = other;
 				rubish_loc = 1'b0;
 				sx_loc = {SIGN,FULL};
@@ -141,33 +141,33 @@ begin
 				loc8_2 = 1'b0;
 				loc8_3 = 1'b0;
 				loc7 = 1'b0;
-				loc6 = 1'bx;
+				loc6 = 1'b1;
 				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'bxx;;
+				be_mem_loc = 2'b00;;
 				cmd_loc = other;
 				sx_loc = {SIGN,FULL};
 				rubish_loc = 1'b0;
 			end
 			U_LUI:begin///////////////
 				loc10 = 1'b1;
-				loc9 = 1'bx;
-				loc8 = 1'bx;
-				loc8_2 = 1'bx;
-				loc8_3 = 1'bx;
-				loc7 = 1'bx;
-				loc6 = 1'bx;
+				loc9 = 1'b1;
+				loc8 = 1'b1;
+				loc8_2 = 1'b1;
+				loc8_3 = 1'b1;
+				loc7 = 1'b1;
+				loc6 = 1'b1;
 				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'bxx;
+				be_mem_loc = 2'b00;
 				cmd_loc = other;
 				sx_loc = {SIGN,FULL};
 				rubish_loc = 1'b0;
@@ -175,58 +175,58 @@ begin
 			U_AUIPC:begin
 				loc10 = 1'b0;
 				loc9 = 1'b0;
-				loc8 = 1'bx;
+				loc8 = 1'b1;
 				loc8_2 = 1'b1;
 				loc8_3 = 1'b1;
-				loc7 = 1'bx;
-				loc6 = 1'bx;
+				loc7 = 1'b1;
+				loc6 = 1'b1;
 				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'bxx;
+				be_mem_loc = 2'b00;
 				cmd_loc = other;
 				sx_loc = {SIGN,FULL};
 				rubish_loc = 1'b0;
 			end
 			SB:begin
 				loc10 = 1'b0;
-				loc9 = 1'bx;
+				loc9 = 1'b1;
 				loc8 = 1'b1;
 				loc8_2 = 1'b0;
 				loc8_3 = 1'b0;
 				loc7 = 1'b1;
 				loc6 = 1'b0;
-				loc5 = 1'bx;
+				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b0;
-				be_mem_loc = 2'bxx;
+				be_mem_loc = 2'b00;
 				cmd_loc = other;
-				sx_loc = 3'bxxx;
+				sx_loc = 3'b100;
 				rubish_loc = 1'b0;
 			end
 			UJ:begin//jal
-				loc10 = 1'bx;
-				loc9 = 1'bx;
-				loc8 = 1'bx;
-				loc8_2 = 1'bx;
-				loc8_3 = 1'bx;
-				loc7 = 1'bx;
-				loc6 = 1'bx;
-				loc4 = 1'bx;
-				loc4_2 = 1'bx;
+				loc10 = 1'b1;
+				loc9 = 1'b1;
+				loc8 = 1'b1;
+				loc8_2 = 1'b1;
+				loc8_3 = 1'b1;
+				loc7 = 1'b1;
+				loc6 = 1'b1;
+				loc4 = 1'b1;
+				loc4_2 = 1'b1;
 				loc3 = 1'b1;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
 				be_mem_loc = FULL;
 				cmd_loc = jmp_cmd;
 				rubish_loc = 1'b0;
-				sx_loc = 3'bxxx;
+				sx_loc = 3'b100;
 				if(hz2ctrl) begin
 					loc5 = 1'b0;
 				end
@@ -234,17 +234,17 @@ begin
 			end
 			I:begin
 				if(fnct == 3'b000)begin
-					loc10 = 1'bx;
-					loc9 = 1'bx;
-					loc8 = 1'bx;
-					loc8_2 = 1'bx;
-					loc8_3 = 1'bx;
+					loc10 = 1'b1;
+					loc9 = 1'b1;
+					loc8 = 1'b1;
+					loc8_2 = 1'b1;
+					loc8_3 = 1'b1;
 					loc7 = 1'b1;
-					loc6 = 1'bx;
+					loc6 = 1'b1;
 					loc4 = 1'b0;
 					loc4_2 = 1'b0;
 					loc3 = 1'b0;
-					sx_loc = 3'bxxx;
+					sx_loc = 3'b100;
 					we_mem_loc = 1'b0;
 					we_reg_loc = 1'b1;
 					be_mem_loc = FULL;
@@ -262,7 +262,7 @@ begin
 					loc8_2 = 1'b0;
 					loc8_3 = 1'b0;
 					loc7 = 1'b0;
-					loc6 = 1'bx;
+					loc6 = 1'b1;
 					loc5 = 1'b1;
 					loc4 = 1'b1;
 					loc4_2 = 1'b1;
@@ -328,21 +328,21 @@ begin
 				endcase
 			end
 			default: begin/// defualt is don't write to reg and mem 
-				loc10 = 1'bx;
-				loc9 = 1'bx;
-				loc8 = 1'bx;
-				loc8_2 = 1'bx;
-				loc8_3 = 1'bx;
-				loc7 = 1'bx;
-				loc6 = 1'bx;
-				loc5 = 1'bx;
+				loc10 = 1'b1;
+				loc9 = 1'b1;
+				loc8 = 1'b1;
+				loc8_2 = 1'b1;
+				loc8_3 = 1'b1;
+				loc7 = 1'b1;
+				loc6 = 1'b1;
+				loc5 = 1'b1;
 				loc4 = 1'b1;
 				loc4_2 = 1'b1;
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b0;
-				be_mem_loc = 2'bxx;
-				cmd_loc = 2'bxx;
+				be_mem_loc = 2'b00;
+				cmd_loc = 2'b00;
 				rubish_loc = 1'b1;
 				sx_loc = {SIGN,FULL};
 			end
@@ -354,7 +354,7 @@ always @*
 begin
 	case(opcode)
 		R:begin
-			brn_loc = 3'b0xx;
+			brn_loc = 3'b000;
 			if(fnct7 == 2'b00)begin
 				case(fnct)
 					3'b000: begin
@@ -411,7 +411,7 @@ begin
 			end
 		end/////end R type
 		R_I:begin
-			brn_loc = 3'b0xx;
+			brn_loc = 3'b000;
 			case(fnct)
 				3'b000: begin
 					alu_loc = ADD;
@@ -534,7 +534,6 @@ assign mux5 = loc5;
 assign mux4 = loc4;
 assign mux4_2 = loc4_2;
 assign mux3 = loc3;
-//assign mux1 = loc1;
 assign we_mem = we_mem_loc;
 assign we_reg = we_reg_loc;
 assign be_mem = be_mem_loc;

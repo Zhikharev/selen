@@ -23,7 +23,7 @@ localparam LB =2'b10;
 
 always @*
 begin
-	if(ctrl[2]) begin
+	if(ctrl[2]) begin//sign
 		case(ctrl[1:0])
 			BP: loc = data_in;
 			LH: loc = {{16{data_in[15]}},data_in};//lw				
@@ -31,7 +31,7 @@ begin
 			default: loc = loc;
 		endcase
 	end
-	else begin
+	else begin//unsign
 		case(ctrl[1:0])
 			BP: loc = data_in;
 			LH: loc = {{16{1'b0}},data_in};//lw				

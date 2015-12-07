@@ -86,7 +86,7 @@ wire[31:0] b_mux5;
 wire s_mux5;
 
 wire[31:0] out_mux7;
-wire[11:0] a_mux7;
+//wire[11:0] a_mux7;
 wire[31:0] b_mux7;
 wire s_mux7;
 
@@ -101,9 +101,9 @@ wire hz2enbE;
 
 wire[31:0] address;
 wire[2:0] regE2regM_sx;
-//wire regE2_mux8;
-//wire regE2_mux8_2;
-//wire regE2_mux8_3;
+wire regE2_mux8;
+wire regE2_mux8_2;
+wire regE2_mux8_3;
 wire[3:0] regE2_alu_ctrl;
 wire regE2_alu_sign;
 wire[31:0] regE2a_bpmux2;
@@ -221,6 +221,7 @@ wire[19:0] regW2b_mux10_imm20;
 ////					end of out 
 //################################### modules 
 ///mem_block
+wire[31:0] mem_block2regD_pc;
 mem_block mem_block (
 	.rst(sys_rst),
 	.clk(sys_clk),
@@ -242,13 +243,14 @@ mem_block mem_block (
 
 	.inst_addr(inst_addr_out),
 	.cyc(inst_cyc_out),
-	.stb(inst_stb_out)
+	.stb(inst_stb_out),
+	.pc_next_out(mem_block2regD_pc)
 );
 
 //////
 reg_decode reg_decode(
 	.instr_in(inst_data_in),
-	.pc_in(pc_next),//pc +4 
+	.pc_in(mem_block2regD_pc),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
 	.flash(hz2flashD),
@@ -300,7 +302,7 @@ reg_exe reg_exe(
 	.rs1E(regD2ctrl[19:15]),
 	.rs2E(regD2ctrl[24:20]),
 	.rdE(regD2ctrl[11:7]),
-	.pcE(),//pc+4//problem;
+	.pcE(regD2regE_pc),
 	.imm20E(regD2ctrl[31:12]),
 	.imm_or_addr(out_mux7),
 	.s_u_alu(ctrl2regE_alu_sign),
@@ -459,6 +461,7 @@ hazard_unit hazard_unit(
 	.bp2W(s_bpmux2),
 	.bp3M(s_bpmux3),
 	.bp4W(s_bpmux4),
+	.bp5M(s_bpmux5),
 	.mux2(s_mux2),
 	.hz2ctrl(hz2ctrl),
 	
@@ -488,16 +491,20 @@ assign b_mux7 = out_mux6;
 
 assign out_mux6 = (s_mux6)?b_mux6:a_mux6;
 assign out_mux5 = (s_mux5)?b_mux5:a_mux5;
-assign out_mux7 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension
+assign a_mux5 = regD2regE_pc;
+assign b_mux5 = out_mux10;
+assign out_mux7 = (s_mux7)?b_mux7:{{19{regD2ctrl[31]}},regD2ctrl[31:20]};///mux end sign extension//a_mux7
+
 //// ################ end of decode
-/////################ exe phase 
+/////################ exe phase
 assign out_mux8 = s_mux8 ? b_mux8 : a_mux8; // mux8
 assign out_mux8_2 = s_mux8_2 ? b_mux8_2 : a_mux8_2; // mux8_2
 assign out_mux8_3 = s_mux8_3 ? b_mux8_3 : a_mux8_3; // mux8_3
 assign out_bpmux1 = s_bpmux1 ? b_bpmux1 : a_bpmux1; // bpmux1
 assign out_bpmux2 = s_bpmux2 ? b_bpmux2 : a_bpmux2; // bpmux2
 assign out_bpmux3 = s_bpmux3 ? b_bpmux3 : a_bpmux3; // bpmux3
-assign out_bpmux4_2 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
+assign out_bpmux4 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
+assign out_bpmux5 = (s_bpmux5)?b_bpmux5:a_bpmux5;//bpmux5
 
 assign a_bpmux1 = regM2mem_result;
 assign b_bpmux1 = out_bpmux2;
@@ -518,7 +525,9 @@ assign address = regE2a_sign_adder + regE2b_sign_adder;////address adder
 
 //// ################ end of exe
 //// ################ mem
-assign out_bpmux5 = (s_bpmux5)?b_bpmux5:a_bpmux5;
+
+assign a_bpmux5 = regM2bpmux;
+assign b_bpmux5 = out_mux10;
 assign data_data_out = out_bpmux5;//data_data_out
 assign out_mux9 = (s_mux9)? b_mux9:a_mux9;
 assign a_mux9 = regW2a_mux9;

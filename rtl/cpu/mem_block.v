@@ -30,6 +30,7 @@ module mem_block(
 	input[31:0] brch_address,
 
 	output[31:0] inst_addr,
+	output[31:0]pc_next_out,
 	output cyc,
 	output stb
 );
@@ -68,7 +69,7 @@ assign pc_next = (mux2)? pc : out_mux3;//mux2
 assign out_mux3 = (mux3)? imm_20 : out_mux1;
 assign out_mux1 = (mux1) ? adder : brch_address;
 assign adder = out_mux4 + out_mux4_2;
-
+assign pc_next_out = pc_next + 4;
 assign inst_addr = pc;
  
 endmodule
