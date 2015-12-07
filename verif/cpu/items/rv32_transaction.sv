@@ -31,6 +31,7 @@ class rv32_transaction;
   
   function string sprint();
     string str;
+    str = {str, opcode.name()};
     return(str);
   endfunction
 
