@@ -136,7 +136,8 @@ begin
 		bp5M_loc = 1'b0;
 	end
 	else begin
-		if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
+		//forwarding form mem stage to exqution stage 
+		(if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
 			bp1M_loc = 1'b0;
 		end
 		else begin
@@ -149,19 +150,25 @@ begin
 		else begin
 			bp3M_loc = 1'b1;
 		end
-
+		//forwarding from writeback stage to exeqution stage 
 		if((rs1E != 5'b0)&&(rs1E == rdW)&&(we_regW== 1'b1))begin
 			bp2W_loc = 1'b1;
 		end
 		else begin
 			bp2W_loc = 1'b0;
 		end
-
+		// forwarding from writeback stage to memory stage 
 		if((rs2E != 5'b0)&&(rs2E == rdW)&&(we_regW== 1'b1))begin
 			bp4W_loc = 1'b1;
 		end
 		else begin
 			bp4W_loc = 1'b0;
+		end
+		if((cmd_inM == lw_cmd)&&(cmd_inW == lw_cmd)&&((rdW == rs1W)||(rdW == rs2W)))begin
+			bp5M_loc = 1'b1;
+		end
+		else begin
+			bp5M_loc = 1'b0;
 		end
 	end
 end
@@ -181,4 +188,4 @@ assign enbM = enbM_loc;
 assign enbW = enbW_loc;
 assign hz2ctrl = hz2ctrl_loc;
 
-endmodule 
+endmodule
