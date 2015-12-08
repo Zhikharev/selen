@@ -20,9 +20,11 @@
 `include "environment/cpu_env.sv"
 
 `include "sequences/cpu_draft_seq.sv"
+`include "sequences/cpu_seq_lib.sv"
 
 `include "tests/base_test.sv"
 `include "tests/draft_test.sv"
+`include "tests/test_lib.sv"
 `include "tests/run_test.sv"
 
 `include "testbench/cpu_assembled.sv"
