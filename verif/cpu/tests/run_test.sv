@@ -29,6 +29,13 @@ program run_test (
   				test.run_phase();
   				test.report_phase();
   			end
+        "direct_test": begin
+          direct_test test;
+          test = new(wbi_intf, wbd_intf, rst_intf);
+          test.build_phase();
+          test.run_phase();
+          test.report_phase();
+        end
   			default: begin
   				$fatal("Undefined TESTNAME");
   			end
