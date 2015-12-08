@@ -34,7 +34,6 @@ module mem_block(
 	output cyc,
 	output stb
 );
-
 reg[31:0] pc;
 wire[31:0] pc_next;
 //wire[31:0] a_mux3;
@@ -60,9 +59,52 @@ begin
 		pc <= pc_next;
 	end
 end
-assign cyc = ((stall)||(~ack_in))? 1'b0:1'b1;
-assign stb = ((stall)||(~ack_in))? 1'b0:1'b1;
-
+//mem FSM
+reg cyc_loc;
+reg stb_loc; 
+reg[1:0] state;
+reg[1:0] state_next;
+always@(posedge clk)begin
+	if((rst)||(stall))begin
+		state <= 2'b0;
+	end	
+	else begin
+		state <= state_next;
+	end
+end
+always@* begin
+	case(state)
+		2'b00:begin
+			state_next = 2'b01;
+			stb_loc = 1'b0;
+			cyc_loc =1'b0;
+		end
+		2'b01:begin
+			state_next = 2'b10;
+			stb_loc = 1'b1;
+			cyc_loc = 1'b1;
+		end
+		2'b10:begin
+			if(ack_in) begin
+				state_next = 2'b11;
+				stb_loc = 1'b0;
+				cyc_loc = 1'b1;
+			end
+			else begin
+				state_next = 2'b11;
+			end
+		end
+		2'b11:begin
+			state_next = 2'b01;
+			stb_loc = 1'b0;
+			cyc_loc = 1'b1;
+		end
+	endcase;
+end
+//assign cyc = ((stall)||(~ack_in))? 1'b0:1'b1;
+//assign stb = ((stall)||(~ack_in))? 1'b0:1'b1;
+assign cyc = cyc_loc;
+assign stb = stb_loc;
 assign out_mux4_2 = (mux4_2)? pc : reg_in;
 assign out_mux4 = (mux4)? 31'b100 : imm_12;
 assign pc_next = (mux2)? pc : out_mux3;//mux2
