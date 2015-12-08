@@ -35,7 +35,7 @@ module hazard_unit(
 	input mux1,
 	input stall_in,
 	input ack_in,
-	input mem_ctrl,
+	//input mem_ctrl,
 	
 	output bp1M,
 	output bp2W,

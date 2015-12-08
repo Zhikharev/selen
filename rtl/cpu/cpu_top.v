@@ -53,9 +53,9 @@ wire hz2ctrl;
 wire hz2flashE;
 wire[31:0] srca2regE;
 wire[31:0] srcb2regE;
-wire ctrl2hz;
+//wire ctrl2hz;
 wire[2:0] ctrl2regE_sx_ctrl;
-wire[31:0] sxD2mux4;
+//wire[31:0] sxD2mux4;
 ////ctrl wires 
 wire ctrl2regE_mux10;
 wire ctrl2regE_mux9;
@@ -74,7 +74,7 @@ wire[1:0]ctrl2regE_brch_type;
 wire ctrl2regE_we_mem;
 wire ctrl2regE_we_reg;
 wire[1:0] ctrl2regE_be_mem;
-wire ctrl_rubish;
+//wire ctrl_rubish;
 wire[31:0] regD2regE_pc;
 wire[31:0] regD2ctrl;
 wire reg2hz;
@@ -101,9 +101,9 @@ wire hz2enbE;
 
 wire[31:0] address;
 wire[2:0] regE2regM_sx;
-wire regE2_mux8;
-wire regE2_mux8_2;
-wire regE2_mux8_3;
+//wire regE2_mux8;
+//wire regE2_mux8_2;
+//wire regE2_mux8_3;
 wire[3:0] regE2_alu_ctrl;
 wire regE2_alu_sign;
 wire[31:0] regE2a_bpmux2;
@@ -167,16 +167,16 @@ wire[1:0] regE2regM_cmd;
 //// 						memory stage 
 wire hz2enbW;
 wire hz2flashM;
-wire[1:0] regM2cnd;
-wire [31:0] result2mem;
+//wire[1:0] regM2cnd;
+//wire [31:0] result2mem;
 wire regM2regW_mux10;
 wire[1:0] regM2regW_cmd;
 wire regM2regW_mux9;
 wire[19:0] regM2regW_imm20;
-wire[19:0] regM2b_mux10_imm20;
+//wire[19:0] regM2b_mux10_imm20;
 //wire regM2regW_mux10;
 wire[4:0] regM2regW_rs1;
-wire[4:0] regM2ergW_rs2;
+//wire[4:0] regM2ergW_rs2;
 wire[4:0] regM2regW_rd;
 wire[31:0] regM2bpmux;
 wire[31:0] mem2regW;
@@ -211,11 +211,11 @@ wire[4:0] regW2out_rd;
 wire[4:0] regW2out_rs2;
 wire[4:0] regW2out_rs1;
 wire[1:0] regW2out_cmd;
-wire[1:0] regW2out;
+//wire[1:0] regW2out;
 wire[31:0] regW2a_mux9;
 wire[31:0] regW2b_mux9;
-wire[4:0] regW2reg_rd;
-wire[4:0] regW_rs2W_out;
+//wire[4:0] regW2reg_rd;
+//wire[4:0] regW_rs2W_out;
 wire[19:0] regW2b_mux10_imm20;
 
 ////					end of out 
@@ -377,7 +377,7 @@ reg_mem reg_mem(
 	.srcbM_out(regM2bpmux),
 	.cndM_out(regM2brch_cnd),
 	.addrM_out(regM2a_mux1),
-	.rs1M_out(regM2regW_rs1),
+	.rs1M_out(W_rs1),
 	.rs2M_out(regM2regW_rs2),
 	.rdM_out(regM2regW_rd),
 	.be_memM_out(data_be_out),// data_be_out
@@ -455,7 +455,7 @@ hazard_unit hazard_unit(
 	.mux1(s_mux1),
 	.stall_in(inst_stall_in),
 	.ack_in(inst_ack_in),
-	.mem_ctrl(mem_ctrl2hz),
+	//.mem_ctrl(),
 	
 	.bp1M(s_bpmux1),
 	.bp2W(s_bpmux2),
