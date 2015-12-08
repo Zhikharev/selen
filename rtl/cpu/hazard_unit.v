@@ -113,7 +113,7 @@ begin
 			end
 		end
 	end
-	if((stall_in)||(~ack_in))begin
+	if(stall_in)begin//TO DO 
 		mux2_loc = 1'b1;
 	end
 	else begin
@@ -137,7 +137,7 @@ begin
 	end
 	else begin
 		//forwarding form mem stage to exqution stage 
-		(if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
+		if((rs1E != 5'b0)&&(rs1E == rdM)&&(we_regM == 1'b1))begin
 			bp1M_loc = 1'b0;
 		end
 		else begin

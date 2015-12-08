@@ -87,11 +87,9 @@ always@* begin
 		2'b10:begin
 			if(ack_in) begin
 				state_next = 2'b11;
-				stb_loc = 1'b0;
-				cyc_loc = 1'b1;
 			end
 			else begin
-				state_next = 2'b11;
+				state_next = 2'b10;
 			end
 		end
 		2'b11:begin
@@ -113,5 +111,5 @@ assign out_mux1 = (mux1) ? adder : brch_address;
 assign adder = out_mux4 + out_mux4_2;
 assign pc_next_out = pc_next + 4;
 assign inst_addr = pc;
- 
+assign inst_out = inst_in; 
 endmodule

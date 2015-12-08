@@ -249,7 +249,7 @@ mem_block mem_block (
 
 //////
 reg_decode reg_decode(
-	.instr_in(inst_data_in),
+	.instr_in(mem_block2regD_inst),
 	.pc_in(mem_block2regD_pc),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
