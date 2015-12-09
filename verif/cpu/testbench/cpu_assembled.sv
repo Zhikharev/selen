@@ -21,7 +21,6 @@
 `include "reg_mem.v"
 `include "reg_write.v"
 `include "register_file.v"
-//`include "sx_1.v"
 `include "mem_block.v"
 `include "sx_2.v"
 `include "cpu_top.v"
@@ -32,6 +31,8 @@ module cpu_assembled (
 	wishbone_if 	wbi_intf,
 	wishbone_if 	wbd_intf
 );
+
+	assign wbi_intf.we = 1'b0;
 
 	// Instantiate CPU DUT here
 	cpu_top top 

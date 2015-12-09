@@ -22,7 +22,7 @@ class cpu_draft_seq extends base_seq;
     $display("[%0t][SEQ] Start of 'cpu_draft_seq'", $time);
     repeat(10) begin
     	req = new();
-    	assert(req.randomize())
+    	assert(req.randomize() with {req.opcode inside {ADD, SLT, SLTU, AND, OR, XOR, SLL, SRL};})
     	else $fatal("Randomization failed!");
     	req_q.push_back(req);
    	end
