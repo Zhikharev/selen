@@ -40,7 +40,7 @@ module commutator
 	output  	[31:0] 		slave4_wb_data_o,
 	
 	// DMA
-	output 					master3_wb_cyc_o,
+	input 					master3_wb_cyc_i,
 	input    				master3_wb_stb_i,
 	output	 	 			master3_wb_ack_o, 
 	input  					master3_wb_we_i,
@@ -143,7 +143,6 @@ module commutator
 	
 	assign master3_wb_ack_o		= reg_master3_wb_ack_o;
 	assign master3_wb_data_o	= reg_master3_wb_data_o;
-	assign master3_wb_cyc_o		= master1_wb_cyc_i;
 	
 	assign slave1_wb_stb_o		= reg_slave1_wb_stb_o;
 	assign slave1_wb_addr_o		= reg_slave1_wb_addr_o;
@@ -156,12 +155,6 @@ module commutator
 	assign slave3_wb_stb_o		= reg_slave3_wb_stb_o;
 	assign slave3_wb_addr_o		= reg_slave3_wb_addr_o;
 	
-
-	
-	
-	//fifo fifo1(sys_clk, sys_rst, master1_wb_addr_i, fifo_master1_addr, master1_wb_stb_i, ~empty, full, empty);
-	
-	//fifo fifo (sys_clk, sys_clk, sys_rst, clr, master1_wb_addr_i, master1_wb_stb_i, fifo_master1_addr, re, full, empty, full_n, empty_n, level );
 	
 	fifo 
 	#(
@@ -211,7 +204,7 @@ module commutator
 			m_data_o						<= slave2_wb_data_i;		
 			reg_slave2_wb_data_o			<= m_data_i;
 			
-			if (master2_wb_stb_i & master1_wb_cyc_i) begin				
+			if (master2_wb_stb_i) begin				
 				m_stb_i 					<= master2_wb_stb_i;
 				reg_master2_wb_ack_o		<= m_ack_o;
 				m_we_i 						<= master2_wb_we_i;

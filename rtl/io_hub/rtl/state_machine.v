@@ -28,16 +28,20 @@ module state_mashine (
 	assign addr_end_reg		= registre_file[2];
 	assign data 			= registre_file[3];
 	
-	localparam state_0 			= 0;
-	localparam state_start 		= 1;
-	localparam state_finish 	= 2;	
-	localparam state_addr_first = 3;	
-	localparam state_addr_end 	= 4;
-	localparam state_data 		= 5;
+	localparam STATE_IDLE 			= 0;
+	localparam STATE_START 		= 1;
+	localparam STATE_FINISH 	= 2;	
+	localparam STATE_ADDR_FIRST = 3;	
+	localparam STATE_ADDR_END 	= 4;
+	localparam STATE_DATA 		= 5;
 	
-	localparam state_addr_first1 = 6;	
-	localparam state_addr_end1 	 = 7;
-	localparam state_data1 		 = 8;
+	localparam STATE_ADDR_FIRST1 = 6;	
+	localparam STATE_ADDR_END1 	 = 7;
+	localparam STATE_DATA1 		 = 8;
+	
+	localparam 	START_BIT		 = 32'h00000001;
+	localparam 	FINISH_BIT		 = 32'h00000002;
+	localparam 	DREADY_BIT		 = 32'h00000004;
 	
 	always @(posedge clk or posedge rst) begin
 		if (rst) begin
@@ -49,23 +53,21 @@ module state_mashine (
 			registre_file[3] <= 32'h00000000; // data
 		end else begin
 			
-			if (state_next == state_start)	registre_file[0] <= registre_file[0] | 32'h00000001;
-			if (state_next == state_finish)	registre_file[0] <= registre_file[0] | 32'h00000002;
-			if (state_next == state_0)		registre_file[0] <= registre_file[0] & ~32'h00000004;
+			if (state_next == STATE_START)	registre_file[0] <= registre_file[0] | START_BIT;
+			if (state_next == STATE_FINISH)	registre_file[0] <= registre_file[0] | FINISH_BIT;
+			if (state_next == STATE_IDLE)		registre_file[0] <= registre_file[0] & ~DREADY_BIT;
 			
-			if ((state_reg == state_addr_first1)  & (dready)) begin
+			if ((state_reg == STATE_ADDR_FIRST1)  & (dready)) begin
 														registre_file[1] <= din;
-														//registre_file[0] <= registre_file[0] | 32'h00000004;
 													end
 			
-			if ((state_reg == state_addr_end1) & (state_next == state_0)) begin
+			if ((state_reg == STATE_ADDR_END1) & (state_next == STATE_IDLE)) begin
 														registre_file[2] <= din;
-														//registre_file[0] <= registre_file[0] | 32'h00000004;
 													end
 			
-			if ((state_reg == state_data1) & (state_next == state_0)) begin
+			if ((state_reg == STATE_DATA1) & (state_next == STATE_IDLE)) begin
 														registre_file[3] <= din;
-														registre_file[0] <= registre_file[0] | 32'h00000004;
+														registre_file[0] <= registre_file[0] | DREADY_BIT;
 													end
 			
 			state_reg <= state_next;
@@ -74,27 +76,27 @@ module state_mashine (
 	
 	always @* begin
 		case (state_reg)
-			state_0			: if (dready)	begin
-								if (din == 32'h00000001) state_next <= state_start;
-								if (din == 32'h00000002) state_next <= state_finish;
+			STATE_IDLE			: if (dready)	begin
+								if (din == 32'h00000001) state_next <= STATE_START;
+								if (din == 32'h00000002) state_next <= STATE_FINISH;
 								
-								if (din == 32'h00000003) state_next <= state_addr_first;									
-								if (din == 32'h00000004) state_next <= state_addr_end;
-								if (din == 32'h00000005) state_next <= state_data;
+								if (din == 32'h00000003) state_next <= STATE_ADDR_FIRST;									
+								if (din == 32'h00000004) state_next <= STATE_ADDR_END;
+								if (din == 32'h00000005) state_next <= STATE_DATA;
 							 end
-			state_start		 :	state_next <= state_0;
-			state_finish	 : 	state_next <= state_0;
+			STATE_START		 :	state_next <= STATE_IDLE;
+			STATE_FINISH	 : 	state_next <= STATE_IDLE;
 								
-			state_addr_first :	if (dready)	state_next <= state_addr_first1;
-			state_addr_first1:	state_next <= state_0;
+			STATE_ADDR_FIRST :	if (dready)	state_next <= STATE_ADDR_FIRST1;
+			STATE_ADDR_FIRST1:	state_next <= STATE_IDLE;
 								
-			state_addr_end	 :	if (dready)	state_next <= state_addr_end1;
-			state_addr_end1	 :	state_next <= state_0;
+			STATE_ADDR_END	 :	if (dready)	state_next <= STATE_ADDR_END1;
+			STATE_ADDR_END1	 :	state_next <= STATE_IDLE;
 								
-			state_data		 :	if (dready)	state_next <= state_data1;								
-			state_data1		 :	state_next <= state_0;
+			STATE_DATA		 :	if (dready)	state_next <= STATE_DATA1;								
+			STATE_DATA1		 :	state_next <= STATE_IDLE;
 								
-			default: state_next <= state_0;
+			default: state_next <= STATE_IDLE;
 		endcase	
 	end
 		

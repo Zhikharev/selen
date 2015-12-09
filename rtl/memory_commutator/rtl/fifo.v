@@ -25,6 +25,9 @@ module fifo
 	output empty,
 	output full
 );
+	localparam READ 		= 2'b01;
+	localparam WRITE		= 2'b10;
+	localparam READ_WRITE 	= 2'b11;
 	
 	reg [SIZE-1:0] ram [(1 << DEPTH) - 1:0];
 	reg [DEPTH - 1:0] rd_pointer = 0;
@@ -38,31 +41,29 @@ module fifo
 
 	
 	always @(posedge clk) begin
-		//rd_pointer = ((empty & rd_en) ? rd_pointer : rd_pointer_r;
-		//wr_pointer = (full & wr_en) ? wr_pointer :wr_pointer_r;
 		case ({wr_en,rd_en})
-			2'b01:	if (~empty) begin
-						rd_pointer <= rd_pointer_r;
-						dout <= ram[rd_pointer_r];						
-						rd_pointer_r <= rd_pointer_r + 1'b1;
-					end
-			2'b10:	if (~full) begin
-						wr_pointer <= wr_pointer_r;
-						ram[wr_pointer_r] <= din;
-						wr_pointer_r <= wr_pointer_r + 1'b1;
-					end
-			2'b11:	begin
-						if (~full) begin
-							wr_pointer <= wr_pointer_r;
-							ram[wr_pointer_r] = din;							
-							wr_pointer_r = wr_pointer_r + 1'b1;
-						end
-						if (~empty) begin
+			READ:		if (~empty) begin
 							rd_pointer <= rd_pointer_r;
-							dout = ram[rd_pointer_r];							
-							rd_pointer_r = rd_pointer_r + 1;
-						end						
-					end
+							dout <= ram[rd_pointer_r];						
+							rd_pointer_r <= rd_pointer_r + 1'b1;
+						end
+			WRITE:		if (~full) begin
+							wr_pointer <= wr_pointer_r;
+							ram[wr_pointer_r] <= din;
+							wr_pointer_r <= wr_pointer_r + 1'b1;
+						end
+			READ_WRITE:	begin
+							if (~full) begin
+								wr_pointer <= wr_pointer_r;
+								ram[wr_pointer_r] = din;							
+								wr_pointer_r = wr_pointer_r + 1'b1;
+							end
+							if (~empty) begin
+								rd_pointer <= rd_pointer_r;
+								dout = ram[rd_pointer_r];							
+								rd_pointer_r = rd_pointer_r + 1;
+							end						
+						end
 			default:;
 		endcase
 	end
