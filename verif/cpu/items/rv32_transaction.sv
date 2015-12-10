@@ -21,20 +21,21 @@ class rv32_transaction;
   rand bit[4:0]    rd;
   rand bit[4:0]    rs1;
   rand bit[4:0]    rs2;
-  rand bit[19:0]   imm;
+  rand bit[31:0]   imm;
   
   function string sprint();
     string str;
     str = {str, opcode.name()};
+    str = {str, $sformatf(" rs1=%d rs2=%d rd=%d imm=%h", rs1, rs2, rd, imm)};
     return(str);
   endfunction
 
   function void decode(bit [31:0] data);
+    rd  = data[11:7];
+    rs1 = data[19:15];
+    rs2 = data[24:20];
     case(data[6:0])
-      7'b0000011: begin
-        rs2 = data[24:20];
-        rs1 = data[19:15];
-        rd  = data[11:7];
+      `R_TYPE: begin
         case(data[31:25])
           7'b0000000: begin
             case(data[14:12])
@@ -53,287 +54,146 @@ class rv32_transaction;
               3'b000: opcode = SUB;
               3'b001: opcode = SRA;
               3'b010: opcode = AM;
-              default: $error("Unknown [14:12]");
+              default: $error("Unknown [14:12] for R_TYPE");
             endcase
           end
-          default: $error("Unknown [31:25");
+          default: $error("Unknown [31:25] for R_TYPE");
         endcase
       end
-      7'b1000011: begin
-        rd  = data[11:7];
-        rs1 = data[19:15];
-        imm = data[31:20];
+      `I_TYPE: begin
+        imm[11:0] = data[31:20];
         case(data[14:12])
           3'b000: opcode = ADDI;
-          3'b001: opcode = SLTI;
-          3'b010: opcode = ANDI;
-          3'b011: opcode = ORI;
+          3'b010: opcode = SLTI;
+          3'b011: opcode = SLTIU;
+          3'b111: opcode = ANDI;
+          3'b110: opcode = ORI;
           3'b100: opcode = XORI;
-          3'b101: begin 
+          3'b001: begin 
             opcode = SLLI;
-            if(data[31:25] != 7'b0000000) $error("Unexpected [31:25]");
+            if(data[31:25] != 7'b0000000) $error("Unexpected [31:25] for I_TYPE");
           end
-          3'b110: begin 
-            opcode = SRLI;
-            if(data[31:25] != 7'b0000000) $error("Unexpected [31:25]");
-          end
-          3'b111: begin 
-            opcode = SRAI;
-            if(data[31:25] != 7'b0100000) $error("Unexpected [31:25]");
+          3'b101: begin 
+            case(data[31:25])
+              7'b0000000: opcode = SLLI;
+              7'b0100000: opcode = SRLI;
+              default: $error("Unexpected [31:25] for I_TYPE");
+            endcase
           end
         endcase
       end
-      7'b0010111: begin
-        rd  = data[11:7];
-        imm = data[31:12];
-        opcode = AUIPC;
-      end
-      7'b0110111: begin
-        rd  = data[11:7];
+      `LUI: begin
         imm = data[31:12];
         opcode = LUI;
       end
-      7'b1100011: begin
+      `AUIPC: begin
+        imm = data[31:12];
+        opcode = AUIPC;
+      end
+      `SB_TYPE: begin
         imm[12] = data[31];
         imm[11] = data[7];
         imm[10:5] = data[30:25];
         imm[4:1] = data[11:8];
-        rs1 = data[19:15];
-        rs2 = data[24:20];
         case(data[14:12])
           3'b000: opcode = BEQ;
           3'b001: opcode = BNE;
-          3'b010: opcode = BLT;
-          3'b011: opcode = BLTU;
-          3'b100: opcode = BGE;
-          3'b101: opcode = BGEU;
-          default: $error("Unexpected [14:12]");
+          3'b100: opcode = BLT;
+          3'b110: opcode = BLTU;
+          3'b101: opcode = BGE;
+          3'b111: opcode = BGEU;
+          default: $error("Unexpected [14:12] for SB_TYPE");
         endcase
       end
-      7'b1101111: begin
+      `UJ_TYPE: begin
+        imm[20]    = data[31];
+        imm[10:1]  = data[30:21];
+        imm[11]    = data[20];
+        imm[19:12] = data[19:12];
         opcode = JAL;
-        $fatal("todo");
       end
-      default: $fatal("todo");
+      `JALR: begin
+        opcode = JALR;
+        imm[11:0] = data[31:20];
+        if(data[14:12] != 3'b000) $error("Unexpected [14:12] for I_TYPE");
+      end
+      `LOAD: begin
+        imm[11:0] = data[31:20];
+        case(data[14:12])
+          3'b010: opcode = LW;
+          3'b001: opcode = LH;
+          3'b101: opcode = LHU;
+          3'b000: opcode = LB;
+          3'b100: opcode = LBU;
+          default: $error("Unexpected [14:12] for LOAD");
+        endcase
+      end
+      `STORE: begin
+        imm[11:5] = data[31:25];
+        case(data[14:12])
+          3'b010: opcode = SW;
+          3'b001: opcode = SH;
+          3'b000: opcode = SB;
+          default: $error("Unexpected [14:12] for STORE");
+        endcase
+      end
+      default: $fatal("Unexpected opcode");
     endcase
   endfunction
 
-/*
-  function void decode(bit [31:0] data);
-      localparam r = 7'b0000011;
-      localparam r_i = 7'b1000011;
-      localparam lui = 7'b1000011;
-      localparam auipc = 7'b0110011;
-      localparam sb = 7'b0010011;
-      localparam jal = 7'b0001011;
-      localparam s = 7'b0001111;
-      localparam i = 7'b0000111;
-      case(data[6:0])
-        r:begin
-          if(data[30] == 1'b1)begin
-            case(data[14:12])
-              3'b000:opcode_d = ADD;
-              3'b001:opcode_d = SLT;
-              3'b010:opcode_d = SLTU;
-              3'b011:opcode_d = AND;
-              3'b100:opcode_d = OR;
-              3'b101:opcode_d = XOR;
-              3'b110:opcode_d = SLL;
-              3'b111:opcode_d = SRL;
-            endcase;
-          end
-          else begin
-            case(data[14:12])
-              3'b000:opcode_d = SUB;
-              3'b001:opcode_d = SRA;
-              3'b010:opcode_d = AM;
-              default: $error("error in decode method can't recognize function's field in R type when data[31] equels 1");
-            endcase;
-          end
-          rs2_d = data[24:20];
-          rs1_d = data[19:15];
-          rd_d = data[11:7];
-        end
-        r_i:begin
-          case(data[14:12])
-            3'b000:opcode_d = ADDI;
-            3'b001:opcode_d = SLTI;
-            3'b010:opcode_d = ANDI;
-            3'b011:opcode_d = ORI;
-            3'b100:opcode_d = XORI;
-            3'b101:opcode_d = SLLI;
-            3'b110:opcode_d = SRLI;
-            3'b111:opcode_d = SRAI;
-          endcase;
-          rd_d = data[11:7];
-          rs1_d = data[19:15];
-          imm_d = 20'b0;
-          imm_d = data[31:20];
-        end      
-        lui:begin
-          opcode_d = LUI;
-          rd_d = data[11:7];
-          imm_d = data[31:12];
-        end
-        auipc:begin
-          opcode_d = AUIPC;
-          rd_d = data[11:7];
-          imm_d = data[31:12];
-        end
-        i:begin
-          case(data[14:12])
-            3'b000:opcode_d = JALR;
-            3'b001:opcode_d = LW;
-            3'b010:opcode_d = LH;
-            3'b011:opcode_d = LHU;
-            3'b100:opcode_d = LB;
-            3'b101:opcode_d = LBU;
-            default: $error("error in decode method can't recognize function's field in I type");
-          endcase;
-          
-          rd_d = data[11:7];
-          rs1_d = data[19:15];
-          imm_d = 20'b0;
-          imm_d = data[31:20];
-        end
-        s:begin
-          case(data[14:12])
-            3'b001:opcode_d = SW;
-            3'b010:opcode_d = SH;
-            3'b011:opcode_d = SB;
-            default: $error("error in decode method can't recognize function's field in S type");
-          endcase
-          imm_d = 20'b0;
-          imm_d = {data[31:25],data[11:7]};
-          rs2_d = data[19:15];
-        end      
-      sb:begin
-        case(data[14:12])
-          3'b000:opcode_d = BEQ;
-          3'b001:opcode_d = BNE;
-          3'b010:opcode_d = BLT;
-          3'b011:opcode_d = BLTU;
-          3'b100:opcode_d = BGE;
-          3'b101:opcode_d = BGEU;
-          default: $error("error in decode method can't recognize function's field in SB type");
-        endcase;
-        rs2_d = data[24:20];
-        rs1_d = data[19:15];
-        imm_d = 20'b0;
-        imm_d = {data[31],data[30:25],data[11:8],data[7]};            
-      end
-      endcase;
-  endfunction
-*/
+
   function bit [31:0] encode();
     bit[31:0] instr;
-    //R type
-    if(opcode inside{ADD,SLT,SLTU,AND,OR,XOR,SLL,SRL,SUB,SRA,AM})begin
-        instr[6:0] = 7'b0000011;
-      if(opcode inside{SUB,SRA,AM})begin
-        instr[31:25] = 7'b0100000;
-      end
-      else begin
-        instr[31:25] = 7'b0000000;
-      end
-      instr[24:20] = rs2;
-      instr[19:15] = rs1;
-      instr[11:7] = rd;
-      case(opcode)
-        ADD:instr[14:12] = 3'b000;
-        SLT:instr[14:12] = 3'b001;
-        SLTU:instr[14:12] = 3'b010;
-        AND:instr[14:12] = 3'b011;
-        OR:instr[14:12] = 3'b100;
-        XOR:instr[14:12] = 3'b101;
-        SLL:instr[14:12] = 3'b110;
-        SRL:instr[14:12] = 3'b111;
-        SUB:instr[14:12] = 3'b000;
-        SRA:instr[14:12] = 3'b001;
-        AM:instr[14:12] = 3'b010;
-      endcase;
-    end 
-    //R_I type  
-    if(opcode inside{ADDI,SLTI,ANDI,ORI,XORI,SLLI,SRLI,SRAI})begin
-     instr[6:0] = 7'b1000011;
-     instr[31:20] = imm[11:0];
-     instr[11:7] = rd;
-     instr[19:15] = rs1; 
-      case(opcode)
-        ADDI:instr[14:12] = 3'b000;
-        SLTI:instr[14:12] = 3'b001;
-        ANDI:instr[14:12] = 3'b010;
-        ORI:instr[14:12] = 3'b011;
-        XORI:instr[14:12] = 3'b100;
-        SLLI:instr[14:12] = 3'b101;
-        SRLI:instr[14:12] = 3'b110;
-        SRAI:instr[14:12] = 3'b111;
-      endcase
-    end
-    if(opcode inside{LUI,AUIPC})begin
-      instr[31:12] = imm;
-      instr[14:11] = rd;
-      if(opcode == LUI)begin
-        instr[6:0] = 7'b0100011;
-      end
-      else begin
-        instr[6:0] = 7'b0110011;
-      end
-    end
-    if(opcode inside{JALR,LW,LH,LHU,LB,LBU})begin
-      instr[6:0] = 7'b0000111;
-      instr[11:7] = rd;
-      instr[19:15] = rs1;
-      instr[31:20] = imm[11:0];
-      case(opcode)
-        JALR:instr[14:12] = 3'b000;
-        LW:instr[14:12] = 3'b001;
-        LH:instr[14:12] = 3'b010;
-        LHU:instr[14:12] = 3'b011;
-        LB:instr[14:12] = 3'b100;
-        LBU:instr[14:12] = 3'b101;
-      endcase;
-    end
-    //STORE S type
-    if(opcode inside{SW,SH,SB})begin
-      instr[6:0] =7'b0001111;
-      instr[11:7] = imm[4:0];
-      instr[19:15] = rs2;
-      instr[24:20] = rs2;
-      instr[31:25] = imm[11:5];
-      case(opcode)
-        SW:instr[14:12] = 3'b000;
-        SH:instr[14:12] = 3'b010;
-        SB:instr[14:12] = 3'b011;
-      endcase;
-    end
-    //BRNCH SB type
-    if(opcode inside{BEQ,BNE,BLT,BLTU,BGE,BGEU})begin
-      instr[6:0] =7'b0010011;
-      instr[7] = imm[11];
-      instr[11:8] = imm[4:1];
-      instr[19:15] = rs1;
-      instr[24:20] = rs2;
-      instr[30:25] = imm[10:5];
-      instr[31] = imm[11];
-      case(opcode)
-        BEQ:instr[14:12] = 3'b000;
-        BNE:instr[14:12] = 3'b001;
-        BLT:instr[14:12] = 3'b010;
-        BLTU:instr[14:12] = 3'b100;
-        BGE:instr[14:12] = 3'b101;
-      endcase;
-    end
-    //UJ type
-    if(opcode == JAL) begin
-      instr[6:0] = 7'b0001011;
-      instr[11:7] = rd;
-      instr[19:12] = imm[18:11];
-      instr[20] = imm[10];
-      instr[30:21] = imm[9:0];
-      instr[31] = imm[19];
-    end
-  return(instr);
+    case(opcode)
+      ADD:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      SLT:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b010; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      SLTU: begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b011; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      AND:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b111; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      OR:   begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b110; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      XOR:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b100; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      SLL:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b001; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      SRL:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b101; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0000000; end
+      
+      SUB:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0100000; end
+      SRA:  begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b101; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0100000; end
+      AM:   begin instr[6:0] = `R_TYPE; instr[11:7] = rd; instr[14:12] = 3'b010; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = 7'b0100000; end
+    
+      ADDI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end
+      SLTI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b010; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end
+      SLTIU:begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b011; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end 
+      ANDI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b111; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end
+      ORI:  begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b110; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end
+      XORI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b100; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end
+
+      SLLI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b001; instr[19:15] = rs1; instr[24:20] = imm[4:0]; instr[31:25] = 7'b0000000; end
+      SRLI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b101; instr[19:15] = rs1; instr[24:20] = imm[4:0]; instr[31:25] = 7'b0000000; end
+      SRAI: begin instr[6:0] = `I_TYPE; instr[11:7] = rd; instr[14:12] = 3'b101; instr[19:15] = rs1; instr[24:20] = imm[4:0]; instr[31:25] = 7'b0100000; end
+    
+      LUI:  begin instr[6:0] = `LUI; instr[11:7] = rd; instr[31:12] = imm[31:12]; end
+      AUIPC:begin instr[6:0] = `AUIPC; instr[11:7] = rd; instr[31:12] = imm[31:12]; end
+
+      BEQ:  begin instr[6:0] = `SB_TYPE; instr[7] = imm[11]; instr[11:8] = imm[4:1]; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[24:20] = rs2; instr[30:25] = imm[10:5]; instr[31] = imm[12]; end
+      BNE:  begin instr[6:0] = `SB_TYPE; instr[7] = imm[11]; instr[11:8] = imm[4:1]; instr[14:12] = 3'b001; instr[19:15] = rs1; instr[24:20] = rs2; instr[30:25] = imm[10:5]; instr[31] = imm[12]; end 
+      BLT:  begin instr[6:0] = `SB_TYPE; instr[7] = imm[11]; instr[11:8] = imm[4:1]; instr[14:12] = 3'b100; instr[19:15] = rs1; instr[24:20] = rs2; instr[30:25] = imm[10:5]; instr[31] = imm[12]; end
+      BLTU: begin instr[6:0] = `SB_TYPE; instr[7] = imm[11]; instr[11:8] = imm[4:1]; instr[14:12] = 3'b110; instr[19:15] = rs1; instr[24:20] = rs2; instr[30:25] = imm[10:5]; instr[31] = imm[12]; end
+      BGE:  begin instr[6:0] = `SB_TYPE; instr[7] = imm[11]; instr[11:8] = imm[4:1]; instr[14:12] = 3'b101; instr[19:15] = rs1; instr[24:20] = rs2; instr[30:25] = imm[10:5]; instr[31] = imm[12]; end
+      BGEU: begin instr[6:0] = `SB_TYPE; instr[7] = imm[11]; instr[11:8] = imm[4:1]; instr[14:12] = 3'b111; instr[19:15] = rs1; instr[24:20] = rs2; instr[30:25] = imm[10:5]; instr[31] = imm[12]; end
+
+      JAL:  begin instr[6:0] = `UJ_TYPE; instr[11:7] = rd; instr[31:12] = {imm[20], imm[10:1], imm[11], imm[19:12]}; end  
+    
+      JALR: begin instr[6:0] = `JALR; instr[11:7] = rd; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end  
+    
+      LW:   begin instr[6:0] = `LOAD; instr[11:7] = rd; instr[14:12] = 3'b010; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end  
+      LH:   begin instr[6:0] = `LOAD; instr[11:7] = rd; instr[14:12] = 3'b001; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end  
+      LHU:  begin instr[6:0] = `LOAD; instr[11:7] = rd; instr[14:12] = 3'b101; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end  
+      LB:   begin instr[6:0] = `LOAD; instr[11:7] = rd; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end  
+      LBU:  begin instr[6:0] = `LOAD; instr[11:7] = rd; instr[14:12] = 3'b100; instr[19:15] = rs1; instr[31:20] = imm[11:0]; end  
+
+      SW:   begin instr[6:0] = `STORE; instr[11:7] = imm[4:0]; instr[14:12] = 3'b010; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = imm[11:5]; end  
+      SH:   begin instr[6:0] = `STORE; instr[11:7] = imm[4:0]; instr[14:12] = 3'b001; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = imm[11:5]; end  
+      SB:   begin instr[6:0] = `STORE; instr[11:7] = imm[4:0]; instr[14:12] = 3'b000; instr[19:15] = rs1; instr[24:20] = rs2; instr[31:25] = imm[11:5]; end  
+    endcase
+    return(instr);
   endfunction
 
 endclass
