@@ -55,38 +55,39 @@ begin
 		loc_srcb = srcb;
 	end
 	else begin
-		loc_srca = {1'b0,srca[30:0]};
-		loc_srcb = {1'b0,srcb[30:0]};
+		//loc_srca = {1'b0,srca[30:0]};
+		loc_srca = ((~srca)+1'b1); 
+		//loc_srcb = {1'b0,srcb[30:0]};
+		loc_srcb = ((~srcb) +1'b1);
 	end
 	
 end
 always@*
 begin
 	case(cntl)
-		ADD: loc_result = loc_srca + loc_srcb;
-		AND: loc_result = loc_srca & loc_srcb;
-		OR:  loc_result = loc_srca | loc_srcb;
-		XOR: loc_result = loc_srca ^ loc_srcb;
-		SLL: loc_result = loc_srca << loc_srcb[4:0];
-		SRL: loc_result = loc_srca >> loc_srcb[4:0];
-		SUB: loc_result = loc_srca - loc_srcb;
-		SRA: loc_result = loc_srca >>> loc_srcb[4:0];
-		AM:  loc_result = (loc_srca + loc_srcb) >> 2;
-		SLT: begin
-			if(loc_srca < loc_srcb) loc_result = 1'b1;
-			else loc_result = 1'b0;
-		end
-		SLTU: begin
-			if((loc_srca < loc_srcb)&&(loc_srcb != 31'b0))begin 
-				loc_result = 1'b1;
-			end	
-			else begin 
-				loc_result = 1'b0;
-			end	
-		end
-		endcase
-	
-end
+			ADD: loc_result = loc_srca + loc_srcb;
+			AND: loc_result = loc_srca & loc_srcb;
+			OR:  loc_result = loc_srca | loc_srcb;
+			XOR: loc_result = loc_srca ^ loc_srcb;
+			SLL: loc_result = loc_srca << loc_srcb[4:0];
+			SRL: loc_result = loc_srca >> loc_srcb[4:0];
+			SUB: loc_result = loc_srca - loc_srcb;
+			SRA: loc_result = loc_srca >>> loc_srcb[4:0];
+			AM:  loc_result = (loc_srca + loc_srcb) >> 2;
+			SLT: begin
+				if(loc_srca < loc_srcb) loc_result = 1'b1;
+				else loc_result = 1'b0;
+			end
+			SLTU: begin
+				if((loc_srca < loc_srcb)&&(loc_srcb != 31'b0))begin 
+					loc_result = 1'b1;
+				end	
+				else begin 
+					loc_result = 1'b0;
+				end	
+			end
+			endcase;
+	end
 assign result = loc_result;
 assign cnd[0] = (loc_result == 31'b0) ? 1'b1:1'b0; // for branches but it might be useless becose I'd like use branch predicter
 assign cnd[1] = (loc_result[31] == 1'b0) ? 1'b1 : 1'b0;//
