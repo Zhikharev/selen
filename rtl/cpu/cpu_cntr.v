@@ -442,7 +442,7 @@ begin
 					s_u_loc = SIGN;
 				end
 				3'b101: begin
-					if(funct7 == 2'b01) begin
+					if(fnct7 == 2'b01) begin
 						alu_loc = SRA;
 						s_u_loc = SIGN;
 					end
@@ -507,9 +507,7 @@ begin
 		end
 		UJ:begin
 			// TO DO
-		end
-		JAL:begin
-			// TO DO 
+			// dont care alu does't work
 		end
 		I:begin
 			case(fnct )
