@@ -2,7 +2,7 @@
 import Registers
 import Service
 class Load_type:
-    opcode = "0000111"
+    opcode = "0000011"#"0000111"
     codes = [
         "LW",
         "LH",
@@ -11,11 +11,11 @@ class Load_type:
         "LBU"
     ]
     funct3 = {
-        "LW" : "001",
-        "LH" : "010",
-        "LHU" : "011",
-        "LB" : "100",
-        "LBU" : "101"
+        "LW" : "010",#"001",
+        "LH" : "001",#"010",
+        "LHU" : "101",#"011",
+        "LB" : "000",#"100",
+        "LBU" : "100"#"101"
     }
     def getCode(self, line):
         elements = line.split(" ")

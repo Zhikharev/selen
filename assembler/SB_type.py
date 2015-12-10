@@ -2,7 +2,7 @@
 import Registers
 import Service
 class SB_type:
-    opcode = "0010011"
+    opcode = "1100011"#"0010011"
     codes = [
         "BEQ",
         "BNE",
@@ -13,11 +13,11 @@ class SB_type:
     ]
     funct3 = {
         "BEQ" : "000",
-        "BNE" : "001",
-        "BLT" : "010",
-        "BLTU" : "011",
-        "BGE" : "100",
-        "BGEU" : "101"
+        "BNE" : "001",#"001",
+        "BLT" : "100",#"010",
+        "BLTU" : "110",#"011",
+        "BGE" : "101",#100",
+        "BGEU" : "111"#"101"
     }
     def getCode(self, line, labels):
         elements = line.split(" ")

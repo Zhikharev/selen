@@ -2,16 +2,16 @@
 import Registers
 import Service
 class I_shamt_type:
-    opcode = "1000011"
+    opcode = "0010011"#"1000011"
     codes = [
         "SLLI",
         "SRLI",
         "SRAI"
     ]
     funct3 = {
-        "SLLI" : "101",
-        "SRLI" : "110",
-        "SRAI" : "111"
+        "SLLI" : "001",#"101",
+        "SRLI" : "101",#"110",
+        "SRAI" : "101"#"111"
     }
     imm = {
         "SLLI" : "0000000",

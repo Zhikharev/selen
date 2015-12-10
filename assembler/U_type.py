@@ -1,7 +1,7 @@
 #LUI Rd, 0xABF4
 import Registers
 import Service
-class U_type:
+class U_type:#opcodes are defferent in LUI and AUIPC 0110111 and 0010111 responsable 
     opcode = "0100011"
     codes = [
         "LUI",

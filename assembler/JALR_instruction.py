@@ -2,7 +2,7 @@
 import Registers
 import Service
 class JALR_instruction:
-    opcode = "0000111"
+    opcode = "1100111"#"0000111"
     codes = [
         "JALR"
     ]

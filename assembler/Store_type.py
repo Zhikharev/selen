@@ -2,16 +2,16 @@
 import Registers
 import Service
 class Store_type:
-    opcode = "0001111"
+    opcode = "0100011"#"0001111"
     codes = [
         "SW",
         "SH",
         "SB"
     ]
     funct3 = {
-        "SW" : "001",
-        "SH" : "010",
-        "SB" : "011"
+        "SW" : "010",#"001",
+        "SH" : "001",#"010",
+        "SB" : "000"#"011"
     }
     def getCode(self, line):
         elements = line.split(" ")

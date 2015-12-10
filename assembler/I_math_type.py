@@ -2,8 +2,8 @@
 import Registers
 import Service
 class I_math_type:
-    opcode = "1000011"
-    codes = [
+    opcode = "0010011"#"1000011"
+    codes = [# U have to add new instraction Set Less Then Immidiate Unsign 
         "ADDI",
         "SLTI",
         "ANDI",
@@ -12,9 +12,9 @@ class I_math_type:
     ]
     funct3 = {
         "ADDI" : "000",
-        "SLTI" : "001",
-        "ANDI" : "010",
-        "ORI" : "011",
+        "SLTI" : "010",#"001",
+        "ANDI" : "111",#"010",
+        "ORI" : "110",#"011",
         "XORI" : "100"
     }
 
