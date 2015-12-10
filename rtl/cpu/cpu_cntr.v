@@ -54,14 +54,15 @@ localparam BP =2'b00;
 localparam LH =2'b01;
 localparam LB =2'b10;
 
-localparam R = 7'b0000011;
-localparam R_I = 7'b1000011;
-localparam U_LUI = 7'b0100011;
-localparam U_AUIPC = 7'b0110011;
-localparam SB = 7'b0010011;
-localparam UJ = 7'b0001011;
-localparam S = 7'b0001111;
-localparam I = 7'b0000111;
+localparam R = 7'b0110011;
+localparam R_I = 7'b0010011;
+localparam U_LUI = 7'b0110111;
+localparam U_AUIPC = 7'b0010111;
+localparam SB = 7'b1100011;
+localparam UJ = 7'b1101111;
+localparam S = 7'b0100011;
+localparam JALR = 7'b1100111;
+localparam I = 7'b1100111;
 
 localparam FULL = 2'b00;
 localparam HALF = 2'b01;
@@ -361,29 +362,29 @@ begin
 						alu_loc = ADD;
 						s_u_loc = SIGN;
 					end
-					3'b001: begin
+					3'b010: begin
 						alu_loc = SLT;
 					end
-					3'b010: begin
+					3'b011: begin
 						alu_loc = SLTU;
 					end
-					3'b011: begin
+					3'b111: begin
 						alu_loc = AND;
 						s_u_loc = SIGN;
 					end
-					3'b100: begin
+					3'b110: begin
 						alu_loc = OR;
 						s_u_loc = SIGN;
 					end
-					3'b101: begin
+					3'b100: begin
 						alu_loc = XOR;
 						s_u_loc = SIGN;
 					end
-					3'b110: begin
+					3'b001: begin
 						alu_loc = SLL;
 						s_u_loc = SIGN;
 					end
-					3'b111: begin
+					3'b101: begin
 						alu_loc = SRL;
 						s_u_loc = SIGN;
 					end
@@ -395,11 +396,11 @@ begin
 						alu_loc = SUB;
 						s_u_loc = SIGN;
 					end
-					3'b001:begin
+					3'b101:begin
 						alu_loc = SRA;
 						s_u_loc = SIGN;
 					end
-					3'b010:begin
+					3'b111:begin
 						alu_loc = AM;
 						s_u_loc = SIGN;
 					end
@@ -417,13 +418,18 @@ begin
 					alu_loc = ADD;
 					s_u_loc = SIGN;
 				end
-				3'b001: begin
+				3'b101: begin
 					alu_loc = SLT;
+					s_u_loc = SIGN;
 				end
-				3'b010: begin
+				3'b011:begin
+					alu_loc = SLT;
+					alu_loc = UNSIGN;
+				end
+				3'b111: begin
 					alu_loc = AND;
 				end
-				3'b011: begin
+				3'b110: begin
 					alu_loc = OR;
 					s_u_loc = SIGN;
 				end
@@ -431,25 +437,27 @@ begin
 					alu_loc = XOR;
 					s_u_loc = SIGN;
 				end
-				3'b101: begin
+				3'b001: begin
 					alu_loc = SLL;
 					s_u_loc = SIGN;
 				end
-				3'b110: begin
-					alu_loc = SRL;
-					s_u_loc = SIGN;
+				3'b101: begin
+					if(funct7 == 2'b01) begin
+						alu_loc = SRA;
+						s_u_loc = SIGN;
+					end
+					else begin
+						alu_loc = SRL;
+						s_u_loc = SIGN;
+					end
 				end
-				3'b111: begin
-					alu_loc = SRA;
-					s_u_loc = SIGN;
-				end
-			endcase
+							endcase
 		end/////end R_I
 		U_LUI:begin
 			alu_loc = SLL;// don't care 
 		end
 		U_AUIPC:begin
-
+			// TO DO 
 			alu_loc = ADD;
 		end
 		SB:begin
@@ -466,25 +474,25 @@ begin
 					s_u_loc = SIGN;
 					brn_loc = {1'b1,NE};
 				end
-				3'b010: begin
+				3'b100: begin
 					////BLT
 					alu_loc = SUB;
 					s_u_loc = SIGN;
 					brn_loc = {1'b1,LT};
 				end
-				3'b011: begin
+				3'b110: begin
 					/////BLTU
 					alu_loc = SUB;
 					s_u_loc = UNSIGN;
 					brn_loc = {1'b1,LT};
 				end
-				3'b100: begin
+				3'b101: begin
 					////BGE
 					alu_loc = SUB;
 					s_u_loc = SIGN;
 					brn_loc = {1'b1,GE};
 				end
-				3'b101: begin
+				3'b111: begin
 					///BGEU
 					alu_loc = SUB;
 					s_u_loc = SIGN;
@@ -498,10 +506,13 @@ begin
 			endcase
 		end
 		UJ:begin
-			
+			// TO DO
+		end
+		JAL:begin
+			// TO DO 
 		end
 		I:begin
-			case(fnct)
+			case(fnct )
 				3'b000:begin
 				end
 				default:begin
