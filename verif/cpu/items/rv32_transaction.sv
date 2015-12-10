@@ -240,14 +240,14 @@ class rv32_transaction;
         BGE:instr[14:12] = 3'b101;
       endcase;
     end
-    //UJ tyoe
+    //UJ type
     if(opcode == JAL) begin
       instr[6:0] = 7'b0001011;
       instr[11:7] = rd;
-      instr[19:12] = imm[19:12];
-      instr[20] = imm[11];
-      instr[30:21] = imm[30:21];
-      instr[31] = imm[20];
+      instr[19:12] = imm[18:11];
+      instr[20] = imm[10];
+      instr[30:21] = imm[9:0];
+      instr[31] = imm[19];
     end
   return(instr);
   endfunction
