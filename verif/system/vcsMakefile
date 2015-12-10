@@ -63,6 +63,7 @@ elaborate:
 	$(ELAB) $(TOP) $(ARCH_OPTS) $(ELAB_OPTS)
 
 sim: analyze elaborate
+	cp $(TB_PATH)/bin_example.bin bin_example.bin;
 	./simv +UVM_NO_RELNOTES -l test.log $(SIM_OPTS)
 
 build_c:

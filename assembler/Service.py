@@ -11,7 +11,7 @@ def Addr2Bin(num, length):
         i = i[2:]
 
     if len(i) > length - 1: # Проверка на превышение лимита
-        Service.ERROR("Error while translate number " + num + ". Length's limit exceeded.")
+        ERROR("Error while translate number " + str(num) + ". Length's limit exceeded.")
 
     i = i.zfill(length-1)
     if num < 0:
@@ -28,7 +28,7 @@ def Addr2BinU(num, length):
     else:
         i = i[2:]
     if len(i) > length: # Проверка на превышение лимита
-        Service.ERROR("Error while translate number " + num + ". Length's limit exceeded.")
+        ERROR("Error while translate number " + str(num) + ". Length's limit exceeded.")
 
     i = i.zfill(length)
     return i;

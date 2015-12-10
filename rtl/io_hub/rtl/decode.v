@@ -50,25 +50,25 @@ module decode(
     );
 	
 	
-	localparam byte_0 = 0;
-	localparam byte_1 = 1;
-	localparam byte_2 = 2;
-	localparam byte_3 = 3;
+	localparam BYTE_0 = 0;
+	localparam BYTE_1 = 1;
+	localparam BYTE_2 = 2;
+	localparam BYTE_3 = 3;
 	
 	
 	always @(posedge clk or posedge rst) begin
 		if (rst) begin
-			state_next = byte_0;
-			state_reg  = byte_0;
+			state_next = BYTE_0;
+			state_reg  = BYTE_0;
 			data_ready = 1'b0;
 		end else begin
-			if ((receive) & (state_reg == byte_0)) dout[7:0] 	<= rx_byte; 
-			if ((receive) & (state_reg == byte_1)) dout[15:8]	<= rx_byte;
-			if ((receive) & (state_reg == byte_2)) dout[23:16]	<= rx_byte;
-			if ((receive) & (state_reg == byte_3)) dout[31:24] 	<= rx_byte;
+			if ((receive) & (state_reg == BYTE_0)) dout[7:0] 	<= rx_byte; 
+			if ((receive) & (state_reg == BYTE_1)) dout[15:8]	<= rx_byte;
+			if ((receive) & (state_reg == BYTE_2)) dout[23:16]	<= rx_byte;
+			if ((receive) & (state_reg == BYTE_3)) dout[31:24] 	<= rx_byte;
 			
-			if ((state_reg == byte_3) & (state_next == byte_0)) data_ready <= 1'b1;
-			if ((state_reg == byte_0) & (state_next == byte_0)) data_ready <= 1'b0;
+			if ((state_reg == BYTE_3) & (state_next == BYTE_0)) data_ready <= 1'b1;
+			if ((state_reg == BYTE_0) & (state_next == BYTE_0)) data_ready <= 1'b0;
 			
 			if (is_receiving) state_reg <= state_next;
 		end
@@ -76,11 +76,11 @@ module decode(
 	
 	always @(*) begin
 		case (state_reg) 
-			byte_0:if (receive) state_next = byte_1;
-			byte_1:if (receive) state_next = byte_2;
-			byte_2:if (receive) state_next = byte_3;
-			byte_3:if (receive) state_next = byte_0;
-			default: state_next = byte_0;
+			BYTE_0:if (receive) state_next = BYTE_1;
+			BYTE_1:if (receive) state_next = BYTE_2;
+			BYTE_2:if (receive) state_next = BYTE_3;
+			BYTE_3:if (receive) state_next = BYTE_0;
+			default: state_next = BYTE_0;
 		endcase
 	end
 	

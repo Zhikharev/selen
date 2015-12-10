@@ -55,8 +55,7 @@ class cpu_wbi_driver;
     fork
       process_req();
       process_ack();
-    join_any
-    wait(active_req == 0);
+    join
     disable fork;
   endtask
 
@@ -101,6 +100,11 @@ class cpu_wbi_driver;
           forever begin
             rv32_transaction item;
             while(!sem.try_get());
+            if(common_q.size() == 0) begin
+              active_req = 0;
+              sem.put();
+              return;
+            end
             item = common_q.pop_front();
             vif.data_in <= item.encode();
             vif.ack <= 1'b1;
