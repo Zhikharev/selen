@@ -26,7 +26,7 @@ module io_top(
 		output 	[31:0] 		io_data_o,
 		
 		// DMA
-		input 				dma_cyc_i,
+		output 				dma_cyc_o,
 		output 				dma_stb_o,
 		input				dma_ack_i, 
 		output 				dma_we_o,
@@ -78,7 +78,7 @@ module io_top(
 		.io_data_o(io_data_o),
 
 		// DMA
-		.dma_cyc_i(dma_cyc_i),
+		.dma_cyc_o(dma_cyc_o),
 		.dma_stb_o(dma_stb_o),
 		.dma_ack_i(dma_ack_i), 
 		.dma_we_o(dma_we_o),

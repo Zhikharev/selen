@@ -18,16 +18,10 @@ class rv32_transaction;
   endfunction 
 
   rand opcode_type opcode;
-  rand bit[4:0] rd;
-  rand bit[4:0] rs1;
-  rand bit[4:0] rs2;
-  rand bit[19:0] imm;
-  //decode's vars
-  opcode_type opcode_d;
-  bit[4:0] rd_d;
-  bit[4:0] rs1_d;
-  bit[4:0] rs2_d;
-  bit[19:0] imm_d;
+  rand bit[4:0]    rd;
+  rand bit[4:0]    rs1;
+  rand bit[4:0]    rs2;
+  rand bit[19:0]   imm;
   
   function string sprint();
     string str;
@@ -35,6 +29,96 @@ class rv32_transaction;
     return(str);
   endfunction
 
+  function void decode(bit [31:0] data);
+    case(data[6:0])
+      7'b0000011: begin
+        rs2 = data[24:20];
+        rs1 = data[19:15];
+        rd  = data[11:7];
+        case(data[31:25])
+          7'b0000000: begin
+            case(data[14:12])
+              3'b000: opcode = ADD;
+              3'b001: opcode = SLT;
+              3'b010: opcode = SLTU;
+              3'b011: opcode = AND;
+              3'b100: opcode = OR;
+              3'b101: opcode = XOR;
+              3'b110: opcode = SLL;
+              3'b111: opcode = SRL;
+            endcase
+          end
+          7'b0100000: begin
+            case(data[14:12])
+              3'b000: opcode = SUB;
+              3'b001: opcode = SRA;
+              3'b010: opcode = AM;
+              default: $error("Unknown [14:12]");
+            endcase
+          end
+          default: $error("Unknown [31:25");
+        endcase
+      end
+      7'b1000011: begin
+        rd  = data[11:7];
+        rs1 = data[19:15];
+        imm = data[31:20];
+        case(data[14:12])
+          3'b000: opcode = ADDI;
+          3'b001: opcode = SLTI;
+          3'b010: opcode = ANDI;
+          3'b011: opcode = ORI;
+          3'b100: opcode = XORI;
+          3'b101: begin 
+            opcode = SLLI;
+            if(data[31:25] != 7'b0000000) $error("Unexpected [31:25]");
+          end
+          3'b110: begin 
+            opcode = SRLI;
+            if(data[31:25] != 7'b0000000) $error("Unexpected [31:25]");
+          end
+          3'b111: begin 
+            opcode = SRAI;
+            if(data[31:25] != 7'b0100000) $error("Unexpected [31:25]");
+          end
+        endcase
+      end
+      7'b0010111: begin
+        rd  = data[11:7];
+        imm = data[31:12];
+        opcode = AUIPC;
+      end
+      7'b0110111: begin
+        rd  = data[11:7];
+        imm = data[31:12];
+        opcode = LUI;
+      end
+      7'b1100011: begin
+        imm[12] = data[31];
+        imm[11] = data[7];
+        imm[10:5] = data[30:25];
+        imm[4:1] = data[11:8];
+        rs1 = data[19:15];
+        rs2 = data[24:20];
+        case(data[14:12])
+          3'b000: opcode = BEQ;
+          3'b001: opcode = BNE;
+          3'b010: opcode = BLT;
+          3'b011: opcode = BLTU;
+          3'b100: opcode = BGE;
+          3'b101: opcode = BGEU;
+          default: $error("Unexpected [14:12]");
+        endcase
+      end
+      7'b1101111: begin
+        opcode = JAL;
+        $fatal("todo");
+      end
+      default: $fatal("todo");
+    endcase
+  endfunction
+
+/*
   function void decode(bit [31:0] data);
       localparam r = 7'b0000011;
       localparam r_i = 7'b1000011;
@@ -63,7 +147,7 @@ class rv32_transaction;
               3'b000:opcode_d = SUB;
               3'b001:opcode_d = SRA;
               3'b010:opcode_d = AM;
-              default: $display("error in decode method can't recognize function's field in R type when data[31] equels 1");
+              default: $error("error in decode method can't recognize function's field in R type when data[31] equels 1");
             endcase;
           end
           rs2_d = data[24:20];
@@ -104,7 +188,7 @@ class rv32_transaction;
             3'b011:opcode_d = LHU;
             3'b100:opcode_d = LB;
             3'b101:opcode_d = LBU;
-            default: $display("error in decode method can't recognize function's field in I type");
+            default: $error("error in decode method can't recognize function's field in I type");
           endcase;
           
           rd_d = data[11:7];
@@ -117,7 +201,7 @@ class rv32_transaction;
             3'b001:opcode_d = SW;
             3'b010:opcode_d = SH;
             3'b011:opcode_d = SB;
-            default: $display("error in decode method can't recognize function's field in S type");
+            default: $error("error in decode method can't recognize function's field in S type");
           endcase
           imm_d = 20'b0;
           imm_d = {data[31:25],data[11:7]};
@@ -131,7 +215,7 @@ class rv32_transaction;
           3'b011:opcode_d = BLTU;
           3'b100:opcode_d = BGE;
           3'b101:opcode_d = BGEU;
-          default: $display("error in decode method can't recognize function's field in SB type");
+          default: $error("error in decode method can't recognize function's field in SB type");
         endcase;
         rs2_d = data[24:20];
         rs1_d = data[19:15];
@@ -140,7 +224,7 @@ class rv32_transaction;
       end
       endcase;
   endfunction
-
+*/
   function bit [31:0] encode();
     bit[31:0] instr;
     //R type
@@ -240,14 +324,14 @@ class rv32_transaction;
         BGE:instr[14:12] = 3'b101;
       endcase;
     end
-    //UJ tyoe
+    //UJ type
     if(opcode == JAL) begin
       instr[6:0] = 7'b0001011;
       instr[11:7] = rd;
-      instr[19:12] = imm[19:12];
-      instr[20] = imm[11];
-      instr[30:21] = imm[30:21];
-      instr[31] = imm[20];
+      instr[19:12] = imm[18:11];
+      instr[20] = imm[10];
+      instr[30:21] = imm[9:0];
+      instr[31] = imm[19];
     end
   return(instr);
   endfunction

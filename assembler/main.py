@@ -32,7 +32,8 @@ pfile = open(file_addr);
 code = Service.SplitToDierctives(pfile)
 if ".CODE" not in code:
     Service.ERROR("CODE not found error!");
-
+dataD = ""
+dataK = ""
 code[".CODE"] = code[".CODE"][:-1].split('\n')
 if ".DATA" in code:
     code[".DATA"] = code[".DATA"][:-1].split('\n')
@@ -81,6 +82,7 @@ for line in code:
 if "out_file" in cfg:
     fout = open(cfg["out_file"], "wb")
     Service.WriteBinary(fout, binary + dataD)
+    fout.close()
 
 if "out_filef" in cfg:
     fout = open(cfg["out_filef"], "wb")
@@ -90,6 +92,7 @@ if "out_filef" in cfg:
     if "data_header" in cfg:
         dheader = cfg["data_header"]
     binary += dataD;
+    print(binary)
     while cur < len(binary):
         c = binary[cur:cur+32]
         fbin += dheader + c
@@ -103,3 +106,4 @@ if "out_filef" in cfg:
     if "end_header" in cfg:
         fbin += cfg["end_header"]
     Service.WriteBinary(fout, fbin)
+    fout.close()

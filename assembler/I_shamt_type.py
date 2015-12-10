@@ -1,4 +1,4 @@
-#SLLI $Rd, Rs1, imm
+#SLLI $Rd, Rs1, shamt
 import Registers
 import Service
 class I_shamt_type:

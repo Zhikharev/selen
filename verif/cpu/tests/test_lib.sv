@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : draft_test.sv
+// FILE NAME      : test_lib.sv
 // PROJECT        : Selen
 // AUTHOR         : 
 // AUTHOR'S EMAIL : 
@@ -9,12 +9,12 @@
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
 
-`ifndef INC_DRAFT_TEST
-`define INC_DRAFT_TEST
+`ifndef INC_TEST_LIB
+`define INC_TEST_LIB
 
-class draft_test extends base_test; 
+class direct_test extends base_test; 
 
-  cpu_draft_seq draft_seq;
+  cpu_direct_seq direct_seq;
 
   function new (virtual wishbone_if wbi_intf, virtual wishbone_if wbd_intf, virtual reset_if rst_intf);
     super.new(wbi_intf, wbd_intf, rst_intf);
@@ -22,10 +22,8 @@ class draft_test extends base_test;
 
   function void build_phase();
     $display("[%0t][TEST][BUILD] Phase started", $time);
-    repeat(2) begin
-      draft_seq = new();
-      env.seq_q.push_back(draft_seq);
-    end
+    direct_seq = new();
+    env.seq_q.push_back(direct_seq);
     env.build_phase();
     $display ("[%0t][TEST][BUILD] Phase ended", $time);   
   endfunction
