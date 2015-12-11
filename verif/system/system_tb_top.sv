@@ -43,13 +43,19 @@
 `include "selen_top.sv"
 
 `include "../verif/system/uart_interface.sv"
+`include "../verif/testbench/wishbone_if.sv"
+`include "../verif/cpu/monitors/cpu_wbi_monitor.sv"
+`include "../verif/cpu/monitors/cpu_wbd_monitor.sv"
+
 
 module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 
 	logic clk;
 	logic rst;
 
-	uart_if uart_intf(clk, rst);
+	uart_if 		uart_intf(clk, rst);
+	wishbone_if 	wbi_intf(clk, rst);
+	wishbone_if 	wbd_intf(clk, rst);
 
 	reg [31:0] prog_mem [0:31];
 
