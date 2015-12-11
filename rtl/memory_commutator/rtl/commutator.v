@@ -176,15 +176,16 @@ module commutator
 	assign master1_wb_stall_o = full;
 
 	// cpu_inst <=> ram or rom
-	always @(*) begin
+	always @(posedge sys_clk) begin
 		//if ((master1_wb_addr_i > M_ROM_l) && (master1_wb_addr_i < M_ROM_h)) begin
-		if (master1_wb_addr_i & SL3_MASK == SL3_ADDR) begin
+		if ((fifo_master1_addr & SL2_MASK) == SL2_ADDR) begin
 			//slave1_wb_stb_o 			<= master1_wb_stb_i;
 			reg_slave1_wb_stb_o 			<= ~empty;
 			reg_master1_wb_ack_o			<= slave1_wb_ack_i;
 			reg_slave1_wb_addr_o			<= fifo_master1_addr & (~SL3_MASK);
 			reg_master1_wb_data_o			<= slave1_wb_data_i;		
-		end else begin
+		end 
+		if ((fifo_master1_addr & SL3_MASK) == SL3_ADDR) begin
 			//slave3_wb_stb_o 			<= master1_wb_stb_i;
 			reg_slave3_wb_stb_o 			<= ~empty;
 			reg_master1_wb_ack_o			<= slave3_wb_ack_i;
@@ -194,9 +195,9 @@ module commutator
 	end
 	
 	// cpu_data <=> ram or I/O
-	always @(*) begin
+	always @(posedge sys_clk) begin
 		//if ((master1_wb_addr_i > M_RAM_l) && (master1_wb_addr_i < M_RAM_h)) begin
-		if (master1_wb_addr_i & SL2_MASK == SL2_ADDR) begin
+		if ((master2_wb_addr_i & SL2_MASK) == SL2_ADDR) begin
 			reg_slave2_wb_stb_o 			<= m_stb_i;
 			m_ack_o							<= slave2_wb_ack_i;
 			reg_slave2_wb_we_o				<= m_we_i;
@@ -219,7 +220,8 @@ module commutator
 				m_data_i					<= master3_wb_data_i;
 				reg_master3_wb_data_o		<= m_data_o;
 			end		
-		end else begin
+		end 
+		if ((master2_wb_addr_i & SL4_MASK) == SL4_ADDR) begin
 			reg_slave4_wb_stb_o 			<= master2_wb_stb_i;
 			reg_master2_wb_ack_o			<= slave4_wb_ack_i;
 			reg_slave4_wb_we_o				<= master2_wb_we_i;
