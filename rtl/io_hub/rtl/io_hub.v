@@ -25,7 +25,7 @@ module io_hub(
 		output 	[31:0] 		io_data_o,
 		
 		// DMA
-		output 				 ,
+		output 				dma_cyc_o,
 		output 				dma_stb_o,
 		input				dma_ack_i, 
 		output 				dma_we_o,
@@ -87,7 +87,7 @@ module io_hub(
 			r_dma_data_o	= 32'h00000000;
 			counter 		= 16'h0000;
 		end else begin
-			if ((~empty) & (status_reg[1]) begin  // state_finish
+			if ((~empty) & (status_reg[1])) begin  // state_finish
 				r_dma_stb_o 	= 1;
 				if (dma_ack_i) begin
 					r_dma_we_o  	= 1;
