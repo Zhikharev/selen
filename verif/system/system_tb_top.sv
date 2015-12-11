@@ -59,20 +59,20 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 	wishbone_if 	cpu_wbi_intf(clk, rst);
 	wishbone_if 	cpu_wbd_intf(clk, rst);
 
-	assign cpu_wbi_intf.cyc     = cpu_wbi_cyc;
-	assign cpu_wbi_intf.stb     = cpu_wbi_stb;
-	assign cpu_wbi_intf.addr    = cpu_wbi_addr;
-	assign cpu_wbi_intf.ack     = cpu_wbi_ack;
-	assign cpu_wbi_intf.data_in = cpu_wbi_data;
-	assign cpu_wbi_intf.stall   = cpu_wbi_stall;
+	assign cpu_wbi_intf.cyc     = selen_top.cpu_wbi_cyc;
+	assign cpu_wbi_intf.stb     = selen_top.cpu_wbi_stb;
+	assign cpu_wbi_intf.addr    = selen_top.cpu_wbi_addr;
+	assign cpu_wbi_intf.ack     = selen_top.cpu_wbi_ack;
+	assign cpu_wbi_intf.data_in = selen_top.cpu_wbi_data;
+	assign cpu_wbi_intf.stall   = selen_top.cpu_wbi_stall;
 
-	assign cpu_wbd_intf.stb     = cpu_wbd_stb;
-	assign cpu_wbd_intf.we      = cpu_wbd_we;
-	assign cpu_wbd_intf.be      = cpu_wbd_be;
-	assign cpu_wbd_intf.addr    = cpu_wbd_addr;
-  assign cpu_wbd_intf.data_out= cpu_wbd_data_o;
-	assign cpu_wbd_intf.ack     = cpu_wbd_ack;
-	assign cpu_wbd_intf.data_in = cpu_wbd_data_i;
+	assign cpu_wbd_intf.stb     = selen_top.cpu_wbd_stb;
+	assign cpu_wbd_intf.we      = selen_top.cpu_wbd_we;
+	assign cpu_wbd_intf.be      = selen_top.cpu_wbd_be;
+	assign cpu_wbd_intf.addr    = selen_top.cpu_wbd_addr;
+  assign cpu_wbd_intf.data_out= selen_top.cpu_wbd_data_o;
+	assign cpu_wbd_intf.ack     = selen_top.cpu_wbd_ack;
+	assign cpu_wbd_intf.data_in = selen_top.cpu_wbd_data_i;
 
 	cpu_wbd_monitor cpu_wbd_mon;
 	cpu_wbi_monitor cpu_wbi_mon;
@@ -101,11 +101,11 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 	task build_checkers();
 		$display("%0t Building checkers...", $time());
 		cpu_wbi_mon = new(cpu_wbi_intf);
-		cpu_wbd_mon = new(cpu_wbd_monitor);
+		cpu_wbd_mon = new(cpu_wbd_intf);
 		fork
 			cpu_wbi_mon.run_phase();
 			cpu_wbd_mon.run_phase();
-		join
+		join_none
 	endtask
 
 	task automatic drive_bin();
