@@ -87,7 +87,7 @@ module selen_top
 		.data_data_out 	(cpu_wbd_data_o),
 		.data_data_in 	(cpu_wbd_data_i)
 	);
-/*
+
 	wb_comm comm
 	(
 		.sys_clk 					(sys_clk),
@@ -114,7 +114,7 @@ module selen_top
 		.io_data_i 				(io_wb_data_o),
 		.io_data_o 				(io_wb_data_i),
 
-		.dma_cyc_o        (dma_wb_cyc),	
+		.dma_cyc_i        (dma_wb_cyc),	
 		.dma_stb_i 				(dma_wb_stb),
 		.dma_ack_o 				(dma_wb_ack), 
 		.dma_we_i 				(dma_wb_we),
@@ -155,7 +155,7 @@ module selen_top
 		.io_data_o 	(io_wb_data_o),
 		.io_data_i 	(io_wb_data_i),
 		
-		.dma_cyc_i 	(dma_wb_cyc),
+		.dma_cyc_o 	(dma_wb_cyc),
 		.dma_stb_o 	(dma_wb_stb),
 		.dma_ack_i	(dma_wb_ack), 
 		.dma_we_o 	(dma_wb_we),
@@ -191,7 +191,6 @@ module selen_top
 		.ram2_data_i (ram_p1_data_i),
 		.ram2_data_o (ram_p1_data_o)
 );
-*/
 
 endmodule
 
