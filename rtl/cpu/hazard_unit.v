@@ -49,6 +49,7 @@ module hazard_unit(
 	output flashE,
 	output flashM,
 	output flashW,
+	output mem_gen_out,
 			
 	output enbD,
 	output enbE,
@@ -115,6 +116,10 @@ begin
 	end
 	if(stall_in)begin//TO DO 
 		mux2_loc = 1'b1;
+		enbE_loc = 1'b1;
+		enbM_loc = 1'b1;
+		enbW_loc = 1'b1;
+		enbD_loc = 1'b1; 
 	end
 	else begin
 		mux2_loc = 1'b0;

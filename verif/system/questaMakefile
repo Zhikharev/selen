@@ -53,6 +53,7 @@ analyze:
 	$(VLOG) $(ARCH_OPTS) $(VLOG_OPTS) $(RTL_SRC) $(SV_SRC)
 
 sim: analyze
+	cp $(TB_PATH)/bin_example.txt bin_example.txt;
 	$(VSIM) -novopt -do 'run -all' $(SIM_OPTS) $(TOP)
 
 build_c:

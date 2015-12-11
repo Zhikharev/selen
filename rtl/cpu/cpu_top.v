@@ -231,19 +231,22 @@ mem_block mem_block (
 	.mux3(s_mux3),
 	.mux4(s_mux4),
 	.mux4_2(s_mux4_2),
-	.stall(inst_stall_in),
+	.stall_inst(inst_stall_in),
+	.stall_data(data_stall_in),
 	
-	.ack_in(inst_ack_in),
+	.inst_ack_in(inst_ack_in),
+	.data_ack_in(data_ack_in),
 	.inst_in(inst_data_in),
 	.inst_out(mem_block2regD_inst),
-	.imm_20({{11{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
+	.imm_20({{12{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
 	.imm_12(out_mux7),
 	.reg_in(srca2regE),
 	.brch_address(regM2a_mux1),
 
 	.inst_addr(inst_addr_out),
-	.cyc(inst_cyc_out),
-	.stb(inst_stb_out),
+	.cyc_inst(inst_cyc_out),
+	.stb_inst(inst_stb_out),
+	.stb_data(data_stb_out),
 	.pc_next_out(mem_block2regD_pc)
 );
 
