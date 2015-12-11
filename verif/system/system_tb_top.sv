@@ -27,7 +27,7 @@
 //`include "cpu/mem_ctr.v"
 `include "cpu/mem_block.v"
 `include "cpu/cpu_top.v"
-
+/*
 `include "memory_commutator/rtl/commutator.v"
 `include "memory_commutator/rtl/fifo.v"
 `include "memory_commutator/rtl/ram.v"
@@ -39,11 +39,13 @@
 `include "io_hub/rtl/io_top.v"
 `include "io_hub/rtl/state_machine.v"
 `include "io_hub/rtl/uart.v"
-
+*/
 `include "selen_top.sv"
 
 `include "../verif/system/uart_interface.sv"
-`include "../verif/testbench/wishbone_if.sv"
+`include "../verif/cpu/testbench/wishbone_if.sv"
+`include	"../verif/cpu/items/cpu_typedefs.sv"
+`include	"../verif/cpu/items/rv32_transaction.sv"
 `include "../verif/cpu/monitors/cpu_wbi_monitor.sv"
 `include "../verif/cpu/monitors/cpu_wbd_monitor.sv"
 
@@ -53,9 +55,27 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 	logic clk;
 	logic rst;
 
-	uart_if 		uart_intf(clk, rst);
-	wishbone_if 	wbi_intf(clk, rst);
-	wishbone_if 	wbd_intf(clk, rst);
+	uart_if 		 	uart_intf(clk, rst);
+	wishbone_if 	cpu_wbi_intf(clk, rst);
+	wishbone_if 	cpu_wbd_intf(clk, rst);
+
+	assign cpu_wbi_intf.cyc     = cpu_wbi_cyc;
+	assign cpu_wbi_intf.stb     = cpu_wbi_stb;
+	assign cpu_wbi_intf.addr    = cpu_wbi_addr;
+	assign cpu_wbi_intf.ack     = cpu_wbi_ack;
+	assign cpu_wbi_intf.data_in = cpu_wbi_data;
+	assign cpu_wbi_intf.stall   = cpu_wbi_stall;
+
+	assign cpu_wbd_intf.stb     = cpu_wbd_stb;
+	assign cpu_wbd_intf.we      = cpu_wbd_we;
+	assign cpu_wbd_intf.be      = cpu_wbd_be;
+	assign cpu_wbd_intf.addr    = cpu_wbd_addr;
+  assign cpu_wbd_intf.data_out= cpu_wbd_data_o;
+	assign cpu_wbd_intf.ack     = cpu_wbd_ack;
+	assign cpu_wbd_intf.data_in = cpu_wbd_data_i;
+
+	cpu_wbd_monitor cpu_wbd_mon;
+	cpu_wbi_monitor cpu_wbi_mon;
 
 	reg [31:0] prog_mem [0:31];
 
@@ -78,6 +98,15 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 		rst = 0;
 	endtask
 
+	task build_checkers();
+		$display("%0t Building checkers...", $time());
+		cpu_wbi_mon = new(cpu_wbi_intf);
+		cpu_wbd_mon = new(cpu_wbd_monitor);
+		fork
+			cpu_wbi_mon.run_phase();
+			cpu_wbd_mon.run_phase();
+		join
+	endtask
 
 	task automatic drive_bin();
 		foreach(prog_mem[k]) begin
@@ -100,6 +129,7 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 
 	initial begin
 		$display("%0t TEST START", $time());
+		build_checkers();
 		reset();
 		drive_bin();
 		wait_for_end();

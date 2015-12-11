@@ -87,7 +87,7 @@ module selen_top
 		.data_data_out 	(cpu_wbd_data_o),
 		.data_data_in 	(cpu_wbd_data_i)
 	);
-
+/*
 	wb_comm comm
 	(
 		.sys_clk 					(sys_clk),
@@ -191,7 +191,7 @@ module selen_top
 		.ram2_data_i (ram_p1_data_i),
 		.ram2_data_o (ram_p1_data_o)
 );
-
+*/
 
 endmodule
 
