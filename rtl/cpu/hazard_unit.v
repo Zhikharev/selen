@@ -16,7 +16,7 @@ module hazard_unit(
 	input[1:0] cmd_inE,
 	input[1:0] cmd_inM,
 	input[1:0] cmd_inW,
-	input done_in,
+	//input done_in,
 	input[4:0] rs1E,
 	input[4:0] rs2E,
 	input[4:0] rs1M,
@@ -33,10 +33,11 @@ module hazard_unit(
 	input we_regM,
 	input we_regW,
 	input mux1,
-	input stall_in,
-	input ack_in,
-	//input mem_ctrl,
-	
+	input inst_stall_in,
+	//input inst_ack_in,
+	input data_stall_in,
+	//input data_ack_in,
+	input data_stb_out,
 	output bp1M,
 	output bp2W,
 	output bp3M,
@@ -49,12 +50,14 @@ module hazard_unit(
 	output flashE,
 	output flashM,
 	output flashW,
-	output mem_gen_out,
 			
 	output enbD,
 	output enbE,
 	output enbM,
-	output enbW
+	output enbW,
+
+	output hz2mem_block_out,
+	output nop_gen_out
 );
 localparam lw_cmd = 2'b11;
 localparam st_cmd = 2'b10;
@@ -70,10 +73,11 @@ reg enbD_loc;
 reg enbE_loc;
 reg enbM_loc;
 reg enbW_loc;
-always @*
-begin
+reg nop_gen_loc;
+always @* begin
 	if(reset)begin
-		//hz2ctrl_loc = 1'b0;
+		hz2ctrl_loc = 1'b1;
+		nop_gen_loc <= 1'b0;
 		flashD_loc = 1'b1;
 		flashE_loc = 1'b1;
 		flashM_loc = 1'b1;
@@ -84,45 +88,64 @@ begin
 		enbD_loc = 1'b0;
 		mux2_loc = 1'b0;
 	end
+	/// pipilene's hazadrs
 	else begin
-		//hz2ctrl_loc = 1'b0;
-		flashD_loc = 1'b0;
-		flashE_loc = 1'b0;
-		flashM_loc = 1'b0;
-		flashW_loc = 1'b0;
-		
-		if(~mux1)begin
+		// lw bubble
+		if((rdE == rs1D)||(rdE == rs2D)||(cmd_inE == lw_cmd))begin
+			mux2_loc = 1'b1;
+			nop_gen_loc =1'b1;
+			enbD_loc = 1'b1;
+		end
+		else begin
+			mux2_loc = mux2_loc;
+			nop_gen_loc =nop_gen_loc;
+			enbD_loc = enbD_loc;
+		end
+		// brnch misprediction penality 
+		if(~mux1) begin
 			flashD_loc = 1'b1;
 			flashE_loc = 1'b1;
 			flashM_loc = 1'b1;
 		end
-		if((cmd_inE == lw_cmd)&&((rs1D == rdE)||(rs2D == rdE)))begin
-			mux2_loc = 1'b1;
-			enbD_loc = 1'b1;
-			flashE_loc = 1'b1;
+		else begin
+			flashD_loc = flashD_loc;
+			flashE_loc = flashE_loc;
+			flashM_loc = flashM_loc;
 		end
-		if((cmd_inE == jmp_cmd)&&(we_regW))begin
-			enbE_loc = 1'b1;
-			enbM_loc = 1'b1;
-			enbW_loc = 1'b1;
-			enbD_loc = 1'b1;
-			if(done_in)begin
-				hz2ctrl_loc = 1'b1;
+		// for jmp hazard if wrt_end is 1 thefore nop gen = 1'b1 and enbD = 1'b1 while wrt_enb = 1'b0; also be aware of rd = zero in jump ocomands becous there is not need to write smt in registe file
+		if(cmd_inD == jmp_cmd)begin
+			if(rdD == 5'b0)begin
+				
 			end
 			else begin
-				hz2ctrl_loc =1'b0;
+				if(we_regW == 1'b1)begin
+					enbD_loc = 1'b1;
+					mux2_loc = 1'b1;
+					nop_gen_loc = 1'b1;
+				end
+				else begin
+					///////
+				end
 			end
 		end
-	end
-	if(stall_in)begin//TO DO 
+		else begin
+			///////
+		end
+		//waiting for memory answer
+	if(data_stb_out == 1'b1)begin
 		mux2_loc = 1'b1;
-		enbE_loc = 1'b1;
-		enbM_loc = 1'b1;
 		enbW_loc = 1'b1;
-		enbD_loc = 1'b1; 
+		enbM_loc = 1'b1;
+		enbE_loc = 1'b1;
+		enbD_loc = 1'b1;
 	end
 	else begin
-		mux2_loc = 1'b0;
+		mux2_loc = mux2_loc;
+		enbW_loc = enbW_loc;
+		enbM_loc = enbM_loc;
+		enbE_loc = enbE_loc;
+		enbD_loc = enbD_loc;
+	end
 	end
 end
 ///// forwarding liters are here for mux are not for stages 
@@ -192,5 +215,86 @@ assign enbE = enbE_loc;
 assign enbM = enbM_loc;
 assign enbW = enbW_loc;
 assign hz2ctrl = hz2ctrl_loc;
-
+assign hz2_mem_block_out = ((cmd_inM == lw_cmd)||(cmd_inM == st_cmd))?1'b1:1'b0;////
 endmodule
+/*always @*
+begin
+	if(reset)begin
+		//hz2ctrl_loc = 1'b0;
+		flashD_loc = 1'b1;
+		flashE_loc = 1'b1;
+		flashM_loc = 1'b1;
+		flashW_loc = 1'b1;
+		enbE_loc = 1'b0;
+		enbM_loc = 1'b0;
+		enbW_loc = 1'b0;
+		enbD_loc = 1'b0;
+		mux2_loc = 1'b0;
+	end
+	else begin
+		//hz2ctrl_loc = 1'b0;
+		flashD_loc = 1'b0;
+		flashE_loc = 1'b0;
+		flashM_loc = 1'b0;
+		flashW_loc = 1'b0;
+		
+		if(~mux1)begin
+			flashD_loc = 1'b1;
+			flashE_loc = 1'b1;
+			flashM_loc = 1'b1;
+		end
+		if((cmd_inE == lw_cmd)&&((rs1D == rdE)||(rs2D == rdE)))begin
+			mux2_loc = 1'b1;
+			enbD_loc = 1'b1;
+
+			flashE_loc = 1'b1;
+
+		end
+
+		if((cmd_inE == jmp_cmd)&&(we_regW))begin
+
+			enbE_loc = 1'b1;
+
+			enbM_loc = 1'b1;
+
+			enbW_loc = 1'b1;
+
+			enbD_loc = 1'b1;
+
+			if(done_in)begin
+
+				hz2ctrl_loc = 1'b1;
+
+			end
+
+			else begin
+
+				hz2ctrl_loc =1'b0;
+
+			end
+
+		end
+
+	end
+
+	if(stall_in)begin//TO DO 
+
+		mux2_loc = 1'b1;
+
+		enbE_loc = 1'b1;
+
+		enbM_loc = 1'b1;
+
+		enbW_loc = 1'b1;
+
+		enbD_loc = 1'b1; 
+
+	end
+
+	else begin
+
+		mux2_loc = 1'b0;
+
+	end
+
+end*/

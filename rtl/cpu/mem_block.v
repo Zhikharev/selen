@@ -30,6 +30,7 @@ module mem_block(
 	input [31:0] imm_12,
 	input [31:0] reg_in,
 	input[31:0] brch_address,
+	input hz2mem_block_in,
 
 	output[31:0] inst_addr,
 	output[31:0]pc_next_out,
@@ -38,6 +39,7 @@ module mem_block(
 	output cyc_data,
 	output stb_data
 );
+
 reg[31:0] pc;
 wire[31:0] pc_next;
 //wire[31:0] a_mux3;
@@ -112,7 +114,12 @@ always@(posedge clk) begin
  	state_mem <= 2'b0;
  end
  else begin
- 	state_mem <= state_next_mem;
+ 	if(hz2mem_block_in)begin
+ 		state_mem <= state_next_mem;
+	end
+	else begin
+		state_mem <= state_mem;
+	end
  end
 end
 always@* begin

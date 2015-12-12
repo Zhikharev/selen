@@ -26,6 +26,7 @@ module cpu_top (
 	output[31:0] data_addr_out,
 	output[31:0] data_data_out,
 	input[31:0] data_data_in,
+	input data_stall_in,
 	//system
 	input sys_clk,
 	input sys_rst
@@ -98,7 +99,7 @@ wire s_mux6;
 ////							end of decode stage 
 ////							 exeqution 
 wire hz2enbE;
-
+wire hz2nop_genE;
 wire[31:0] address;
 wire[2:0] regE2regM_sx;
 //wire regE2_mux8;
@@ -222,6 +223,7 @@ wire[19:0] regW2b_mux10_imm20;
 //################################### modules 
 ///mem_block
 wire[31:0] mem_block2regD_pc;
+wire hz2mem_block;
 mem_block mem_block (
 	.rst(sys_rst),
 	.clk(sys_clk),
@@ -247,7 +249,8 @@ mem_block mem_block (
 	.cyc_inst(inst_cyc_out),
 	.stb_inst(inst_stb_out),
 	.stb_data(data_stb_out),
-	.pc_next_out(mem_block2regD_pc)
+	.pc_next_out(mem_block2regD_pc),
+	.hz2mem_block_in(hz2mem_block)
 );
 
 //////
@@ -269,8 +272,8 @@ reg_file reg_file (
 	.adr_srca(regD2ctrl[19:15]),
 	.adr_srcb(regD2ctrl[24:20]),
 	.out_srca(srca2regE),
-	.out_srcb(srcb2regE),
-	.done(reg2hz)
+	.out_srcb(srcb2regE)//,
+	//.done(reg2hz)
 );
 cpu_ctrl cpu_ctrl(
 	.rst(sys_rst),
@@ -345,7 +348,9 @@ reg_exe reg_exe(
 	.mux10E_out(regE2regM_mux10),
 	.cmdE_out(regE2regM_cmd),
 	.imm_or_addr_out(regE2b_sign_adder),
-	.sx_2E_ctrl_out(regE2regM_sx)
+	.sx_2E_ctrl_out(regE2regM_sx),
+
+	.nop_gen(hz2nop_genE)
 );
 alu alu (
 	.srca(out_mux8_2),
@@ -456,7 +461,7 @@ hazard_unit hazard_unit(
 	.we_regW(regW2out_we_reg),
 	.we_regM(regM2regW_we_reg),
 	.mux1(s_mux1),
-	.stall_in(inst_stall_in),
+	.inst_stall_in(inst_stall_in),
 	.ack_in(inst_ack_in),
 	//.mem_ctrl(),
 	
@@ -476,7 +481,12 @@ hazard_unit hazard_unit(
 	.enbD(hz2enbD),
 	.enbE(hz2enbE),
 	.enbM(hz2enbM),
-	.enbW(hz2enbW)
+	.enbW(hz2enbW),
+	.hz2mem_block_out(hz2mem_block),
+
+	.nop_gen_out(hz2nop_genE),
+	.data_stb_out(data_stb_out),
+	.data_stall_in(data_stall_in)
 );
 ///// ############### area with pc (fetch)
 

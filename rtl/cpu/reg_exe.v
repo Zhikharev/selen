@@ -82,6 +82,10 @@ reg mux10E_loc;
 reg[2:0] sx_2E_loc;
 reg [1:0] cmdE_loc;
 reg[31:0] imm_or_addr_loc;
+reg nop_gen_loc;
+always@(posedge clk)begin
+	nop_gen_loc <= nop_gen;
+end
 always @(posedge clk)
 begin
 	if(flashE) begin
@@ -157,24 +161,24 @@ begin
 	end
 end
 
-assign srcaE_out = (nop_gen)?31'b0:srcaE_loc;
-assign srcbE_out = (nop_gen)?31'b0:srcbE_loc;
+assign srcaE_out = (nop_gen_loc)?31'b0:srcaE_loc;
+assign srcbE_out = (nop_gen_loc)?31'b0:srcbE_loc;
 assign rs1E_out = rs1E_loc;
 assign rs2E_out = rs2E_loc;
 assign rdE_out = rdE_loc;
 assign pcE_out = pcE_loc;
-assign imm20E_out = (nop_gen)?321'b0:imm20E_loc;
+assign imm20E_out = (nop_gen_loc)?321'b0:imm20E_loc;
 assign s_u_alu_out = s_u_alu_loc;
 assign alu_ctrl_out = alu_ctrl_loc;
-assign be_memE_out = (nop_gen)?1'b0:be_memE_loc;
-assign we_memE_out = (nop_gen)?1'b0:we_memE_loc;
-assign we_regE_out = (nop_gen)?1'b0:we_regE_loc;
+assign be_memE_out = (nop_gen_loc)?1'b0:be_memE_loc;
+assign we_memE_out = (nop_gen_loc)?1'b0:we_memE_loc;
+assign we_regE_out = (nop_gen_loc)?1'b0:we_regE_loc;
 assign brch_typeE_out = brch_typeE_loc;
 assign mux9E_out = mux9E_loc;
 assign mux8E_out = mux8E_loc;
 assign mux8_2E_out = mux8_2E_loc;
 assign mux8_3E_out = mux8_3E_loc;
-assign mux10E_out = (nop_gen)?1'b0:mux10E_loc;
+assign mux10E_out = (nop_gen_loc)?1'b0:mux10E_loc;
 assign cmdE_out = cmdE_loc;
 assign imm_or_addr_out = imm_or_addr_loc;
 assign sx_2E_ctrl_out = sx_2E_loc;

@@ -22,8 +22,8 @@ module reg_file (
 	input[4:0] adr_srcb,
 	//input [1:0] reg_be,
 	output[31:0] out_srca,
-	output[31:0] out_srcb,
-	output done
+	output[31:0] out_srcb
+	//output done
 );
 integer i;
 reg [31:0] loc_regs [0:31];
@@ -41,10 +41,10 @@ begin
 		if(we)begin
 			if(adr_wrt != 0) begin 
 				loc_regs[adr_wrt] <= data_in;
-				done_loc <= 1'b1;
+				//done_loc <= 1'b1;
 			end
 			else begin 
-				done_loc <=1'b0;
+				//done_loc <=1'b0;
 				loc_regs[5'b0] <= 31'b0;
 			end
 		end
@@ -63,7 +63,7 @@ begin
 	end
 
 end
-assign done = done_loc;
+//assign done = done_loc;
 assign out_srca = loc_srca;
 assign out_srcb = loc_srcb;
 endmodule
