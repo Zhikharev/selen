@@ -68,14 +68,14 @@ class cpu_wbi_driver;
         active_req = 0;
       end
       else begin
+        if(active_req >= max_active_req) begin
+          vif.stall <= 1'b1;
+        end
+        else begin
+          vif.stall <= 1'b0;
+        end
         if(vif.cyc && vif.stb) begin
-          if(active_req >= max_active_req) begin
-            vif.stall <= 1'b1;
-          end
-          else begin
-            active_req++;
-            vif.stall <= 1'b0;
-          end
+          active_req++;
         end
       end
       sem.put();
@@ -92,7 +92,7 @@ class cpu_wbi_driver;
         while(!sem.try_get());
         if(active_req > 0) begin
           sem.put();
-          std::randomize(delay) with {delay >= 0; delay < 10;};
+          std::randomize(delay) with {delay >= 0; delay < 20;};
           repeat(delay) begin 
             clear_interface();
             @(vif.drv);

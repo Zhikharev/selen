@@ -35,4 +35,26 @@ class cpu_direct_seq extends base_seq;
 
 endclass
 
+class cpu_load_seq extends base_seq;
+
+  function new ();
+    super.new();
+  endfunction 
+
+  task body();
+    $display("[%0t][SEQ] Start of 'cpu_load_seq'", $time);
+    repeat(10) begin
+      req = new();
+      assert(req.randomize() with {
+        req.opcode == LW;
+        req.rd inside {[1:25]};
+      })
+      else $fatal("Randomization failed!");
+      req_q.push_back(req);
+    end
+    $display ("[%0t][SEQ] End of 'cpu_load_seq'", $time);  
+  endtask 
+
+endclass
+
 `endif
