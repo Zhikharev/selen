@@ -32,7 +32,7 @@ all parameters are strongly required
 Example: 
  ./disasm LE image.bin
 ```
-То есть надо передать аргумент порядка байт в словах (наш транслятор кладет инструкции в Big Endian):
+То есть надо передать аргумент порядка байт в словах:
 ```
 ../../../build-sim/disas BE out.bin
 image out.bin size 84 b
