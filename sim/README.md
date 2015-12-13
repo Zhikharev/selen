@@ -16,8 +16,9 @@ make
 Также в ней должна появиться библиотекa libisa.so(Linux) или isa.dll(Windows) -  общая для дизассемблера и симулятора, 
 из-за чего они воспринимают инструкции одинаково.
 
+Пример использования:
 
-дизассемблер, out.bin -файл из примера траслятора gipnocow:
+дизассемблер,  файл out.bin взят из примера траслятора gipnocow:
 ```
 jettatura@Jettatura-ubunty:-> ../../../build-sim/disas out.bin
 too few arguments
