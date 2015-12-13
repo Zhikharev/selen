@@ -50,6 +50,7 @@ module cpu_assembled (
 		.data_addr_out 	(wbd_intf.addr),
 		.data_data_out 	(wbd_intf.data_out),
 		.data_data_in 	(wbd_intf.data_in),
+		.data_stall_in  (wbd_intf.stall),
 		.sys_clk 				(clk),
 		.sys_rst 				(rst)
 );
