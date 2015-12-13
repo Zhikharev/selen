@@ -36,7 +36,7 @@ module mem_block(
 	output[31:0]pc_next_out,
 	output cyc_inst,
 	output stb_inst,
-	output cyc_data,
+	//output cyc_data,
 	output stb_data
 );
 
@@ -62,7 +62,12 @@ begin
 		pc <= 31'b0;
 	end
 	else begin
-		pc <= pc_next;
+		if(inst_ack_in) begin
+			pc <= pc_next;
+		end
+		else begin
+			pc <= pc;
+		end
 	end
 end
 //mem FSM for instractions

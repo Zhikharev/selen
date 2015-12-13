@@ -78,7 +78,7 @@ wire[1:0] ctrl2regE_be_mem;
 //wire ctrl_rubish;
 wire[31:0] regD2regE_pc;
 wire[31:0] regD2ctrl;
-wire reg2hz;
+//wire reg2hz;
 ////end of ctrl wires
 ///// wires of mux
 wire[31:0] out_mux5;
@@ -385,7 +385,7 @@ reg_mem reg_mem(
 	.srcbM_out(regM2bpmux),
 	.cndM_out(regM2brch_cnd),
 	.addrM_out(regM2a_mux1),
-	.rs1M_out(W_rs1),
+	.rs1M_out(regM2regW_rs1),
 	.rs2M_out(regM2regW_rs2),
 	.rdM_out(regM2regW_rd),
 	.be_memM_out(data_be_out),// data_be_out
@@ -444,7 +444,7 @@ hazard_unit hazard_unit(
 	.cmd_inE(regE2regM_cmd),
 	.cmd_inM(regM2regW_cmd),
 	.cmd_inW(regW2out_cmd),
-	.done_in(reg2hz),
+	//.done_in(reg2hz),
 	.rs1D(regD2ctrl[19:15]),
 	.rs2D(regD2ctrl[24:20]),
 	.rs1E(regE2regM_rs1),
@@ -462,7 +462,7 @@ hazard_unit hazard_unit(
 	.we_regM(regM2regW_we_reg),
 	.mux1(s_mux1),
 	.inst_stall_in(inst_stall_in),
-	.ack_in(inst_ack_in),
+	//.inst_ack_in(inst_ack_in),
 	//.mem_ctrl(),
 	
 	.bp1M(s_bpmux1),

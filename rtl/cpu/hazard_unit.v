@@ -89,6 +89,7 @@ always@* begin
 		nop_gen_loc = 1'b0;
 	end
 	else begin
+		// every stage works 
 		hz2ctrl_loc = 1'b0;//check it 
 		mux2_loc = 1'b0;
 		flashD_loc = 1'b0;
@@ -109,7 +110,7 @@ always@* begin
 			enbW_loc = 1'b1;
 		end
 		//lw bubble 
-		if((cmd_inE == lw_cmd)||(rs1D == rdE)||(rs2D == rdE))begin
+		if((cmd_inE == lw_cmd)&&((rs1D == rdE)||(rs2D == rdE)&&(rs1D != 5'b0)))begin
 			mux2_loc = 1'b1;
 			enbD_loc = 1'b1;
 			nop_gen_loc = 1'b1;
@@ -121,10 +122,12 @@ always@* begin
 			flashW_loc = 1'b1;
 		end
 		//for jmp hazard if wrt_end is 1 thefore nop gen = 1'b1 and enbD = 1'b1 core is waiting wrt_enb = 1'b0; also be aware of rd = zero in jump comands becous there is not need to write smt in registe file
-		if((cmd_inD == jmp_cmd)||(we_regW == 1'b1)||(rdW != 5'b0))begin
-			mux2_loc = 1'b1;
-			enbD_loc = 1'b1;
-			nop_gen_loc = 1'b1;
+		if(cmd_inD == jmp_cmd)begin
+			if((we_regW == 1'b1)&&(rdW != 5'b0))begin
+				mux2_loc = 1'b1;
+				enbD_loc = 1'b1;
+				nop_gen_loc = 1'b1;
+			end
 		end
 		//waiting for memory answer
 		if(data_stb_out == 1'b1)begin
@@ -205,6 +208,6 @@ assign enbM = enbM_loc;
 assign enbW = enbW_loc;
 assign hz2ctrl = hz2ctrl_loc;
 assign nop_gen_out = nop_gen_loc;
-assign hz2_mem_block_out = ((cmd_inM == lw_cmd)||(cmd_inM == st_cmd))?1'b1:1'b0;////
+assign hz2mem_block_out = ((cmd_inM == lw_cmd)||(cmd_inM == st_cmd))?1'b1:1'b0;////
 endmodule
 
