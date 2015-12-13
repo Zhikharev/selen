@@ -179,7 +179,7 @@ assign mux8E_out = mux8E_loc;
 assign mux8_2E_out = mux8_2E_loc;
 assign mux8_3E_out = mux8_3E_loc;
 assign mux10E_out = (nop_gen_loc)?1'b0:mux10E_loc;
-assign cmdE_out = cmdE_loc;
+assign cmdE_out = (nop_gen_loc)?2'b0:cmdE_loc;
 assign imm_or_addr_out = imm_or_addr_loc;
 assign sx_2E_ctrl_out = sx_2E_loc;
 endmodule
