@@ -2,7 +2,7 @@
 risc-v isa simulator & disassembler
 
 Официальные симуляторы Spike(https://github.com/riscv/riscv-isa-sim) и Qemu(https://github.com/riscv/riscv-qemu) очень крутые но пока нам не походят:
-надо собирать toolchain (https://github.com/riscv/riscv-gnu-toolchain), плюс надо возиться со скриптами линкера gcc, чтобы правильно расположить секции бинарника.
+надо собирать toolchain (https://github.com/riscv/riscv-gnu-toolchain), плюс надо возиться со скриптами линкера gcc, чтобы правильно расположить секции бинарника, плюс сам бинарник надо загружать в симулятор, об этом потом.
 
 Этот симулятор&дизассемблер сделан специaльно для нашего транслятора (https://github.com/Zhikharev/selen/tree/master/assembler), он очень простой, однако поддерживает все инструкции предложенные в Isa.docx(13 декабря) 
 
