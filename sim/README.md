@@ -34,9 +34,9 @@ Example:
 ```
 То есть надо передать аргумент порядка байт в словах:
 ```
-../../../build-sim/disas BE out.bin
+../../../build-sim/disas LE out.bin
 image out.bin size 84 b
-endianness: BE
+endianness: LE
          0	  0x500813	ADDI	S0, ZERO, 0x5
        0x4	  0xc81813	SLLI	S0, S0, 0xc
        0x8	  0x500413	ADDI	T0, ZERO, 0x5
@@ -66,15 +66,15 @@ Image это образ памяти который загружается в с
 
 тот же файл out.bin, симулятор:
 ```
-jettatura@Jettatura-ubunty: pts/0: 5 files 28Kb -> ../../../build-sim/sim BE 10 0 out.bin
-             CONFIG|        endianness: BE
+jettatura@Jettatura-ubunty: pts/0: 5 files 28Kb -> ../../../build-sim/sim LE 10 0 out.bin
+             CONFIG|        endianness: LE
              CONFIG|             steps: 10
              CONFIG|          PC entry: 0
              CONFIG|             image: out.bin
 image out.bin loaded
 initial memory layout:
 
-endianness: BE
+endianness: LE
          0 | 0x500813
        0x4 | 0xc81813
        0x8 | 0x500413
