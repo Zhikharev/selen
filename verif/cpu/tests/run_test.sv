@@ -36,10 +36,28 @@ program run_test (
           test.run_phase();
           test.report_phase();
         end
-  			default: begin
-  				$fatal("Undefined TESTNAME");
+  			"1st_test_seq":begin
+					certain_inst test;
+					test = new(wbi_intf, wbd_intf, rst_intf);
+					test.build_phase();
+					test.run_phase();
+					test.report_phase(); 			
   			end
-  		endcase
+  		 "bp_test_seq":begin
+					bp_inst test;
+					test = new(wbi_intf, wbd_intf, rst_intf);
+					test.build_phase();
+					test.run_phase();
+					test.report_phase(); 			
+				end
+  		 "ADDI_test_seq":begin
+					ADDI_inst test;
+					test = new(wbi_intf, wbd_intf, rst_intf);
+					test.build_phase();
+					test.run_phase();
+					test.report_phase(); 			
+				end
+			endcase
   	end
   	else begin 
       $fatal("Undefined TESTNAME");

@@ -43,7 +43,7 @@ public:
     //read/write
 
     template< typename unit_t>
-    unit_t read(const addr_t pos)
+    unit_t read(const addr_t pos) const
     {
       static_assert(std::is_integral<unit_t>::value ,"unit_t must be integer");
       if((size() + sizeof(unit_t)) < pos)
@@ -114,12 +114,12 @@ public:
         endianness = value;
     }
 
-    bool is_little_endian()
+    bool is_little_endian() const
     {
         return (endianness == LE);
     }
 
-    void dump(std::ostream& out)
+    void dump(std::ostream& out) const
     {
         out << std::showbase << std::hex;
         out << "endianness: " << ((is_little_endian())? "LE" : "BE" ) << std::endl;

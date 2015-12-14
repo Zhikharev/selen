@@ -55,10 +55,10 @@ void Simulator::cycle(const size_t steps_limit, size_t& steps_made)
         //Tracing
         if(m_config.trace)
         {
-            std::cerr << std::hex <<
-                m_state.pc <<
-                "\t" << instr <<
-                "\t" << isa::disassemble(instr) << std::endl;
+            std::cerr << std::hex
+                      << std::setw(ADR_WIDHT) << m_state.pc
+                      << "\t" << std::setw(INST_WIDHT) << instr
+                      << "\t" << isa::disassemble(instr) << std::endl;
         }
 
         isa::perform(m_state, instr);
@@ -67,7 +67,7 @@ void Simulator::cycle(const size_t steps_limit, size_t& steps_made)
     }
 }
 
-instruction_t Simulator::fetch()
+instruction_t Simulator::fetch() const
 {
     if(m_state.pc > m_state.mem.size() + selen::WORD_SIZE)
         throw std::runtime_error("PC refers to invalid address: "
@@ -76,7 +76,7 @@ instruction_t Simulator::fetch()
     return m_state.mem.read<word_t>(m_state.pc);
 }
 
-void Simulator::dump_registers(std::ostream& out)
+void Simulator::dump_registers(std::ostream& out) const
 {
     out << std::showbase << std::hex;
 
@@ -87,7 +87,7 @@ void Simulator::dump_registers(std::ostream& out)
             << m_state.reg[id].u << "\n";
 }
 
-void Simulator::dump_memory(std::ostream& out)
+void Simulator::dump_memory(std::ostream& out) const
 {
     return m_state.mem.dump(out);
 }

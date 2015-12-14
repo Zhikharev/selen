@@ -21,6 +21,10 @@
 #define MF_WIDHT 6
 //regname field widht
 #define RN_WIDHT 3
+//address field widht
+#define ADR_WIDHT 12
+//instruction field widht
+#define INST_WIDHT 12
 //
 
 namespace selen

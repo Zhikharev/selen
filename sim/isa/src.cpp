@@ -96,7 +96,7 @@ isa::handler_t& get_handler(const instruction_t instr, const addr_t pc)
         out << hex << showbase
             << "illegal opcode " << (op&0xff)
             << ", unable decode instruction: " << instr
-            << " at address " << pc + WORD_SIZE <<"\n"
+            << " at address " << pc <<"\n"
             << "valid opcodes:\n";
 
         for(auto token: handlers)

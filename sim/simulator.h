@@ -26,7 +26,8 @@ struct Config
     std::string imagefilename;
 
     //dump destination
-    std::string dumpfile;
+    std::string final_dump;
+    std::string init_dump;
 
     //endian
     memory_t::ENDIAN endianness = {memory_t::LE};
@@ -49,12 +50,12 @@ public:
     std::size_t step(size_t num_steps);
     
     //dump registers and memory to stream
-    void dump_registers(std::ostream& out);
-    void dump_memory(std::ostream& out);
+    void dump_registers(std::ostream& out) const;
+    void dump_memory(std::ostream& out) const;
 
 private:
     void cycle(const size_t num_steps, size_t &steps_made);
-    instruction_t fetch();
+    instruction_t fetch() const;
     
     State  m_state;
     Config m_config;

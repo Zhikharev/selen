@@ -13,9 +13,9 @@ void print_usage(std::ostream& out)
         "\n"
         "where:\n"
             "\t<endianness> - one of \"LE\" or \"BE\" - word endianness at imagefile\n"
-            "\t<adress-space-size>  - size of address space in bytes\n"
-            "\t<steps>      - number of steps to perform\n"
-            "\t<entrypc>    - PC start position\n"
+            "\t<adress-space-size>  -  address space byte size (dec)\n"
+            "\t<steps>      - number of steps to perform (dec)\n"
+            "\t<entrypc>    - PC start position(hex)\n"
             "\t<imagefile>  - binary executable\n"
         "\n"
         "all parameters are strongly required"
@@ -66,17 +66,18 @@ selen::Config parse_command_line(int argc, char* argv[])
     config.endianness = (endianness == "BE") ? selen::memory_t::BE : selen::memory_t::LE;
 
     std::string mem_size(argv[2]);
-    config.mem_size = std::stoul(mem_size, 0);
+    config.mem_size = std::stoul(mem_size, nullptr, 0);
 
     std::string steps(argv[3]);
-    config.steps = std::stoul(steps, 0);
+    config.steps = std::stoul(steps, nullptr, 10);
 
     std::string pcentry(argv[4]);
-    config.pc = std::stoul(pcentry, 0);
+    config.pc = std::stoul(pcentry, nullptr, 0);
 
     config.imagefilename = std::string(argv[5]);
 
-    config.dumpfile = "dump.txt";
+    config.init_dump = "init_dump.txt";
+    config.final_dump = "final_dump.txt";
 
     //enable tracing
     config.trace = true;
@@ -108,6 +109,14 @@ selen::Config parse_command_line(int argc, char* argv[])
     return config;
 }
 
+void dump_state_to_file(selen::Simulator& sim, const std::string& filename)
+{
+    std::ofstream foutinit(filename);
+    sim.dump_registers(foutinit);
+    sim.dump_memory(foutinit);
+    foutinit.close();
+}
+
 int main(int argc, char* argv[])
 try
 {
@@ -117,23 +126,18 @@ try
     
     selen::memory_t image = read_file(config.imagefilename);
     simulator.load(image);
+    std::cout << "Image " << config.imagefilename << " loaded\n";
 
-    std::cout << "image " << config.imagefilename << " loaded\n"
-              << "initial memory layout:\n\n";
-    simulator.dump_memory(std::cout);
-    std::cout << std::endl;
+    dump_state_to_file(simulator, config.init_dump);
+    std::cout << "Initial state dumped to : " << config.init_dump << std::endl;
 
-    std::cout << "start step..." << std::endl;
+    std::cout << "Start step..." << std::endl;
     size_t steps_made = simulator.step(config.steps);
 
     std::cout << "\n\nSUMMARY:\n\nsteps made: " << std::dec << steps_made << std::endl;
 
-    std::ofstream fout(config.dumpfile);
-    simulator.dump_registers(fout);
-    simulator.dump_memory(fout);
-    fout.close();
-
-    std::cout << "State dumped to " << config.dumpfile << std::endl;
+    dump_state_to_file(simulator, config.final_dump);
+    std::cout << "State dumped to " << config.final_dump << std::endl;
 }
 catch(std::exception& e)
 {

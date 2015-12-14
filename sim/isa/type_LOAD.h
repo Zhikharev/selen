@@ -36,9 +36,9 @@ struct LOAD
     {
         link_t& r = find_link(*this);
 
-        s << r.mnemonic << "\t"
-          << get_regname(data.rd) << ", ["
-          << get_regname(data.rs1) << " + "
+        s << std::setw(MF_WIDHT) << r.mnemonic << "\t"
+          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", ["
+          << std::setw(RN_WIDHT) << get_regname(data.rs1) << " + "
           << std::hex << std::showbase
           << data.get_immediate() << "]";
     }
