@@ -8,7 +8,7 @@
 #include "formats.h"
 
 /*
- * SB-type instruction implementation
+ * SB-type instruction
  */
 
 namespace selen
@@ -36,9 +36,9 @@ struct SB
     {
         link_t& r = find_link(*this);
 
-        s << r.mnemonic << "\t"
-          << get_regname(data.rs1) << ", "
-          << get_regname(data.rs2) << ", ["
+        s << std::setw(MF_WIDHT) << r.mnemonic << "\t"
+          << std::setw(RN_WIDHT) << get_regname(data.rs1) << ", "
+          << std::setw(RN_WIDHT) << get_regname(data.rs2) << ", ["
           << std::hex << std::showbase
           << data.get_B_immediate() << "]";
     }

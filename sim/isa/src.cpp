@@ -20,7 +20,7 @@ using namespace std;
 //table of handlers.
 typedef map<isa::opcode_t, isa::handler_t*> handlers_table_t;
 
-std::string selen::get_regname(reg_id_t id)
+std::string selen::get_regname(const reg_id_t id)
 {
     static std::string names[] =
     {
@@ -75,12 +75,12 @@ handlers_table_t inline init_handlers()
         };
 }
 
-isa::opcode_t extract_opcode(instruction_t instr)
+isa::opcode_t extract_opcode(const instruction_t instr)
 {
      return bit_seq(instr, 0, 7);
 }
 
-isa::handler_t& get_handler(instruction_t instr, addr_t pc)
+isa::handler_t& get_handler(const instruction_t instr, const addr_t pc)
 {
     static handlers_table_t handlers = init_handlers();
 
@@ -134,16 +134,15 @@ isa::handler_t& get_handler(instruction_t instr)
     return (*iter->second);
 }
 
-std::string isa::perform(State& state, instruction_t instr)
+void isa::perform(State& state, const selen::instruction_t instr)
 {
     handler_t& h = get_handler(instr, state.pc);
-    h.perform(state, instr);
 
-    return h.disasemble(instr);
+    return h.perform(state, instr);
 }
 
 
-std::string isa::disassemble(instruction_t instr)
+std::string isa::disassemble(const selen::instruction_t instr)
 {
     std::string product;
 

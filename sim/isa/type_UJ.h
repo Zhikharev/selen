@@ -33,8 +33,8 @@ struct JAL
 
     void print(std::ostream& s) const
     {
-        s << "JAL\t"
-          << get_regname(data.rd) << ", "
+        s << std::setw(MF_WIDHT) << "JAL" << "\t"
+          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", "
           << std::hex << std::showbase
           << data.get_J_immediate();
     }
@@ -62,8 +62,8 @@ struct JALR
 
     void print(std::ostream& s) const
     {
-        s << "JALR\t"
-          << get_regname(data.rd) << ", "
+        s << std::setw(MF_WIDHT) << "JALR" << "\t"
+          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", "
           << std::hex << std::showbase
           << data.get_immediate();
     }

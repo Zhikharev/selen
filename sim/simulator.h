@@ -53,7 +53,7 @@ public:
     void dump_memory(std::ostream& out);
 
 private:
-    void cycle(size_t num_steps, size_t &steps_made);
+    void cycle(const size_t num_steps, size_t &steps_made);
     instruction_t fetch();
     
     State  m_state;

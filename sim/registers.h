@@ -76,7 +76,7 @@ enum : reg_id_t
 constexpr std::size_t NUM_REGISTERS = R_LAST;
 
 
-std::string get_regname(reg_id_t id);
+std::string get_regname(const reg_id_t id);
 
 } //namespace selen
 #endif //REG123456789SELEN

@@ -43,9 +43,9 @@ struct I_R
 
         const link_t& r = find_link(*this);
 
-        s << r.mnemonic << "\t"
-          << get_regname(data.i.rd) << ", "
-          << get_regname(data.i.rs1) << ", "
+        s << std::setw(MF_WIDHT) << r.mnemonic << "\t"
+          << std::setw(RN_WIDHT) << get_regname(data.i.rd) << ", "
+          << std::setw(RN_WIDHT) << get_regname(data.i.rs1) << ", "
           << std::hex << std::showbase
           << data.i.get_immediate();
     }

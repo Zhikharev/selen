@@ -9,16 +9,17 @@
 void print_usage(std::ostream& out)
 {
     out <<
-        "Usage:\t"  "sim <endianness> <steps> <entrypc> <imagefile>\n"
+        "Usage:\t"  "sim <endianness> <adress-space-size> <steps> <entrypc> <imagefile>\n"
         "\n"
         "where:\n"
             "\t<endianness> - one of \"LE\" or \"BE\" - word endianness at imagefile\n"
-            "\t<steps>      - number of steps\n"
+            "\t<adress-space-size>  - size of address space in bytes\n"
+            "\t<steps>      - number of steps to perform\n"
             "\t<entrypc>    - PC start position\n"
             "\t<imagefile>  - binary executable\n"
         "\n"
         "all parameters are strongly required"
-        "\nExample: \n ./sim LE 25 0x45c image.bin\n"
+        "\nExample: \n ./sim LE 1024 25 0x45c image.bin\n"
         "\n";
 }
 
@@ -46,7 +47,7 @@ selen::memory_t read_file(const std::string& filename)
 
 selen::Config parse_command_line(int argc, char* argv[])
 {
-    if(argc < 4)
+    if(argc < 6)
     {
         std::ostringstream out;
 
@@ -64,17 +65,19 @@ selen::Config parse_command_line(int argc, char* argv[])
 
     config.endianness = (endianness == "BE") ? selen::memory_t::BE : selen::memory_t::LE;
 
-    std::string steps(argv[2]);
+    std::string mem_size(argv[2]);
+    config.mem_size = std::stoul(mem_size, 0);
+
+    std::string steps(argv[3]);
     config.steps = std::stoul(steps, 0);
 
-    std::string pcentry(argv[3]);
+    std::string pcentry(argv[4]);
     config.pc = std::stoul(pcentry, 0);
 
-    config.imagefilename = std::string(argv[4]);
+    config.imagefilename = std::string(argv[5]);
 
     config.dumpfile = "dump.txt";
-    //auto fit if small
-    config.mem_size = 10;
+
     //enable tracing
     config.trace = true;
 
@@ -85,6 +88,9 @@ selen::Config parse_command_line(int argc, char* argv[])
               << std::setw(field_width) << "endianness: "
               << endianness << std::endl;
 
+    std::cout << std::setw(field_width) << "CONFIG|"
+              << std::setw(field_width) << "mem size: "
+              << config.trace << std::endl;
 
     std::cout << std::setw(field_width) << "CONFIG|"
               << std::setw(field_width) << "steps: "

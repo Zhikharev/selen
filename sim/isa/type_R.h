@@ -36,9 +36,9 @@ struct R
     {
         link_t& r = find_link(*this);
 
-        s << r.mnemonic << "\t"
-          << get_regname(data.rd) << ", "
-          << get_regname(data.rs1) << ", "
+        s << std::setw(MF_WIDHT) << r.mnemonic << " "
+          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", "
+          << std::setw(RN_WIDHT) << get_regname(data.rs1) << ", "
           << get_regname(data.rs2);
     }
 
@@ -184,8 +184,8 @@ private:
             out << std::hex << std::showbase
                 << "R-type invalid func fields: "
                 << "opcode= " << i.data.opcode
-                << "func3= " << i.data.funct3
-                << "func7= " << i.data.funct7;
+                << " func3= " << i.data.funct3
+                << " func7= " << i.data.funct7;
 
             throw std::runtime_error(out.str());
         }

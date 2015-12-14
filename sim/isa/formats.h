@@ -7,12 +7,6 @@
 
 #include "definitions.h"
 
-//Bits extraction
-//least n bits
-#define bit_least(val,n) ((val) & ((1<<(n))-1))
-//extract sequence, start inclusive, stop exclusive
-#define bit_seq(val,start,stop) bit_least((val)>>(start),((stop)-(start)))
-
 namespace selen
 {
 namespace isa

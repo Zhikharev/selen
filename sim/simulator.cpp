@@ -38,7 +38,7 @@ std::size_t Simulator::step(size_t num_steps)
     return steps_made;
 }
 
-void Simulator::cycle(size_t steps_limit, size_t& steps_made)
+void Simulator::cycle(const size_t steps_limit, size_t& steps_made)
 {
     if(m_config.trace)
         std::cerr << std::showbase << std::hex
@@ -52,16 +52,17 @@ void Simulator::cycle(size_t steps_limit, size_t& steps_made)
 
         instruction_t instr = fetch();
 
-        std::string mnemonic = isa::perform(m_state, instr);
-
         //Tracing
         if(m_config.trace)
         {
             std::cerr << std::hex <<
                 m_state.pc <<
                 "\t" << instr <<
-                "\t" << mnemonic << std::endl;
+                "\t" << isa::disassemble(instr) << std::endl;
         }
+
+        isa::perform(m_state, instr);
+
         steps_made++;
     }
 }
