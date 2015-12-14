@@ -55,7 +55,7 @@ public:
       }
 
       unit_t result = 0;
-      if(endianness == LE)
+      if(endianness != LE)
       {
           const unit_t* tmp =reinterpret_cast<const unit_t*>(this->data()+pos) ;
           result = *tmp;
@@ -92,7 +92,7 @@ public:
 
         result.t = value;
 
-        if(endianness == LE)
+        if(endianness != BE)
         {
             for (size_t i = 0;i < sizeof(unit_t); i++)
                 this->operator [](pos + i) = result.b[i];
