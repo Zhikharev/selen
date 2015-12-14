@@ -157,7 +157,7 @@ GP:	0
 SP:	0
 FP:	0
 RA:	0
-endianness: BE
+endianness: LE
          0 | 0x500813
        0x4 | 0xc81813
        0x8 | 0x500413
