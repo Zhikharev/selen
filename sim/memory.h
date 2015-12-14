@@ -92,7 +92,7 @@ public:
 
         result.t = value;
 
-        if(endianness != LE)
+        if(endianness != BE)
         {
             for (size_t i = 0;i < sizeof(unit_t); i++)
                 this->operator [](pos + i) = result.b[i];
