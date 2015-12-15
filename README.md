@@ -9,6 +9,7 @@ SoC contains:
 
 Target platfrom FPGA Spartan-6.
 
-We introduce assembler for RISC-V ISA, which supports our custom instructions.
+We introduce assembler for RISC-V ISA, which supports our custom instructions. 
+At last we designed simple ISA simulator to execute binary memory images.
 
 <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcR5ojY1hvgnKv5paAHNRG-_s-mZUgI-eqFm6e9j_gn8IIR2Ylms">
