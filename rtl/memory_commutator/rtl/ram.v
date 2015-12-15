@@ -39,11 +39,12 @@ module ram(
 	begin
 		if (ram_stb_i) begin
 			data_o <= ram[ram_addr_i];
+			ack_o <= ram_stb_i;
 		end
 	end
 	
 	assign ram_data_o = data_o;
-	assign ram_ack_o  = ~ram_stb_i;
+	assign ram_ack_o  = ack_o;
 	
 	// RAM port2
 	always @(posedge sys_clk)
@@ -52,9 +53,10 @@ module ram(
 			ram[ram2_addr_i] <= ram2_data_i;
 		end else begin
 			data2_o <= ram[ram2_addr_i];
+			ack2_o <= ram2_stb_i;
 		end
 	end
 	
 	assign ram2_data_o = data2_o;
-	assign ram2_ack_o  = ~ram2_stb_i;
+	assign ram2_ack_o  = ack2_o;
 endmodule

@@ -21,6 +21,7 @@ module rom(
 );
 	reg 	 [31:0] 		data_o;
 	reg 	 [31:0] 		rom [0:6];
+	reg 					rom_ack_r;
 
 	always @(posedge sys_clk, posedge sys_rst) begin	
 		if (sys_rst) begin
@@ -31,10 +32,14 @@ module rom(
 			rom[4] <= 32'hFFFFFFFF;
 			rom[5] <= 32'hFFFFFFFF;
 			rom[6] <= 32'hFFFFFFFF;
-		end else 
+			
+			rom_ack_r <= 1'b0;
+		end else begin
 			data_o <= rom[rom_addr_i];
+			rom_ack_r <= rom_stb_i;
+		end
 	end
 
 	assign rom_data_o = data_o;
-	assign rom_ack_o  = ~rom_stb_i;
+	assign rom_ack_o  = rom_ack_r;
 endmodule
