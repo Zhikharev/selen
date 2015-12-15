@@ -78,7 +78,9 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 	cpu_wbd_monitor cpu_wbd_mon;
 	cpu_wbi_monitor cpu_wbi_mon;
 
-	reg [31:0] prog_mem [0:31];
+	reg [31:0] prog_mem [1024];
+	integer bin_dscr;
+	integer r_dscr;
 
 	initial begin
 		clk = 0;
@@ -145,9 +147,11 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 	endtask
 
 	initial begin 
-		$readmemh("bin_example.txt", prog_mem);
+		bin_dscr = $fopen("image.bin", "rb");
+		r_dscr   = $fread(prog_mem, bin_dscr);
 		foreach(prog_mem[i]) begin
-			$display("PROG MEM[%0d] %0h", i, prog_mem[i]);
+			if($isunknown(prog_mem[i])) break;
+			$display("PROG MEM[%0d] %8h", i, prog_mem[i]);
 		end
 	end
 

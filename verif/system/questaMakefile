@@ -3,6 +3,7 @@ GIT_HOME 	=	/home/selen
 RTL_PATH    = $(GIT_HOME)/rtl/
 TB_PATH     = $(GIT_HOME)/verif/system
 MODEL       = $(GIT_HOME)/
+BIN         = $(GIT_HOME)/assembler/outf.bin
 
 # RTL and SV files
 RTL_SRC    = 
@@ -53,7 +54,7 @@ analyze:
 	$(VLOG) $(ARCH_OPTS) $(VLOG_OPTS) $(RTL_SRC) $(SV_SRC)
 
 sim: analyze
-	cp $(TB_PATH)/bin_example.txt bin_example.txt;
+	cp $(BIN) image.bin;
 	$(VSIM) -novopt -do 'run -all' $(SIM_OPTS) $(TOP)
 
 build_c:
