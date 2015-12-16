@@ -49,6 +49,9 @@
 `include "../verif/cpu/monitors/cpu_wbi_monitor.sv"
 `include "../verif/cpu/monitors/cpu_wbd_monitor.sv"
 
+`ifndef CLK_HALF_TIME
+`define CLK_HALF_TIME 5ns  
+`endif
 
 module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 
@@ -83,8 +86,9 @@ module system_tb_top #(parameter HDR_WIDTH = 2)  ();
 	integer r_dscr;
 
 	initial begin
+		$display("CLK_HALF_TIME=%0d", `CLK_HALF_TIME);
 		clk = 0;
-		forever #10 clk = !clk;
+		forever #`CLK_HALF_TIME clk = !clk;
 	end
 
 	selen_top selen_top 
