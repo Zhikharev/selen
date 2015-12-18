@@ -11,19 +11,25 @@
 */
 
 module cpu_top (
-	output[31:0] inst_out,//address of instraction
-	output [31:0] pc_next_out,
-	output brch_out,
-	output sw_out,
-	output lw_out,
-	output whait_out,
-	input[31:0] inst_in,//instractoin from mem
-	input[31:0] data_in,//data from mem
-	output[31:0] data_out, // data for store instr
-	output[31:0] addr_out, // address for load commands 
-	input stall_in,
-	input pc_ctrl,
-	input ben//bit enable 2 data_mem
+	//instruction 
+	output inst_cyc_out,
+	output inst_stb_out,
+	output[31:0] inst_addr_out,
+	input inst_ack_in,
+	input[31:0] inst_data_in,
+	input inst_stall_in,
+	//data
+	output data_stb_out,
+	output data_we_out,
+	output[1:0] data_be_out,
+	input data_ack_in,
+	output[31:0] data_addr_out,
+	output[31:0] data_data_out,
+	input[31:0] data_data_in,
+	input data_stall_in,
+	//system
+	input sys_clk,
+	input sys_rst
 );
 
 //all wires  ###################################################### 
@@ -48,13 +54,20 @@ wire hz2ctrl;
 wire hz2flashE;
 wire[31:0] srca2regE;
 wire[31:0] srcb2regE;
+//wire ctrl2hz;
 wire[2:0] ctrl2regE_sx_ctrl;
-////				ctrl wires 
+//wire[31:0] sxD2mux4;
+////ctrl wires 
 wire ctrl2regE_mux10;
 wire ctrl2regE_mux9;
 wire ctrl2regE_mux8_3;
 wire ctrl2regE_mux8_2;
 wire ctrl2regE_mux8;
+//wire ctrl2_mux5;
+//wire ctrl2_mux4_2;
+//wire ctrl2_mux4;
+//wire ctrl2_mux3;
+//wire ctrl2_mux1;
 wire[1:0] ctrl2regE_cmd;
 wire[3:0] ctrl2regE_alu_ctrl;
 wire ctrl2regE_alu_sign;
@@ -62,17 +75,19 @@ wire[1:0]ctrl2regE_brch_type;
 wire ctrl2regE_we_mem;
 wire ctrl2regE_we_reg;
 wire[1:0] ctrl2regE_be_mem;
+//wire ctrl_rubish;
 wire[31:0] regD2regE_pc;
 wire[31:0] regD2ctrl;
 //wire reg2hz;
 ////end of ctrl wires
-///// 					wires of mux
+///// wires of mux
 wire[31:0] out_mux5;
 wire[31:0] a_mux5;
 wire[31:0] b_mux5;
 wire s_mux5;
 
 wire[31:0] out_mux7;
+//wire[11:0] a_mux7;
 wire[31:0] b_mux7;
 wire s_mux7;
 
@@ -87,6 +102,9 @@ wire hz2enbE;
 wire hz2nop_genE;
 wire[31:0] address;
 wire[2:0] regE2regM_sx;
+//wire regE2_mux8;
+//wire regE2_mux8_2;
+//wire regE2_mux8_3;
 wire[3:0] regE2_alu_ctrl;
 wire regE2_alu_sign;
 wire[31:0] regE2a_bpmux2;
@@ -102,7 +120,7 @@ wire[1:0] alu2regM_cnd;
 wire[2:0] regE2ergM_sx;
 wire regE2regM_we_reg;
 
-////						muxs for exeqution stage 
+///muxs for exeqution stage 
 wire[31:0] out_mux8;
 wire[31:0] a_mux8;
 wire[31:0] b_mux8;
@@ -117,8 +135,8 @@ wire[31:0] out_mux8_3;
 wire[31:0] a_mux8_3;
 wire[31:0] b_mux8_3;
 wire s_mux8_3;
-////							end muxs of exeqution stage 
-////					forwardinr's mux
+///end muxs of exeqution stage 
+/// forwardinr's mux
 wire[31:0] out_bpmux1;
 wire[31:0] a_bpmux1;
 wire[31:0] b_bpmux1;
@@ -138,7 +156,8 @@ wire[31:0] out_bpmux4;
 wire[31:0] a_bpmux4;
 wire[31:0] b_bpmux4;
 wire s_bpmux4;
-////								end of forwarding
+//// end of forwarding
+//// regE2regM
 wire[1:0] regE2regM_be_mem;
 wire regE2regM_we_mem;
 wire regE2regM_mux10;
@@ -149,17 +168,25 @@ wire[1:0] regE2regM_cmd;
 //// 						memory stage 
 wire hz2enbW;
 wire hz2flashM;
+//wire[1:0] regM2cnd;
+//wire [31:0] result2mem;
 wire regM2regW_mux10;
 wire[1:0] regM2regW_cmd;
 wire regM2regW_mux9;
 wire[19:0] regM2regW_imm20;
+//wire[19:0] regM2b_mux10_imm20;
+//wire regM2regW_mux10;
 wire[4:0] regM2regW_rs1;
+//wire[4:0] regM2ergW_rs2;
 wire[4:0] regM2regW_rd;
 wire[31:0] regM2bpmux;
 wire[31:0] mem2regW;
 wire[31:0] regM2mem_result;
 wire[1:0] regM2_cnd_type;
 wire[1:0] regM2brch_cnd;
+//wire regM2mem_we_mem;
+//wire[1:0] regM2mem_be_mem;
+
 wire[31:0] a_bpmux5;
 wire[31:0] b_bpmux5;
 wire[31:0] out_bpmux5;
@@ -185,8 +212,11 @@ wire[4:0] regW2out_rd;
 wire[4:0] regW2out_rs2;
 wire[4:0] regW2out_rs1;
 wire[1:0] regW2out_cmd;
+//wire[1:0] regW2out;
 wire[31:0] regW2a_mux9;
 wire[31:0] regW2b_mux9;
+//wire[4:0] regW2reg_rd;
+//wire[4:0] regW_rs2W_out;
 wire[19:0] regW2b_mux10_imm20;
 
 ////					end of out 
@@ -203,18 +233,30 @@ mem_block mem_block (
 	.mux3(s_mux3),
 	.mux4(s_mux4),
 	.mux4_2(s_mux4_2),
+	.stall_inst(inst_stall_in),
+	.stall_data(data_stall_in),
+	
+	.inst_ack_in(inst_ack_in),
+	.data_ack_in(data_ack_in),
+	.inst_in(inst_data_in),
+	.inst_out(mem_block2regD_inst),
 	.imm_20({{12{regD2ctrl[31]}},regD2ctrl[31],regD2ctrl[19:12],regD2ctrl[20],regD2ctrl[30:21]}),
 	.imm_12(out_mux7),
 	.reg_in(srca2regE),
 	.brch_address(regM2a_mux1),
-	.inst_addr(inst_out),//global
-	.pc_next_out(pc_next_out)
+
+	.inst_addr(inst_addr_out),
+	.cyc_inst(inst_cyc_out),
+	.stb_inst(inst_stb_out),
+	.stb_data(data_stb_out),
+	.pc_next_out(mem_block2regD_pc),
+	.hz2mem_block_in(hz2mem_block)
 );
 
 //////
 reg_decode reg_decode(
-	.instr_in(inst_in),//global
-	.pc_in(pc_in_glob),//pc +4 
+	.instr_in(mem_block2regD_inst),
+	.pc_in(mem_block2regD_pc),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
 	.flash(hz2flashD),
@@ -231,6 +273,7 @@ reg_file reg_file (
 	.adr_srcb(regD2ctrl[24:20]),
 	.out_srca(srca2regE),
 	.out_srcb(srcb2regE)//,
+	//.done(reg2hz)
 );
 cpu_ctrl cpu_ctrl(
 	.rst(sys_rst),
@@ -338,7 +381,7 @@ reg_mem reg_mem(
 	.imm20M(regE2regM_imm20),
 	.sx_2M_ctrl(regE2regM_sx),
 	
-	.resultM_out(addr_out),//global
+	.resultM_out(regM2mem_result),
 	.srcbM_out(regM2bpmux),
 	.cndM_out(regM2brch_cnd),
 	.addrM_out(regM2a_mux1),
@@ -368,7 +411,7 @@ reg_write reg_write(
 	.mux10W(regM2regW_mux10),
 	.resultW(regM2mem_result),
 	.rdW(regM2regW_rd),
-	.memW(data_in),//global
+	.memW(mem2regW),
 	.clk(sys_clk),
 	.flashW(hz2flashW),
 	.enbW(hz2enbW),
@@ -401,6 +444,7 @@ hazard_unit hazard_unit(
 	.cmd_inE(regE2regM_cmd),
 	.cmd_inM(regM2regW_cmd),
 	.cmd_inW(regW2out_cmd),
+	//.done_in(reg2hz),
 	.rs1D(regD2ctrl[19:15]),
 	.rs2D(regD2ctrl[24:20]),
 	.rs1E(regE2regM_rs1),
@@ -417,6 +461,9 @@ hazard_unit hazard_unit(
 	.we_regW(regW2out_we_reg),
 	.we_regM(regM2regW_we_reg),
 	.mux1(s_mux1),
+	.inst_stall_in(inst_stall_in),
+	//.inst_ack_in(inst_ack_in),
+	//.mem_ctrl(),
 	
 	.bp1M(s_bpmux1),
 	.bp2W(s_bpmux2),
@@ -424,6 +471,7 @@ hazard_unit hazard_unit(
 	.bp4W(s_bpmux4),
 	.bp5M(s_bpmux5),
 	.mux2(s_mux2),
+	.hz2ctrl(hz2ctrl),
 	
 	.flashD(hz2flashD),
 	.flashE(hz2flashE),
@@ -434,15 +482,11 @@ hazard_unit hazard_unit(
 	.enbE(hz2enbE),
 	.enbM(hz2enbM),
 	.enbW(hz2enbW),
+	.hz2mem_block_out(hz2mem_block),
 
 	.nop_gen_out(hz2nop_genE),
-	.sys2hz_stall(stall_in),//global
-
-	.hz2sys_lw(lw_out),//global
-	.hz2sys_sw(sw_out),//global
-	.whait(whait_out),//global
-
-	pc_ctrl(pc_ctrl)
+	.data_stb_out(data_stb_out),
+	.data_stall_in(data_stall_in)
 );
 ///// ############### area with pc (fetch)
 
@@ -452,7 +496,7 @@ hazard_unit hazard_unit(
 //// ################ end of fetch
 //// ################ decode 
 /////begining of sign extenshion 
-assign brch_out = s_mux1;//global //if taken s_mux1 = 1'b0
+
 assign a_mux6 = {{19{regD2ctrl}},regD2ctrl[31],regD2ctrl[7],regD2ctrl[31:25],regD2ctrl[11:8]};
 assign b_mux6 = {{20{regD2ctrl}},regD2ctrl[31:25],regD2ctrl[11:7]};
 assign b_mux7 = out_mux6;
@@ -474,7 +518,6 @@ assign out_bpmux2 = s_bpmux2 ? b_bpmux2 : a_bpmux2; // bpmux2
 assign out_bpmux3 = s_bpmux3 ? b_bpmux3 : a_bpmux3; // bpmux3
 assign out_bpmux4 = s_bpmux4 ? b_bpmux4 : a_bpmux4; // bpmux4
 assign out_bpmux5 = (s_bpmux5)?b_bpmux5:a_bpmux5;//bpmux5
-assign data_out = out_bpmux5;
 
 assign a_bpmux1 = regM2mem_result;
 assign b_bpmux1 = out_bpmux2;
@@ -505,6 +548,7 @@ assign b_mux9 = regW2b_mux9;
 assign b_mux10 = {regW2b_mux10_imm20,{11{1'b1}}};
 assign out_mux10 = (s_mux10)? b_mux10:a_mux10;
 //// ################ end of mem
-
-
+assign mem2regW = data_data_in;//data_data_in
+assign data_addr_out = regM2mem_result; //data_addr_out
+//assign data_we_out = regM2mem_we_mem;
 endmodule

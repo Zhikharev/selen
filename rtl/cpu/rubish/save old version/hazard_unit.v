@@ -16,6 +16,7 @@ module hazard_unit(
 	input[1:0] cmd_inE,
 	input[1:0] cmd_inM,
 	input[1:0] cmd_inW,
+	//input done_in,
 	input[4:0] rs1E,
 	input[4:0] rs2E,
 	input[4:0] rs1M,
@@ -31,9 +32,12 @@ module hazard_unit(
 	input we_regE,
 	input we_regM,
 	input we_regW,
-	input mux1,//branch
-	input sys2hz_stall,
-	input sys2hz_pc_ctrl,
+	input mux1,
+	input inst_stall_in,
+	//input inst_ack_in,
+	input data_stall_in,
+	//input data_ack_in,
+	input data_stb_out,
 	output bp1M,
 	output bp2W,
 	output bp3M,
@@ -52,13 +56,11 @@ module hazard_unit(
 	output enbM,
 	output enbW,
 
-	output nop_gen_out,
-	
-	output hz2sys_lw,
-	output hz2sys_sw
+	output hz2mem_block_out,
+	output nop_gen_out
 );
 localparam lw_cmd = 2'b11;
-localparam sw_cmd = 2'b10;
+localparam st_cmd = 2'b10;
 localparam jmp_cmd = 2'b01;
 localparam other = 2'b00;
 reg hz2ctrl_loc;
@@ -100,7 +102,7 @@ always@* begin
 		enbW_loc = 1'b0;
 		nop_gen_loc = 1'b0;
 		//both stalls
-		if(sys2hz_stall)begin
+		if((inst_stall_in)||(data_stall_in))begin
 			mux2_loc = 1'b1;
 			enbD_loc = 1'b1;
 			enbE_loc = 1'b1;
@@ -127,8 +129,14 @@ always@* begin
 				nop_gen_loc = 1'b1;
 			end
 		end
-		
-		
+		//waiting for memory answer
+		if(data_stb_out == 1'b1)begin
+			mux2_loc = 1'b1;
+			enbW_loc = 1'b1;
+			enbM_loc = 1'b1;
+			enbE_loc = 1'b1;
+			enbD_loc = 1'b1;
+		end
 	end
 end
 
@@ -198,10 +206,8 @@ assign enbD = enbD_loc;
 assign enbE = enbE_loc;
 assign enbM = enbM_loc;
 assign enbW = enbW_loc;
-assign hz2ctrl = hz2ctrl_loc;/// be aware 
+assign hz2ctrl = hz2ctrl_loc;
 assign nop_gen_out = nop_gen_loc;
-assign hz2sys_lw = (cmd_inM == lw_cmd)?1'b1:1'b0;
-assign hz2sys_sw = (cmd_inM == sw_cmd)?1'b1:1'b0;
-assign whait = (enbD)?1'b1:1'b0;
+assign hz2mem_block_out = ((cmd_inM == lw_cmd)||(cmd_inM == st_cmd))?1'b1:1'b0;////
 endmodule
 
