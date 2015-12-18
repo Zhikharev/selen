@@ -9,7 +9,7 @@
 // DESCRIPTION    : FIFO
 // ----------------------------------------------------------------------------
 
-module fifo
+module cpu_fifo
 #(
 	parameter DEPTH = 2,
 	parameter SIZE = 8

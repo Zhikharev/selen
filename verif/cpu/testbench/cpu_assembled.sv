@@ -12,6 +12,7 @@
 `ifndef INC_CPU_ASSEMBLED
 `define INC_CPU_ASSEMBLED
 
+`include "cpu_fifo.v"
 `include "alu.v"
 `include "brnch_cnd.v"
 `include "cpu_cntr.v"
@@ -24,7 +25,9 @@
 `include "mem_block.v"
 `include "sx_2.v"
 `include "cpu_top.v"
-
+`include "wb_data.v"
+`include "wb_instr.v" 
+`include "system.v"
 module cpu_assembled (
 	input 				clk,
 	input 				rst,
@@ -35,7 +38,7 @@ module cpu_assembled (
 	assign wbi_intf.we = 1'b0;
 
 	// Instantiate CPU DUT here
-	cpu_top top 
+	system top 
 	(
 		.inst_cyc_out 	(wbi_intf.cyc),
 		.inst_stb_out 	(wbi_intf.stb),
