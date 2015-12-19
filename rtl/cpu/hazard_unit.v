@@ -32,15 +32,13 @@ module hazard_unit(
 	input we_regM,
 	input we_regW,
 	input mux1,//branch
-	input sys2hz_stall,
-	input sys2hz_pc_ctrl,
 	output bp1M,
 	output bp2W,
 	output bp3M,
 	output bp4W,
 	output bp5M,
 	output mux2,
-	output hz2ctrl,
+	//output hz2ctrl,
 	
 	output flashD,
 	output flashE,
@@ -54,8 +52,11 @@ module hazard_unit(
 
 	output nop_gen_out,
 	
+	input sys2hz_stall,
 	output hz2sys_lw,
-	output hz2sys_sw
+	output hz2sys_sw,
+	output whait,
+	input pc_ctrl
 );
 localparam lw_cmd = 2'b11;
 localparam sw_cmd = 2'b10;
@@ -127,8 +128,9 @@ always@* begin
 				nop_gen_loc = 1'b1;
 			end
 		end
-		
-		
+		if(pc_ctrl)begin
+			mux2_loc = 1'b1;			
+		end
 	end
 end
 

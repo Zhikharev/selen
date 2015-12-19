@@ -20,7 +20,7 @@ module mem_block(
 	input mux4,
 	input mux4_2,
 	
-	input[19:0] imm_20,
+	input[31:0] imm_20,
 	input [31:0] imm_12,
 	input [31:0] reg_in,
 	input[31:0] brch_address,

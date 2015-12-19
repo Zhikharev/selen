@@ -23,7 +23,11 @@ module cpu_top (
 	output[31:0] addr_out, // address for load commands 
 	input stall_in,
 	input pc_ctrl,
-	input ben//bit enable 2 data_mem
+	input[31:0] pc_next_in,
+	output data_we_out,
+	output[1:0] data_be_out,
+	input sys_rst,
+	input sys_clk
 );
 
 //all wires  ###################################################### 
@@ -214,7 +218,7 @@ mem_block mem_block (
 //////
 reg_decode reg_decode(
 	.instr_in(inst_in),//global
-	.pc_in(pc_in_glob),//pc +4 
+	.pc_in(pc_next_in),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
 	.flash(hz2flashD),
@@ -442,7 +446,8 @@ hazard_unit hazard_unit(
 	.hz2sys_sw(sw_out),//global
 	.whait(whait_out),//global
 
-	pc_ctrl(pc_ctrl)
+	.pc_ctrl(pc_ctrl)
+	//.hz2ctrl()
 );
 ///// ############### area with pc (fetch)
 

@@ -14,116 +14,94 @@ module wd_inst (
 	input brnch,
 	input[31:0] pc,
 	input[31:0] pc_next_in,
-	input[31:0] pc_next_out,
+	output[31:0] pc_next_out,
 	input whait,
 	output[31:0] inst,
-	output stall,
-	output pc_whait
+	output stall,// fifo is empty 
+	output pc_ctrl
 );
-localparam RST = 3'b0;
-localparam RQST = 3'b001;
-localparam WHT = 3'b010;
-localparam STALL = 3'b011;
-localparam BRCH = 3'b100;
-localparam FULL_INST = 3'b101;
-localparam FULL_PC = 3'b110;
-reg[2:0] state;
-reg[2:0] state_next;
-reg wr_pc;
-reg wr_inst;
+///FSM for both fifo
+localparam RST = 2'b00;
+localparam RQST = 2'b01;
+localparam WHT = 2'b10;
+localparam WRT_RD = 2'b11; 
 reg stb_loc;
 reg cyc_loc;
-reg rst_fifo;
-reg pc_ctr
+reg wr_pc;
+reg wr_inst;
+reg full_pc;
+reg full_inst;
+reg empty_pc;
+reg emrty_inst;
+reg[1:0] state;
+reg[1:0] state_next;
+reg pc_whait;
 always@(posedge clk)begin
-	if(rst)state <= 3'b000;
-	else state <= state_next;
+	if(rst) state = RST;
+	else state = state_next; 
 end
-always @*begin
+always@* begin
 	case(state)
-		RST:begin
+	RST:begin
+		stb_loc = 1'b0;
+		cyc_loc = 1'b0;
+		wr_pc = 1'b0;
+		wr_inst = 1'b0;
+		pc_whait = 1'b1;
+		state_next = RQST;
+	end
+	RQST:begin
+		stb_loc = 1'b1;
+		cyc_loc = 1'b1;
+		pc_whait = 1'b0;
+		wr_pc = 1'b1;
+		state_next = WHT;
+	end
+	WHT:begin
+		if((wb_stall||full_pc||full_inst)&&(~ack))begin
 			stb_loc = 1'b0;
-			cyc_loc = 1'b0;
-			rst_fifo = 1'b1;
-			state_next = RQST;
-		end
-		RQST:begin
-			stb_loc = 1'b1;
-			cyc_loc = 1'b1;
-			rst_fifo = 1'b0;
+			pc_whait = 1'b1;
 			state_next = WHT;
+			wr_pc = 1'b0;
 		end
-		WHT:begin
-			if(wb_stall)begin
-				stb_loc = 1'b0;
-				state_next = STALL;
-				pc_ctrl = 1'b1;
-			end
-			if(full_inst)begin
-				stb_loc = 1'b0;
-				wr_inst = 1'b0;
-				state_next = FULL_INST;
-				pc_ctrl = 1'b1;
-			end
-			if(full_pc)begin
-				stb_loc = 1'b0;
-				wr_pc = 1'b0;
-				state_next = FULL_PC;
-				pc_ctrl = 1'b1;
-			end
-			if(brch)begin
-				stb_loc = 1'b0;
-				state_next = BRCH;
-				pc_ctrl = 1'b1;
-			end
+		if(ack)begin
+			wr_inst = 1'b1;		
 		end
-		BRCH:begin
-			state_next = RST;
-		end
-		STALL:begin
-			if(wb_stall) state_next = STALL;
-			else state_next = WHT;
-		end
-		FULL_INST:begin
-			if(full_inst) state_next = FULL_INST;
-			else state_next = WHT;
-		end
-		FULL_PC:begin
-			if(full_pc) state_next = FULL_PC;
-			else state_next = WHT;
-		end
+		state_next = WHT;
+	end
+	WRT_RD:begin
+		
+	end
 	endcase
 end
-cpu_fifo pc_fifo(
-#(
-	DEPTH = 10,
-	SIZE = 32
-)
-	clk(clk),
-	wr_en(wr_pc),
-	din(pc_next),
-	rst(rst_fifo),
+cpu_fifo #(10,32) pc_fifo(
+	.clk(clk),
+	.wr_en(wr_pc),
+	.din(pc_next_in),
+	.rst(~brnch),
 	
-	rd_en(~whait),
-	dout(pc_next_out),
+	.rd_en(~whait),
+	.dout(pc_next_out),
 	
-	empty(empty_pc),
-	full(full_pc)
+	.empty(empty_pc),
+	.full(full_pc)
 );
-cpu_fifo inst_fifo(
-#(
-	DEPTH = 10,
-	SIZE = 32
-)
-	clk(clk),
-	wr_en(wr_inst),
-	din(wb_inst),
-	rst(rst_fifo),
+cpu_fifo #(10,32) inst_fifo(
+	.clk(clk),
+	.wr_en(wr_inst),
+	.din(wb_inst),
+	.rst(~brnch),
 
-	rd_en(~whait),
-	dout(inst),
+	.rd_en(~whait),
+	.dout(inst),
 
-	empty(empty_inst),
-	full(full_inst)
+	.empty(empty_inst),
+	.full(full_inst)
 );
+assign stb = stb_loc;
+assign cyc = cyc_loc;
+assign wb_addr = pc;
+assign stall = empty_inst;// fifo is empty 
+assign pc_ctrl = pc_whait;
+ 
 endmodule
