@@ -66,12 +66,12 @@ for line in code:
             binary += SB_t.getCode(line, {last: nlabel - len(binary)/8})
         else:
             Service.ERROR("Error label not found, in lane: " + line);
-    elif instr in Jal.codes:
-        Jal.getCode(line, labels)
     elif instr in Jalr.codes:
+        Jalr.getCode(line)
+    elif instr in Jal.codes:
         if last in labels:
             nlabel = labels[last]
-            binary += Jalr.getCode(line, {last: nlabel - len(binary)/8})
+            binary += Jal.getCode(line, {last: nlabel - len(binary)/8})
         else:
             Service.ERROR("Error label not found, in lane: " + line);
     elif instr in L_t.codes:
