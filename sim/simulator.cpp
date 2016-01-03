@@ -7,24 +7,35 @@
 
 using namespace selen;
 
-void Simulator::load(memory_t &image)
+bool Simulator::load(memory_t &image, bool allow_resize, addr_t load_offset)
 {
-    assert(!image.empty());
+    size_t required_size = image.size() + load_offset;
+    size_t available_size = state.mem.size();
 
-    m_state.mem.swap(image);
-    if(m_state.mem.size() < m_config.mem_size)
-        m_state.mem.resize(m_config.mem_size);
+    if(required_size > available_size)
+    {
+        if(!allow_resize)
+            return false;
+
+        state.mem.resize(required_size);
+    }
+
+    std::copy(image.begin(), image.end(), state.mem.data() + load_offset);
+
+    status.image_loaded = true;
+
+    return true;
 }
 
 std::size_t Simulator::step(size_t num_steps)
 {
-    m_state.pc = m_config.pc;
-
-    size_t steps_made = 0;
-
+    status.steps_made_last = 0;
     try
     {
-        cycle(num_steps, steps_made);
+        if(!status.image_loaded)
+            throw std::runtime_error("image was not loaded to simulator");
+
+        cycle(num_steps);
     }
     catch(std::exception & e)
     {
@@ -35,59 +46,129 @@ std::size_t Simulator::step(size_t num_steps)
                   << std::endl;
     }
 
-    return steps_made;
+    status.steps_made_from_begin += status.steps_made_last;
+    return status.steps_made_last;
 }
 
-void Simulator::cycle(const size_t steps_limit, size_t& steps_made)
+void Simulator::cycle(const size_t steps_limit)
 {
-    if(m_config.trace)
+    if(config.trace)
         std::cerr << std::showbase << std::hex
                   << "Trace: " << std::endl;
 
-    steps_made = 0;
-    while (steps_made < steps_limit)
+    status.steps_made_last = 0;
+    while (status.steps_made_last < steps_limit)
     {
-        if(m_state.pc == selen::SIMEXIT)
+        if(state.pc == selen::SIMEXIT)
             break;
 
         instruction_t instr = fetch();
 
         //Tracing
-        if(m_config.trace)
+        if(config.trace)
         {
             std::cerr << std::hex
-                      << std::setw(ADR_WIDHT) << m_state.pc
+                      << std::setw(ADR_WIDHT) << state.pc
                       << "\t" << std::setw(INST_WIDHT) << instr
                       << "\t" << isa::disassemble(instr) << std::endl;
         }
 
-        isa::perform(m_state, instr);
+        isa::perform(state, instr);
 
-        steps_made++;
+        status.steps_made_last++;
     }
 }
 
 instruction_t Simulator::fetch() const
 {
-    if(m_state.pc > m_state.mem.size() + selen::WORD_SIZE)
+    if(state.pc > state.mem.size() + selen::WORD_SIZE)
         throw std::runtime_error("PC refers to invalid address: "
                                  "out of memory range");
 
-    return m_state.mem.read<word_t>(m_state.pc);
+    return state.mem.read<word_t>(state.pc);
 }
 
 void Simulator::dump_registers(std::ostream& out) const
 {
     out << std::showbase << std::hex;
 
-    out << "PC:\t" << m_state.pc << std::endl;
+    out << "PC:\t" << state.pc << std::endl;
 
     for (selen::reg_id_t id = 0; id < selen::NUM_REGISTERS; id++)
         out << get_regname(id) << ":\t"
-            << m_state.reg[id].u << "\n";
+            << state.reg[id].u << "\n";
 }
 
 void Simulator::dump_memory(std::ostream& out) const
 {
-    return m_state.mem.dump(out);
+    return state.mem.dump(out);
+}
+
+void Simulator::set_config(const Config &econfig)
+{
+    config = econfig;
+
+    if(state.mem.size() < config.mem_size)
+        state.mem.resize(config.mem_size);
+
+    state.mem.set_endian(config.endianness);
+    state.pc = config.pc;
+}
+
+const Config &Simulator::get_config() const
+{
+    return config;
+}
+
+void Simulator::enable_tracing(bool enable)
+{
+    config.trace = enable;
+}
+
+const Status &Simulator::get_status() const
+{
+    return status;
+}
+
+addr_t Simulator::get_program_counter() const
+{
+    return state.pc;
+}
+
+void Simulator::set_program_counter(addr_t new_pc)
+{
+    state.pc = new_pc;
+}
+
+const State &Simulator::get_state() const
+{
+    return state;
+}
+
+std::ostream &selen::operator<<(std::ostream &os, const Config &cfg)
+{
+    using namespace std;
+
+    os << setw(fmtwidht) << "tracing: " << ((cfg.trace) ? "on" : "off") << std::endl
+       << setw(fmtwidht) << "endianness: " << ((cfg.endianness == selen::memory_t::LE) ? "LE" : "BE") << std::endl
+       << setw(fmtwidht) << "address space size: " << cfg.mem_size << " bytes" << std::endl
+       << setw(fmtwidht) << "start pc: " << cfg.pc << std::endl
+       << setw(fmtwidht) << "steps: " << cfg.steps;
+
+    return os;
+}
+
+std::ostream &selen::operator<<(std::ostream &os, const Status &st)
+{
+    using namespace std;
+
+    os << setw(fmtwidht) << "program running: " << ((st.in_progress)? "yes" : "no") << endl
+       << setw(fmtwidht) << "steps made from begin: " << st.steps_made_from_begin << endl
+       << setw(fmtwidht) << "steps made at last step: " << st.steps_made_last << endl
+       << setw(fmtwidht) << "image was load: " << ((st.image_loaded) ? "yes" : "no") << endl
+       << setw(fmtwidht) << "was error: " << st.was_error << "\t"
+       << ((st.was_error)? st.error_description : string())  << endl
+       << setw(fmtwidht) << "return code: " << st.return_code;
+
+    return os;
 }
