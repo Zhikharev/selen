@@ -1,0 +1,2 @@
+`define CORE_ADDR_WIDTH 32
+`define CORE_COP_WIDTH  3
