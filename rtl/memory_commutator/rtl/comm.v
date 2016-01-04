@@ -17,7 +17,7 @@ module comm(
 	input    				cpu_inst_stb_i,
 	output 	 				cpu_inst_ack_o, 
 	input 	 				cpu_inst_cyc_i, 
-	input		[15:0]		cpu_inst_addr_i,
+	input		[31:0]		cpu_inst_addr_i,
 	output  	[31:0]		cpu_inst_data_o,
 	input 					cpu_inst_stall_o,
 
@@ -26,7 +26,7 @@ module comm(
 	input    			cpu_data_stb_i,
 	output 		 		cpu_data_ack_o, 
 	input  				cpu_data_we_i,
-	input	[15:0]	 	cpu_data_addr_i,
+	input	[31:0]	 	cpu_data_addr_i,
 	input 	[31:0]		cpu_data_data_i,
 	output 	[31:0] 		cpu_data_data_o
 );

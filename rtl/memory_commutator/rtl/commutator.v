@@ -18,7 +18,7 @@ module commutator
 	input    				master1_wb_stb_i,
 	output 	 				master1_wb_ack_o,
 	input 		 			master1_wb_cyc_i,	
-	input		[15:0]		master1_wb_addr_i,
+	input		[31:0]		master1_wb_addr_i,
 	output  	[31:0]		master1_wb_data_o,
 	output 					master1_wb_stall_o,
 
@@ -27,7 +27,7 @@ module commutator
 	input    				master2_wb_stb_i,
 	output 	 				master2_wb_ack_o, 
 	input  					master2_wb_we_i,
-	input		[15:0] 		master2_wb_addr_i,
+	input		[31:0] 		master2_wb_addr_i,
 	input 		[31:0]		master2_wb_data_i,
 	output 		[31:0] 		master2_wb_data_o,
 
@@ -35,7 +35,7 @@ module commutator
 	output    				slave4_wb_stb_o,
 	input 	 				slave4_wb_ack_i,
 	output          		slave4_wb_we_o,
-	output  	[15:0] 		slave4_wb_addr_o,
+	output  	[31:0] 		slave4_wb_addr_o,
 	input   	[31:0] 		slave4_wb_data_i,
 	output  	[31:0] 		slave4_wb_data_o,
 	
@@ -44,28 +44,28 @@ module commutator
 	input    				master3_wb_stb_i,
 	output	 	 			master3_wb_ack_o, 
 	input  					master3_wb_we_i,
-	input		[15:0] 		master3_wb_addr_i,
+	input		[31:0] 		master3_wb_addr_i,
 	input 		[31:0]		master3_wb_data_i,
 	output 		[31:0] 		master3_wb_data_o,
 	
 	// RAM port1 instructions
 	output  	   			slave1_wb_stb_o,
 	input 					slave1_wb_ack_i,
-	output  	[15:0]		slave1_wb_addr_o,
+	output  	[31:0]		slave1_wb_addr_o,
 	input 	  	[31:0]		slave1_wb_data_i,
 	
 	// RAM port2 data
 	output 	    			slave2_wb_stb_o,
 	input 		 			slave2_wb_ack_i,
 	output 	 				slave2_wb_we_o,
-	output 		[15:0]		slave2_wb_addr_o,
+	output 		[31:0]		slave2_wb_addr_o,
 	output 		[31:0]		slave2_wb_data_o,
 	input 		[31:0] 		slave2_wb_data_i,
 	
 	// ROM 
 	output 					slave3_wb_stb_o,
 	input 		 			slave3_wb_ack_i,
-	output   	[15:0]		slave3_wb_addr_o,
+	output   	[31:0]		slave3_wb_addr_o,
 	input 	  	[31:0]		slave3_wb_data_i
 );
 	/*parameter M_ROM_h = 16'h0000;
@@ -90,20 +90,20 @@ module commutator
 	localparam SL4_MASK = 16'h8000;
 	
 	parameter DEPTH = 3;
-	parameter SIZE	= 16;
+	parameter SIZE	= 32;
 	
 	reg 					m_stb_i;
 	reg						m_ack_o; 
 	reg  					m_we_i;
 	reg  					m_cyc_i;
-	reg			[15:0] 		m_addr_i;
+	reg			[31:0] 		m_addr_i;
 	reg 		[31:0]		m_data_i;
 	reg			[31:0] 		m_data_o;
 	
 	//FIFO
 	wire full;
 	wire empty;
-	wire [15:0] fifo_master1_addr;
+	wire [31:0] fifo_master1_addr;
 	
 	reg	 			reg_master1_wb_ack_o;
 	reg [31:0]		reg_master1_wb_data_o;
@@ -113,22 +113,22 @@ module commutator
 	
 	reg   			reg_slave4_wb_stb_o;
 	reg        		reg_slave4_wb_we_o;
-	reg [15:0] 		reg_slave4_wb_addr_o;
+	reg [31:0] 		reg_slave4_wb_addr_o;
 	reg [31:0] 		reg_slave4_wb_data_o;
 	
 	reg	 			reg_master3_wb_ack_o; 
 	reg	[31:0] 		reg_master3_wb_data_o;
 	
 	reg    			reg_slave1_wb_stb_o;
-	reg [15:0]		reg_slave1_wb_addr_o;
+	reg [31:0]		reg_slave1_wb_addr_o;
 	
 	reg	    		reg_slave2_wb_stb_o;
 	reg	 			reg_slave2_wb_we_o;
-	reg	[15:0]		reg_slave2_wb_addr_o;
+	reg	[31:0]		reg_slave2_wb_addr_o;
 	reg	[31:0]		reg_slave2_wb_data_o;
 	
 	reg				reg_slave3_wb_stb_o;
-	reg [15:0]		reg_slave3_wb_addr_o;
+	reg [31:0]		reg_slave3_wb_addr_o;
 	
 	
 	assign master1_wb_ack_o		= reg_master1_wb_ack_o;
@@ -166,7 +166,7 @@ module commutator
 		.clk(sys_clk),
 		.wr_en(master1_wb_stb_i),
 		.din(master1_wb_addr_i),		
-		.rd_en(1),
+		.rd_en(1'b1),
 		.dout(fifo_master1_addr),		
 		.empty(empty),
 		.full(full)

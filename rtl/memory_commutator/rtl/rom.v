@@ -16,7 +16,7 @@ module rom(
 	// RAM 
 	input    				rom_stb_i,
 	output 		 			rom_ack_o,
-	input	 [15:0]			rom_addr_i,
+	input	 [31:0]			rom_addr_i,
 	output 	 [31:0] 		rom_data_o
 );
 	reg 	 [31:0] 		data_o;

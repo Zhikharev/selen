@@ -17,7 +17,7 @@ module wb_comm(
 	input    				cpu_inst_stb_i,
 	output 	 				cpu_inst_ack_o, 
 	input 	 				cpu_inst_cyc_i, 
-	input		[15:0]		cpu_inst_addr_i,
+	input		[31:0]		cpu_inst_addr_i,
 	output  	[31:0]		cpu_inst_data_o,
 	input 					cpu_inst_stall_o,
 
@@ -26,7 +26,7 @@ module wb_comm(
 	input    				cpu_data_stb_i,
 	output 	 				cpu_data_ack_o, 
 	input  					cpu_data_we_i,
-	input		[15:0] 		cpu_data_addr_i,
+	input		[31:0] 		cpu_data_addr_i,
 	input 		[31:0]		cpu_data_data_i,
 	output 		[31:0] 		cpu_data_data_o,
 
@@ -34,7 +34,7 @@ module wb_comm(
 	output    				io_stb_o,
 	input 	 				io_ack_i,
 	output          		io_we_o,
-	output  	[15:0] 		io_addr_o,
+	output  	[31:0] 		io_addr_o,
 	input   	[31:0] 		io_data_i,
 	output  	[31:0] 		io_data_o,
 	
@@ -43,28 +43,28 @@ module wb_comm(
 	input    				dma_stb_i,
 	output 	 				dma_ack_o, 
 	input  					dma_we_i,
-	input		[15:0] 		dma_addr_i,
+	input		[31:0] 		dma_addr_i,
 	input 		[31:0]		dma_data_i,
 	output 		[31:0] 		dma_data_o,
 	
 	// RAM port1 instructions
 	output     				ram_stb_o,
 	input 					ram_ack_i,
-	output  	[15:0]		ram_addr_o,
+	output  	[31:0]		ram_addr_o,
 	input 	  	[31:0]		ram_data_i,
 	
 	// RAM port2 data
 	output 	    			ram2_stb_o,
 	input 		 			ram2_ack_i,
 	output 	 				ram2_we_o,
-	output 		[15:0]		ram2_addr_o,
+	output 		[31:0]		ram2_addr_o,
 	output 		[31:0]		ram2_data_o,
 	input 		[31:0] 		ram2_data_i,
 	
 	// ROM 
 	output 					rom_stb_o,
 	input 		 			rom_ack_i,
-	output  	[15:0]		rom_addr_o,
+	output  	[31:0]		rom_addr_o,
 	input 	  	[31:0]		rom_data_i
 );
 

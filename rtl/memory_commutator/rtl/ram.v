@@ -15,14 +15,14 @@ module ram(
 	// RAM port1 instructions
 	input		    		ram_stb_i,
 	output 		 			ram_ack_o,
-	input	 [15:0]			ram_addr_i,
+	input	 [31:0]			ram_addr_i,
 	output 	 [31:0] 		ram_data_o,
 	
 	// RAM port2 data
 	input		   			ram2_stb_i,
 	output 		 			ram2_ack_o,
 	input	 				ram2_we_i,
-	input	 [15:0]			ram2_addr_i,
+	input	 [31:0]			ram2_addr_i,
 	input	 [31:0]	  		ram2_data_i,
 	output 	 [31:0] 		ram2_data_o
 );
