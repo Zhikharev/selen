@@ -25,7 +25,7 @@ l1_reg_mem
 	input                       wen,
 	input 	[$clog(DEPTH)-1:0] 	waddr,
 	input 	[WIDTH-1:0] 				wdata,
-	input 	[(WIDTH/32)-1:0] 		wbe
+	input 	[(WIDTH/8)-1:0] 		wbe
 );
 
 
