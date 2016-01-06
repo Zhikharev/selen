@@ -20,7 +20,7 @@ module l1i_top
 	output                        	core_req_ack,
 	output	[`CORE_DATA_WIDTH-1:0] 	core_ack_data,
 	output	 												mau_req_val,
-	output 													mau_req_addr,
+	output 	[`CORE_ADDR_WIDTH-1:0]	mau_req_addr,
 	input 													mau_req_ack,
 	input 	[`L1_LINE_SIZE-1:0] 		mau_ack_data
 );
@@ -73,7 +73,7 @@ module l1i_top
 	// MAU
 	// -----------------------------------------------------
 	assign mau_req_val  = core_req_val & ~lru_hit;
-	assign mau_req_addr = core_req_addr;
+	assign mau_req_addr = {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
 
 	// -----------------------------------------------------
 	// CORE
