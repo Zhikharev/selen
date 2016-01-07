@@ -12,6 +12,7 @@
 
 module hazard_unit(
 	input reset,
+	input clk,
 	input[1:0] cmd_inD,
 	input[1:0] cmd_inE,
 	input[1:0] cmd_inM,
@@ -38,7 +39,6 @@ module hazard_unit(
 	output bp4W,
 	output bp5M,
 	output mux2,
-	//output hz2ctrl,
 	
 	output flashD,
 	output flashE,
@@ -52,16 +52,17 @@ module hazard_unit(
 
 	output nop_gen_out,
 	
-	input sys2hz_stall,
-	output hz2sys_lw,
-	output hz2sys_sw,
-	output whait,
-	input pc_ctrl
+	output val2il1,
+	output val2dl1,
+	input l1d_ack,
+	input l1i_ack 
 );
 localparam lw_cmd = 2'b11;
 localparam sw_cmd = 2'b10;
 localparam jmp_cmd = 2'b01;
 localparam other = 2'b00;
+reg d_val;
+//reg i_val;
 reg hz2ctrl_loc;
 reg mux2_loc;
 reg flashD_loc;
@@ -73,6 +74,56 @@ reg enbE_loc;
 reg enbM_loc;
 reg enbW_loc;
 reg nop_gen_loc;
+reg state;
+reg state_next;
+reg[4:0] lw_rd;
+localparam WHAIT = 1'b1;
+localparam FREE = 1'b0;
+///////////////
+always@(posedge clk) 
+begin
+	if(reset) begin
+		state <= FREE;
+		lw_rd <= 5'b0;
+	end	
+	else begin
+		state <= state_next;
+	end
+end
+always@* 
+begin
+	case(state)
+		FREE:begin
+			if(cmd_inM == lw_cmd)begin
+				state_next = WHAIT;
+				lw_rd = rdM;
+			end
+			else begin
+				state_next = FREE;
+			end
+		end
+		WHAIT:begin
+			if(l1d_ack)begin
+				state_next = FREE;
+			end
+		end
+	endcase
+end
+//////////////////////
+always@* begin
+	if(reset)begin
+		d_val = 1'b0;
+	end	
+	else begin	
+		if(cmd_inM == lw_cmd || cmd_inM == sw_cmd)begin
+			d_val = 1'b1;
+		end
+		else begin
+			d_val = 1'b0;	
+		end
+	end
+end
+//////////////////////
 always@* begin
 	if(reset) begin
 		hz2ctrl_loc = 1'b0;//check it 
@@ -100,8 +151,16 @@ always@* begin
 		enbM_loc = 1'b0;
 		enbW_loc = 1'b0;
 		nop_gen_loc = 1'b0;
-		//both stalls
-		if(sys2hz_stall)begin
+		// stalls
+		if(~l1i_ack)begin
+			mux2_loc = 1'b1;
+			enbD_loc = 1'b1;
+			enbE_loc = 1'b1;
+			enbM_loc = 1'b1;
+			enbW_loc = 1'b1;
+		end
+		//feture for speeding up allow to path out another command when lw and any anouther command has not the same rd 
+		if((rdM == lw_rd)&&(rdM != 5'b0)&&(lw_rd != 5'b0)&&(state_next == WHAIT))begin
 			mux2_loc = 1'b1;
 			enbD_loc = 1'b1;
 			enbE_loc = 1'b1;
@@ -127,9 +186,6 @@ always@* begin
 				enbD_loc = 1'b1;
 				nop_gen_loc = 1'b1;
 			end
-		end
-		if(pc_ctrl)begin
-			mux2_loc = 1'b1;			
 		end
 	end
 end
@@ -202,8 +258,7 @@ assign enbM = enbM_loc;
 assign enbW = enbW_loc;
 assign hz2ctrl = hz2ctrl_loc;/// be aware 
 assign nop_gen_out = nop_gen_loc;
-assign hz2sys_lw = (cmd_inM == lw_cmd)?1'b1:1'b0;
-assign hz2sys_sw = (cmd_inM == sw_cmd)?1'b1:1'b0;
-assign whait = (enbD)?1'b1:1'b0;
+assign vla2il1 = mux2_loc;
+assign val2dl1 = d_val;
 endmodule
 

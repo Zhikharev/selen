@@ -11,14 +11,22 @@
 */
 
 module cpu_top (
-	output core_req_val,//valid of request
-	output[31:0] core_req_addr,//address of request
-	output[2:0] core_req_cop,// type od request
-	output[31:0] core_req_wdata,//data for writing
-	output[3:0] core_req_size,//size pf request 4 load command 
-	output[3:0] core_req_be,//byte masck 4 store commands
-	input core_ack_val,
-	input[31:0] core_ack_rdata//data for load
+	input sys_clk,
+	input sys_rst,
+//to instructoin cashe 
+	output core2il1_val,
+	output[31:0] core2il1_addr,
+	input il12core_ack,
+	input[31:0] il12core_data,
+	
+//to data cashe 
+	output core2dl1_req,
+	output _add_we,
+	output[31:0] core2dl1_addr,	
+	output[31:0] core2dl1_wdata,
+	output[3:0] core2dl1_be,
+	input[31:0] dl12core_data,
+	input dl12care_ack
 );
 
 //all wires  ###################################################### 
@@ -37,6 +45,7 @@ wire[31:0] regM2a_mux1;
 wire hz2enbD;
 wire hz2flashD;
 wire hz2ctrl;
+wire[31:0] mem_bloc2reg_decode;
 ////// end of wires of multiplecser
 //// 							end of fetch stage
 ///// 							wires of decode 
@@ -202,14 +211,14 @@ mem_block mem_block (
 	.imm_12(out_mux7),
 	.reg_in(srca2regE),
 	.brch_address(regM2a_mux1),
-	.inst_addr(),//global
-	.pc_next_out(pc_next_out)
+	.inst_addr(core2il1_addr),//global address of instruction
+	.pc_next_out(mem_bloc2reg_decode)
 );
 
 //////
 reg_decode reg_decode(
-	.instr_in(),//global
-	.pc_in(pc_next_in),//pc +4 
+	.instr_in(il12core_data),//global istruction itself
+	.pc_in(mem_bloc2reg_decode),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
 	.flash(hz2flashD),
@@ -333,15 +342,15 @@ reg_mem reg_mem(
 	.imm20M(regE2regM_imm20),
 	.sx_2M_ctrl(regE2regM_sx),
 	
-	.resultM_out(),//global
+	.resultM_out(core2dl1_addr),//global address o dato to write or riad from memory 
 	.srcbM_out(regM2bpmux),
 	.cndM_out(regM2brch_cnd),
 	.addrM_out(regM2a_mux1),
 	.rs1M_out(regM2regW_rs1),
 	.rs2M_out(regM2regW_rs2),
 	.rdM_out(regM2regW_rd),
-	.be_memM_out(),// data_be_out //global
-	.we_memM_out(),// data_we_out //global
+	.be_memM_out(core2dl1_be),// data_be_out //global data
+	.we_memM_out(core2dl1_we),// data_we_out //global data
 	.we_regM_out(regM2regW_we_reg),
 	.brch_typeM_out(regM2_cnd_type),
 	.mux9M_out(regM2regW_mux9),
@@ -363,7 +372,7 @@ reg_write reg_write(
 	.mux10W(regM2regW_mux10),
 	.resultW(regM2mem_result),
 	.rdW(regM2regW_rd),
-	.memW(),//global
+	.memW(dl12core_data),//global data for core to be written in register file
 	.clk(sys_clk),
 	.flashW(hz2flashW),
 	.enbW(hz2enbW),
@@ -392,6 +401,7 @@ sx_2 sx_2 (
 );
 hazard_unit hazard_unit(
 	.reset(sys_rst),
+	.clk(sys_clk),
 	.cmd_inD(ctrl2regE_cmd),
 	.cmd_inE(regE2regM_cmd),
 	.cmd_inM(regM2regW_cmd),
@@ -431,14 +441,11 @@ hazard_unit hazard_unit(
 	.enbW(hz2enbW),
 
 	.nop_gen_out(hz2nop_genE),
-	.sys2hz_stall(),//global
-
-	.hz2sys_lw(),//global
-	.hz2sys_sw(),//global
-	.whait(),//global
-
-	.pc_ctrl(pc_ctrl)
-	//.hz2ctrl()
+	
+	.val2il1(core2il1_val),//global val for instruction cashe
+	.val2dl1(core2dl1_val),//gobal val for data cashe
+	.l1d_ack(dl12core_ack), // global data cashe to core ack
+	.l1i_ack(il12core_ack) //global instruction cashe to core ack 
 );
 ///// ############### area with pc (fetch)
 
@@ -448,7 +455,6 @@ hazard_unit hazard_unit(
 //// ################ end of fetch
 //// ################ decode 
 /////begining of sign extenshion 
-//assign brch_out = s_mux1;//global //if taken s_mux1 = 1'b0
 assign a_mux6 = {{19{regD2ctrl}},regD2ctrl[31],regD2ctrl[7],regD2ctrl[31:25],regD2ctrl[11:8]};
 assign b_mux6 = {{20{regD2ctrl}},regD2ctrl[31:25],regD2ctrl[11:7]};
 assign b_mux7 = out_mux6;
@@ -494,34 +500,15 @@ assign address = regE2a_sign_adder + regE2b_sign_adder;////address adder
 
 assign a_bpmux5 = regM2bpmux;
 assign b_bpmux5 = out_mux10;
-assign data_data_out = out_bpmux5;//data_data_out
+assign core2dl1_wdata = out_bpmux5;//global data to be wirren to memory
 assign out_mux9 = (s_mux9)? b_mux9:a_mux9;
 assign a_mux9 = regW2a_mux9;
 assign b_mux9 = regW2b_mux9;
 assign b_mux10 = {regW2b_mux10_imm20,{11{1'b1}}};
 assign out_mux10 = (s_mux10)? b_mux10:a_mux10;
 //// ################ end of mem
+assign core_req_val = ~s_mux2;
 
 
 endmodule
 
-/*
-	output[31:0] inst_out,//address of instraction
-	output [31:0] pc_next_out,
-	output brch_out,
-	output sw_out,
-	output lw_out,
-	output whait_out,
-	input[31:0] inst_in,//instractoin from mem
-	input[31:0] data_in,//data from mem
-	output[31:0] data_out, // data for store instr
-	output[31:0] addr_out, // address for load commands 
-	input stall_in,
-	input pc_ctrl,
-	input[31:0] pc_next_in,
-	output data_we_out,
-	output[1:0] data_be_out,
-	input sys_rst,
-	input sys_clk
-
-*/

@@ -21,7 +21,7 @@ module reg_exe(
 	input [31:0] imm_or_addr,
 	input s_u_alu,
 	input[3:0] alu_ctrl,
-	input[1:0] be_memE,
+	input[3:0] be_memE,
 	input we_memE,
 	input we_regE,
 	input[1:0] brch_typeE,
@@ -47,7 +47,7 @@ module reg_exe(
 	output [19:0] imm20E_out,
 	output s_u_alu_out,
 	output[3:0] alu_ctrl_out,
-	output[1:0] be_memE_out,
+	output[3:0] be_memE_out,
 	output we_memE_out,
 	output we_regE_out,
 	output[1:0] brch_typeE_out,
@@ -69,7 +69,7 @@ reg [31:0] pcE_loc;//pc+4_loc;
 reg [19:0] imm20E_loc;
 reg s_u_alu_loc;
 reg [3:0] alu_ctrl_loc;
-reg[1:0] be_memE_loc;
+reg[3:0] be_memE_loc;
 reg we_memE_loc;
 reg we_regE_loc;
 reg[1:0] brch_typeE_loc;

@@ -15,7 +15,7 @@ module cpu_ctrl(
 	input[2:0] fnct,
 	input[6:0] opcode,
 	input hz2ctrl,
-	output[1:0] be_mem,
+	output[3:0] be_mem,
 	output we_mem,
 	output we_reg,
 	output[1:0] brn_type,
@@ -82,10 +82,14 @@ localparam st_cmd = 2'b10;
 localparam jmp_cmd = 2'b01;
 localparam other = 2'b00;
 
+localparam BE_FULL = 4'b0000;
+localparam BE_HALF = 4'b0001;
+localparam BE_BYTE = 4'b0010;
+
 reg loc10,loc9,loc8,loc8_2,loc8_3,loc7,loc6,loc5,loc4,loc4_2,loc3,loc1;
 reg we_mem_loc,we_reg_loc;
 reg s_u_loc;
-reg[1:0]be_mem_loc;
+reg[3:0]be_mem_loc;
 reg[1:0] cmd_loc;
 reg[2:0] brn_loc,sx_loc;
 reg[3:0]alu_loc;
@@ -109,7 +113,7 @@ begin
 		loc3 = 1'b0;
 		we_mem_loc = 1'b0;
 		we_reg_loc = 1'b1;
-		be_mem_loc = 2'b0;
+		be_mem_loc = BE_FULL;
 		cmd_loc = other;
 		rubish_loc = 1'b0;
 		sx_loc = {SIGN,FULL};
@@ -130,7 +134,7 @@ begin
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'b00;
+				be_mem_loc = BE_FULL;
 				cmd_loc = other;
 				rubish_loc = 1'b0;
 				sx_loc = {SIGN,FULL};
@@ -149,7 +153,7 @@ begin
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'b00;;
+				be_mem_loc = BE_FULL;
 				cmd_loc = other;
 				sx_loc = {SIGN,FULL};
 				rubish_loc = 1'b0;
@@ -168,7 +172,7 @@ begin
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'b00;
+				be_mem_loc = BE_FULL;
 				cmd_loc = other;
 				sx_loc = {SIGN,FULL};
 				rubish_loc = 1'b0;
@@ -187,7 +191,7 @@ begin
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = 2'b00;
+				be_mem_loc = BE_FULL;
 				cmd_loc = other;
 				sx_loc = {SIGN,FULL};
 				rubish_loc = 1'b0;
@@ -206,7 +210,7 @@ begin
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b0;
-				be_mem_loc = 2'b00;
+				be_mem_loc = BE_FULL;
 				cmd_loc = other;
 				sx_loc = 3'b100;
 				rubish_loc = 1'b0;
@@ -224,7 +228,7 @@ begin
 				loc3 = 1'b1;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b1;
-				be_mem_loc = FULL;
+				be_mem_loc = BE_FULL;
 				cmd_loc = jmp_cmd;
 				rubish_loc = 1'b0;
 				sx_loc = 3'b100;
@@ -248,7 +252,7 @@ begin
 					sx_loc = 3'b100;
 					we_mem_loc = 1'b0;
 					we_reg_loc = 1'b1;
-					be_mem_loc = FULL;
+					be_mem_loc = BE_FULL;
 					cmd_loc = jmp_cmd;
 					rubish_loc = 1'b0;
 					if(hz2ctrl) begin
@@ -274,27 +278,27 @@ begin
 					case(fnct)
 						3'b001:begin
 							//LW
-							be_mem_loc = FULL;
+							be_mem_loc = BE_FULL;
 							sx_loc ={SIGN,FULL};
 						end
 						3'b010:begin
 							//LH
-							be_mem_loc = HALF;
+							be_mem_loc = BE_HALF;
 							sx_loc ={SIGN,HALF};
 						end
 						3'b011:begin
 							//LHU
-							be_mem_loc = HALF;
+							be_mem_loc = BE_HALF;
 							sx_loc = {UNSIGN,HALF};
 						end
 						3'b100:begin
 							//LB
-							be_mem_loc = BYTE;
+							be_mem_loc = BE_BYTE;
 							sx_loc = {SIGN,BYTE};
 						end
 						3'b101:begin
 							//LBU
-							be_mem_loc = BYTE;
+							be_mem_loc = BE_BYTE;
 							sx_loc = {UNSIGN,BYTE};
 						end
 					endcase
@@ -342,7 +346,7 @@ begin
 				loc3 = 1'b0;
 				we_mem_loc = 1'b0;
 				we_reg_loc = 1'b0;
-				be_mem_loc = 2'b00;
+				be_mem_loc = BE_FULL;
 				cmd_loc = 2'b00;
 				rubish_loc = 1'b1;
 				sx_loc = {SIGN,FULL};

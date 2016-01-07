@@ -16,9 +16,8 @@ module reg_mem(
 	input[1:0] cndM,
 	input[31:0] addrM,
 	input[4:0] rdM,
-	input[1:0] be_memM,
+	input[3:0] be_memM,
 	input we_memM,
-	//input be_regM,
 	input we_regM,
 	input[1:0] brch_typeM,
 	input mux9M,
@@ -37,7 +36,7 @@ module reg_mem(
 	output[1:0] cndM_out,
 	output[31:0] addrM_out,
 	output[4:0] rdM_out,
-	output[1:0] be_memM_out,
+	output[3:0] be_memM_out,
 	output we_memM_out,
 	//output be_regM_out,
 	output we_regM_out,
@@ -55,7 +54,7 @@ reg [31:0] srcbM_loc;
 reg[1:0] cndM_loc;
 reg[31:0] addrM_loc;
 reg[4:0] rdM_loc;
-reg[1:0] be_memM_loc;
+reg[3:0] be_memM_loc;
 reg we_memM_loc;
 reg we_regM_loc;
 reg[1:0] brch_typeM_loc;
