@@ -12,14 +12,10 @@
 `ifndef INC_BASE_TEST
 `define INC_BASE_TEST
 
-class base_test extends cpu_base_component; 
+class base_test extends cpu_base_component #(virtual core_if); 
 
-  cpu_env env;
-
-  function new (virtual wishbone_if wbi_intf, virtual wishbone_if wbd_intf, virtual reset_if rst_intf);
-    super.new(wbi_intf, wbd_intf, rst_intf);
-    env = new(wbi_intf, wbd_intf, rst_intf);  
-  endfunction 
+  `env_inst(`if_type)
+  `test_utils(`if_type)
 
   function void build_phase();
     $display("[%0t][TEST][BUILD] Phase started", $time);

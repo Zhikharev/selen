@@ -6,8 +6,8 @@ MODEL       = $(GIT_HOME)/
 
 # RTL and SV files
 RTL_SRC    = 
-SV_SRC     = $(TB_PATH)/tb.inc.sv
-TOP        = cpu_tb_top
+SV_SRC     = $(TB_PATH)/run/core_tb.inc.sv
+TOP        = core_tb_top
 
 MODE = DEBUG
 SEED = random
