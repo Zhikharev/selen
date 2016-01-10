@@ -22,8 +22,8 @@ module l1_mau
 
 	// L1D interface
 	input	 												l1d_req_val,
-	input                       	l1d_req_we
-	input 												l1d_req_addr,
+	input                       	l1d_req_we,
+	input  [`CORE_ADDR_WIDTH-1:0]	l1d_req_addr,
 	input  [`CORE_DATA_WIDTH-1:0] l1d_req_wdata,
 	input  [`CORE_BE_WIDTH-1:0]   l1d_req_be,
 	output 												l1d_req_ack,
@@ -50,7 +50,12 @@ module l1_mau
 
 	localparam IDLE 			= 1'b0;
 	localparam TR_REQ 		= 1'b1;
+	localparam REC_ACK    = 1'b1;
+
 	localparam TR_CNT_MAX = `L1_LINE_SIZE/`CORE_DATA_WIDTH;
+
+	localparam ACK_I = 1'b0;
+	localparam ACK_D = 1'b1;
 
 	wire rst_n;
 
@@ -70,22 +75,84 @@ module l1_mau
 
 	reg [`CORE_ADDR_WIDTH-1:0] 	tr_addr_r;
 	reg [`CORE_ADDR_WIDTH-1:0] 	tr_addr_next;
-	reg [`MAU_TR_CNT_WIDTH-1:0] tr_cnt_r;
+	reg [$clog2(TR_CNT_MAX)-1:0] tr_cnt_r;
 	reg tr_state_r;
 	reg tr_state_next;
 
-	assign rst_n = ~wb_rst_i;
+	reg  ack_received;
+	reg  ack_wait;
+	reg  wait_ack_type;
+	wire ack_type;
+	wire ack_waiting;
+	wire ack_waiting_n;
 
-	always @(posedge wb_clk or negedge rst_n) begin
+	reg ack_state_r;
+	reg ack_state_next;
+	reg  [`L1_LINE_SIZE-1:0] ack_data_r;
+	wire [`L1_LINE_SIZE-1:0] ack_data_next;
+	reg [$clog2(TR_CNT_MAX)-1:0] ack_cnt_r;
+	reg [$clog2(TR_CNT_MAX)-1:0] ack_cnt_next;
+
+	wire i_val;
+	reg  l1i_req_val_r;
+	wire l1i_req_val_next;
+	wire d_val;
+	reg  l1d_req_val_r;
+	wire l1d_req_val_next;
+
+	assign rst_n = ~wb_rst_i;
+	assign ack_waiting = ~ack_waiting_n;
+	// -----------------------------------------------------
+	// Inner val
+	// -----------------------------------------------------
+	assign i_val = l1i_req_val & ~l1i_req_val_r;
+	assign d_val = l1d_req_val & ~l1d_req_val_r;
+
+	// This models like combinational circuit, VCS
+	// always @(posedge wb_clk_i) l1i_req_val_r <= l1i_req_val & ~(ack_received & (ack_type == ACK_I));
+	// always @(posedge wb_clk_i) l1d_req_val_r <= l1d_req_val & ~(ack_received & (ack_type == ACK_D));
+
+	assign l1i_req_val_next = l1i_req_val & ~(ack_received & (ack_type == ACK_I));
+	assign l1d_req_val_next = l1d_req_val & ~(ack_received & (ack_type == ACK_D));
+
+	always @(posedge wb_clk_i) l1i_req_val_r <= l1i_req_val_next;
+	always @(posedge wb_clk_i) l1d_req_val_r <= l1d_req_val_next;
+
+	fifo 
+	#(
+		.WIDTH (1),
+		.DEPTH (2)
+	) 
+	ack_queue
+	(
+  	.clk 		(wb_clk_i), 
+  	.rst 		(wb_rst_i),
+  	.rd 		(ack_received), 
+  	.wr 		(ack_wait),
+  	.w_data (wait_ack_type),
+  	.empty 	(ack_waiting_n), 
+  	.full 	(),
+  	.r_data (ack_type)
+	);
+
+	// -------------------------------------------------------------
+	// REQ PROCESSING
+	// -------------------------------------------------------------
+
+	assign wb_cyc = ack_waiting;
+	assign wb_adr = tr_addr_r;
+	assign wb_stb = (tr_state_r == TR_REQ);
+
+	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
-			tr_state_r <= IDLE;
+			tr_state_r  <= IDLE;
 		end
 		else begin
-			tr_state_r <= tr_state_next;
+			tr_state_r  <= tr_state_next;
 		end
 	end
 
-	always @(posedge wb_clk or negedge rst_n) begin
+	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
 			tr_addr_r <= 0;
 		end
@@ -97,31 +164,117 @@ module l1_mau
 	always @* begin
 		case(tr_state_r)
 			IDLE: begin
-				if(mau_fifo_empty) tr_state_next = IDLE;
-				else begin 
+				if(d_val) begin
+					ack_wait = 1'b1;
+					wait_ack_type = ACK_D;
 					tr_state_next = TR_REQ;
-					tr_addr_next  = mau_fifo_data;
+					tr_addr_next = l1d_req_addr;
+				end
+				else if(i_val) begin
+					ack_wait = 1'b1;
+					wait_ack_type = ACK_I;
+					tr_state_next = TR_REQ;
+					tr_addr_next = l1i_req_addr;
+				end
+				else begin
+					ack_wait = 1'b0;
+					wait_ack_type = ACK_D;
+					tr_state_next = IDLE;
+					tr_addr_next = tr_addr_r;
 				end
 			end
 			TR_REQ: begin
 				if(tr_cnt_r == TR_CNT_MAX) begin
-					if(mau_fifo_empty) tr_state_next = IDLE;
-					else begin 
-						tr_state_next = TR_REQ;
-						tr_addr_next  = mau_fifo_data;
-					end
+						tr_state_next = IDLE;
 				end
 				else begin
 					tr_state_next = TR_REQ;
-					tr_addr_next = tr_addr_r + `CORE_DATA_WIDTH/8;
+					if(~wb_stall_i) begin
+						tr_addr_next = tr_addr_r + `CORE_DATA_WIDTH/8;
+					end
+					else begin
+						tr_addr_next = tr_addr_r;
+					end
 				end
 			end
 		endcase
 	end
 
-	always @(posedge wb_clk or negedge rst_n) begin
+	// -------------------------------------------------------------
+	// ACK PROCESSING
+	// -------------------------------------------------------------
+
+	assign l1i_req_ack = ack_received & (ack_type == ACK_I);
+	assign l1d_req_ack = ack_received & (ack_type == ACK_D);
+	assign l1i_ack_data = ack_data_r;
+	assign l1d_ack_data = ack_data_r;
+
+	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
-			tr_cnt_r <= 0;
+			ack_state_r <= IDLE;
+		end
+		else begin
+			ack_state_r <= ack_state_next;
+		end
+	end
+
+	always @(posedge wb_clk_i or negedge rst_n) begin
+		if(~rst_n) begin
+			ack_data_r   <= 0;
+		end
+		else begin
+			if(wb_ack_i) ack_data_r <= {ack_data_r, wb_dat_i};
+		end
+	end
+
+	always @(posedge wb_clk_i or negedge rst_n) begin
+		if(~rst_n) begin
+			ack_cnt_r <= 0;
+		end
+		else begin
+			ack_cnt_r <= ack_cnt_next;
+		end
+	end
+
+	always @* begin
+		if(wb_ack_i && (ack_state_r == IDLE || (ack_state_r == REC_ACK && ack_cnt_next == 0)))
+			ack_cnt_next = TR_CNT_MAX - 1;
+		else
+			ack_cnt_next = ack_cnt_r - 1;
+	end
+
+	always @* begin
+		case(ack_state_r)
+			IDLE: begin
+				ack_received = 0;
+				if(wb_ack_i) 	ack_state_next = REC_ACK;
+				else 					ack_state_next = IDLE;
+			end
+			REC_ACK: begin
+				if(wb_ack_i) begin
+					if(ack_cnt_r == 0) begin
+						ack_received = 1;
+						ack_state_next = REC_ACK;
+					end
+					else begin
+						ack_state_next = REC_ACK;
+						ack_received = 0;
+					end
+				end
+				else begin
+					ack_received = 0;
+					ack_state_next = REC_ACK;
+				end
+			end
+		endcase
+	end
+
+	// -------------------------------------------------------------
+	// WISHBONE REGISTERS AND OUTPUT
+	// -------------------------------------------------------------
+
+	always @(posedge wb_clk_i or negedge rst_n) begin
+		if(~rst_n) begin
 			wb_dat_r <= 0;
 			wb_adr_r <= 0;
 			wb_cyc_r <= 0;
@@ -130,8 +283,12 @@ module l1_mau
 			wb_we_r  <= 0;
 		end
 		else begin
-			if(tr_state_r == TR_REQ) 
-				tr_cnt_r <= tr_cnt_r + 1'b1;
+			wb_dat_r <= wb_dat;
+			wb_adr_r <= wb_adr;
+			wb_cyc_r <= wb_cyc;
+			wb_sel_r <= wb_sel;
+			wb_stb_r <= wb_stb;
+			wb_we_r  <= wb_we;
 		end
 	end
 

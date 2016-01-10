@@ -132,3 +132,5 @@ assign full = full_reg ;
 assign empty = empty_reg;
 
 endmodule
+
+`endif

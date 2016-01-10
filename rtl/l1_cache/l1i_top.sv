@@ -29,6 +29,9 @@ module l1i_top
 	wire [`CORE_IDX_WIDTH-1:0]  		core_req_idx;
 	wire [`CORE_OFFSET_WIDTH-1:0] 	core_req_offset;
 
+	reg 														core_req_val_r;
+	wire 														core_req_val_next;
+
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[`L1_WAY_NUM];
 	wire [`L1_WAY_NUM-1:0] 					ld_rd_val;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_rd_tag   [`L1_WAY_NUM];
@@ -41,25 +44,27 @@ module l1i_top
 
 	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 
-	wire [`L1_WAY_NUM-1:0] 					lru_way_vect
+	wire                            lru_req;
+	wire [`L1_WAY_NUM-1:0] 					lru_way_vect;
 	wire 														lru_hit;
 	wire [$clog2(`L1_WAY_NUM)-1:0]  lru_way_pos;
 
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
 
 	wire [`L1_WAY_NUM-1:0]          dm_wen_vect;
+	wire [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [(`L1_LD_MEM_WIDTH/8)-1:0] dm_wr_be;  
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num
   // ------------------------------------------------------
-  function [$clog2(`L2_TSB_NUM)-1:0] one_hot_num;
-    input [`L2_TSB_NUM-1:0] one_hot_vector;
+  function [$clog2(`L1_WAY_NUM)-1:0] one_hot_num;
+    input [`L1_WAY_NUM-1:0] one_hot_vector;
     integer i,j;
-    reg [`L2_TSB_NUM-1:0] tmp;
-    for(i = 0; i < $clog2(`L2_TSB_NUM); i++) begin
-      for(j = 0; j < `L2_TSB_NUM; j++) begin
+    reg [`L1_WAY_NUM-1:0] tmp;
+    for(i = 0; i < $clog2(`L1_WAY_NUM); i++) begin
+      for(j = 0; j < `L1_WAY_NUM; j++) begin
         tmp[j] = one_hot_vector[j] & j[i];  
       end
       one_hot_num[i] = |tmp;
@@ -68,6 +73,15 @@ module l1i_top
 
 	assign {core_req_tag, core_req_idx, core_req_offset} = core_req_addr;
 	assign lru_way_pos = one_hot_num(lru_way_vect);
+
+	// This work models like combinational circuit, VCS
+	// always_ff @(posedge clk) core_req_val_r <= core_req_val & ~ core_req_ack;
+
+	assign core_req_val_next = core_req_val & ~core_req_ack;
+	always_ff @(posedge clk) core_req_val_r <= core_req_val_next;
+
+
+	assign lru_req = core_req_val & ~core_req_val_r;
 
 	// -----------------------------------------------------
 	// MAU
@@ -99,13 +113,17 @@ module l1i_top
 	assign dm_wr_be = '1; //'
 
 `ifndef NO_L1_ASSERTIONS
-	`ASSERT_ONE_HOT(tag_cmp_vect, core_req_val)
-	`ASSERT_ONE_HOT(lru_way_vect, core_req_val)
+	wire tag_cmp_with_val_vect;
+	
+	assign tag_cmp_with_val_vect = tag_cmp_vect & ld_rd_val;
+
+	`ASSERT_ONE_HOT(tag_cmp_with_val_vect, (core_req_val & rst_n))
+	`ASSERT_ONE_HOT(lru_way_vect, (core_req_val & rst_n))
 `endif
 
 	genvar way;
 	generate 
-		for(way = 0; way < `L1_WAY_NUM; way = way + 1) begin: way
+		for(way = 0; way < `L1_WAY_NUM; way = way + 1) begin
 			
 			assign {ld_rd_val[way], ld_rd_tag[way]} = ld_rdata[way];
 			assign tag_cmp_vect[way] = (ld_rd_tag[way] == core_req_tag);
@@ -116,7 +134,7 @@ module l1i_top
 			l1_reg_mem 
 			#(
 				.WIDTH (`L1_LD_MEM_WIDTH), 
-				.DEPTH ((1 << `L1_IDX_WIDTH) + 1)
+				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
 			)
 			ld_mem 
 			(
@@ -127,7 +145,7 @@ module l1i_top
 				.wen 		(ld_wen_vect[way]),
 				.waddr 	(core_req_idx),
 				.wdata 	(ld_wdata),
-				.wbe 		(ld_wr_be;)
+				.wbe 		(ld_wr_be)
 			);
 
 			// -----------------------------------------------------
@@ -135,8 +153,8 @@ module l1i_top
 			// -----------------------------------------------------
 			l1_reg_mem 
 			#(
-				.WIDTH (`L1_DM_WIDTH), 
-				.DEPTH ((1 << `L1_IDX_WIDTH) + 1)
+				.WIDTH (`L1_LINE_SIZE), 
+				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
 			)
 			dm_mem 
 			(
@@ -149,14 +167,14 @@ module l1i_top
 				.wdata 	(dm_wdata),
 				.wbe 		(dm_wr_be)
 			);
-
+		end
 	endgenerate
 
 	l1_lrum lrum
 	(
 		.clk 					(clk),
 		.rst_n 				(rst_n),
-		.req 					(core_req_val),
+		.req 					(lru_req),
  		.idx 					(core_req_idx),
   	.tag_cmp_vect (tag_cmp_vect),
   	.ld_val_vect  (ld_rd_val),
