@@ -46,6 +46,7 @@ module l1i_top
 
 	wire                            lru_req;
 	wire [`L1_WAY_NUM-1:0] 					lru_way_vect;
+	reg  [`L1_WAY_NUM-1:0] 					lru_way_vect_r;
 	wire 														lru_hit;
 	wire [$clog2(`L1_WAY_NUM)-1:0]  lru_way_pos;
 
@@ -74,15 +75,19 @@ module l1i_top
 	assign {core_req_tag, core_req_idx, core_req_offset} = core_req_addr;
 	assign lru_way_pos = one_hot_num(lru_way_vect);
 
-	// This work models like combinational circuit, VCS
+	// This models like combinational circuit, VCS
 	// always_ff @(posedge clk) core_req_val_r <= core_req_val & ~ core_req_ack;
 
 	assign core_req_val_next = core_req_val & ~core_req_ack;
 	always_ff @(posedge clk) core_req_val_r <= core_req_val_next;
 
 
+	// -----------------------------------------------------
+	// LRU
+	// -----------------------------------------------------
 	assign lru_req = core_req_val & ~core_req_val_r;
-
+	always_ff @(posedge clk) if(lru_req) lru_way_vect_r <= lru_way_vect;
+	
 	// -----------------------------------------------------
 	// MAU
 	// -----------------------------------------------------
@@ -99,7 +104,7 @@ module l1i_top
 	// -----------------------------------------------------
 	// LD
 	// -----------------------------------------------------
-	assign ld_wen_vect = lru_way_vect & ({`L1_WAY_NUM{(lru_hit | mau_req_ack)}});
+	assign ld_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{(lru_hit | mau_req_ack)}});
 	assign ld_wdata = {ld_wr_val, ld_wr_tag};
 	assign ld_wr_val = 1'b1;
 	assign ld_wr_tag = core_req_tag;
@@ -108,7 +113,7 @@ module l1i_top
 	// -----------------------------------------------------
 	// DM
 	// -----------------------------------------------------
-	assign dm_wen_vect = lru_way_vect & ({`L1_WAY_NUM{(mau_req_ack)}});
+	assign dm_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
 	assign dm_wdata = mau_ack_data;
 	assign dm_wr_be = '1; //'
 

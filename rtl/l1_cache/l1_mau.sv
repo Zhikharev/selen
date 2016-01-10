@@ -73,15 +73,16 @@ module l1_mau
 	reg                        wb_stb;
 	reg                        wb_we;
 
-	reg [`CORE_ADDR_WIDTH-1:0] 	tr_addr_r;
-	reg [`CORE_ADDR_WIDTH-1:0] 	tr_addr_next;
-	reg [$clog2(TR_CNT_MAX)-1:0] tr_cnt_r;
-	reg tr_state_r;
-	reg tr_state_next;
+	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_r;
+	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_next;
+	reg [$clog2(TR_CNT_MAX)-1:0] 	tr_cnt_r;
+	reg [$clog2(TR_CNT_MAX)-1:0]  tr_cnt_next;
+	reg 													tr_state_r;
+	reg 													tr_state_next;
 
 	reg  ack_received;
-	reg  ack_wait;
-	reg  wait_ack_type;
+	wire ack_wait;
+	wire wait_ack_type;
 	wire ack_type;
 	wire ack_waiting;
 	wire ack_waiting_n;
@@ -155,37 +156,43 @@ module l1_mau
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
 			tr_addr_r <= 0;
+			tr_cnt_r 	<= 0;
 		end
 		else begin
 			tr_addr_r <= tr_addr_next;
+			tr_cnt_r  <= tr_cnt_next;
 		end
 	end
+
+	always @* begin
+		if(tr_state_r == IDLE && (d_val | i_val))    tr_cnt_next = TR_CNT_MAX - 1;
+		else if(tr_state_r == TR_REQ && ~wb_stall_i) tr_cnt_next = tr_cnt_r - 1'b1;
+		else                                         tr_cnt_next = tr_cnt_r;
+	end
+
+	assign ack_wait = i_val | d_val;
+	assign wait_ack_type = (i_val) ? ACK_I : ACK_D;
 
 	always @* begin
 		case(tr_state_r)
 			IDLE: begin
 				if(d_val) begin
-					ack_wait = 1'b1;
-					wait_ack_type = ACK_D;
 					tr_state_next = TR_REQ;
 					tr_addr_next = l1d_req_addr;
 				end
 				else if(i_val) begin
-					ack_wait = 1'b1;
-					wait_ack_type = ACK_I;
 					tr_state_next = TR_REQ;
 					tr_addr_next = l1i_req_addr;
 				end
 				else begin
-					ack_wait = 1'b0;
-					wait_ack_type = ACK_D;
 					tr_state_next = IDLE;
 					tr_addr_next = tr_addr_r;
 				end
 			end
 			TR_REQ: begin
-				if(tr_cnt_r == TR_CNT_MAX) begin
+				if(tr_cnt_r == 0) begin
 						tr_state_next = IDLE;
+						tr_addr_next = tr_addr_r;
 				end
 				else begin
 					tr_state_next = TR_REQ;
@@ -237,8 +244,8 @@ module l1_mau
 	end
 
 	always @* begin
-		if(wb_ack_i && (ack_state_r == IDLE || (ack_state_r == REC_ACK && ack_cnt_next == 0)))
-			ack_cnt_next = TR_CNT_MAX - 1;
+		if(wb_ack_i && (ack_state_r == IDLE || (ack_state_r == REC_ACK && ack_cnt_r == 0)))
+			ack_cnt_next = TR_CNT_MAX - 2;
 		else
 			ack_cnt_next = ack_cnt_r - 1;
 	end

@@ -45,9 +45,11 @@ endif
 
 VLOG = $(VCS_HOME)/bin/vlogan -full64 -f $(TB_PATH)/vlog.opt
 
-VLOG_OPTS = +incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv \
-           +verilog2001ext+v +libext+.v +lint=all,noVCDE,noZERO -sverilog \
-           +nospecify +notimingchecks -l vlogan.log +incdir+$(RTL_PATH) +incdir+$(TB_PATH)
+#VLOG_OPTS = +incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv \
+#           +verilog2001ext+v +libext+.v +lint=all,noVCDE,noZERO -sverilog \
+#           +nospecify +notimingchecks -l vlogan.log +incdir+$(RTL_PATH) +incdir+$(TB_PATH)
+
+VLOG_OPTS = -timescale=1ns/1ps -sverilog
 
 ELAB = $(VCS_HOME)/bin/vcs
 
