@@ -96,10 +96,9 @@ module l1_mau
 
 	wire i_val;
 	reg  l1i_req_val_r;
-	wire l1i_req_val_next;
+	
 	wire d_val;
 	reg  l1d_req_val_r;
-	wire l1d_req_val_next;
 
 	assign rst_n = ~wb_rst_i;
 	assign ack_waiting = ~ack_waiting_n;
@@ -109,15 +108,8 @@ module l1_mau
 	assign i_val = l1i_req_val & ~l1i_req_val_r;
 	assign d_val = l1d_req_val & ~l1d_req_val_r;
 
-	// This models like combinational circuit, VCS
-	// always @(posedge wb_clk_i) l1i_req_val_r <= l1i_req_val & ~(ack_received & (ack_type == ACK_I));
-	// always @(posedge wb_clk_i) l1d_req_val_r <= l1d_req_val & ~(ack_received & (ack_type == ACK_D));
-
-	assign l1i_req_val_next = l1i_req_val & ~(ack_received & (ack_type == ACK_I));
-	assign l1d_req_val_next = l1d_req_val & ~(ack_received & (ack_type == ACK_D));
-
-	always @(posedge wb_clk_i) l1i_req_val_r <= l1i_req_val_next;
-	always @(posedge wb_clk_i) l1d_req_val_r <= l1d_req_val_next;
+	always @(posedge wb_clk_i) l1i_req_val_r <= l1i_req_val & ~(ack_received & (ack_type == ACK_I));
+	always @(posedge wb_clk_i) l1d_req_val_r <= l1d_req_val & ~(ack_received & (ack_type == ACK_D));
 
 	fifo 
 	#(

@@ -13,29 +13,29 @@ module tb_top ();
 	reg [`CORE_DATA_WIDTH-1:0] wb_data;
 
 	initial begin
-		clk = 0;
-		forever #10 clk = ~clk;
+		clk <= 0;
+		forever #10 clk <= ~clk;
 	end
 
 	initial begin
-		rst = 1;
-		l1i_req_val = 0;
-		l1i_req_addr = 0;
-		wb_ack = 0;
-		wb_data = 0;
+		rst <= 1;
+		l1i_req_val <= 0;
+		l1i_req_addr <= 0;
+		wb_ack <= 0;
+		wb_data <= 0;
 		repeat(5) @(posedge clk);
-		rst = 0;
+		rst <= 0;
 	end
 
 	initial begin
 		wait(rst == 0);
 		repeat(2) begin
 			@(posedge clk);
-			l1i_req_val = 1;
-			l1i_req_addr = 0;
+			l1i_req_val <= 1;
+			l1i_req_addr <= 0;
 			@(posedge clk);
 			wait(l1i_req_ack == 1);
-			l1i_req_val = 0;
+			l1i_req_val <= 0;
 		end
 		#100;
 	end
