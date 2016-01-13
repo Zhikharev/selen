@@ -32,7 +32,7 @@ module l1_dut
 	input                        	wb_err_i, 	// not used now
 	output                      	wb_lock_o, 	// not used now
 	input                        	wb_rty_i, 	// not used now
-	output                      	wb_sel_o,
+	output [`CORE_BE_WIDTH-1:0]   wb_sel_o,
 	output                       	wb_stb_o,
 	output                       	wb_tga_o, 	// not used now
 	output                       	wb_tgc_o, 	// not used now
