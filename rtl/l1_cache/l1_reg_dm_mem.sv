@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_reg_mem.sv
+// FILE NAME      : l1_reg_dm_mem.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
-`ifndef INC_L1_REG_MEM
-`define INC_L1_REG_MEM
+`ifndef INC_L1_REG_DM_MEM
+`define INC_L1_REG_DM_MEM
 
-module l1_reg_mem
+module l1_reg_dm_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024

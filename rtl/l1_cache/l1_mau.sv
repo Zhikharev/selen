@@ -22,6 +22,7 @@ module l1_mau
 
 	// L1D interface
 	input	 												l1d_req_val,
+	input                         l1d_req_nc,
 	input                       	l1d_req_we,
 	input  [`CORE_ADDR_WIDTH-1:0]	l1d_req_addr,
 	input  [`CORE_DATA_WIDTH-1:0] l1d_req_wdata,

@@ -30,7 +30,6 @@ module l1i_top
 	wire [`CORE_OFFSET_WIDTH-1:0] 	core_req_offset;
 
 	reg 														core_req_val_r;
-	wire 														core_req_val_next;
 
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[`L1_WAY_NUM];
 	wire [`L1_WAY_NUM-1:0] 					ld_rd_val;
@@ -40,8 +39,7 @@ module l1i_top
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_wdata;
 	wire  													ld_wr_val;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_wr_tag;
-	wire [(`L1_LD_MEM_WIDTH/8)-1:0] ld_wr_be;  
-
+ 
 	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 
 	wire                            lru_req;
@@ -75,12 +73,7 @@ module l1i_top
 	assign {core_req_tag, core_req_idx, core_req_offset} = core_req_addr;
 	assign lru_way_pos = one_hot_num(lru_way_vect);
 
-	// This models like combinational circuit, VCS
-	// always_ff @(posedge clk) core_req_val_r <= core_req_val & ~ core_req_ack;
-
-	assign core_req_val_next = core_req_val & ~core_req_ack;
-	always_ff @(posedge clk) core_req_val_r <= core_req_val_next;
-
+	always_ff @(posedge clk) core_req_val_r <= core_req_val & ~ core_req_ack;
 
 	// -----------------------------------------------------
 	// LRU
@@ -108,7 +101,6 @@ module l1i_top
 	assign ld_wdata = {ld_wr_val, ld_wr_tag};
 	assign ld_wr_val = 1'b1;
 	assign ld_wr_tag = core_req_tag;
-	assign ld_wr_be  =  '1; // '
 
 	// -----------------------------------------------------
 	// DM
@@ -136,7 +128,7 @@ module l1i_top
 			// -----------------------------------------------------
 			// LD tag memories 
 			// -----------------------------------------------------
-			l1_reg_mem 
+			l1_reg_ld_mem 
 			#(
 				.WIDTH (`L1_LD_MEM_WIDTH), 
 				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
@@ -149,14 +141,13 @@ module l1i_top
 				.rdata 	(ld_rdata[way]),
 				.wen 		(ld_wen_vect[way]),
 				.waddr 	(core_req_idx),
-				.wdata 	(ld_wdata),
-				.wbe 		(ld_wr_be)
+				.wdata 	(ld_wdata)
 			);
 
 			// -----------------------------------------------------
 			// Data memories
 			// -----------------------------------------------------
-			l1_reg_mem 
+			l1_reg_dm_mem 
 			#(
 				.WIDTH (`L1_LINE_SIZE), 
 				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
