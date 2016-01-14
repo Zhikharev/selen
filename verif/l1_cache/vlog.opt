@@ -1,0 +1,11 @@
+
+$GIT_HOME/rtl/lib/fifo.v
+$GIT_HOME/rtl/l1_cache/l1_defines.sv
+$GIT_HOME/rtl/l1_cache/l1_lrum.sv
+$GIT_HOME/rtl/l1_cache/l1_reg_ld_mem.sv
+$GIT_HOME/rtl/l1_cache/l1_reg_dm_mem.sv
+$GIT_HOME/rtl/l1_cache/l1_mau.sv
+$GIT_HOME/rtl/l1_cache/l1i_top.sv
+
+$GIT_HOME/verif/l1_cache/dut.sv
+$GIT_HOME/verif/l1_cache/tb_top.sv

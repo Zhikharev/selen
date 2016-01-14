@@ -30,8 +30,8 @@ module fifo
 );
 // signal declaration
 reg [WIDTH-1:0] array_reg [DEPTH-1:0] ; // register array
-reg [$clog2(DEPTH)-1:0] w_ptr_reg, w_ptr_next , w_ptr_succ;
-reg [$clog2(DEPTH)-1:0] r_ptr_reg , r_ptr_next , r_ptr_succ ;
+reg [$clog2(DEPTH)-1:0] w_ptr_reg, w_ptr_next;
+reg [$clog2(DEPTH)-1:0] r_ptr_reg , r_ptr_next;
 
 wire [$clog2(DEPTH)-1:0] w_ptr_succ;
 wire [$clog2(DEPTH)-1:0] r_ptr_succ;
@@ -132,3 +132,5 @@ assign full = full_reg ;
 assign empty = empty_reg;
 
 endmodule
+
+`endif

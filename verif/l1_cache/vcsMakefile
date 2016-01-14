@@ -1,0 +1,79 @@
+# Main path variables
+GIT_HOME 	=
+RTL_PATH    = $(GIT_HOME)/rtl/l1_cache
+TB_PATH     = $(GIT_HOME)/verif/l1_cache
+MODEL       = $(GIT_HOME)/
+
+# RTL and SV files
+RTL_SRC    = 
+SV_SRC     = 
+TOP        = tb_top
+
+MODE = DEBUG
+SEED = random
+
+# Model files
+MODEL_SRC = $(MODEL)/alu.c $(MODEL)/model.c
+MODEL_LIB_NAME = model
+MODEL_LIB_DIR = $(RUN)/model_lib
+MODEL_SO = $(MODEL_LIB_DIR)/$(MODEL_LIB_NAME).so
+MODEL_VSIM_OPT= -sv_lib $(MODEL_LIB_DIR)/$(MODEL_LIB_NAME)
+
+ifeq ($(SEED), random)
+	VCS_SET_SEED = +ntb_random_seed_automatic
+else
+	VCS_SET_SEED = +ntb_random_seed=$(SEED)
+endif
+
+ARCH = $(shell uname -m)
+
+ifeq ($(ARCH), x86_64)
+	ARCH_OPTS = -full64
+else
+	ARCH_OPTS =
+endif
+ifeq ($(MODE), DEBUG)
+	ELAB_OPTS += -debug_acc+all -lca
+endif
+ifeq ($(MODE), COVER)
+	ELAB_OPTS += -cm line+cond+tgl+branch
+	SIM_OPTS  += -cm_name $(COVER_SUFFIX) -cm line+cond+branch
+endif
+
+#VLOG = UVM_HOME=$(UVM_HOME) VCS_HOME=$(VCS_HOME) GIT_HOME=$(GIT_HOME) RTL_PATH=$(RTL_PATH) \
+#       $(VCS_HOME)/bin/vlogan
+
+VLOG = $(VCS_HOME)/bin/vlogan -full64 -f $(TB_PATH)/vlog.opt
+
+#VLOG_OPTS = +incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv \
+#           +verilog2001ext+v +libext+.v +lint=all,noVCDE,noZERO -sverilog \
+#           +nospecify +notimingchecks -l vlogan.log +incdir+$(RTL_PATH) +incdir+$(TB_PATH)
+
+VLOG_OPTS = -timescale=1ns/1ps -sverilog
+
+ELAB = $(VCS_HOME)/bin/vcs
+
+#ELAB_OPTS = -l elaborate.log -CFLAGS -DVCS $(UVM_HOME)/src/dpi/uvm_dpi.cc
+
+SIM_OPTS  = $(VCS_SET_SEED)
+
+analyze:
+	$(VLOG) $(ARCH_OPTS) $(VLOG_OPTS) $(RTL_SRC) $(SV_SRC)
+
+elaborate:
+	$(ELAB) $(TOP) $(ARCH_OPTS) $(ELAB_OPTS)
+
+sim: analyze elaborate
+	./simv +UVM_NO_RELNOTES -l test.log $(SIM_OPTS)
+
+build_c:
+	mkdir -p $(MODEL_LIB_DIR)
+	gcc -fPIC -shared -I$(MTI_HOME)/include -o $(MODEL_SO) $(MODEL_SRC)
+
+# Cleaning project files
+.PHONY: clean
+clean:
+	rm -rf  $(RUN)/*
+	rm -f .mod*
+	rm -rf .ht*
+

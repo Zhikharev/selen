@@ -16,9 +16,7 @@ class draft_test extends base_test;
 
   cpu_draft_seq draft_seq;
 
-  function new (virtual wishbone_if wbi_intf, virtual wishbone_if wbd_intf, virtual reset_if rst_intf);
-    super.new(wbi_intf, wbd_intf, rst_intf);
-  endfunction 
+  `test_utils(`if_type)
 
   function void build_phase();
     $display("[%0t][TEST][BUILD] Phase started", $time);

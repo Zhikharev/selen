@@ -1,29 +1,28 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_reg_mem.sv
+// FILE NAME      : l1_reg_dm_mem.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
 // DESCRIPTION    : 
 // ----------------------------------------------------------------------------
-`ifndef INC_L1_REG_MEM
-`define INC_L1_REG_MEM
+`ifndef INC_L1_REG_DM_MEM
+`define INC_L1_REG_DM_MEM
 
-module 
+module l1_reg_dm_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
 ) 
-l1_reg_mem
 (
 	input 											clk,
 	input 											rst_n,
-	input 	[$clog(DEPTH)-1:0] 	raddr,
+	input 	[$clog2(DEPTH)-1:0] raddr,
 	output 	[WIDTH-1:0] 				rdata,
 	input                       wen,
-	input 	[$clog(DEPTH)-1:0] 	waddr,
+	input 	[$clog2(DEPTH)-1:0] waddr,
 	input 	[WIDTH-1:0] 				wdata,
 	input 	[(WIDTH/8)-1:0] 		wbe
 );
@@ -48,7 +47,7 @@ l1_reg_mem
 			end
 		end
 		else begin
-			if(wval) mem[waddr] <= mask_data;
+			if(wen) mem[waddr] <= mask_data;
 		end
 	end
 

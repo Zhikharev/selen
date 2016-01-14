@@ -50,5 +50,12 @@ typedef enum int{
     SH,
     SB,
     JAL
-}opcode_type;
+} opcode_type;
+
+typedef enum bit [2:0] {
+    RD    = 3'b000,
+    WR    = 3'b001,
+    RDNC  = 3'b010,
+    WRNC  = 3'b011
+} core_cop_t;
 
