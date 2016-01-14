@@ -233,9 +233,10 @@ module l1_mau
 			ack_data_r   <= 0;
 		end
 		else begin
-			if(wb_ack_i) ack_data_r <= {ack_data_r, wb_dat_i};
+			if(wb_ack_i) ack_data_r <= {wb_dat_i, ack_data_r[`L1_LINE_SIZE-1:`CORE_DATA_WIDTH]};
 		end
 	end
+
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
@@ -247,10 +248,15 @@ module l1_mau
 	end
 
 	always @* begin
-		if(wb_ack_i && (ack_state_r == IDLE || (ack_state_r == REC_ACK && ack_cnt_r == 0)))
-			ack_cnt_next = TR_CNT_MAX - 2;
-		else
-			ack_cnt_next = ack_cnt_r - 1;
+		if(wb_ack_i) begin
+			if(ack_state_r == IDLE)
+				ack_cnt_next = TR_CNT_MAX - 1;
+			else
+				ack_cnt_next = ack_cnt_r - 1;
+		end
+		else begin
+			ack_cnt_next = ack_cnt_r;
+		end
 	end
 
 	always @* begin
@@ -261,6 +267,15 @@ module l1_mau
 				else 					ack_state_next = IDLE;
 			end
 			REC_ACK: begin
+				if(ack_cnt_r == 0) begin
+					ack_received = 1;
+					ack_state_next = IDLE;
+				end
+				else begin
+					ack_state_next = REC_ACK;
+					ack_received = 0;
+				end
+				/*
 				if(wb_ack_i) begin
 					if(ack_cnt_r == 0) begin
 						ack_received = 1;
@@ -275,6 +290,7 @@ module l1_mau
 					ack_received = 0;
 					ack_state_next = REC_ACK;
 				end
+				*/
 			end
 		endcase
 	end

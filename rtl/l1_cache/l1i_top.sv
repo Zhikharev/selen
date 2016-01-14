@@ -28,6 +28,7 @@ module l1i_top
 	wire [`CORE_TAG_WIDTH-1:0] 			core_req_tag;
 	wire [`CORE_IDX_WIDTH-1:0]  		core_req_idx;
 	wire [`CORE_OFFSET_WIDTH-1:0] 	core_req_offset;
+	wire [`CORE_OFFSET_WIDTH-1:0]   core_alligned_req_offset;
 
 	reg 														core_req_val_r;
 
@@ -92,7 +93,8 @@ module l1i_top
 	// -----------------------------------------------------
 	assign core_req_ack = lru_hit | mau_req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data;
-	assign core_ack_data = core_line_data[core_req_offset*32+:32];
+	assign core_alligned_req_offset = {core_req_offset[`CORE_OFFSET_WIDTH-1:2], 2'b00};
+	assign core_ack_data = core_line_data[core_alligned_req_offset*8+:`CORE_DATA_WIDTH];
 
 	// -----------------------------------------------------
 	// LD
