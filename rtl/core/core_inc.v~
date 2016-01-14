@@ -1,0 +1,13 @@
+`include "alu.v"
+`include "brnch_cnd.v"
+`include "cpu_cntr.v"
+`include "hazard_unit.v"
+`include "reg_decode.v"
+`include "reg_exe.v"
+`include "reg_mem.v"
+`include "reg_write.v"
+`include "register_file.v"
+`include "mem_block.v"
+`include "sx_2.v"
+`include "cpu_top.v"
+
