@@ -34,10 +34,17 @@ module cpu_ctrl(
 	output mux4_2,
 	output mux3,
 	output[1:0] cmd,
+	output[2:0] cop,
+	output size,
 	input rst,
 	output rubish//not right comand 
 
 );
+localparam RD = 3'b000;
+localparam WR = 3'b001;
+localparam RDNC = 3'b010;
+localparam WRNC = 3'b011;
+
 localparam ADD = 4'b0000;
 localparam SLT = 4'b0001;
 localparam SLTU = 4'b0010;
@@ -95,11 +102,14 @@ reg[2:0] brn_loc,sx_loc;
 reg[3:0]alu_loc;
 reg rubish_loc;
 reg rubish_alu_loc;
+reg[2:0] cop_loc;
+reg[2:0] size_loc;
 ////// always for muxs and,be and sx
 always @*
-begin
 	///////R type 
+begin
 	if(rst) begin
+		cop_loc = 3'b0;
 		loc10 = 1'b0;
 		loc9 = 1'b0;
 		loc8 = 1'b0;
@@ -272,34 +282,39 @@ begin
 					loc4 = 1'b1;
 					loc4_2 = 1'b1;
 					loc3 = 1'b0;
-					//loc2 = 1'b0;
 					cmd_loc = lw_cmd;
+					cop_loc = RD;//new
 					rubish_loc = 1'b0;
 					case(fnct)
 						3'b001:begin
 							//LW
 							be_mem_loc = BE_FULL;
 							sx_loc ={SIGN,FULL};
+							size_loc ={1'b0,FULL};//new
 						end
 						3'b010:begin
 							//LH
 							be_mem_loc = BE_HALF;
 							sx_loc ={SIGN,HALF};
+							size_loc ={1'b0,HALF};//new
 						end
 						3'b011:begin
 							//LHU
 							be_mem_loc = BE_HALF;
 							sx_loc = {UNSIGN,HALF};
+							size_loc ={1'b0,HALF}; //new
 						end
 						3'b100:begin
 							//LB
 							be_mem_loc = BE_BYTE;
 							sx_loc = {SIGN,BYTE};
+							size_loc ={1'b0,BYTE};//new
 						end
 						3'b101:begin
 							//LBU
 							be_mem_loc = BE_BYTE;
 							sx_loc = {UNSIGN,BYTE};
+							size_loc ={1'b0,BYTE};//new
 						end
 					endcase
 				end
@@ -319,16 +334,20 @@ begin
 				we_mem_loc = 1'b1;
 				we_reg_loc = 1'b0;
 				cmd_loc = st_cmd;
+				cop_loc = WR;//new
 				rubish_loc = 1'b0;
 				case(fnct)
 					3'b001:begin
 						sx_loc = {SIGN,FULL};
+						size_loc ={1'b0,FULL};//new
 					end
 					3'b010:begin
 						sx_loc = {SIGN,HALF};
+						size_loc ={1'b0,HALF};//new
 					end
 					3'b011:begin
 						sx_loc = {SIGN,BYTE};
+						size_loc ={1'b0,BYTE};//new
 					end
 				endcase
 			end
@@ -556,4 +575,6 @@ assign alu_cntr = alu_loc;
 assign alu_s_u = s_u_loc;
 assign cmd = cmd_loc;
 assign rubish = rubish_loc;
+assign cop = cop_loc;
+assign size = size_loc; 
 endmodule

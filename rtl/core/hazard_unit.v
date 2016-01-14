@@ -1,4 +1,4 @@
-/*
+33/*
 ###########################################################
 #
 # Author: Bolotnokov Alexsandr 
@@ -79,7 +79,7 @@ reg state_next;
 reg[4:0] lw_rd;
 localparam WHAIT = 1'b1;
 localparam FREE = 1'b0;
-///////////////
+/////////////// FSM for mem requests and answers 
 always@(posedge clk) 
 begin
 	if(reset) begin

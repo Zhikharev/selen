@@ -17,16 +17,19 @@ module cpu_top (
 	output core2il1_val,
 	output[31:0] core2il1_addr,
 	input il12core_ack,
-	input[31:0] il12core_data,
+	input[31:0] il12core_rdata,
 	
 //to data cashe 
-	output core2dl1_req,
-	output _add_we,
+	output core2dl1_val,
 	output[31:0] core2dl1_addr,	
+	output[2:0] core2dl1_cop,
 	output[31:0] core2dl1_wdata,
+	output[2:0] core2dl1_size,
 	output[3:0] core2dl1_be,
-	input[31:0] dl12core_data,
-	input dl12care_ack
+	input[31:0] dl12core_rdata,
+	input dl12core_val
+	
+	
 );
 
 //all wires  ###################################################### 
@@ -68,6 +71,8 @@ wire ctrl2regE_we_reg;
 wire[1:0] ctrl2regE_be_mem;
 wire[31:0] regD2regE_pc;
 wire[31:0] regD2ctrl;
+wire[2:0] ctrl2regE_cop;
+wire[2:0] ctrl2regE_size;
 //wire reg2hz;
 ////end of ctrl wires
 ///// 					wires of mux
@@ -105,6 +110,8 @@ wire[31:0] alu2regM_result;
 wire[1:0] alu2regM_cnd;
 wire[2:0] regE2ergM_sx;
 wire regE2regM_we_reg;
+wire[2:0] regE2regM_cop;
+wire[2:0] regE2regM_size;
 
 ////						muxs for exeqution stage 
 wire[31:0] out_mux8;
@@ -217,7 +224,7 @@ mem_block mem_block (
 
 //////
 reg_decode reg_decode(
-	.instr_in(il12core_data),//global istruction itself
+	.instr_in(il12core_rdata),//global istruction itself
 	.pc_in(mem_bloc2reg_decode),//pc +4 
 	.clk(sys_clk),
 	.enb(hz2enbD),
@@ -261,9 +268,13 @@ cpu_ctrl cpu_ctrl(
 	.mux4_2(s_mux4_2),
 	.mux3(s_mux3),
 	.cmd(ctrl2regE_cmd),
-	.rubish()
+	.rubish(),
+	.cop(ctrl2regE_cop),
+	.size(ctrl2regE_size)
 );
 reg_exe reg_exe(
+	.copE(ctrl2regE_cop),
+	.sizeE(ctrl2reg_size),
 	.srcaE(srca2regE),
 	.srcbE(srcb2regE),
 	.rs1E(regD2ctrl[19:15]),
@@ -310,8 +321,9 @@ reg_exe reg_exe(
 	.cmdE_out(regE2regM_cmd),
 	.imm_or_addr_out(regE2b_sign_adder),
 	.sx_2E_ctrl_out(regE2regM_sx),
-
-	.nop_gen(hz2nop_genE)
+	.copE_out(regE2regM_cop),
+	.nop_gen(hz2nop_genE),
+	.sizeE_out(regE2regM_size)
 );
 alu alu (
 	.srca(out_mux8_2),
@@ -322,6 +334,7 @@ alu alu (
 	.cnd(alu2regM_cnd)
 );
 reg_mem reg_mem(
+	.copM(regE2regM_cop),
 	.resultM(alu2regM_result),
 	.srcbM(regE2a_bpmux4),
 	.cndM(regE2regM_cmd),
@@ -341,8 +354,11 @@ reg_mem reg_mem(
 	.cmdM(regE2regM_cmd),
 	.imm20M(regE2regM_imm20),
 	.sx_2M_ctrl(regE2regM_sx),
+	.sizeM(regE2regM_size),
 	
-	.resultM_out(core2dl1_addr),//global address o dato to write or riad from memory 
+	.sizeM_out(core2dl1_size), //global size of request
+	.copM_out(core2dl1_cop),//global code operation for data cashe 
+	.resultM_out(core2dl1_addr),//global address fro writting
 	.srcbM_out(regM2bpmux),
 	.cndM_out(regM2brch_cnd),
 	.addrM_out(regM2a_mux1),
@@ -372,7 +388,7 @@ reg_write reg_write(
 	.mux10W(regM2regW_mux10),
 	.resultW(regM2mem_result),
 	.rdW(regM2regW_rd),
-	.memW(dl12core_data),//global data for core to be written in register file
+	.memW(dl12core_rdata),//global data for core to be written in register file
 	.clk(sys_clk),
 	.flashW(hz2flashW),
 	.enbW(hz2enbW),
@@ -444,7 +460,7 @@ hazard_unit hazard_unit(
 	
 	.val2il1(core2il1_val),//global val for instruction cashe
 	.val2dl1(core2dl1_val),//gobal val for data cashe
-	.l1d_ack(dl12core_ack), // global data cashe to core ack
+	.l1d_ack(dl12core_val), // global data cashe to core ack
 	.l1i_ack(il12core_ack) //global instruction cashe to core ack 
 );
 ///// ############### area with pc (fetch)

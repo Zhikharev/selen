@@ -30,6 +30,8 @@ module reg_mem(
 	input[1:0] cmdM,
 	input[19:0] imm20M,
 	input[2:0] sx_2M_ctrl,
+	input[2:0] copM,
+	input[2:0] sizeM,
 
 	output[31:0] resultM_out,
 	output[31:0] srcbM_out,
@@ -38,7 +40,7 @@ module reg_mem(
 	output[4:0] rdM_out,
 	output[3:0] be_memM_out,
 	output we_memM_out,
-	//output be_regM_out,
+	output[2:0] copM_out,
 	output we_regM_out,
 	output[1:0] brch_typeM_out,
 	output mux9M_out,
@@ -47,8 +49,11 @@ module reg_mem(
 	output[1:0] cmdM_out,
 	output[4:0] rs2M_out,
 	output[19:0] imm20M_out,
-	output[2:0] sx_2M_ctrl_out
+	output[2:0] sx_2M_ctrl_out,
+	output[2:0] sizeM_loc
 );
+reg[2:0] copM_loc;
+reg[2:0] sizeM_loc;
 reg [31:0] resultM_loc;
 reg [31:0] srcbM_loc;
 reg[1:0] cndM_loc;
@@ -69,6 +74,8 @@ reg[2:0] sx_2M_loc;
 always @(posedge clk)
 begin
 	if(flashM) begin
+		sizeM_loc <= 2'b0;
+		copM_loc <= 3'b0;
 		resultM_loc <= 32'b0;
 		srcbM_loc <= 32'b0;
 		cndM_loc <= 2'b0;
@@ -90,6 +97,8 @@ begin
 	end
 	else begin
 		if(enbM)begin
+			sizeM_loc <= sizeM_loc;
+			copM_loc <= copM_loc;
 			resultM_loc <= resultM_loc;
 			srcbM_loc <= srcbM_loc;
 			cndM_loc <= cndM_loc;
@@ -109,6 +118,8 @@ begin
 			sx_2M_loc <= sx_2M_loc;
 		end
 		else begin
+			copM_loc <= copM;
+			sizeM_loc <= sizeM;
 			resultM_loc <= resultM;
 			cndM_loc <= cndM;
 			srcbM_loc <= srcbM;
@@ -129,6 +140,7 @@ begin
 		end
 	end
 end
+assign copM_out = copM_loc;
 assign rs1M_out = rs1M_loc;
 assign rs2M_out = rs2M_loc;
 assign resultM_out = resultM_loc;

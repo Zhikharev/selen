@@ -35,9 +35,11 @@ module reg_exe(
 	input flashE,
 	input[1:0] cmdE,
 	input[2:0] sx_2E_ctrl,
-
+	input[2:0] copE,
 	input nop_gen,
+	input sizeE,
 
+	output[2:0] copE_out,
 	output[31:0] srcaE_out,
 	output [31:0] srcbE_out,
 	output [4:0] rs1E_out,
@@ -58,8 +60,10 @@ module reg_exe(
 	output mux10E_out,
 	output[31:0] imm_or_addr_out,
 	output[1:0] cmdE_out,
-	output[2:0] sx_2E_ctrl_out
+	output[2:0] sx_2E_ctrl_out,
+	output sizeE_out
 );
+reg [2:0] copE_loc;
 reg [31:0] srcaE_loc;
 reg [31:0] srcbE_loc;
 reg [4:0] rs1E_loc;
@@ -83,12 +87,15 @@ reg[2:0] sx_2E_loc;
 reg [1:0] cmdE_loc;
 reg[31:0] imm_or_addr_loc;
 reg nop_gen_loc;
+reg sizeE_loc;
 always@(posedge clk)begin
 	nop_gen_loc <= nop_gen;
 end
 always @(posedge clk)
 begin
 	if(flashE) begin
+		sizeE_loc <= 3'b000;
+		copE_loc <= 3'b000;
 		srcaE_loc <= 32'b0;
 		srcbE_loc <= 32'b0;
 		rs1E_loc <= 5'b0;
@@ -113,6 +120,8 @@ begin
 	end
 	else begin
 		if(enbE)begin
+			sizeE_loc <= sizeE_loc;
+			copE_loc <= copE_loc;
 			srcaE_loc <= srcaE_loc;
 			srcbE_loc <= srcbE_loc;
 			rs1E_loc <= rs1E_loc;
@@ -136,6 +145,8 @@ begin
 			sx_2E_loc <= sx_2E_loc;
 		end
 		else begin
+			sizeE_loc <= sizeE;
+			copE_loc <= copE;
 			srcaE_loc <= srcaE;
 			srcbE_loc <= srcbE;
 			rs1E_loc <= rs1E;
@@ -160,7 +171,8 @@ begin
 		end
 	end
 end
-
+assign sizeE_out = size_loc;
+assign copE_out = copE_loc;
 assign srcaE_out = (nop_gen_loc)?31'b0:srcaE_loc;
 assign srcbE_out = (nop_gen_loc)?31'b0:srcbE_loc;
 assign rs1E_out = rs1E_loc;
