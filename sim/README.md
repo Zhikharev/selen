@@ -1,12 +1,12 @@
 # selen-sim
 risc-v isa simulator & disassembler
 
-Официальные симуляторы Spike(https://github.com/riscv/riscv-isa-sim) и Qemu(https://github.com/riscv/riscv-qemu) очень крутые но пока нам не походят:
-надо собирать toolchain (https://github.com/riscv/riscv-gnu-toolchain), после чего скомпилированные им исполняемые файлы надо правильно загружать в симулятор.
+Есть симуляторы Spike(https://github.com/riscv/riscv-isa-sim) и Qemu(https://github.com/riscv/riscv-qemu).
+Но интересно сделать свой.
 
-Этот симулятор&дизассемблер сделан специaльно для нашего транслятора (https://github.com/Zhikharev/selen/tree/master/assembler), он очень простой, однако поддерживает все инструкции предложенные в Isa.docx(13 декабря) 
+Этот симулятор сделан специaльно для нашего транслятора (https://github.com/Zhikharev/selen/tree/master/assembler), он очень простой, однако поддерживает все инструкции предложенные в Isa.docx(13 декабря) 
 
-Собирать надо cmake-ом, на Windows есть специальная программа, а в Linux:
+Собирать cmake-ом в Linux:
 ```
 cd директория-где-собирать
 cmake директория-где-лежат-сорцы
@@ -14,38 +14,68 @@ make
 ```
 
 в директории-где-собирать появятся два исполняемых файла: disas - дизассемлер, и sim - симулятор.
-Также в ней должна появиться библиотекa libisa.so(Linux) или isa.dll(Windows) -  общая для дизассемблера и симулятора, 
-из-за чего они воспринимают инструкции одинаково.
-
-```
-Для тех кого cmake не устраивает есть обычный  Makefile в директории build.
-Пути в нем надо переписать.
-Однако в этом случае, после того как скомпилируется, надо указать системе где искать библиотеку libisa.so,
-те запускать симулятор и дизассемблер первый раз в каждом терминале надо так:
-env LD_LIBRARY_PATH=путь-где-libisa ./sim ...
-```
+Также в ней должна появиться библиотекa libisa.so.
 
 Пример использования:
 
-дизассемблер,  файл out.bin взят из примера траслятора gipnocow:
-```
-jettatura@Jettatura-ubunty:-> ../../../build-sim/disas out.bin
-too few arguments
-Usage:	disasm <endianness>  <imagefile>
+файл out.bin взят из примера траслятора gipnocow.
 
-where:
-	<endianness> - one of "LE" or "BE" - word endianness at imagefile
-	<imagefile>  - binary executable
+Дизассемблер:
+пока устарел, его функции теперь в интерактивном режиме симулятора. Позже его наверное удалю.
 
-all parameters are strongly required
-Example: 
- ./disasm LE image.bin
+Симулятор:
+
 ```
-То есть надо передать аргумент порядка байт в словах:
+./sim -h
+
+Selen isa simulator 2015.Options:
+                   --endianess,   -e - word endianness at imagefile, LE -little endian, BE - big endian
+                       --image, -img - path to memory image file
+                  --final-dump,  -fd - state will dumped here after execution, default fd.txt
+                        --help,   -h - show help and exit
+             --program-counter,  -pc - program-counter start value(hex with 0x prefix)
+           --adress-space-size,  -as - address space byte size (dec)
+                       --steps,   -s - number of steps to perform (dec)
+                       --quiet,   -q - be quiet
+                  --no-tracing,  -nt - disable tracing (tracing is enabled by default)
+                 --interactive,   -i - run in interactive regime (simple regime by default)
 ```
-jettatura@Jettatura-ubunty:-> ./disas LE ../src/assembler/out.bin
-image ../src/assembler/out.bin size 84 b
-endianness: LE
+
+Image это образ памяти который загружается в симулятор, он должен целиком находится в файле.
+
+Интерактивный режим:
+```
+./sim -img  ../src/assembler/out.bin -as 1222222 -i
+Selen isa simulator 2015.
+Parameters:
+                  image file: ../src/assembler/out.bin
+               state dump to: id.txt
+               state dump to: fd.txt
+                      regime: interactive
+           Simulator config: 
+                     tracing: on
+                  endianness: LE
+          address space size: 1222222 bytes
+                    start pc: 0
+                       steps: 0
+Simulator at unteractive regime
+(isa-sim): help
+Avaible commands:
+	quit, exit, q - exit simulator
+	help, h - print help
+	load, l [filename] [address] - load image from "filename"(may be omitted if was specified by command line) to memory at address (default 0)
+	status, st - check simulator and program status
+	tracing, tr [on, off, yes, no] - turn on/off step tracing (to std::cout)
+	program-counter, pc [address] - get program-counter without address argument, set if address exists
+	step, s [num] - make num (1 if num arg missed) steps at simulator
+	disas, d <address> [num] - disassemle num words(default 10) from address at memory
+
+(isa-sim): l
+image ../src/assembler/out.bin was loaded to simulator memory at address 0
+(isa-sim): load ../src/assembler/out.bin 0x64
+image ../src/assembler/out.bin was loaded to simulator memory at address 0x64
+(isa-sim): d 0 32
+dissasemble 32 words from address 0
          0	  0x500813	  ADDI	 S0, ZERO, 0x5
        0x4	  0xc81813	  SLLI	 S0,  S0, 0xc
        0x8	  0x500413	  ADDI	 T0, ZERO, 0x5
@@ -67,46 +97,26 @@ endianness: LE
       0x48	 0x12888b3	   ADD	 S1,  S1, S2
       0x4c	 0x1282823	    SW	 S0, [ S2 + 0x10]
       0x50	 0x12888b3	   ADD	 S1,  S1, S2
-
-
-```
-
-Image это образ памяти который загружается в симулятор, он должен целиком находится в файле.
-
-симулятор:
-```
-
-jettatura@Jettatura-ubunty:-> ./sim
-
-Error: too few arguments: 1
-Usage:	sim <endianness> <adress-space-size> <steps> <entrypc> <imagefile>
-
-where:
-    <endianness> - one of "LE" or "BE" - word endianness at imagefile
-    <adress-space-size>  -  address space byte size (dec)
-    <steps>      - number of steps to perform (dec)
-    <entrypc>    - PC start position(hex)
-    <imagefile>  - binary executable
-
-all parameters are strongly required
-Example:
- ./sim LE 1024 25 0x45c image.bin
-```
-
-правильные аргументы:
-
-```
-jettatura@Jettatura-ubunty: pts/0: 11 files 2,3Mb -> ./sim LE 0xffff 25 0 ../src/assembler/out.bin
-             CONFIG|        endianness: LE
-             CONFIG|          mem size: 1
-             CONFIG|             steps: 25
-             CONFIG|          PC entry: 0
-             CONFIG|             image: ../src/assembler/out.bin
-Image ../src/assembler/out.bin loaded
-Initial state dumped to : init_dump.txt
-Start step...
-Trace:
-           0	    0x500813	  ADDI	 S0, ZERO, 0x5
+      0x54	         0	invalid, opcode: 0
+      0x58	         0	invalid, opcode: 0
+      0x5c	         0	invalid, opcode: 0
+      0x60	         0	invalid, opcode: 0
+      0x64	  0x500813	  ADDI	 S0, ZERO, 0x5
+      0x68	  0xc81813	  SLLI	 S0,  S0, 0xc
+      0x6c	  0x500413	  ADDI	 T0, ZERO, 0x5
+      0x70	  0x300493	  ADDI	 T1, ZERO, 0x3
+      0x74	  0x600513	  ADDI	 T2, ZERO, 0x6
+      0x78	  0x9405b3	   ADD	 T3,  T0, T1
+      0x7c	  0xb50633	   ADD	 T4,  T2, T3
+(isa-sim): pc 0x4
+current pc: 0x4
+(isa-sim): trace on
+unknown command: trace on
+(isa-sim): tracing on
+tracing: on
+(isa-sim): s 12
+start 12 step from 0x4
+Trace: 
          0x4	    0xc81813	  SLLI	 S0,  S0, 0xc
          0x8	    0x500413	  ADDI	 T0, ZERO, 0x5
          0xc	    0x300493	  ADDI	 T1, ZERO, 0x3
@@ -119,33 +129,13 @@ Trace:
         0x28	    0xc82583	    LW	 T3, [ S0 + 0xc]
         0x2c	   0x1082603	    LW	 T4, [ S0 + 0x10]
         0x30	   0x1182023	    SW	 S0, [ S1 + 0]
-        0x34	   0x1282223	    SW	 S0, [ S2 + 0x4]
-        0x38	   0x12888b3	   ADD	 S1,  S1, S2
-        0x3c	   0x1282423	    SW	 S0, [ S2 + 0x8]
-        0x40	   0x12888b3	   ADD	 S1,  S1, S2
-        0x44	   0x1282623	    SW	 S0, [ S2 + 0xc]
-        0x48	   0x12888b3	   ADD	 S1,  S1, S2
-        0x4c	   0x1282823	    SW	 S0, [ S2 + 0x10]
-        0x50	   0x12888b3	   ADD	 S1,  S1, S2
-        0x54	           0	invalid, opcode: 0
-
-***************
-SIMULATOR ERROR: illegal opcode 0, unable decode instruction: 0 at address 0x54
-valid opcodes:
-0x3	0x13	0x17	0x23	0x33	0x37	0x63	0x67	0x6f
-***************
-
-
-
-SUMMARY:
-
-steps made: 21
-State dumped to final_dump.txt
-
+steps performed 12, current pc 0x34
+(isa-sim): q
 
 ```
 
-Здесь закончились инструкции, и вылезла ошибка.
+Добавлять новые команды просто, поэтому он будет прирастать.
+
 
 После завершения симулятора образ памяти и регистры сбрасываются в файл final_dump.txt:
 
