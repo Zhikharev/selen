@@ -42,12 +42,13 @@ module tb_top ();
       if(l1i_req_ack) data = l1i_ack_data;
     end
     l1i_req_val <= 1'b0;
+    #0;
  		$display("L1I ACK DATA=%0h (%0t)", data, $time());
 	endtask
 
 	task automatic l1d_read (
-		input [`CORE_TAG_WIDTH-1:0] tag, 
-		input [`CORE_IDX_WIDTH-1:0] idx, 
+		input [`CORE_TAG_WIDTH-1:0] 	tag, 
+		input [`CORE_IDX_WIDTH-1:0] 	idx, 
 		input [`CORE_SIZE_WIDTH-1:0]  size,
 		output [`CORE_DATA_WIDTH-1:0] data
 	);
@@ -55,7 +56,7 @@ module tb_top ();
 		// Its hard to check pipeline mode here
 		@(posedge clk);
 
-		$display("L1D RD tag=%0h idx=%0h (%0t)", tag, idx, $time());
+		$display("L1D RD size=%0d tag=%0h idx=%0h (%0t)", size, tag, idx, $time());
 		l1d_req_val  <= 1'b1;
 		l1d_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
 		l1d_req_size <= size;
@@ -65,12 +66,13 @@ module tb_top ();
       if(l1d_req_ack) data = l1d_ack_data;
     end
     l1d_req_val <= 1'b0;
+    #0;
  		$display("L1D ACK DATA=%0h (%0t)", data, $time());
 	endtask
 
 	task automatic l1d_nc_read (
-		input [`CORE_TAG_WIDTH-1:0] tag, 
-		input [`CORE_IDX_WIDTH-1:0] idx, 
+		input [`CORE_TAG_WIDTH-1:0]   tag, 
+		input [`CORE_IDX_WIDTH-1:0]   idx, 
 		input [`CORE_SIZE_WIDTH-1:0]  size,
 		output [`CORE_DATA_WIDTH-1:0] data
 	);
@@ -78,7 +80,7 @@ module tb_top ();
 		// Its hard to check pipeline mode here
 		@(posedge clk);
 
-		$display("L1D RDNC tag=%0h idx=%0h (%0t)", tag, idx, $time());
+		$display("L1D RDNC size=%0d tag=%0h idx=%0h (%0t)", size, tag, idx, $time());
 		l1d_req_val  <= 1'b1;
 		l1d_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
 		l1d_req_size <= size;
@@ -88,13 +90,14 @@ module tb_top ();
       if(l1d_req_ack) data = l1d_ack_data;
     end
     l1d_req_val <= 1'b0;
+    #0;
  		$display("L1D ACK DATA=%0h (%0t)", data, $time());
 	endtask
 
 	task automatic l1d_write (
-		input [`CORE_TAG_WIDTH-1:0] tag, 
-		input [`CORE_IDX_WIDTH-1:0] idx, 
-		input [`CORE_SIZE_WIDTH-1:0]  size,
+		input [`CORE_TAG_WIDTH-1:0]  tag, 
+		input [`CORE_IDX_WIDTH-1:0]  idx, 
+		input [`CORE_SIZE_WIDTH-1:0] size,
 		input [`CORE_DATA_WIDTH-1:0] data
 	);
 
@@ -111,13 +114,13 @@ module tb_top ();
       if(l1d_req_ack) data = l1d_ack_data;
     end
     l1d_req_val <= 1'b0;
- 		$display("L1D WR tag=%0h idx=%0h (%0t)", tag, idx, $time());
+ 		$display("L1D WR size=%0d tag=%0h idx=%0h (%0t)", size, tag, idx, $time());
 	endtask
 
 	task automatic l1d_nc_write (
-		input [`CORE_TAG_WIDTH-1:0] tag, 
-		input [`CORE_IDX_WIDTH-1:0] idx, 
-		input [`CORE_SIZE_WIDTH-1:0]  size,
+		input [`CORE_TAG_WIDTH-1:0]  tag, 
+		input [`CORE_IDX_WIDTH-1:0]  idx, 
+		input [`CORE_SIZE_WIDTH-1:0] size,
 		input [`CORE_DATA_WIDTH-1:0] data
 	);
 
@@ -134,7 +137,7 @@ module tb_top ();
       if(l1d_req_ack) data = l1d_ack_data;
     end
     l1d_req_val <= 1'b0;
- 		$display("L1D WR tag=%0h idx=%0h (%0t)", tag, idx, $time());
+ 		$display("L1D WRNC size=%0d tag=%0h idx=%0h (%0t)", size, tag, idx, $time());
 	endtask
 
 	initial begin
@@ -156,8 +159,9 @@ module tb_top ();
 
 	initial begin
 		bit [31:0] l1i_data;
+		bit [31:0] l1d_data;
 		wait(rst == 0);
-		l1i_read(0, 0, l1i_data);
+		/*l1i_read(0, 0, l1i_data);
 		l1i_read(0, 1, l1i_data);
 
 		// Check evict
@@ -166,9 +170,17 @@ module tb_top ();
 		l1i_read(2, 0, l1i_data);
 		l1i_read(3, 0, l1i_data);
 		l1i_read(4, 0, l1i_data);
-		l1i_read(5, 0, l1i_data);
+		l1i_read(5, 0, l1i_data);*/
 
-
+		//l1d_read(0, 1, 4, l1d_data);
+		//l1d_read(0, 1, 4, l1d_data);
+		//l1d_nc_read(0, 2, 4, l1d_data);
+		//l1d_nc_write(0, 2, 4, l1d_data);
+		//l1d_read(0, 1, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_read(0, 1, 4, l1d_data);
 
 		#1000;
 		$finish();
@@ -193,7 +205,8 @@ module tb_top ();
 		forever begin
 			@(posedge clk);
 			if(active_req > 0) begin
-				std::randomize(delay) with {delay inside {[0:5]};};
+				//std::randomize(delay) with {delay inside {[0:5]};};
+				delay = 10;
 				repeat(delay) begin
 					wb_ack <= 0;
 					@(posedge clk);

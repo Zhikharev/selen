@@ -70,7 +70,7 @@ module l1_dut
 	l1d_top l1d 
 	(
 		.clk 						(clk), 
-		.rstn 					(rstn),
+		.rst_n 					(rst_n),
 		.core_req_val 	(l1d_req_val),
 		.core_req_addr 	(l1d_req_addr),
 		.core_req_cop 	(l1d_req_cop),

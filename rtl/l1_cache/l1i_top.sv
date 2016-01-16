@@ -131,7 +131,7 @@ module l1i_top
 			l1_reg_ld_mem 
 			#(
 				.WIDTH (`L1_LD_MEM_WIDTH), 
-				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
+				.DEPTH (1 << `CORE_IDX_WIDTH)
 			)
 			ld_mem 
 			(
@@ -150,7 +150,7 @@ module l1i_top
 			l1_reg_dm_mem 
 			#(
 				.WIDTH (`L1_LINE_SIZE), 
-				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
+				.DEPTH (1 << `CORE_IDX_WIDTH)
 			)
 			dm_mem 
 			(
@@ -158,7 +158,7 @@ module l1i_top
 				.rst_n 	(rst_n),
 				.raddr 	(core_req_idx),
 				.rdata 	(dm_rdata[way]),
-				.wen 		(dm_wen_vect),
+				.wen 		(dm_wen_vect[way]),
 				.waddr 	(core_req_idx),
 				.wdata 	(dm_wdata),
 				.wbe 		(dm_wr_be)
@@ -208,12 +208,12 @@ module l1i_top
 				@(posedge clk);
 				if(rst_n) begin
 					if(core_req_val) begin
-						str = $sformatf("LI1 ld tag=%0h idx=%0h ", core_req_tag, core_req_idx);
+						str = $sformatf("L1I ld tag=%0h idx=%0h ", core_req_tag, core_req_idx);
 						if(lru_hit) str = {str, $sformatf("hit way=%0d data=%0h", lru_way_pos, dm_rdata[lru_way_pos])};
 						else str = {str, $sformatf("miss I->S way=%0d", lru_way_pos)};
 						$display("%0s (%0t)", str, $time());
 						if(lru_evict_val) begin 
-							str = $sformatf("LI1 EVICT way=%0d tag=%0h idx=%0h ", lru_way_pos, ld_rd_tag[lru_way_pos], core_req_idx);
+							str = $sformatf("L1I EVICT way=%0d tag=%0h idx=%0h ", lru_way_pos, ld_rd_tag[lru_way_pos], core_req_idx);
 							$display("%0s (%0t)", str, $time());
 						end
 						if(!lru_hit) do begin @(posedge clk); end while(!core_req_ack);
@@ -229,7 +229,7 @@ module l1i_top
 				@(posedge clk);
 				if(rst_n) begin
 					if(dm_wen_vect != 0) begin
-						str = $sformatf("LI1 dm write idx=%0h way=%0d data=%0h",
+						str = $sformatf("L1I dm write idx=%0h way=%0d data=%0h",
 						core_req_idx, one_hot_num(dm_wen_vect), dm_wdata);
 						$display("%0s (%0t)", str, $time());
 					end

@@ -14,7 +14,7 @@
 module l1d_top 
 (
 	input 															clk,
-	input 															rstn,
+	input 															rst_n,
 	input 															core_req_val,
 	input 		 [`CORE_ADDR_WIDTH-1:0] 	core_req_addr,
 	input 		 [`CORE_COP_WIDTH-1:0]   	core_req_cop,
@@ -64,6 +64,7 @@ module l1d_top
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [(`L1_LINE_SIZE/8)-1:0]    dm_wr_be;  
+	wire                            dm_wen_val;
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num
@@ -93,7 +94,7 @@ module l1d_top
 	// -----------------------------------------------------
 	assign core_req_ack = lru_hit | mau_req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data;
-	assign core_ack_data = core_line_data[core_req_offset*8+:`CORE_DATA_WIDTH];
+	assign core_ack_data = (core_req_nc) ? mau_ack_data[`L1_LINE_SIZE-1-:`CORE_DATA_WIDTH] : core_line_data[core_req_offset*8+:`CORE_DATA_WIDTH];
 
 	// -----------------------------------------------------
 	// LRU
@@ -113,7 +114,8 @@ module l1d_top
 	// -----------------------------------------------------
 	// DM
 	// -----------------------------------------------------
-	assign dm_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack | (lru_hit & core_req_cop == `CORE_REQ_WR))}});
+	assign dm_wen_val = ~core_req_nc & (mau_req_ack | (lru_hit & core_req_cop == `CORE_REQ_WR));
+	assign dm_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{dm_wen_val}});
 	assign dm_wdata = (lru_hit) ? core_req_wdata : mau_ack_data;
 	
 	always @* 
@@ -150,7 +152,7 @@ module l1d_top
 			l1_reg_ld_mem 
 			#(
 				.WIDTH (`L1_LD_MEM_WIDTH), 
-				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
+				.DEPTH (1 << `CORE_IDX_WIDTH)
 			)
 			ld_mem 
 			(
@@ -169,7 +171,7 @@ module l1d_top
 			l1_reg_dm_mem 
 			#(
 				.WIDTH (`L1_LINE_SIZE), 
-				.DEPTH ((1 << `CORE_IDX_WIDTH) + 1)
+				.DEPTH (1 << `CORE_IDX_WIDTH)
 			)
 			dm_mem 
 			(
@@ -177,7 +179,7 @@ module l1d_top
 				.rst_n 	(rst_n),
 				.raddr 	(core_req_idx),
 				.rdata 	(dm_rdata[way]),
-				.wen 		(dm_wen_vect),
+				.wen 		(dm_wen_vect[way]),
 				.waddr 	(core_req_idx),
 				.wdata 	(dm_wdata),
 				.wbe 		(dm_wr_be)
@@ -213,6 +215,53 @@ module l1d_top
 			assert property(@(posedge clk) (core_req_val & rst_n) -> core_req_offset[1:0] == 0)
 			else $fatal("Wrong offset allignment!");
 
+	`endif
+
+	// -----------------------------------------------------------
+	// TRACER
+	// -----------------------------------------------------------
+	`ifndef NO_L1_TRACE
+
+		// LD
+		initial begin
+			string str;
+			$timeformat(-9, 1, " ns", 0);
+			forever begin
+				@(posedge clk);
+				if(rst_n) begin
+					if(core_req_val && core_req_cop inside {`CORE_REQ_RD, `CORE_REQ_WR}) begin
+						str = $sformatf("L1D ld tag=%0h idx=%0h ", core_req_tag, core_req_idx);
+						if(lru_hit) str = {str, $sformatf("hit way=%0d ", lru_way_pos)};
+						else str = {str, $sformatf("miss I->S way=%0d", lru_way_pos)};
+						$display("%0s (%0t)", str, $time());
+						if(core_req_cop == `CORE_REQ_RD && lru_hit) begin 
+							str = $sformatf("L1D dm read data=%0h ", dm_rdata[lru_way_pos]);
+							$display("%0s (%0t)", str, $time());
+						end
+						if(lru_evict_val) begin 
+							str = $sformatf("LID EVICT way=%0d tag=%0h idx=%0h ", lru_way_pos, ld_rd_tag[lru_way_pos], core_req_idx);
+							$display("%0s (%0t)", str, $time());
+						end
+						if(!lru_hit) do begin @(posedge clk); end while(!mau_req_ack);
+					end
+				end
+			end
+		end
+			
+		// DM
+		initial begin
+			string str;
+			forever begin
+				@(posedge clk);
+				if(rst_n) begin
+					if(dm_wen_vect != 0) begin
+						str = $sformatf("L1D dm write idx=%0h way=%0d data=%0h",
+						core_req_idx, one_hot_num(dm_wen_vect), dm_wdata);
+						$display("%0s (%0t)", str, $time());
+					end
+				end
+			end
+		end
 	`endif
 endmodule
 `endif
