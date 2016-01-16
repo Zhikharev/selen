@@ -67,7 +67,7 @@ Avaible commands:
 	status, st - check simulator and program status
 	tracing, tr [on, off, yes, no] - turn on/off step tracing (to std::cout)
 	program-counter, pc [address] - get program-counter without address argument, set if address exists
-	step, s [num] - make num (0 if num arg missed) steps at simulator
+	step, s [num] - make num (1 if num arg missed) steps at simulator
 	disas, d <address> [num] - disassemle num words(default 10) from address at memory
 
 (isa-sim): l
