@@ -20,9 +20,7 @@ module l1i_top
 	output                        			core_req_ack,
 	output			[`CORE_DATA_WIDTH-1:0] 	core_ack_data,
 	output	 														mau_req_val,
-	output reg                          mau_req_ev,
-	output 			[`L1_LINE_SIZE-1:0]     mau_req_ev_data,
-	output reg 	[`CORE_ADDR_WIDTH-1:0]	mau_req_addr,
+	output 		 	[`CORE_ADDR_WIDTH-1:0]	mau_req_addr,
 	input 															mau_req_ack,
 	input 			[`L1_LINE_SIZE-1:0] 		mau_ack_data
 );
@@ -56,15 +54,7 @@ module l1i_top
 	wire [`L1_WAY_NUM-1:0]          dm_wen_vect;
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
-	wire [(`L1_LD_MEM_WIDTH/8)-1:0] dm_wr_be;  
-
-	reg [1:0] 											mau_state_r;
-	reg [1:0] 											mau_state_next;
-	reg [`CORE_ADDR_WIDTH-1:0]			mau_req_addr_r;
-
-	localparam MAU_IDLE  = 2'b00;
-	localparam MAU_EVICT = 2'b01;
-	localparam MAU_REQ   = 2'b10;
+	wire [(`L1_LINE_SIZE/8)-1:0]    dm_wr_be;  
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num
@@ -96,64 +86,13 @@ module l1i_top
 	// MAU
 	// -----------------------------------------------------
 	
-	always_ff @(posedge clk or negedge rst_n) begin
-		if(~rst_n) begin
-			mau_state_r    <= MAU_IDLE;
-		end else begin
-			mau_state_r    <= mau_state_next;
-		end
-	end
-
-	always_ff @(posedge clk) begin
-		if(mau_state_r == MAU_IDLE) begin
-			if(lru_evict_val)	mau_req_addr_r <= {ld_rd_tag[lru_way_pos], core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-			else mau_req_addr_r <= {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-		end
-	end
-
-	assign mau_req_val     = core_req_val & ~lru_hit;
-	assign mau_req_ev_data = dm_rdata[lru_way_pos];
-
-	always @* begin
-		case(mau_state_r)
-			MAU_IDLE: begin
-				if(mau_req_val) begin
-					if(lru_evict_val) begin
-						mau_state_next = MAU_EVICT;
-						mau_req_addr  = {ld_rd_tag[lru_way_pos], core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-						mau_req_ev    = 1'b1;
-					end
-					else begin 
-						mau_state_next = MAU_REQ;
-						mau_req_addr   = {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-						mau_req_ev     = 1'b0;
-					end
-				end
-				else begin
-					mau_state_next = MAU_IDLE;
-					mau_req_addr   = {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-					mau_req_ev     = 1'b0;
-				end
-			end
-			MAU_REQ: begin
-				mau_req_addr   = {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-				mau_req_ev     = 1'b0;
-				if(mau_req_ack) mau_state_next = MAU_IDLE;
-				else mau_state_next = MAU_REQ;
-			end
-			MAU_EVICT: begin
-				mau_req_addr  = mau_req_addr_r;
-				mau_req_ev    = 1'b1;
-				if(mau_req_ack) mau_state_next = MAU_REQ;
-				else mau_state_next = MAU_EVICT;
-			end
-		endcase
-	end
+	assign mau_req_val  = core_req_val & ~lru_hit;
+	assign mau_req_addr = {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
 
 	// -----------------------------------------------------
 	// CORE
 	// -----------------------------------------------------
-	assign core_req_ack = lru_hit | (mau_req_ack & mau_state_r == MAU_REQ);
+	assign core_req_ack = lru_hit | mau_req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data;
 
 	// Request from core must be alligned to the width ofthe operation
@@ -177,7 +116,7 @@ module l1i_top
 	// -----------------------------------------------------
 	assign dm_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
 	assign dm_wdata = mau_ack_data;
-	assign dm_wr_be = '1; //'
+	assign dm_wr_be = '1; 
 
 	genvar way;
 	generate 
@@ -256,5 +195,47 @@ module l1i_top
 			else $fatal("Wrong offset allignment!");
 	`endif
 
+	// -----------------------------------------------------------
+	// TRACER
+	// -----------------------------------------------------------
+	`ifndef NO_L1_TRACE
+
+		// LD
+		initial begin
+			string str;
+			$timeformat(-9, 1, " ns", 0);
+			forever begin
+				@(posedge clk);
+				if(rst_n) begin
+					if(core_req_val) begin
+						str = $sformatf("LI1 ld tag=%0h idx=%0h ", core_req_tag, core_req_idx);
+						if(lru_hit) str = {str, $sformatf("hit way=%0d data=%0h", lru_way_pos, dm_rdata[lru_way_pos])};
+						else str = {str, $sformatf("miss I->S way=%0d", lru_way_pos)};
+						$display("%0s (%0t)", str, $time());
+						if(lru_evict_val) begin 
+							str = $sformatf("LI1 EVICT way=%0d tag=%0h idx=%0h ", lru_way_pos, ld_rd_tag[lru_way_pos], core_req_idx);
+							$display("%0s (%0t)", str, $time());
+						end
+						if(!lru_hit) do begin @(posedge clk); end while(!core_req_ack);
+					end
+				end
+			end
+		end
+			
+		// DM
+		initial begin
+			string str;
+			forever begin
+				@(posedge clk);
+				if(rst_n) begin
+					if(dm_wen_vect != 0) begin
+						str = $sformatf("LI1 dm write idx=%0h way=%0d data=%0h",
+						core_req_idx, one_hot_num(dm_wen_vect), dm_wdata);
+						$display("%0s (%0t)", str, $time());
+					end
+				end
+			end
+		end
+	`endif
 endmodule
 `endif

@@ -3,10 +3,19 @@ module tb_top ();
 	reg clk;
 	reg rst;
 
-	reg 													l1i_req_val;
-	reg 	[`CORE_ADDR_WIDTH-1:0] 	l1i_req_addr;
-	reg                        		l1i_req_ack;
-	reg	[`CORE_DATA_WIDTH-1:0] 		l1i_ack_data;
+	reg 												l1i_req_val;
+	reg [`CORE_ADDR_WIDTH-1:0] 	 l1i_req_addr;
+	reg                        	l1i_req_ack;
+	reg	[`CORE_DATA_WIDTH-1:0] 	l1i_ack_data;
+
+	reg 												l1d_req_val;
+	reg [`CORE_ADDR_WIDTH-1:0] 	l1d_req_addr;
+	reg [`CORE_COP_WIDTH-1:0]   l1d_req_cop;
+	reg [`CORE_DATA_WIDTH-1:0] 	l1d_req_wdata;
+	reg [`CORE_SIZE_WIDTH-1:0]  l1d_req_size;
+	reg [`CORE_BE_WIDTH-1:0]    l1d_req_be;
+	reg                        	l1d_req_ack;
+	reg	[`CORE_DATA_WIDTH-1:0] 	l1d_ack_data;
 
 	reg wb_ack;
 	reg wb_stb;
@@ -25,7 +34,7 @@ module tb_top ();
 		// Its hard to check pipeline mode here
 		@(posedge clk);
 
-		$display("%0t L1I READ tag=%0h idx=%0h", $time(), tag, idx);
+		$display("L1I READ tag=%0h idx=%0h (%0t)", tag, idx, $time());
 		l1i_req_val  <= 1'b1;
 		l1i_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
     while(l1i_req_ack !== 1'b1) begin
@@ -33,7 +42,99 @@ module tb_top ();
       if(l1i_req_ack) data = l1i_ack_data;
     end
     l1i_req_val <= 1'b0;
- 		$display("%0t L1I ACK DATA=%0h", $time(), data);
+ 		$display("L1I ACK DATA=%0h (%0t)", data, $time());
+	endtask
+
+	task automatic l1d_read (
+		input [`CORE_TAG_WIDTH-1:0] tag, 
+		input [`CORE_IDX_WIDTH-1:0] idx, 
+		input [`CORE_SIZE_WIDTH-1:0]  size,
+		output [`CORE_DATA_WIDTH-1:0] data
+	);
+
+		// Its hard to check pipeline mode here
+		@(posedge clk);
+
+		$display("L1D RD tag=%0h idx=%0h (%0t)", tag, idx, $time());
+		l1d_req_val  <= 1'b1;
+		l1d_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
+		l1d_req_size <= size;
+		l1d_req_cop  <= `CORE_REQ_RD;
+    while(l1d_req_ack !== 1'b1) begin
+      @(posedge clk)
+      if(l1d_req_ack) data = l1d_ack_data;
+    end
+    l1d_req_val <= 1'b0;
+ 		$display("L1D ACK DATA=%0h (%0t)", data, $time());
+	endtask
+
+	task automatic l1d_nc_read (
+		input [`CORE_TAG_WIDTH-1:0] tag, 
+		input [`CORE_IDX_WIDTH-1:0] idx, 
+		input [`CORE_SIZE_WIDTH-1:0]  size,
+		output [`CORE_DATA_WIDTH-1:0] data
+	);
+
+		// Its hard to check pipeline mode here
+		@(posedge clk);
+
+		$display("L1D RDNC tag=%0h idx=%0h (%0t)", tag, idx, $time());
+		l1d_req_val  <= 1'b1;
+		l1d_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
+		l1d_req_size <= size;
+		l1d_req_cop  <= `CORE_REQ_RDNC;
+    while(l1d_req_ack !== 1'b1) begin
+      @(posedge clk)
+      if(l1d_req_ack) data = l1d_ack_data;
+    end
+    l1d_req_val <= 1'b0;
+ 		$display("L1D ACK DATA=%0h (%0t)", data, $time());
+	endtask
+
+	task automatic l1d_write (
+		input [`CORE_TAG_WIDTH-1:0] tag, 
+		input [`CORE_IDX_WIDTH-1:0] idx, 
+		input [`CORE_SIZE_WIDTH-1:0]  size,
+		input [`CORE_DATA_WIDTH-1:0] data
+	);
+
+		// Its hard to check pipeline mode here
+		@(posedge clk);
+
+		l1d_req_val  <= 1'b1;
+		l1d_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
+		l1d_req_size <= size;
+		l1d_req_cop  <= `CORE_REQ_WR;
+		l1d_req_wdata <= data;
+    while(l1d_req_ack !== 1'b1) begin
+      @(posedge clk)
+      if(l1d_req_ack) data = l1d_ack_data;
+    end
+    l1d_req_val <= 1'b0;
+ 		$display("L1D WR tag=%0h idx=%0h (%0t)", tag, idx, $time());
+	endtask
+
+	task automatic l1d_nc_write (
+		input [`CORE_TAG_WIDTH-1:0] tag, 
+		input [`CORE_IDX_WIDTH-1:0] idx, 
+		input [`CORE_SIZE_WIDTH-1:0]  size,
+		input [`CORE_DATA_WIDTH-1:0] data
+	);
+
+		// Its hard to check pipeline mode here
+		@(posedge clk);
+
+		l1d_req_val  <= 1'b1;
+		l1d_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
+		l1d_req_size <= size;
+		l1d_req_cop  <= `CORE_REQ_WRNC;
+		l1d_req_wdata <= data;
+    while(l1d_req_ack !== 1'b1) begin
+      @(posedge clk)
+      if(l1d_req_ack) data = l1d_ack_data;
+    end
+    l1d_req_val <= 1'b0;
+ 		$display("L1D WR tag=%0h idx=%0h (%0t)", tag, idx, $time());
 	endtask
 
 	initial begin
@@ -46,6 +147,7 @@ module tb_top ();
 		rst <= 1;
 		l1i_req_val <= 0;
 		l1i_req_addr <= 0;
+		l1d_req_val <= 0;
 		wb_ack <= 0;
 		wb_data <= 0;
 		repeat(5) @(posedge clk);
@@ -64,6 +166,9 @@ module tb_top ();
 		l1i_read(2, 0, l1i_data);
 		l1i_read(3, 0, l1i_data);
 		l1i_read(4, 0, l1i_data);
+		l1i_read(5, 0, l1i_data);
+
+
 
 		#1000;
 		$finish();
@@ -74,7 +179,7 @@ module tb_top ();
 		forever begin
 			@(posedge clk);
 			if(wb_stb) begin
-				$display("%0t WB REQ ADDR=%0d", $time(), wb_adr);
+				//$display("%0t WB REQ ADDR=%0d", $time(), wb_adr);
 				while(!sem.try_get());
 				active_req++;
 				sem.put();
@@ -99,7 +204,7 @@ module tb_top ();
 				while(!sem.try_get());
 				active_req--;
 				sem.put();
-				$display("%0t WB ACK DATA=%0h", $time(), data);
+				//$display("%0t WB ACK DATA=%0h", $time(), data);
 			end
 			else wb_ack <= 0;
 		end
@@ -116,14 +221,14 @@ module tb_top ();
 		.l1i_req_ack 	(l1i_req_ack),
 		.l1i_ack_data (l1i_ack_data),
 		// L1D interface
-		.l1d_req_val 	(),
-		.l1d_req_addr (),
-		.l1d_req_cop 	(),
-		.l1d_req_wdata(),
-		.l1d_req_size (),
-		.l1d_req_be 	(),
-		.l1d_req_ack 	(),
-		.l1d_ack_data (),
+		.l1d_req_val 	(l1d_req_val),
+		.l1d_req_addr (l1d_req_addr),
+		.l1d_req_cop 	(l1d_req_cop), 
+		.l1d_req_wdata(l1d_req_wdata),
+		.l1d_req_size (l1d_req_size),
+		.l1d_req_be 	(l1d_req_be),
+		.l1d_req_ack 	(l1d_req_ack),
+		.l1d_ack_data (l1d_ack_data),
 		// Wishbone B4 interface
 		.wb_clk_i 		(clk),
 		.wb_rst_i 		(rst),

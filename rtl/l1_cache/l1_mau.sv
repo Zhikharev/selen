@@ -16,8 +16,6 @@ module l1_mau
 
 	// L1I interface
 	input	 												l1i_req_val,
-	input                         l1i_req_ev,
-	input  [`L1_LINE_SIZE-1:0]    l1i_req_ev_data,
 	input  [`CORE_ADDR_WIDTH-1:0]	l1i_req_addr,
 	output 												l1i_req_ack,
 	output [`L1_LINE_SIZE-1:0] 		l1i_ack_data,
@@ -82,7 +80,6 @@ module l1_mau
 	reg [$clog2(TR_CNT_MAX)-1:0]  tr_cnt_next;
 	reg [0:0]											tr_state_r;
 	reg [0:0]											tr_state_next;
-	reg                           tr_we_r;
 
 	reg  ack_received;
 	wire ack_wait;
@@ -149,8 +146,9 @@ module l1_mau
 	assign wb_adr = tr_addr_r;
 	assign wb_stb = (tr_state_r == TR_REQ);
 	assign wb_adr = tr_addr_r;
-	assign wb_we  = tr_we_r;
+	assign wb_we  = l1d_req_we;
 	assign wb_sel = l1d_req_be;
+	assign wb_dat = l1d_req_wdata;
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
@@ -170,12 +168,6 @@ module l1_mau
 			tr_addr_r <= tr_addr_next;
 			tr_cnt_r  <= tr_cnt_next;
 		end
-	end
-
-	always @(posedge wb_clk_i or negedge rst_n) begin
-		if(~rst_n) tr_we_r <= 0;
-		if(i_val) tr_we_r <= l1i_req_ev;
-		else if (d_val) tr_we_r <= l1d_req_we;
 	end
 
 	assign ack_wait = i_val | d_val;;
