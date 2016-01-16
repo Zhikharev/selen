@@ -43,19 +43,23 @@ module l1_dut
 	wire 	[`CORE_ADDR_WIDTH-1:0]	l1i_mau_req_addr;
 	wire 													l1i_mau_req_ack;
 	wire 	[`L1_LINE_SIZE-1:0] 		l1i_mau_ack_data;
+	wire                          l1i_mau_req_ev;
+	wire 	[`L1_LINE_SIZE-1:0]     l1i_mau_req_ev_data;
 
 	l1i_top l1i 
 	(
-		.clk 						(clk),
-		.rst_n 					(rst_n),
-		.core_req_val 	(l1i_req_val),
-		.core_req_addr 	(l1i_req_addr),
-		.core_req_ack 	(l1i_req_ack),
-		.core_ack_data 	(l1i_ack_data),
-		.mau_req_val 		(l1i_mau_req_val),
-		.mau_req_addr 	(l1i_mau_req_addr),
-		.mau_req_ack 		(l1i_mau_req_ack),
-		.mau_ack_data 	(l1i_mau_ack_data)
+		.clk 						 (clk),
+		.rst_n 					 (rst_n),
+		.core_req_val 	 (l1i_req_val),
+		.core_req_addr 	 (l1i_req_addr),
+		.core_req_ack 	 (l1i_req_ack),
+		.core_ack_data 	 (l1i_ack_data),
+		.mau_req_val 		 (l1i_mau_req_val),
+		.mau_req_addr 	 (l1i_mau_req_addr),
+		.mau_req_ack 		 (l1i_mau_req_ack),
+		.mau_ack_data 	 (l1i_mau_ack_data),
+		.mau_req_ev 	   (l1i_mau_req_ev),
+		.mau_req_ev_data (l1i_mau_req_ev_data)
 	);
 
 /*
@@ -77,10 +81,12 @@ module l1_dut
 	l1_mau mau
 	(
 		// L1I interface
-		.l1i_req_val 	(l1i_mau_req_val),
-		.l1i_req_addr (l1i_mau_req_addr),
-		.l1i_req_ack 	(l1i_mau_req_ack),
-		.l1i_ack_data (l1i_mau_ack_data),
+		.l1i_req_val 		 (l1i_mau_req_val),
+		.l1i_req_addr 	 (l1i_mau_req_addr),
+		.l1i_req_ack 		 (l1i_mau_req_ack),
+		.l1i_ack_data 	 (l1i_mau_ack_data),
+		.l1i_req_ev 	   (l1i_mau_req_ev),
+		.l1i_req_ev_data (l1i_mau_req_ev_data),
 		// L1D interface
 		.l1d_req_val 	(0),
 		.l1d_req_we 	(),

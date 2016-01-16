@@ -16,6 +16,8 @@ module l1_mau
 
 	// L1I interface
 	input	 												l1i_req_val,
+	input                         l1i_req_ev,
+	input  [`L1_LINE_SIZE-1:0]    l1i_req_ev_data,
 	input  [`CORE_ADDR_WIDTH-1:0]	l1i_req_addr,
 	output 												l1i_req_ack,
 	output [`L1_LINE_SIZE-1:0] 		l1i_ack_data,
@@ -55,8 +57,8 @@ module l1_mau
 
 	localparam TR_CNT_MAX = `L1_LINE_SIZE/`CORE_DATA_WIDTH;
 
-	localparam ACK_I = 1'b0;
-	localparam ACK_D = 1'b1;
+	localparam ACK_I  = 1'b0;
+	localparam ACK_D  = 1'b1;
 
 	wire rst_n;
 
@@ -78,8 +80,8 @@ module l1_mau
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_next;
 	reg [$clog2(TR_CNT_MAX)-1:0] 	tr_cnt_r;
 	reg [$clog2(TR_CNT_MAX)-1:0]  tr_cnt_next;
-	reg 													tr_state_r;
-	reg 													tr_state_next;
+	reg [0:0]											tr_state_r;
+	reg [0:0]											tr_state_next;
 	reg                           tr_we_r;
 
 	reg  ack_received;
@@ -97,21 +99,30 @@ module l1_mau
 	reg [$clog2(TR_CNT_MAX)-1:0] ack_cnt_next;
 
 	wire i_val;
-	reg  l1i_req_val_r;
-	
+	reg  i_req_was_send_r;
+
 	wire d_val;
-	reg  l1d_req_val_r;
+	reg  d_req_was_send_r;
 
 	assign rst_n = ~wb_rst_i;
 	assign ack_waiting = ~ack_waiting_n;
+
 	// -----------------------------------------------------
 	// Inner val
 	// -----------------------------------------------------
-	assign i_val = l1i_req_val & ~l1i_req_val_r;
-	assign d_val = l1d_req_val & ~l1d_req_val_r;
 
-	always @(posedge wb_clk_i) l1i_req_val_r <= l1i_req_val & ~(ack_received & (ack_type == ACK_I));
-	always @(posedge wb_clk_i) l1d_req_val_r <= l1d_req_val & ~(ack_received & (ack_type == ACK_D));
+	assign d_val    = l1d_req_val & ~d_req_was_send_r;
+	assign i_val    = l1i_req_val & ~i_req_was_send_r;
+
+	always @(posedge wb_clk_i) begin
+		if(d_req_was_send_r) i_req_was_send_r <= ~(ack_received & (ack_type == ACK_D));
+		else d_req_was_send_r <= l1d_req_val & (tr_state_r == IDLE);
+	end
+
+	always @(posedge wb_clk_i) begin
+		if(i_req_was_send_r) i_req_was_send_r <= ~(ack_received & (ack_type == ACK_I));
+		else i_req_was_send_r <= l1i_req_val & ~l1d_req_val & (tr_state_r == IDLE);
+	end
 
 	fifo 
 	#(
@@ -163,11 +174,12 @@ module l1_mau
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) tr_we_r <= 0;
-		else tr_we_r <= (i_val) ? 1'b0 : l1d_req_we;
+		if(i_val) tr_we_r <= l1i_req_ev;
+		else if (d_val) tr_we_r <= l1d_req_we;
 	end
 
-	assign ack_wait = i_val | d_val;
-	assign wait_ack_type = (i_val) ? ACK_I : ACK_D;
+	assign ack_wait = i_val | d_val;;
+	assign wait_ack_type = (d_val) ? ACK_D : ACK_I;
 
 	always @* begin
 		case(tr_state_r)
@@ -180,8 +192,8 @@ module l1_mau
 				end
 				else if(i_val) begin
 					tr_state_next = TR_REQ;
-					tr_addr_next = l1i_req_addr;
 					tr_cnt_next  = TR_CNT_MAX - 1;
+					tr_addr_next = l1i_req_addr;
 				end
 				else begin
 					tr_state_next = IDLE;
@@ -275,22 +287,6 @@ module l1_mau
 					ack_state_next = REC_ACK;
 					ack_received = 0;
 				end
-				/*
-				if(wb_ack_i) begin
-					if(ack_cnt_r == 0) begin
-						ack_received = 1;
-						ack_state_next = REC_ACK;
-					end
-					else begin
-						ack_state_next = REC_ACK;
-						ack_received = 0;
-					end
-				end
-				else begin
-					ack_received = 0;
-					ack_state_next = REC_ACK;
-				end
-				*/
 			end
 		endcase
 	end
@@ -324,6 +320,12 @@ module l1_mau
 	assign wb_sel_o = wb_sel_r;
 	assign wb_stb_o = wb_stb_r;
 	assign wb_we_o  = wb_we_r;
+
+	// -----------------------------------------------------------
+	// ASSERTIONS
+	// -----------------------------------------------------------
+
+
 
 endmodule
 
