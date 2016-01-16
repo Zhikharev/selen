@@ -163,12 +163,12 @@ std::ostream &selen::operator<<(std::ostream &os, const Status &st)
     using namespace std;
 
     os << setw(fmtwidht) << "program running: " << ((st.in_progress)? "yes" : "no") << endl
-       << setw(fmtwidht) << "steps made from begin: " << st.steps_made_from_begin << endl
-       << setw(fmtwidht) << "steps made at last step: " << st.steps_made_last << endl
+       << setw(fmtwidht) << "steps made from begin: " << std::dec << st.steps_made_from_begin << endl
+       << setw(fmtwidht) << "steps made at last step: " << std::dec <<st.steps_made_last << endl
        << setw(fmtwidht) << "image was load: " << ((st.image_loaded) ? "yes" : "no") << endl
        << setw(fmtwidht) << "was error: " << st.was_error << "\t"
        << ((st.was_error)? st.error_description : string())  << endl
-       << setw(fmtwidht) << "return code: " << st.return_code;
+       << setw(fmtwidht) << "return code: " << std::dec << st.return_code;
 
     return os;
 }

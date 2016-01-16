@@ -182,6 +182,12 @@ string Application::print_banner()
 
 void Application::exit(int status = EXIT_SUCCESS)
 {
+    if(!params.quiet)
+        cout << "\n\nSUMMARY:\n\n"
+            << sim.get_status() << std::endl;
+
+    dump_state_to_file(params.final_dump);
+
     return ::exit(status);
 }
 
@@ -273,6 +279,7 @@ void Application::run_interactive()
     Interactive instance(this);
 
     instance.run();
+
     return;
 }
 

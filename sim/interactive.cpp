@@ -103,7 +103,7 @@ static const CommandMap& get_commands_map()
         },
         {
             std::regex("\\b(step|s)[\\s]*(=)?[\\s]*([0-9]+)*\\b", std::regex::icase),
-            "step, s [num] - make num (0 if num arg missed) steps at simulator",
+            "step, s [num] - make num (1 if num arg missed) steps at simulator",
             []CMD_OPERATION
             {
                 std::string arg = tokens.str(3);
