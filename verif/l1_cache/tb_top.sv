@@ -16,6 +16,26 @@ module tb_top ();
 	semaphore sem;
 	int active_req;
 
+	task automatic l1i_read (
+		input [`CORE_TAG_WIDTH-1:0] tag, 
+		input [`CORE_IDX_WIDTH-1:0] idx, 
+		output [`CORE_DATA_WIDTH-1:0] data
+	);
+
+		// Its hard to check pipeline mode here
+		@(posedge clk);
+
+		$display("%0t L1I READ tag=%0h idx=%0h", $time(), tag, idx);
+		l1i_req_val  <= 1'b1;
+		l1i_req_addr <= {tag, idx, {`CORE_OFFSET_WIDTH{1'b0}}};
+    while(l1i_req_ack !== 1'b1) begin
+      @(posedge clk)
+      if(l1i_req_ack) data = l1i_ack_data;
+    end
+    l1i_req_val <= 1'b0;
+ 		$display("%0t L1I ACK DATA=%0h", $time(), data);
+	endtask
+
 	initial begin
 		clk <= 0;
 		sem = new(1);
@@ -33,25 +53,17 @@ module tb_top ();
 	end
 
 	initial begin
+		bit [31:0] l1i_data;
 		wait(rst == 0);
-		repeat(2) begin
-			@(posedge clk);
-			l1i_req_val <= 1;
-			l1i_req_addr <= 0;
-			@(posedge clk);
-			$display("%0t REQ ADDR=%0h", $time(), l1i_req_addr);
-			wait(l1i_req_ack == 1);
-			$display("%0t ACK DATA=%0h", $time(), l1i_ack_data);
-			l1i_req_val <= 0;
-		end
-		@(posedge clk);
-		l1i_req_val <= 1;
-		l1i_req_addr <= 75;
-		@(posedge clk);
-		$display("%0t REQ ADDR=%0h", $time(), l1i_req_addr);
-		wait(l1i_req_ack == 1);
-		$display("%0t ACK DATA=%0h", $time(), l1i_ack_data);
-		l1i_req_val <= 0;
+		l1i_read(0, 0, l1i_data);
+		l1i_read(0, 1, l1i_data);
+
+		// Check evict
+		l1i_read(0, 0, l1i_data);
+		l1i_read(1, 0, l1i_data);
+		l1i_read(2, 0, l1i_data);
+		l1i_read(3, 0, l1i_data);
+		l1i_read(4, 0, l1i_data);
 
 		#1000;
 		$finish();
@@ -72,6 +84,7 @@ module tb_top ();
 
 	initial begin
 		int delay;
+		bit [31:0] data;
 		forever begin
 			@(posedge clk);
 			if(active_req > 0) begin
@@ -81,11 +94,12 @@ module tb_top ();
 					@(posedge clk);
 				end
 				wb_ack  <= 1;
-				wb_data <= wb_data + 1;
+				data = wb_data + 1;
+				wb_data <= data;
 				while(!sem.try_get());
 				active_req--;
 				sem.put();
-				$display("%0t WB ACK DATA=%0h", $time(), wb_data);
+				$display("%0t WB ACK DATA=%0h", $time(), data);
 			end
 			else wb_ack <= 0;
 		end

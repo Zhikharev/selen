@@ -20,6 +20,7 @@ module l1_lrum
   input   [`L1_WAY_NUM-1:0]     tag_cmp_vect,
   input   [`L1_WAY_NUM-1:0]     ld_val_vect,
 	output 												hit,
+  output                        evict_val,
 	output 	[`L1_WAY_NUM-1:0] 	  way_vect
 );
 
@@ -33,7 +34,6 @@ module l1_lrum
 
 	wire [`L1_WAY_NUM-1:0] 				lru_ev_aloc_way_vect;
 	wire 													lru_is_evict;
-	wire 													lru_evict_val;
 
   // ------------------------------------------------------
   // FUNCTION: ms1_vec
@@ -56,7 +56,7 @@ module l1_lrum
   assign hit = |hit_vect & req;
   assign way_vect = (hit) ? hit_vect : lru_ev_aloc_way_vect;
   assign lru_is_evict  = &ld_val_vect;
-  assign lru_evict_val = ~hit & lru_is_evict;
+  assign evict_val = ~hit & lru_is_evict;
   assign lru_ev_aloc_way_vect = (lru_used_r[idx] == 0) ? 1 : ms1_vec(~lru_used_r[idx]);
   assign lru_used_upd  = lru_used_r[idx] | way_vect;
   assign lru_used_next = (&lru_used_upd) ? way_vect : lru_used_upd;
