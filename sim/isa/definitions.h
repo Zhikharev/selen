@@ -4,6 +4,7 @@
  * Instruction set
  */
 #include <string>
+#include <ostream>
 
 #include "memory.h"
 #include "../state.h"
@@ -43,6 +44,19 @@ void perform(State& state, const instruction_t instr);
 //disassemble unstruction, nothrow
 std::string disassemble(const instruction_t inst);
 
+
+//dumper for memory_t::dump()
+struct disasembler_dumper
+{
+    typedef selen::instruction_t token_t;
+
+    void inline operator()(selen::instruction_t token, std::ostream& out)
+    {
+        out << std::setw(10) << token
+            << "\t"
+            << selen::isa::disassemble(token);
+    }
+};
 
 } // namespace isa
 

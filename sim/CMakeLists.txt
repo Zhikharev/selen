@@ -15,9 +15,9 @@ add_library(linenoise ${LINENOISE_SRC})
 #simulator
 set(SIM_SRC sim_main.cpp simulator.cpp application.cpp interactive.cpp)
 add_executable(sim ${SIM_SRC})
-target_link_libraries(sim isa pthread linenoise)
+target_link_libraries(sim isa linenoise)
 
 #disassembler
-set(DISASM_SRC disas_main.cpp)
-add_executable(disas ${DISASM_SRC})
-target_link_libraries(disas isa)
+#set(DISASM_SRC disas_main.cpp)
+#add_executable(disas ${DISASM_SRC})
+#target_link_libraries(disas isa)

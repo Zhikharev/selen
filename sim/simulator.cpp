@@ -101,7 +101,7 @@ void Simulator::dump_registers(std::ostream& out) const
 
 void Simulator::dump_memory(std::ostream& out) const
 {
-    return state.mem.dump(out);
+    return state.mem.dump(out, state.mem.size());
 }
 
 void Simulator::set_config(const Config &econfig)

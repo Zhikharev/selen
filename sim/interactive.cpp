@@ -12,7 +12,7 @@ typedef std::vector<Command> CommandMap;
 
 void test(std::smatch tokens)
 {
-    std::cout << "load" << std::endl;
+    std::cout << "not implemented" << std::endl;
     for (size_t i = 0; i < tokens.size(); i++)
         std::cout << std::dec << i << " : " << tokens.str(i) << std::endl;
 }
@@ -141,31 +141,29 @@ static const CommandMap& get_commands_map()
 
                 const selen::memory_t& memory = app->get_simulator().get_state().mem;
 
-                size_t avaib_size = memory.size();
-                if(start_addr > avaib_size)
-                {
-                    std::ostringstream out;
-                    out << "unable disasemble at invalid address "
-                        << std::hex << std::showbase << start_addr
-                        << ", max valid address: " << avaib_size;
+                memory.dump(std::cout, num_words, start_addr, selen::isa::disasembler_dumper());
+            }
+        },
+        {
+            std::regex("\\b(print|p)[\\s]+(reg|mem)[\\s]+([\\s\\S]+)*\\b", std::regex::icase),
+            "print, p reg NAME mem <address> [format]- print register or memory, [format] valid only for memory, specifies output format: b/s/w/i- bytes/symbols/words/disasemled instructions,  x/d - hex/dec (valid only for b and w), ",
+            []CMD_OPERATION
+            {
+                test(tokens);
+//                std::string saddr = tokens.str(2);
+//                std::string snum_words = tokens.str(4);
 
-                    throw std::runtime_error(out.str());
-                }
+//                size_t num_words = (snum_words.empty()) ? 10 : std::stoul(snum_words, 0, 0);
+//                size_t start_addr = std::stoul(saddr, 0, 0);
 
-                std::string separator("\t");
-                size_t end_addr = std::min(start_addr + num_words*selen::WORD_SIZE, avaib_size);
+//                if(!app->get_parameters().quiet)
+//                    std::cout << "dissasemble " << std::dec << num_words << " words from address "
+//                            << std::hex << start_addr
+//                            << std::endl;
 
-                for (std::size_t i = start_addr; i < end_addr; i = i + selen::WORD_SIZE)
-                {
-                    selen::instruction_t instr = memory.read<selen::word_t>(i);
+//                const selen::memory_t& memory = app->get_simulator().get_state().mem;
 
-                    std::cout << std::setw(10) << std::hex  << i
-                              << separator
-                              << std::setw(10) << instr
-                              << separator
-                              << selen::isa::disassemble(instr)
-                              << std::endl;
-                }
+//                memory.dump(std::cout, num_words, start_addr, selen::isa::disasembler_dumper());
             }
         }
     };

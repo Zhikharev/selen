@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
+#include <functional>
 
 namespace selen
 {
@@ -119,23 +120,50 @@ public:
         return (endianness == LE);
     }
 
-    void dump(std::ostream& out) const
+    template<class T>
+    struct memory_dumper
     {
+        typedef T token_t;
+        void inline operator()(const T token, std::ostream& out)
+        {
+            out << token;
+        }
+    };
+
+    template<class dumper_t = memory_dumper<word_t> >
+    void dump(std::ostream& out, size_t num, size_t start_addr = 0, dumper_t dmp = dumper_t()) const
+    {
+        std::cout << "dump " << std::endl;
+
+        typedef typename dumper_t::token_t token_t;
+
+        size_t avaib_size = std::floor(size () /sizeof(token_t)) * sizeof(token_t);
+        if(start_addr > avaib_size)
+        {
+            std::ostringstream out;
+            out << "try access to memory at invalid address "
+                << std::hex << std::showbase << start_addr
+                << ", max valid address: " << avaib_size;
+
+            throw std::runtime_error(out.str());
+        }
+
+        std::string separator("\t");
+        size_t end_addr = std::min(start_addr + num*sizeof(token_t), avaib_size);
+
         out << std::showbase << std::hex;
-        out << "endianness: " << ((is_little_endian())? "LE" : "BE" ) << std::endl;
-        std::string separator(" | ");
+        for (std::size_t i = start_addr; i < end_addr; i = i + sizeof(token_t))
+        {
+            token_t token = this->read<token_t>(i);
 
-        out << std::hex << std::showbase;
+            out << std::setw(10) << std::hex  << i
+                << separator;
 
-        size_t avaib_size = std::floor(size () /WORD_SIZE) * WORD_SIZE;
+            dmp(token, out);
 
-        for (std::size_t i = 0; i < avaib_size; i = i + WORD_SIZE)
-            out << std::setw(10) << i
-                << separator
-                << read<word_t>(i)
-                << std::endl;
+            out << std::endl;
+        }
     }
-
 private:
     ENDIAN endianness = {LE};
 }; //memory

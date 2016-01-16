@@ -6,7 +6,6 @@
 #include <iostream>
 #include <algorithm>
 #include <atomic>
-#include <thread>
 #include <fstream>
 
 #include "application.h"
