@@ -51,7 +51,7 @@ Disassembly of section .text:
 
 ```
 
-конвертировать elf в binary, все секции ложаться так как в живой программе
+конвертировать elf в binary
 ```
 /home/jettatura/bin/riscv/bin/riscv64-unknown-linux-gnu-objcopy -O binary --set-start 0 temp.elf temp.bin
 ```
