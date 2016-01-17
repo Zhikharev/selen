@@ -115,4 +115,4 @@ dissasemble 30 words from address 0
 (isa-sim): 
 
 ```
- 
+ Пока ничего не зашагает в таком виде, потому что startup code нужен, выставить stack pointer.
