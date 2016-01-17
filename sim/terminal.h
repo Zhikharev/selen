@@ -24,11 +24,22 @@ void init()
 
 std::string readline(const std::string& promt)
 {
+    static std::string last_valid_command;
+
     char *line = linenoise(promt.c_str());
 
     std::string token(line);
-    linenoiseHistoryAdd(line);
-    linenoiseHistorySave(COMMAND_HISTORY_FILE);
+    //empty line (enter was pressed ) perform last non empty command
+    if(!token.empty())
+    {
+        linenoiseHistoryAdd(line);
+        linenoiseHistorySave(COMMAND_HISTORY_FILE);
+        last_valid_command = token;
+    }
+    else
+        token = last_valid_command;
+
+
     free(line);
 
     return token;
