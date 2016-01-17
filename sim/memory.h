@@ -133,8 +133,6 @@ public:
     template<class dumper_t = memory_dumper<word_t> >
     void dump(std::ostream& out, size_t num, size_t start_addr = 0, dumper_t dmp = dumper_t()) const
     {
-        std::cout << "dump " << std::endl;
-
         typedef typename dumper_t::token_t token_t;
 
         size_t avaib_size = std::floor(size () /sizeof(token_t)) * sizeof(token_t);
