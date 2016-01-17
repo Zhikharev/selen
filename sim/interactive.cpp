@@ -28,7 +28,7 @@ static const CommandMap& get_commands_map()
             "print help for specific command or list of avaible commands.",
             []CMD_OPERATION
             {
-                std::cout << i->print_help(tokens.str(3)) << std::endl;
+                instance->print_help(tokens.str(3));
             }
         },
         {
@@ -38,7 +38,7 @@ static const CommandMap& get_commands_map()
             "dump state to file and exit simulator.",
             []CMD_OPERATION
             {
-                app->exit(0);
+                instance->exit(0);
             }
         },
         {
@@ -53,20 +53,7 @@ static const CommandMap& get_commands_map()
 
                 selen::addr_t addr = (s_addr.empty()) ? 0 : std::stoul(s_addr, 0, 0);
 
-                if(filename.empty())
-                    filename = app->get_parameters().imagefilename;
-                else
-                {
-                    Parameters temp = app->get_parameters();
-                    temp.imagefilename = filename;
-                    app->set_parameters(temp);
-                }
-
-                selen::memory_t image = read_file<selen::memory_t>(filename);
-                app->get_simulator().load(image, true, addr);
-
-                std::cout << "image " << filename << " was loaded to simulator memory at address "
-                          << std::showbase << std::hex << addr << std::endl;
+                instance->load(filename, addr);
             }
         },
         {
@@ -76,7 +63,7 @@ static const CommandMap& get_commands_map()
             "print simulator status: steps, programm code, errors, and etc.",
             []CMD_OPERATION
             {
-                std::cout << app->get_simulator().get_status() << std::endl;
+                instance->print_status();
             }
         },
         {
@@ -89,9 +76,8 @@ static const CommandMap& get_commands_map()
                 std::string arg = tokens.str(3);
                 std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
                 bool plug = !(arg == "off" || arg == "no");
-                app->get_simulator().enable_tracing(plug);
 
-                std::cout << "tracing: " << ((app->get_simulator().get_config().trace)? "on": "off") << std::endl;
+                instance->enable_tracing(plug);
             }
         },
         {
@@ -103,14 +89,7 @@ static const CommandMap& get_commands_map()
             {
                 std::string arg = tokens.str(4);
 
-                if(!arg.empty())
-                {
-                    selen::addr_t pc = std::stoul(arg, 0, 0);
-                    app->get_simulator().set_program_counter(pc);
-                }
-
-                std::cout << "current pc: " << std::hex << std::showbase
-                          << app->get_simulator().get_program_counter() << std::endl;
+                instance->touch_pc(arg);
             }
         },
         {
@@ -124,17 +103,7 @@ static const CommandMap& get_commands_map()
 
                 size_t steps = (arg.empty()) ? 1: std::stoul(arg, 0, 0);
 
-                if(!app->get_parameters().quiet)
-                    std::cout << "start " << std::dec << steps << " step from "
-                              << std::hex << app->get_simulator().get_program_counter()
-                              << std::endl;
-
-                size_t performed = app->get_simulator().step(steps);
-
-                if(!app->get_parameters().quiet)
-                    std::cout << "steps performed " << std::dec << performed << ", current pc "
-                            << std::hex << app->get_simulator().get_program_counter()
-                            << std::endl;
+                instance->step(steps);
             }
         },
         {
@@ -150,43 +119,50 @@ static const CommandMap& get_commands_map()
                 size_t num_words = (snum_words.empty()) ? 10 : std::stoul(snum_words, 0, 0);
                 size_t start_addr = std::stoul(saddr, 0, 0);
 
-                if(!app->get_parameters().quiet)
-                    std::cout << "dissasemble " << std::dec << num_words << " words from address "
-                            << std::hex << start_addr
-                            << std::endl;
-
-                const selen::memory_t& memory = app->get_simulator().get_state().mem;
-
-                memory.dump(std::cout, num_words, start_addr, selen::isa::disasembler_dumper());
+                instance->disassemble(num_words, start_addr);
             }
         },
         {
             cmd_names_t{"print","p"},
-            "[\\s]+(reg|mem)[\\s]+([\\s\\S]+)*",
+            "[\\s]+(reg|mem)([\\s]+([\\s\\S]+))*",
             "print register or region of memory",
-            "arguments: reg <name>, or mem <address> [format]- print register or memory, [format] valid only for memory, specifies output format: b/s/w/i- bytes/symbols/words/disasemled instructions,  x/d - hex/dec (valid only for b and w), ",
+            "arguments: reg <name>, or mem <address> [format]- print register or memory, if reg name is empty then dump all registers, [format] arument valid only for memory, specifies output format: b/s/w/i- bytes/symbols/words/disasemled instructions,  x/d - hex/dec (valid only for b and w), ",
             []CMD_OPERATION
             {
-                test(tokens);
-//                std::string saddr = tokens.str(2);
-//                std::string snum_words = tokens.str(4);
+                std::string type = tokens.str(4);
+                std::string arg = tokens.str(6);
 
-//                size_t num_words = (snum_words.empty()) ? 10 : std::stoul(snum_words, 0, 0);
-//                size_t start_addr = std::stoul(saddr, 0, 0);
+                if(type == "reg")
+                {
+                    instance->print_register(arg);
+                    return;
+                }
 
-//                if(!app->get_parameters().quiet)
-//                    std::cout << "dissasemble " << std::dec << num_words << " words from address "
-//                            << std::hex << start_addr
-//                            << std::endl;
-
-//                const selen::memory_t& memory = app->get_simulator().get_state().mem;
-
-//                memory.dump(std::cout, num_words, start_addr, selen::isa::disasembler_dumper());
+                std::cout << "memory printing not implemented yet";
+//                selen::memory_t::memory_dumper dmp;
+//                state.mem.dump(std::cout, len ,addr, dmp);
             }
         }
     };
 
     return map;
+}
+
+std::string compose_reg_names_string(const std::string& separator = std::string(", "))
+{
+    const std::vector<std::string>& names = selen::get_reg_names();
+    std::string product;
+
+    selen::reg_id_t id = selen::R_FIRST;
+    for (; id < selen::R_LAST - 1; id++)
+    {
+        product.append(names.at(id));
+        product.append(separator);
+    }
+
+    //last one without separator
+    product.append(names.at(id));
+    return product;
 }
 
 int Interactive::run()
@@ -199,11 +175,8 @@ int Interactive::run()
     return EXIT_SUCCESS;
 }
 
-std::string Interactive::print_help(const std::string command) const
+void Interactive::print_help(const std::string command) const
 {
-    static std::ostringstream out;
-    out.str("");
-
     const CommandMap& commands = get_commands_map();
 
     if(!command.empty())
@@ -227,25 +200,120 @@ std::string Interactive::print_help(const std::string command) const
 
         if(cmd_found)
         {
-            out << "\t" << std::setw(fmtwidht) << cmd.print_names()
-                << " - " << cmd.description << std::endl;
-            return out.str();
+            std::cout << "\t" << std::setw(fmtwidht) << cmd.print_names()
+                      << " - " << cmd.description << std::endl;
+            return;
         }
 
-        out << "undefined command: " << command << std::endl;
+        std::cout << "undefined command: " << command << std::endl;
     }
 
-    out << "Avaible commands:\n";
+    std::cout << "Avaible commands:\n";
 
     for(const Command& token : commands)
     {
-        out << "\t" << std::setw(fmtwidht) << token.print_names()
+        std::cout << "\t" << std::setw(fmtwidht) << token.print_names()
             << " - " << token.brief << std::endl;
     }
 
-    out << "\n\tUse \"help <command>\" to get special command help";
+    std::cout << "\n\tUse \"help <command>\" to get special command help";
+}
 
-    return out.str();
+void Interactive::print_status() const
+{
+    std::cout << parent->get_simulator().get_status() << std::endl;
+}
+
+void Interactive::print_register(const std::string &name) const
+{
+    if(name.empty())
+    {
+        parent->get_simulator().dump_registers(std::cout);
+        return;
+    }
+
+    const selen::State &state = parent->get_simulator().get_state();
+    selen::reg_id_t id = selen::name2regid(name);
+
+    if(id == selen::R_LAST)
+        std::cout << "there is no register \"" << name << "\"."
+                     "\nAvaible registers:\n"
+                  << compose_reg_names_string() << std::endl;
+    else
+        std::cout << selen::regid2name(id) << ": "
+                  << std::hex << state.reg[id].u << std::endl;
+}
+
+void Interactive::exit(int exit_code)
+{
+    if(!parent->get_parameters().quiet)
+        std::cerr << "exit interactive regime\n";
+
+    running.store(false);
+    parent->exit(exit_code);
+}
+
+void Interactive::load(std::string filename, size_t addr)
+{
+    if(filename.empty())
+        filename = parent->get_parameters().imagefilename;
+    else
+    {
+        Parameters temp = parent->get_parameters();
+        temp.imagefilename = filename;
+        parent->set_parameters(temp);
+    }
+
+    selen::memory_t image = read_file<selen::memory_t>(filename);
+    parent->get_simulator().load(image, true, addr);
+
+    std::cout << "image " << filename << " was loaded to simulator memory at address "
+              << std::showbase << std::hex << addr << std::endl;
+}
+
+void Interactive::enable_tracing(bool enable)
+{
+    parent->get_simulator().enable_tracing(enable);
+    std::cout << "tracing: " << ((parent->get_simulator().get_config().trace)? "on": "off") << std::endl;
+}
+
+void Interactive::disassemble(size_t num_words, size_t start_addr) const
+{
+    if(!parent->get_parameters().quiet)
+        std::cout << "dissasemble " << std::dec << num_words << " words from address "
+                  << std::hex << start_addr
+                  << std::endl;
+
+    const selen::memory_t& memory = parent->get_simulator().get_state().mem;
+
+    memory.dump(std::cout, num_words, start_addr, selen::isa::disasembler_dumper());
+}
+
+void Interactive::step(size_t steps)
+{
+    if(!parent->get_parameters().quiet)
+        std::cout << "start " << std::dec << steps << " step from "
+                  << std::hex << parent->get_simulator().get_program_counter()
+                  << std::endl;
+
+    size_t performed = parent->get_simulator().step(steps);
+
+    if(!parent->get_parameters().quiet)
+        std::cout << "steps performed " << std::dec << performed << ", current pc "
+                << std::hex << parent->get_simulator().get_program_counter()
+                << std::endl;
+}
+
+void Interactive::touch_pc(const std::string &arg)
+{
+    if(!arg.empty())
+    {
+        selen::addr_t pc = std::stoul(arg, 0, 0);
+        parent->get_simulator().set_program_counter(pc);
+    }
+
+    std::cout << "current pc: " << std::hex << std::showbase
+              << parent->get_simulator().get_program_counter() << std::endl;
 }
 
 bool Interactive::eval(const std::string &token)
@@ -259,7 +327,7 @@ bool Interactive::eval(const std::string &token)
         {
             try
             {
-                cmd.operation(parent, this, arguments);
+                cmd.operation(this, arguments);
             }
             catch(std::exception& e)
             {
@@ -276,7 +344,7 @@ bool Interactive::eval(const std::string &token)
 void Interactive::main_cycle()
 {
     if(!parent->get_parameters().quiet)
-        std::cerr << "Simulator at unteractive regime\n";
+        std::cerr << "Simulator at interactive regime\n";
 
     terminal::init();
 

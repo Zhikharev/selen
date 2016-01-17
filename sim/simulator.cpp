@@ -95,7 +95,7 @@ void Simulator::dump_registers(std::ostream& out) const
     out << "PC:\t" << state.pc << std::endl;
 
     for (selen::reg_id_t id = 0; id < selen::NUM_REGISTERS; id++)
-        out << get_regname(id) << ":\t"
+        out << regid2name(id) << ":\t"
             << state.reg[id].u << "\n";
 }
 

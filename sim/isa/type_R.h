@@ -37,9 +37,9 @@ struct R
         link_t& r = find_link(*this);
 
         s << std::setw(MF_WIDHT) << r.mnemonic << "\t"
-          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", "
-          << std::setw(RN_WIDHT) << get_regname(data.rs1) << ", "
-          << get_regname(data.rs2);
+          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
+          << std::setw(RN_WIDHT) << regid2name(data.rs1) << ", "
+          << regid2name(data.rs2);
     }
 
 private:

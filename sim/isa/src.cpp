@@ -2,6 +2,7 @@
 #include <sstream>
 #include <memory>
 #include <tuple>
+#include <algorithm>
 
 #include "handlers.h"
 
@@ -20,9 +21,9 @@ using namespace std;
 //table of handlers.
 typedef map<isa::opcode_t, isa::handler_t*> handlers_table_t;
 
-std::string selen::get_regname(const reg_id_t id)
+const std::vector<string>& selen::get_reg_names()
 {
-    static std::string names[] =
+    static std::vector<std::string> names =
     {
         "ZERO",
         "AT",
@@ -39,10 +40,33 @@ std::string selen::get_regname(const reg_id_t id)
         "RA",
     };
 
+    return names;
+}
+
+std::string selen::regid2name(const reg_id_t id)
+{
+    const std::vector<std::string>& names = get_reg_names();
+
     if(id >= R_LAST)
         throw std::invalid_argument("bad register id");
 
-    return names[id];
+    return names.at(id);
+}
+
+reg_id_t selen::name2regid(const std::string &name)
+{
+    const std::vector<std::string>& names = get_reg_names();
+
+    std::string NAME;
+    std::transform(name.begin(), name.end(), std::back_inserter(NAME), ::toupper);
+
+    for (size_t i = 0; i < names.size(); i++)
+    {
+        if(names.at(i) == NAME)
+            return static_cast<reg_id_t>(i);
+    }
+
+    return selen::R_LAST;
 }
 
 handlers_table_t inline init_handlers()

@@ -34,7 +34,7 @@ struct LUI
     void print(std::ostream& s) const
     {
         s << std::setw(MF_WIDHT) << "LUI" << "\t"
-          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", "
+          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
           << std::hex << std::showbase
           << data.get_U_immediate();
     }
@@ -63,7 +63,7 @@ struct AUIPC
     void print(std::ostream& s) const
     {
         s << std::setw(MF_WIDHT) << "AUIPC"
-          << std::setw(RN_WIDHT) << get_regname(data.rd) << ", "
+          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
           << std::hex << std::showbase
           << data.get_U_immediate();
     }

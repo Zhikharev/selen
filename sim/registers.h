@@ -69,14 +69,26 @@ enum : reg_id_t
     //return addres
     R_RA,
 
-    //bounder, not real register
-    R_LAST
+    //boundary, not real registers
+    R_LAST,
+    R_FIRST = R_ZERO
+
 };
 
 constexpr std::size_t NUM_REGISTERS = R_LAST;
 
+//Register names handling
 
-std::string get_regname(const reg_id_t id);
+//throw if id > R_LAST
+std::string regid2name(const reg_id_t id);
+
+//return R_LAST if there is no register with name
+//upper and low case are equal
+reg_id_t name2regid(const std::string &name);
+
+const std::vector<std::string>& get_reg_names();
+
+
 
 } //namespace selen
 #endif //REG123456789SELEN

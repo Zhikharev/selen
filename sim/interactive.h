@@ -30,7 +30,7 @@ struct Command
     std::string description;
 
     //command operation
-#define CMD_OPERATION (Application* app, Interactive* i, std::smatch tokens)
+#define CMD_OPERATION (Interactive* instance, std::smatch tokens)
     std::function<void CMD_OPERATION> operation;
 
     std::string print_names(const std::string& separator = std::string(", ")) const;
@@ -53,8 +53,18 @@ public:
 
     int run();
 
-    //print help for "command" or list of avaible commands if "command" empty
-    std::string print_help(const std::string command = std::string()) const;
+    //interactive command functions
+public:
+    void print_help(const std::string command = std::string()) const;
+    void print_status() const;
+    void print_register(const std::string& name) const;
+    void exit(int exit_code);
+    void load(std::string filename, size_t addr);
+    void enable_tracing(bool enable);
+    void disassemble(size_t num_words, size_t start_addr) const;
+    void step(size_t steps);
+    //special functions for pc command
+    void touch_pc(const std::string& arg);
 
 protected:
     void main_cycle();
