@@ -8,8 +8,8 @@ main:
 	.cfi_startproc
 	add	sp,sp,-32
 	.cfi_def_cfa_offset 32
-	sd	s0,24(sp)
-	.cfi_offset 8, -8
+	sw	s0,28(sp)
+	.cfi_offset 8, -4
 	add	s0,sp,32
 	.cfi_def_cfa 8, 0
 	li	a5,1
@@ -22,16 +22,16 @@ main:
 	li	a5,3
 	bgt	a4,a5,.L2
 	lw	a5,-28(s0)
-	addw	a5,a5,1
+	add	a5,a5,1
 	sw	a5,-24(s0)
 	lw	a5,-20(s0)
-	addw	a5,a5,1
+	add	a5,a5,1
 	sw	a5,-20(s0)
 	j	.L3
 .L2:
 	lw	a5,-24(s0)
 	mv	a0,a5
-	ld	s0,24(sp)
+	lw	s0,28(sp)
 	add	sp,sp,32
 	jr	ra
 	.cfi_endproc
