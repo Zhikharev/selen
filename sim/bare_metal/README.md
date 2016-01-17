@@ -1,21 +1,16 @@
 #Как компилировать программы с помощью gcc а потом запускать их на голом симуляторе или железе без OC?
 
-или bare metal в нашем случае.
-
-Далее названия всех файлов соответствуют таковым в этой папке, все действия повторяются в скрипте run.sh, все происходит в bash-e
-
 скомпилировать cpp файл без startup кода, без билиотек
 ```
 riscv64-unknown-elf-gcc -m32 -nostdlib -nostartfiles -o temp.elf test.cpp
 ```
 флаг -m32 означает 32 битный RISCV
 
-если хочется просто посмореть инструкции
+если надо просто посмотреть инструкции
 ```
 riscv64-unknown-elf-gcc -m32 -nostdlib -nostartfiles -S -o temp.s test.cpp
 ```
-
-или уже в готовом elf:
+ в готовом elf:
 ```
 riscv64-unknown-elf-objdump -d temp.elf 
 
@@ -55,13 +50,13 @@ Disassembly of section .text:
 ```
 /home/jettatura/bin/riscv/bin/riscv64-unknown-elf-objcopy -O binary -S --set-start 0 temp.elf temp.bin
 ```
+чтобы ссылки и метки не сбились надо было исрользовать скрипт линкера. Про это напишу потом.
 
 теперь надо сделать образ памяти.
 Для этого надо вставить temp.bin в начало куска нулей нужного размера. 
 ```
 dd if=temp.bin of=flash.bin bs=4096 conv=notrunc
 ```
-
 
 Запускать в симуляторе
 ```
