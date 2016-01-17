@@ -52,12 +52,9 @@ Disassembly of section .text:
 ```
 
 конвертировать elf в binary, все секции ложаться так как в живой программе
-start address определяется нашей микросхемой, выставляется здесь
 ```
 /home/jettatura/bin/riscv/bin/riscv64-unknown-linux-gnu-objcopy -O binary --set-start 0 temp.elf temp.bin
 ```
-
-entry point - место откуда симулятор или железо будет выполнять инструкции, он же start address
 
 теперь надо сделать образ памяти.
 Для этого надо вставить temp.bin в начало куска нулей нужного размера. 
@@ -70,7 +67,6 @@ dd if=temp.bin of=$IMAGE_NAME bs=$IMAGE_SIZE conv=notrunc
 ```
 ./sim -img  ../src/sim/bare_metal/flash.bin -i -e BE
 ```
-
 
 BE - big endian, это издержки недопонимания от транслятора gipnocow в нашем случае. Этот вопрос надо решать. 
 
