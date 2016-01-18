@@ -91,7 +91,7 @@ riscv64-unknown-elf-as -m32 startup.s -g -o startup.o
 3) Слинковать объектники и получить исполняемый файл.
 В [riscv-test](https://github.com/riscv/riscv-tests/tree/master/benchmarks/common) можно найти скрипт линкера и стратап код.
 Секцию кода там располагают по адресу 0x100. А в [stackoverflow](http://stackoverflow.com/questions/31390127/how-can-i-compile-c-code-to-get-a-bare-metal-skeleton-of-a-minimal-risc-v-assemb) 
-говорится что golden model(Spike) стартует с 0x200.
+говорится что golden model([Spike](https://github.com/riscv/riscv-isa-sim)) стартует с 0x200.
 Мы будем пока класть по 0x0, потому что мы можем стартовать откуда хотим:
 
 ```
