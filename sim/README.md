@@ -1,22 +1,25 @@
 # selen-sim
-risc-v isa simulator & disassembler
+risc-v isa simulator
 
-Есть симуляторы Spike(https://github.com/riscv/riscv-isa-sim) и Qemu(https://github.com/riscv/riscv-qemu).
+Есть симуляторы [Spike](https://github.com/riscv/riscv-isa-sim) и [Qemu](https://github.com/riscv/riscv-qemu).
 Однако интересно сделать свой.
 
-Этот симулятор сделан специaльно для нашего транслятора (https://github.com/Zhikharev/selen/tree/master/assembler), он очень простой, однако поддерживает все инструкции предложенные в Isa.docx(13 декабря) 
+####образы
+Как компилировать образы с которыми работает симулятор с помощью [riscv-gcc](https://github.com/riscv/riscv-gnu-toolchain) описано в папке "bare metal"
 
-Собирать cmake-ом в Linux:
+####сборка
+
+Linux:
 ```
 cd директория-где-собирать
 cmake директория-где-лежат-сорцы
 make
 ```
-надо обладать минимум GCC-4.9.2
+!надо обладать минимум GCC-4.9.2
 
 в директории-где-собирать появятся sim - симулятор.
 
-Пример использования:
+####Пример использования:
 
 файл out.bin взят из примера траслятора gipnocow.
 
