@@ -36,13 +36,28 @@ _entry:
 ```
 riscv64-unknown-elf-as -m32 startup.s -g -o startup.o
 ```
-Символы _entry, main и stack_top передаются линкеру, их встретим в скрипте линкера.
+Символы _entry, и stack_top передаются линкеру, их встретим в скрипте линкера, main находится в prog.cpp. Линкер заменит их на адреса.
 
 3) Слинковать объектники и получить исполняемый файл.
-В (riscv-test)[https://github.com/riscv/riscv-tests/tree/master/benchmarks/common] можно найти скрипт линкера и стратап код.
+В [riscv-test](https://github.com/riscv/riscv-tests/tree/master/benchmarks/common) можно найти скрипт линкера и стратап код.
 Секцию кода там располагают по адресу 0x100. А в [stackoverflow](http://stackoverflow.com/questions/31390127/how-can-i-compile-c-code-to-get-a-bare-metal-skeleton-of-a-minimal-risc-v-assemb) 
-говорится что golden model(Spike) стартует 0x200.
-Мы будем пока класть по 0x0, потому что у нас стартовать мы можем откуда хотим.
+говорится что golden model(Spike) стартует с 0x200.
+Мы будем пока класть по 0x0, потому что мы можем стартовать откуда хотим:
+
+```
+ENTRY(_entry)
+SECTIONS
+{
+ . = 0x0;
+ .startup . : { startup.o(.text) }
+ .text : { *(.text) }
+ .data : { *(.data) }
+ .bss : { *(.bss COMMON) }
+ . = ALIGN(8);
+ . = . + 0x1000; /* 4kB of stack memory */
+ stack_top = .;
+}
+```
 
 Линкуем:
 
@@ -103,8 +118,9 @@ riscv64-unknown-elf-objcopy  -O binary -S --set-start 0 prog.elf prog.bin
 Для этого надо вставить binary в начало куска нулей нужного размера. 
 
 ```
-dd if=prog.bin of=flash.bin bs=4096 conv=notrunc
+dd if=prog.bin of=flash.bin bs=65536 conv=notrunc
 ```
+размер 65536 байт, главное чтобы больше чем стек, чтобы все уместилось.
 
 *Готово, flash.bin это наш образ!*
 
@@ -113,7 +129,7 @@ dd if=prog.bin of=flash.bin bs=4096 conv=notrunc
 ./sim -img  ../src/sim/bare_metal/flash.bin -i -e BE
 ```
 
-BE - big endian, это издержки недопонимания от транслятора gipnocow в нашем случае. Этот вопрос надо решать. 
+BE - big endian, это издержки недопонимания порядка байт от транслятора gipnocow в нашем случае. Этот вопрос надо решать. 
 ```
 Selen isa simulator 2015.
 Parameters:
