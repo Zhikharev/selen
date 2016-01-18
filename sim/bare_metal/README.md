@@ -158,6 +158,7 @@ Disassembly of section .text:
 
 
 ```
+
 4) конвертировать elf в binary
 ```
 riscv64-unknown-elf-objcopy  -O binary -S --set-start 0 prog.elf prog.bin
@@ -176,6 +177,9 @@ dd if=prog.bin of=flash.bin bs=65536 conv=notrunc
 *Готово, flash.bin это наш образ!*
 
 ####Запускать в симуляторе
+
+flash.bin  можно было запустить в Spike или QEMU если прописать в скрипте правильный адрес начала.
+В нашем симуляторе:
 ```
 ./sim -img  ../src/sim/bare_metal/flash.bin -i -e BE
 ```
