@@ -114,6 +114,7 @@ SECTIONS
 ```
 riscv64-unknown-elf-ld -melf32lriscv -T linker.ld startup.o prog.o -o prog.elf
 ```
+-melf32lriscv скажет линкеру что надо использовать ABI elf32lriscv
 
 Посмотреть инструкции в готовом elf командой:
 ```
