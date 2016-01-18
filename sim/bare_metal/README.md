@@ -4,7 +4,7 @@
 есть [riscv-gcc](https://github.com/riscv/riscv-gnu-toolchain) собранный с опцией --enable-multilib.
 
 Задача следующая:
-	Скомпилироать файл prog.cpp и запустить его в симуляторе.
+ - Скомпилировать файл prog.cpp и запустить его в симуляторе.
 
 
 
