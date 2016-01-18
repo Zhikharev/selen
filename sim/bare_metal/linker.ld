@@ -1,10 +1,12 @@
-ENTRY(main)
+ENTRY(_entry)
 SECTIONS
 {
  . = 0x0;
+ .startup . : { startup.o(.text) }
  .text : { *(.text) }
  .data : { *(.data) }
- . = ALIGN(4);
+ .bss : { *(.bss COMMON) }
+ . = ALIGN(8);
  . = . + 0x1000; /* 4kB of stack memory */
  stack_top = .;
 }
