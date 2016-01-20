@@ -43,7 +43,7 @@ endif
 #VLOG = UVM_HOME=$(UVM_HOME) VCS_HOME=$(VCS_HOME) GIT_HOME=$(GIT_HOME) RTL_PATH=$(RTL_PATH) \
 #       $(VCS_HOME)/bin/vlogan
 
-VLOG = $(VCS_HOME)/bin/vlogan -full64 -f $(TB_PATH)/vlog.opt
+VLOG = $(VCS_HOME)/bin/vlogan -full64 -f $(TB_PATH)/vlog.opt +define+NO_L1_TRACE
 
 #VLOG_OPTS = +incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv \
 #           +verilog2001ext+v +libext+.v +lint=all,noVCDE,noZERO -sverilog \

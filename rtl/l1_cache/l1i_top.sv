@@ -7,7 +7,10 @@
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
 // DESCRIPTION    : core_req_cop = RD core_req_size = 4
+//
+// 1.0 		20.01.16  	Начальная версия со статическй памятью
 // ----------------------------------------------------------------------------
+
 `ifndef INC_L1I_TOP
 `define INC_L1I_TOP
 
@@ -25,36 +28,56 @@ module l1i_top
 	input 			[`L1_LINE_SIZE-1:0] 		mau_ack_data
 );
 
-	wire [`CORE_TAG_WIDTH-1:0] 			core_req_tag;
-	wire [`CORE_IDX_WIDTH-1:0]  		core_req_idx;
-	wire [`CORE_OFFSET_WIDTH-1:0] 	core_req_offset;
+	// Для хранения первого адреса во время аппартной очистки
+	// кэш-памяти после сброса
+	reg  [`CORE_ADDR_WIDTH-1:0]   	core_req_addr_r;
+	reg                           	core_req_val_r;
+	wire                            cache_ready;
+	reg                             cache_ready_r;
+	// Стадия чтения
+	wire [`CORE_ADDR_WIDTH-1:0]   	req_addr;
+	wire [`CORE_TAG_WIDTH-1:0] 			req_tag;
+	wire [`CORE_IDX_WIDTH-1:0] 			req_idx;
+	wire [`CORE_OFFSET_WIDTH-1:0] 	req_offset;
+	wire                          	req_val;
 
-	reg 														core_req_val_r;
+	// Стадия анализа
+	reg  [`CORE_TAG_WIDTH-1:0] 			req_tag_r;
+	reg  [`CORE_IDX_WIDTH-1:0] 			req_idx_r;
+	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
+	reg                           	req_val_r;
 
+	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
+	wire                            req_ack;
+	wire [`L1_LINE_SIZE-1:0]        core_line_data;
+
+	reg 														mau_req_was_send_r;
+	reg 														mau_req_ack_r;
+	reg  [`CORE_DATA_WIDTH-1:0]     mau_ack_data_r;
+
+	wire [`L1_WAY_NUM-1:0]					ld_ready_vect;
+	wire [`L1_WAY_NUM-1:0]          ld_en_vect;
+	wire [`CORE_IDX_WIDTH-1:0]      ld_addr;
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[`L1_WAY_NUM];
-	wire [`L1_WAY_NUM-1:0] 					ld_rd_val;
+	wire [`L1_WAY_NUM-1:0] 					ld_rd_val_vect;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_rd_tag   [`L1_WAY_NUM];
-	
-	wire [`L1_WAY_NUM-1:0]          ld_wen_vect;
+	wire [`L1_WAY_NUM-1:0]          ld_we_vect;
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_wdata;
 	wire  													ld_wr_val;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_wr_tag;
  
-	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
-
-	wire                            lru_req;
+	wire                            lru_ready;
 	wire [`L1_WAY_NUM-1:0] 					lru_way_vect;
 	reg  [`L1_WAY_NUM-1:0] 					lru_way_vect_r;
 	wire 														lru_hit;
 	wire                            lru_evict_val;
 	wire [$clog2(`L1_WAY_NUM)-1:0]  lru_way_pos;
 
-	wire [`L1_LINE_SIZE-1:0]        core_line_data;
-
-	wire [`L1_WAY_NUM-1:0]          dm_wen_vect;
+	wire [`L1_WAY_NUM-1:0]          dm_en_vect;
+	wire [`L1_WAY_NUM-1:0]          dm_we_vect;
+	wire [`CORE_IDX_WIDTH-1:0]      dm_addr;
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
-	wire [(`L1_LINE_SIZE/8)-1:0]    dm_wr_be;  
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num
@@ -71,50 +94,75 @@ module l1i_top
     end  
   endfunction
 
-	assign {core_req_tag, core_req_idx, core_req_offset} = core_req_addr;
-	assign lru_way_pos = one_hot_num(lru_way_vect);
+  // -----------------------------------------------------
+	// CACHE
+	// -----------------------------------------------------
+	always_ff @(posedge clk) cache_ready_r <= cache_ready;
+	assign req_val = cache_ready & core_req_val & (req_ack | ~cache_ready_r);
+	assign req_addr = (cache_ready & ~cache_ready_r) ? core_req_addr_r : core_req_addr;
+	assign {req_tag, req_idx, req_offset} = req_addr;
+	always_ff @(posedge clk) if(req_val) req_tag_r    <= req_tag;
+	always_ff @(posedge clk) if(req_val) req_idx_r    <= req_idx;
+	always_ff @(posedge clk) if(req_val) req_offset_r <= req_offset;
 
-	always_ff @(posedge clk) core_req_val_r <= core_req_val & ~ core_req_ack;
+	always_ff @(posedge clk, negedge rst_n) begin
+		if(~rst_n) core_req_val_r <= 1'b0;
+		else core_req_val_r <= core_req_val;
+	end
+
+	always_ff @(posedge clk) 
+		if(~core_req_val_r) core_req_addr_r <= core_req_addr;
+	
+	always @(posedge clk, negedge rst_n)
+		if(~rst_n) req_val_r <= 1'b0;
+		else req_val_r <= req_val;
+
+	assign req_ack = mau_req_ack_r | lru_hit;
+
+	assign cache_ready = &ld_ready_vect & lru_ready;
 
 	// -----------------------------------------------------
 	// LRU
 	// -----------------------------------------------------
-	assign lru_req = core_req_val & ~core_req_val_r;
-	always_ff @(posedge clk) if(lru_req) lru_way_vect_r <= lru_way_vect;
-	
-	// -----------------------------------------------------
-	// MAU
-	// -----------------------------------------------------
-	
-	assign mau_req_val  = core_req_val & ~lru_hit;
-	assign mau_req_addr = {core_req_tag, core_req_idx, {`CORE_OFFSET_WIDTH{1'b0}}};
-
-	// -----------------------------------------------------
-	// CORE
-	// -----------------------------------------------------
-	assign core_req_ack = lru_hit | mau_req_ack;
-	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data;
-
-	// Request from core must be alligned to the width ofthe operation
-	// We have assertion for this
-	//
-	// assign core_alligned_req_offset = {core_req_offset[`CORE_OFFSET_WIDTH-1:2], 2'b00};
-	// assign core_ack_data = core_line_data[core_alligned_req_offset*8+:`CORE_DATA_WIDTH];
-
-	assign core_ack_data = core_line_data[core_req_offset*8+:`CORE_DATA_WIDTH];
+	always_ff @(posedge clk) if(req_val_r) lru_way_vect_r <= lru_way_vect;
+	assign lru_way_pos = one_hot_num(lru_way_vect_r);
 
 	// -----------------------------------------------------
 	// LD
 	// -----------------------------------------------------
-	assign ld_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{(lru_hit | mau_req_ack)}});
-	assign ld_wdata = {ld_wr_val, ld_wr_tag};
+	assign ld_en_vect = {`L1_WAY_NUM{(req_val)}} | (lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}}));
+	assign ld_we_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
+	assign ld_addr   = (req_val) ? req_idx : req_idx_r;
+	assign ld_wdata  = {ld_wr_val, ld_wr_tag};
 	assign ld_wr_val = 1'b1;
-	assign ld_wr_tag = core_req_tag;
+	assign ld_wr_tag = req_tag_r;
+
+	// -----------------------------------------------------
+	// MAU
+	// -----------------------------------------------------
+	always @(posedge clk, posedge rst_n) begin
+		if(~rst_n) mau_req_was_send_r <= 1'b0;
+		else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack;
+	 	else mau_req_was_send_r <= mau_req_val;
+	end
+	assign mau_req_val = (req_val_r & ~lru_hit) | mau_req_was_send_r;
+	assign mau_req_addr = {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
+	always @(posedge clk) mau_req_ack_r  <= mau_req_ack;
+	always @(posedge clk) mau_ack_data_r <= mau_ack_data;
+
+	// -----------------------------------------------------
+	// CORE
+	// -----------------------------------------------------
+	assign core_req_ack = req_ack;
+	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data;
+	assign core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
 
 	// -----------------------------------------------------
 	// DM
 	// -----------------------------------------------------
-	assign dm_wen_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
+	assign dm_en_vect = {`L1_WAY_NUM{(req_val)}} | (lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}}));
+	assign dm_we_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
+	assign dm_addr  = (req_val) ? req_idx : req_idx_r;
 	assign dm_wdata = mau_ack_data;
 	assign dm_wr_be = '1; 
 
@@ -122,46 +170,46 @@ module l1i_top
 	generate 
 		for(way = 0; way < `L1_WAY_NUM; way = way + 1) begin
 			
-			assign {ld_rd_val[way], ld_rd_tag[way]} = ld_rdata[way];
-			assign tag_cmp_vect[way] = (ld_rd_tag[way] == core_req_tag);
+			assign {ld_rd_val_vect[way], ld_rd_tag[way]} = ld_rdata[way];
+			assign tag_cmp_vect[way] = (ld_rd_tag[way] == req_tag_r);
 
 			// -----------------------------------------------------
 			// LD tag memories 
 			// -----------------------------------------------------
-			l1_reg_ld_mem 
+			l1_ld_mem 
 			#(
 				.WIDTH (`L1_LD_MEM_WIDTH), 
-				.DEPTH (1 << `CORE_IDX_WIDTH)
+				.DEPTH (`L1_SET_NUM)
 			)
 			ld_mem 
 			(
-				.clk 		(clk),
-				.rst_n 	(rst_n),
-				.raddr 	(core_req_idx),
-				.rdata 	(ld_rdata[way]),
-				.wen 		(ld_wen_vect[way]),
-				.waddr 	(core_req_idx),
-				.wdata 	(ld_wdata)
+				.CLK 		(clk),
+				.RST_N 	(rst_n),
+				.EN     (ld_en_vect[way]),
+				.WE     (ld_we_vect[way]),
+				.ADDR 	(ld_addr),
+				.RDATA 	(ld_rdata[way]),
+				.WDATA 	(ld_wdata),
+				.ready  (ld_ready_vect[way])
 			);
 
 			// -----------------------------------------------------
 			// Data memories
 			// -----------------------------------------------------
-			l1_reg_dm_mem 
+
+			l1_dm_mem
 			#(
-				.WIDTH (`L1_LINE_SIZE), 
-				.DEPTH (1 << `CORE_IDX_WIDTH)
+				.WIDTH (`L1_LD_MEM_WIDTH), 
+				.DEPTH (`L1_SET_NUM)
 			)
-			dm_mem 
+			dm_mem
 			(
-				.clk 		(clk),
-				.rst_n 	(rst_n),
-				.raddr 	(core_req_idx),
-				.rdata 	(dm_rdata[way]),
-				.wen 		(dm_wen_vect[way]),
-				.waddr 	(core_req_idx),
-				.wdata 	(dm_wdata),
-				.wbe 		(dm_wr_be)
+				.CLK 		(clk),
+				.EN 		(dm_en_vect[way]),
+				.ADDR 	(dm_addr),
+				.WE 		(dm_we_vect[way]),
+				.WDATA 	(dm_wdata),
+				.RDATA  (dm_rdata[way])
 			);
 		end
 	endgenerate
@@ -170,10 +218,11 @@ module l1i_top
 	(
 		.clk 					(clk),
 		.rst_n 				(rst_n),
-		.req 					(lru_req),
- 		.idx 					(core_req_idx),
+		.req 					(req_val),
+ 		.idx 					(req_idx),
+ 		.ready        (lru_ready),
   	.tag_cmp_vect (tag_cmp_vect),
-  	.ld_val_vect  (ld_rd_val),
+  	.ld_val_vect  (ld_rd_val_vect),
 		.hit 					(lru_hit),
 		.evict_val   	(lru_evict_val),
 		.way_vect 		(lru_way_vect)
@@ -185,13 +234,13 @@ module l1i_top
 
 	`ifndef NO_L1_ASSERTIONS
 		wire tag_cmp_with_val_vect;
-		assign tag_cmp_with_val_vect = tag_cmp_vect & ld_rd_val;
+		assign tag_cmp_with_val_vect = tag_cmp_vect & ld_rd_val_vect;
 
-		`ASSERT_ONE_HOT(tag_cmp_with_val_vect, (core_req_val & rst_n))
-		`ASSERT_ONE_HOT(lru_way_vect, (core_req_val & rst_n))
+		`ASSERT_ONE_HOT(tag_cmp_with_val_vect, req_val_r)
+		`ASSERT_ONE_HOT(lru_way_vect, req_val_r)
 
 		offset_allign_p:
-			assert property(@(posedge clk) (core_req_val & rst_n) -> core_req_offset[1:0] == 0)
+			assert property(@(posedge clk) (core_req_val & rst_n) -> core_req_addr[1:0] == 0)
 			else $fatal("Wrong offset allignment!");
 	`endif
 
@@ -228,9 +277,9 @@ module l1i_top
 			forever begin
 				@(posedge clk);
 				if(rst_n) begin
-					if(dm_wen_vect != 0) begin
+					if(dm_we_vect != 0) begin
 						str = $sformatf("L1I dm write idx=%0h way=%0d data=%0h",
-						core_req_idx, one_hot_num(dm_wen_vect), dm_wdata);
+						core_req_idx, one_hot_num(dm_we_vect), dm_wdata);
 						$display("%0s (%0t)", str, $time());
 					end
 				end

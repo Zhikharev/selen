@@ -33,7 +33,7 @@ module sram_sp
 	always @(posedge CLK) begin
 		if(EN) begin
 			if(WE) ram[ADDR] <= DI;
-			else addr_r <= ADDR;
+			addr_r <= ADDR;
 		end
 	end
 	

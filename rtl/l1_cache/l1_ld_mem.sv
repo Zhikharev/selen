@@ -24,7 +24,7 @@ module l1_ld_mem
 	input                       WE,
 	input 	[WIDTH-1:0] 				WDATA,
 	output 	[WIDTH-1:0] 				RDATA,
-	output                      ready,
+	output                      ready
 );
 
 	localparam IDLE 	= 1'b0;
@@ -42,8 +42,9 @@ module l1_ld_mem
 		if(~RST_N) begin
 			rst_state_r <= IDLE;
 		end else begin
-			if(rst_addr_r == '1) rst_state_r <= READY;
-			else rst_state_r <= IDLE;
+			if(rst_state_r == IDLE) begin 
+				if(rst_addr_r == '1) rst_state_r <= READY;
+			end
 		end
 	end
 	always_ff @(posedge CLK or negedge RST_N) begin
@@ -51,7 +52,7 @@ module l1_ld_mem
 			rst_addr_r <= 0;
 		end else begin
 			if(rst_state_r == IDLE)
-				rst_state_r <= rst_state_r + 1;;
+				rst_addr_r <= rst_addr_r + 1;;
 		end
 	end
 
@@ -62,11 +63,12 @@ module l1_ld_mem
 	assign addr  = (rst_state_r == IDLE) ? rst_addr_r : ADDR;
 	assign wdata = (rst_state_r == IDLE) ? '0 : WDATA;
 
-	sram_sp mem 
+	sram_sp
 	#(
 		.WIDTH  (WIDTH),
 		.DEPTH 	(DEPTH)
 	)
+	mem
 	(
 		.WE 		(we),
 		.EN 		(en),

@@ -20,6 +20,7 @@
 `define L1_LD_MEM_WIDTH 	(`CORE_TAG_WIDTH + 1)
 `define L1_WAY_NUM 			4
 `define L1_LINE_BE_WIDTH 	(`L1_LINE_SIZE / 8)
+`define L1_SET_NUM          (1 << `CORE_IDX_WIDTH)
 
 
 

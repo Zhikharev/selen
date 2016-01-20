@@ -170,7 +170,7 @@ module tb_top ();
 		l1i_read(2, 0, l1i_data);
 		l1i_read(3, 0, l1i_data);
 		l1i_read(4, 0, l1i_data);
-		l1i_read(5, 0, l1i_data);*/
+		l1i_read(5, 0, l1i_data);
 
 		//l1d_read(0, 1, 4, l1d_data);
 		//l1d_read(0, 1, 4, l1d_data);
@@ -181,7 +181,40 @@ module tb_top ();
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_read(0, 1, 4, l1d_data);
+		*/
+		@(posedge clk);
+		l1i_req_val  <= 1'b1;
+		l1i_req_addr <= 32'h0000_0000;
+		@(posedge clk);
+		l1i_req_addr <= 32'h1000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
+		@(posedge clk);
+		l1i_req_addr <= 32'h2000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
+		@(posedge clk);
+		l1i_req_addr <= 32'h3000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
+		@(posedge clk);
+		l1i_req_addr <= 32'h0000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
+		@(posedge clk);
+		l1i_req_addr <= 32'h1000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
+		@(posedge clk);
+		l1i_req_addr <= 32'h2000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
+		@(posedge clk);
+		l1i_req_addr <= 32'h5000_0000;
+		@(negedge clk);
+		wait(l1i_req_ack);
 
+		#1000ns;
 		#1000;
 		$finish();
 	end

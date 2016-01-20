@@ -122,6 +122,7 @@ module l1_mau
 	assign d_val = l1d_req_val & ~d_req_was_send_r & ~buf_full;
 	assign i_val = l1i_req_val & ~i_req_was_send_r & ~buf_full;
 
+	// TODO: add reset
 	always @(posedge wb_clk_i) begin
 		if(d_req_was_send_r) d_req_was_send_r <= ~((ack_received & (ack_type == ACK_D)) & (ack_we == 1'b0));
 		else d_req_was_send_r <= l1d_req_val & ~l1d_req_we & (tr_state_r == IDLE) & ~buf_full;
