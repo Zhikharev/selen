@@ -165,13 +165,15 @@ module tb_top ();
 		l1d_read(0, 1, 4, l1d_data);
 		l1d_read(0, 1, 4, l1d_data);
 		l1d_write(0, 1, 4, 0);
-		l1d_nc_read(0, 2, 4, l1d_data);
+		l1d_read(0, 2, 4, l1d_data);
+
+		/*l1d_nc_read(0, 2, 4, l1d_data);
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_read(0, 1, 4, l1d_data);
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_nc_write(0, 2, 4, l1d_data);
-		l1d_read(0, 1, 4, l1d_data);
+		l1d_read(0, 1, 4, l1d_data);*/
 
 
 		/*l1i_read(0, 0, l1i_data);

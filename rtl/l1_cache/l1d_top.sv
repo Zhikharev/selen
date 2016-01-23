@@ -115,12 +115,6 @@ module l1d_top
 	assign core_req_wr = (core_req_cop == `CORE_REQ_WR);
 	assign core_req_rd = (core_req_cop == `CORE_REQ_RD);
 
-	always @* begin
-		if     (core_req_size == 1) req_be = 4'b0001 << req_offset;
-		else if(core_req_size == 2) req_be = 4'b0011 << req_offset;
-		else                        req_be = 4'b1111 << req_offset;
-	end
-
 	assign cache_ready = &ld_ready_vect & lru_ready;
 
   // -----------------------------------------------------
@@ -139,6 +133,12 @@ module l1d_top
 
 	assign {req_tag, req_idx, req_offset} = core_req_addr;
 
+	always @* begin
+		if     (core_req_size == 1) req_be = 4'b0001 << req_offset;
+		else if(core_req_size == 2) req_be = 4'b0011 << req_offset;
+		else                        req_be = 4'b1111 << req_offset;
+	end
+
 	always @(posedge clk, negedge rst_n) begin
 		if(~rst_n) req_val_r <= 1'b0;
 		else req_val_r <= req_val;
@@ -147,7 +147,7 @@ module l1d_top
 	always @(posedge clk) if(req_val) req_addr_r <= core_req_addr;
 	assign {req_tag_r, req_idx_r, req_offset_r} = req_addr_r;
 
-	assign req_ack = lru_hit | (mau_req_ack & mau_ack_nc) | mau_req_ack_r;
+	assign req_ack = lru_hit | del_buf_hit_r | (mau_req_ack & mau_ack_nc) | mau_req_ack_r;
 
   // -----------------------------------------------------
 	// DELAYED BUFFER
@@ -165,7 +165,7 @@ module l1d_top
 			del_buf_val_r <= 1'b0;
 			del_buf_hit_r <= 1'b0;
 		end else begin
-			del_buf_val_r <= (core_req_val & core_req_wr) | ~del_buf_clean;
+			del_buf_val_r <= (core_req_val & core_req_wr) | (~del_buf_clean & del_buf_val_r);
 			del_buf_hit_r <= del_buf_val_r & req_val & core_req_rd & (del_buf_addr_r == core_req_addr);
 		end
 	end
@@ -272,12 +272,13 @@ module l1d_top
 	// -----------------------------------------------------
 	// CORE
 	// -----------------------------------------------------
-	assign core_req_ack = req_ack;
+	assign core_req_ack   = req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
 	
 	always @* begin
 		if(mau_ack_nc) core_ack_data = mau_ack_data[`CORE_DATA_WIDTH-1:0];
-		else           core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
+		else if(del_buf_hit_r) core_ack_data = del_buf_data_r;
+		else core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
 	end
 
 	// -----------------------------------------------------
@@ -353,7 +354,7 @@ module l1d_top
 
 		no_req_when_not_ready_p:
 			assert property(@(posedge clk) (core_req_val & rst_n) -> cache_ready == 1'b1)
-			else $fatal("Received L1D request whenc cache is noy ready!");
+			else $fatal("Received L1D request whenc cache is not ready!");
 
 		no_req_val_when_mau_req_ack_p:
 			assert property(@(posedge clk) (rst_n) -> $onehot0({req_val, mau_req_ack}))
