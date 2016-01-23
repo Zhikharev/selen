@@ -161,6 +161,19 @@ module tb_top ();
 		bit [31:0] l1i_data;
 		bit [31:0] l1d_data;
 		wait(rst == 0);
+		wait(dut.l1d.cache_ready);
+		l1d_read(0, 1, 4, l1d_data);
+		l1d_read(0, 1, 4, l1d_data);
+		l1d_write(0, 1, 4, 0);
+		l1d_nc_read(0, 2, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_read(0, 1, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_nc_write(0, 2, 4, l1d_data);
+		l1d_read(0, 1, 4, l1d_data);
+
+
 		/*l1i_read(0, 0, l1i_data);
 		l1i_read(0, 1, l1i_data);
 
@@ -181,7 +194,7 @@ module tb_top ();
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_nc_write(0, 2, 4, l1d_data);
 		l1d_read(0, 1, 4, l1d_data);
-		*/
+		/*
 		@(posedge clk);
 		l1i_req_val  <= 1'b1;
 		l1i_req_addr <= 32'h0000_0000;
@@ -213,7 +226,7 @@ module tb_top ();
 		l1i_req_addr <= 32'h5000_0000;
 		@(negedge clk);
 		wait(l1i_req_ack);
-
+*/
 		#1000ns;
 		#1000;
 		$finish();

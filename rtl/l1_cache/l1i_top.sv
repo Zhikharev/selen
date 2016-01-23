@@ -8,7 +8,8 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION    : core_req_cop = RD core_req_size = 4
 //
-// 1.0 		20.01.16  	Начальная версия со статическй памятью
+// 1.0 		20.01.16  	Начальная версия со статической памятью
+// 1.1    23.01.16    Исправлены ошибки
 // ----------------------------------------------------------------------------
 
 `ifndef INC_L1I_TOP
@@ -53,7 +54,7 @@ module l1i_top
 
 	reg 														mau_req_was_send_r;
 	reg 														mau_req_ack_r;
-	reg  [`CORE_DATA_WIDTH-1:0]     mau_ack_data_r;
+	reg  [`L1_LINE_SIZE-1:0]        mau_ack_data_r;
 
 	wire [`L1_WAY_NUM-1:0]					ld_ready_vect;
 	wire [`L1_WAY_NUM-1:0]          ld_en_vect;
@@ -154,7 +155,7 @@ module l1i_top
 	// CORE
 	// -----------------------------------------------------
 	assign core_req_ack = req_ack;
-	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data;
+	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
 	assign core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
 
 	// -----------------------------------------------------

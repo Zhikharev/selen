@@ -29,6 +29,7 @@ module l1_mau
 	input  [`CORE_BE_WIDTH-1:0]   l1d_req_be,
 	output 												l1d_req_ack,
 	output [`L1_LINE_SIZE-1:0] 		l1d_ack_data,
+	output                        l1d_ack_nc,
 
 	// Wishbone B4 interface
 	input 											 	wb_clk_i,
@@ -58,23 +59,23 @@ module l1_mau
 	localparam ACK_I  = 1'b0;
 	localparam ACK_D  = 1'b1;
 
-	localparam BUF_WIDTH = $clog2(TR_CNT_MAX) + 2;
+	localparam BUF_WIDTH = $clog2(TR_CNT_MAX) + 3;
 
 	wire rst_n;
 
-	reg [`CORE_DATA_WIDTH-1:0] wb_dat_r;
-	reg [`CORE_ADDR_WIDTH-1:0] wb_adr_r;
-	reg                        wb_cyc_r;
-	reg [`CORE_BE_WIDTH-1:0]   wb_sel_r;
-	reg                        wb_stb_r;
-	reg                        wb_we_r;
+	reg [`CORE_DATA_WIDTH-1:0] 		wb_dat_r;
+	reg [`CORE_ADDR_WIDTH-1:0] 		wb_adr_r;
+	reg                       	  wb_cyc_r;
+	reg [`CORE_BE_WIDTH-1:0]   		wb_sel_r;
+	reg                        		wb_stb_r;
+	reg                        		wb_we_r;
 
-	wire [`CORE_DATA_WIDTH-1:0] wb_dat;
-	wire [`CORE_ADDR_WIDTH-1:0] wb_adr;
-	wire                        wb_cyc;
-	wire [`CORE_BE_WIDTH-1:0]   wb_sel;
-	wire                        wb_stb;
-	wire                        wb_we;
+	wire [`CORE_DATA_WIDTH-1:0] 	wb_dat;
+	wire [`CORE_ADDR_WIDTH-1:0] 	wb_adr;
+	wire                        	wb_cyc;
+	wire [`CORE_BE_WIDTH-1:0]   	wb_sel;
+	wire                        	wb_stb;
+	wire                        	wb_we;
 
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_r;
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_next;
@@ -88,10 +89,12 @@ module l1_mau
 	wire 													ack_wait;
 	wire 													wait_ack_type;
 	wire 													wait_ack_we;
+	wire                          wait_ack_nc;
 	wire [$clog2(TR_CNT_MAX)-1:0] wait_ack_cnt;
 	wire [BUF_WIDTH-1:0] 					wait_ack;
 	wire 													ack_type;
 	wire 													ack_we;
+	wire                          ack_nc;
 	wire [$clog2(TR_CNT_MAX)-1:0] ack_cnt;
 	wire [BUF_WIDTH-1:0] 					ack;
 	wire 													ack_waiting;
@@ -137,8 +140,8 @@ module l1_mau
 	// BUF
 	// -----------------------------------------------------
 
-	assign wait_ack = {wait_ack_type, wait_ack_we, wait_ack_cnt};
-	assign {ack_type, ack_we, ack_cnt} = ack;
+	assign wait_ack = {wait_ack_type, wait_ack_we, wait_ack_nc, wait_ack_cnt};
+	assign {ack_type, ack_we, ack_nc, ack_cnt} = ack;
 
 	fifo 
 	#(
@@ -193,6 +196,7 @@ module l1_mau
 	assign wait_ack_type = (d_val) ? ACK_D : ACK_I;
 	assign wait_ack_cnt  = (d_val & l1d_req_nc) ? 0 : TR_CNT_MAX - 1;
 	assign wait_ack_we   = (d_val & l1d_req_we) ? 1'b1 : 1'b0;
+	assign wait_ack_nc   = (d_val & l1d_req_nc) ? 1'b1 : 1'b0;
 
 	always @* begin
 		case(tr_state_r)
@@ -244,6 +248,8 @@ module l1_mau
 	
 	assign l1i_ack_data = ack_data_r;
 	assign l1d_ack_data = ack_data_r;
+
+	assign l1d_ack_nc 	= ack_nc;
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin

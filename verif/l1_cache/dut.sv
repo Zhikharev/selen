@@ -52,6 +52,7 @@ module l1_dut
 	wire  [`CORE_BE_WIDTH-1:0]    l1d_mau_req_be;
 	wire 													l1d_mau_req_ack;
 	wire 	[`L1_LINE_SIZE-1:0] 		l1d_mau_ack_data;
+	wire                          l1d_mau_ack_nc;
 
 	l1i_top l1i 
 	(
@@ -85,7 +86,8 @@ module l1_dut
 		.mau_req_wdata 	(l1d_mau_req_wdata),
 		.mau_req_be 		(l1d_mau_req_be),
 		.mau_req_ack 		(l1d_mau_req_ack),
-		.mau_ack_data 	(l1d_mau_ack_data)
+		.mau_ack_data 	(l1d_mau_ack_data),
+		.mau_ack_nc    	(l1d_mau_ack_nc)
 	);
 
 
@@ -105,23 +107,24 @@ module l1_dut
 		.l1d_req_be 		 (l1d_mau_req_be),
 		.l1d_req_ack 	 	 (l1d_mau_req_ack),
 		.l1d_ack_data 	 (l1d_mau_ack_data),
+		.l1d_ack_nc      (l1d_mau_ack_nc),
 		// Wishbone B4 interface
-		.wb_clk_i 		(wb_clk_i),
-		.wb_rst_i 		(wb_rst_i),
-		.wb_dat_i 		(wb_dat_i),
-		.wb_dat_o 		(wb_dat_o),
-		.wb_ack_i 		(wb_ack_i),
-		.wb_adr_o 		(wb_adr_o),
-		.wb_cyc_o 		(wb_cyc_o),
-		.wb_stall_i 	(wb_stall_i),
-		.wb_err_i 		(wb_err_i), 	// not used now
-		.wb_lock_o 		(wb_lock_o), 	// not used now
-		.wb_rty_i 		(wb_rty_i), 	// not used now
-		.wb_sel_o 		(wb_sel_o),
-		.wb_stb_o 		(wb_stb_o),
-		.wb_tga_o 		(wb_tga_o), 	// not used now
-		.wb_tgc_o 		(wb_tgc_o), 	// not used now
-		.wb_we_o 			(wb_we_o)
+		.wb_clk_i 			(wb_clk_i),
+		.wb_rst_i 			(wb_rst_i),
+		.wb_dat_i 			(wb_dat_i),
+		.wb_dat_o 			(wb_dat_o),
+		.wb_ack_i 			(wb_ack_i),
+		.wb_adr_o 			(wb_adr_o),
+		.wb_cyc_o 			(wb_cyc_o),
+		.wb_stall_i 		(wb_stall_i),
+		.wb_err_i 			(wb_err_i), 	// not used now
+		.wb_lock_o 			(wb_lock_o), 	// not used now
+		.wb_rty_i 			(wb_rty_i), 	// not used now
+		.wb_sel_o 			(wb_sel_o),
+		.wb_stb_o 			(wb_stb_o),
+		.wb_tga_o 			(wb_tga_o), 	// not used now
+		.wb_tgc_o 			(wb_tgc_o), 	// not used now
+		.wb_we_o 				(wb_we_o)
 	);
 
 
