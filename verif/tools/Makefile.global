@@ -1,0 +1,97 @@
+ARCH = $(shell uname -m)
+MODE=DEBUG
+CXX=g++
+UVM_DPI=$(UVM_HOME)src/dpi/uvm_dpi.cc
+COVER_SUFFIX=default_cover_suffix
+LOOP_S=1
+LOOP_E=5
+
+# --------------------------------------------
+# SEED
+# --------------------------------------------
+
+ifeq ($(SEED), random)
+	VCS_SET_SEED = +ntb_random_seed_automatic
+else
+	VCS_SET_SEED = +ntb_random_seed=$(SEED)
+endif
+
+# --------------------------------------------
+# ARCH
+# --------------------------------------------
+
+ifeq ($(ARCH), x86_64)
+	ARCH_OPTS = -full64
+else
+	ARCH_OPTS =
+endif
+
+# --------------------------------------------
+# VLOG
+# --------------------------------------------
+
+VLOG = UVM_HOME=$(UVM_HOME) VCS_HOME=$(VCS_HOME) GIT_HOME=$(GIT_HOME) BENCH_HOME=$(BENCH_HOME) RTL_PATH=$(RTL_PATH) \
+       $(VCS_HOME)/bin/vlogan
+
+LINT = +lint=all,noVCDE,noZERO
+
+VLOG_OPTS = \
+	+incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv \
+	+verilog2001ext+v +libext+.v  -sverilog $(LINT) +nospecify +notimingchecks -l vlogan.log \
+	$(RTL_SRC) $(VCS_RTL_INC) $(MODEL_SRC)
+
+ifneq ($(VLOG_OPT_FILE), )
+	VLOG_OPTS += -f $(VLOG_OPT_FILE)
+endif
+
+# --------------------------------------------
+# ELAB
+# --------------------------------------------
+
+ELAB = $(VCS_HOME)/bin/vcs
+
+ELAB_OPTS = -l elaborate.log -CFLAGS -DVCS $(UVM_HOME)/src/dpi/uvm_dpi.cc
+
+RUN_OPTS  = $(VCS_SET_SEED) -l $@.log
+
+
+ifeq ($(MODE), DEBUG)
+	ELAB_OPTS += -debug_acc+all -lca
+endif
+ifeq ($(MODE), COVER)
+	ELAB_OPTS += -cm line+cond+tgl+branch -cm_noconst -cm_seqnoconst -diag noconst
+	RUN_OPTS  += -cm_name $@_$(COVER_SUFFIX) -cm line+cond+branch
+endif
+
+analyze:
+ifneq ($(SIM_SETUP),)
+	cp $(SIM_SETUP) .
+endif
+	$(VLOG) $(ARCH_OPTS) $(VLOG_OPTS)
+
+elaborate:
+	$(ELAB) $(TOP) $(ARCH_OPTS) $(ELAB_OPTS)
+
+clean::
+	rm -rf csrc simv* vc_hdrs.h ucli.key urg* *.log
+
+cover_view view_cover:
+	UVM_HOME=$(UVM_HOME) VCS_HOME=$(VCS_HOME) $(VCS_HOME)/bin/dve -full64 -covdir *.vdb
+
+cover_report report_cover:
+	UVM_HOME=$(UVM_HOME) VCS_HOME=$(VCS_HOME) $(VCS_HOME)/bin/urg -full64 -dir *.vdb $(URG_OPTS)
+
+info::
+	@ echo ------------------------------------------------------------
+	@ echo  VCS_HOME = $(VCS_HOME)
+	@ echo  ARCH = $(ARCH)
+	@ echo  MODE = $(MODE)
+	@ echo  UVM_HOME = $(UVM_HOME)
+	@ echo  VLOG_OPT_FILE = $(VLOG_OPT_FILE)
+	@ echo  TOP = $(TOP)
+	@ echo
+	@ echo  RTL_SRC = $(RTL_SRC)
+	@ echo
+	@ echo  RTL_INC = $(RTL_INC)
+	@ echo	VCS_RTL_INC = $(VCS_RTL_INC)
+	@ echo  -----------------------------------------------------------
