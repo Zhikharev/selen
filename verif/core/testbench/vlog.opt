@@ -1,0 +1,7 @@
+
++incidr+$BENCH_HOME
+
+$BENCH_HOME/testbench/core_if.sv
+$BENCH_HOME/testbench/core_assembled.sv
+$BENCH_HOME/uvm/uvm.inc.sv
+$BENCH_HOME/testbench/core_tb_top.sv
