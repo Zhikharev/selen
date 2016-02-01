@@ -1,3 +1,13 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME            : cpu_top.sv
+// PROJECT                : Selen
+// AUTHOR                 : Alexsandr Bolotnokov
+// AUTHOR'S EMAIL 				:	AlexBolotnikov@gmail.com 			
+// ----------------------------------------------------------------------------
+// DESCRIPTION        : top module for pipline CPU include interconection betwin pipline module and CRS module 
+// ----------------------------------------------------------------------------
 module cpu_top (
 	input core_sys_clk,    
 	input core_sys_rst  	

@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        : instruction fetch phase of pipline 
 // ----------------------------------------------------------------------------
-
+`include "core_defines.vh"
 module core_if_s (
 	input 								clk,
 	input 								if_pc_stop,
