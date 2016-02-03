@@ -34,7 +34,7 @@ module cpu_dec_s(
 	output[5:0]		reg		dec_mux_bus_out_reg,
 	output[2:0]		reg		dec_brnch_cnd_out_reg,
 	output[3:0]		reg		dec_alu_op_out_reg,	
-	output[3:0] 	reg 	dec_alu_cnd_out_reg,// the MSB equals 1 means there is a branch command
+	output[2:0] 	reg 	dec_alu_cnd_out_reg,// the MSB equals 1 means there is a branch command
 	output[14:0]	reg		dec_hazard_bus_out_reg
 );
 reg 				dec_order_loc;
@@ -52,6 +52,8 @@ reg[2:0]		dec_brnch_cnd_loc;
 reg[3:0]		dec_alu_op_loc;	
 reg[3:0] 		dec_alu_cnd_loc;
 reg[14:0]		dec_hazard_bus_loc;
+wire[4:0]		rs1;
+wire [4:0]	rs2;
 //controll unit
 always @* begin
 	//initial assinging
@@ -210,8 +212,8 @@ end
 	core_reg_file reg_file (
 		.clk(clk),
 		.rst_n(rst_n),
-		.rs1(dec_inst[19:15]),
-		.rs2(dec_inst[24:20]),
+		.rs1(rs1),
+		.rs2(rs2),
 		.rd(dec_inst[11:7]),
 		.data_in(dec_data_wrt),
 		.we(dec_we_reg_file_in),
@@ -232,6 +234,7 @@ end
 			dec_pc_4_out_reg <= dec_pc_4_loc;
 			dec_sx_imm_out_reg <= dec_sx_loc;
 			dec_we_reg_file_out_reg <= dec_we_reg_file_loc;
+			dec_hazard_bus_out_reg <= dec_hazard_bus_loc;
 		end	
 		else begin
 		end	
@@ -247,10 +250,14 @@ end
 			dec_pc_4_out_reg <=  	0;
 			dec_sx_imm_out_reg <= 0;
 			dec_we_reg_file_out_reg <= 0;
+			dec_hazard_bus_out_reg <= 0;
 		end	
 end 
+assign dec_hazard_bus_loc = {rs1,rs2,dec_inst[11:7]};
 assign dec_stall = (dec_il1_ack)? 1'b0;1'b1;
 assign dec_ld1_loc = (dec_nop_gen)?NOT_REQ : dec_ld1_loc;
 assign dec_we_reg_file_loc = (dec_nop_gen)? WE_OFF : dec_we_reg_file_loc;
+assign rs1 = (dec_nop_gen)? 5'b0: dec_inst[19:15];
+assign rs2 = (dec_nop_gen)? 5'b0: dec_inst[24:20];	
 endmodule // cpu_dec_s
 

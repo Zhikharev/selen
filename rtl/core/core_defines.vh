@@ -1,6 +1,6 @@
 `define PS_START 32'b0
 /// mux bus bellow 
-`define R_MUX 6'b0xx010
+`define R_MUX 6'b0xx000
 `define I_R_MUX 6'b0xx010
 `define LUI_MUX 6'bxxxxxx
 `define AUIPC_MUX 6'b0xx010
@@ -9,13 +9,25 @@
 `define LD_MUX 6'b111xx0
 `define ST_MUX 6'bx11xx0
 `define JALR_MUX 6'bx11xx1
+
+`define CNTR_TRNS_MUX		0
+`define SRC1_IMM_MUX 		1
+`define SRC2_PC_MUX			2
+`define PC_4_SRC1_MUX		3
+`define PC_MUX3_MUX			4
+`define ALU_MEM_MUX			5
 // forwarding bus bellow 
-`define M2E_SRC1_BP	5'bxxxx0
-`define W2E_SRC1_BP	5'bxxx01
-`define M2E_SRC2_BP 5'bx0xxx
-`define W2E_SRC2_BP 5'bx01xx
-`define W2M_BP 5'b1xxxx
-`define START_BP 5'b01111
+`define M2E_SRC1_BP 4'bxxx0
+`define W2E_SRC1_BP 4'bxx01
+`define M2E_SRC2_BP 4'bx0xx
+`define W2E_SRC2_BP 4'b01xx
+`define W2M_BP 1'b1
+`define BP_INIT 4'b1111
+
+`define M2E_SRC1_MUX 0
+`define W2E_SRC1_MUX 1
+`define M2E_SRC2_MUX 2
+`define W2E_SRC2_MUX 3
 //regiser file 
 `define ORDER_ON  	1'b1 // change order of source opperands
 `define ORDER_OFF 	1'b0 // don't change order of source opperands
@@ -64,3 +76,9 @@
 `define SX_B 3'b000
 `define SX_PC	3'b111
 `define SX_BP	1'b010
+//sx input
+`define SX_AUIPC_LUI		3'b000
+`define SX_LD_I_R_JALR 	3'b001
+`define SX_SB 					3'b010
+`define SX_UJ_JAL				3'b011
+`define SX_ST						3'b010
