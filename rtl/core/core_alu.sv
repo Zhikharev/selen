@@ -11,32 +11,32 @@
 `include "opcodes.vh"
 `include "core_defines.vh"
 module(
-	input[31:0] signed				src1,
-	input[31:0] signed				src2,
-	input[2:0]								alu_op,
-	input[2:0]								brnch_cnd,
-	output[31:0] signed reg		alu_result,
-	output 		 					reg		brnch_takenn			
+	input[31:0] signed						src1,
+	input[31:0] signed						src2,
+	input[3:0]										alu_op,
+	input[2:0]										brnch_cnd,
+	output[31:0] signed reg				alu_result,
+	output 		 					reg				brnch_takenn			
 );
 always @* begin  
 	case(alu_op)
-		ADD: alu_result = src1 + src2;
-		AND: alu_result = src1 | src2;
-		OR:	alu_result = src1 & src2;
-		XOR: alu_result = src1 ^ src2;
-		SLT: begin
+		ADD_ALU: alu_result = src1 + src2;
+		AND_ALU: alu_result = src1 | src2;
+		OR_ALU:	alu_result = src1 & src2;
+		XOR_ALU: alu_result = src1 ^ src2;
+		SLT_ALU: begin
 			if(src1 < src2) alu_result = 32'b1;
 			else alu_result = 32'b0;
 		end 	
-		SLTU: begin
+		SLTU_ALU: begin
 			if((~src2)+32'b1 < (~src1)+32'b1) alu_result = 32'b1 //I ll try to do it better after I read the article about sign computation in verilog 2001
 				else
 		end
-		SUB: alu_result = src1 - src2;
-		SLL: alu_result = src1 << src2[4:0];
-		SRL: alu_result = src1 >> src1[4:0];
-		SRA: alu_result = src1 >>> src2[4:0];
-		AM:  alu_result = (src1 + src2) >> 1'b1;
+		SUB_ALU: alu_result = src1 - src2;
+		SLL_ALU: alu_result = src1 << src2[4:0];
+		SRL_ALU: alu_result = src1 >> src1[4:0];
+		SRA_ALU: alu_result = src1 >>> src2[4:0];
+		AM_ALU:  alu_result = (src1 + src2) >> 1'b1;
 	endcase // alu_op
 end
 
