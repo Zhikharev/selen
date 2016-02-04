@@ -8,7 +8,6 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        : instruction fetch phase of pipline 
 // ----------------------------------------------------------------------------
-`include "core_defines.vh"
 module core_if_s (
 	input 							clk,// system clock 
 	input 							if_pc_stop,// stop counting for pc 
