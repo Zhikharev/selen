@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : sram_sp.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhikharev
-// AUTHOR'S EMAIL : 
+// AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
 // DESCRIPTION    : SRAM single-port verilog model, syncronous read
 // ----------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 `ifndef INC_SRAM_SP_MODEL
 `define INC_SRAM_SP_MODEL
 
-module sram_sp 
+module sram_sp
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 10234
@@ -22,13 +22,13 @@ module sram_sp
 	input 										 EN,
 	input 										 CLK,
 	input  [$clog2(DEPTH)-1:0] ADDR,
-	input  [WIDTH-1:0] 				 DI, 
+	input  [WIDTH-1:0] 				 DI,
 	output [WIDTH-1:0] 				 DO
 );
 
-	reg [WIDTH-1:0] ram[ DEPTH];
+	reg [WIDTH-1:0] ram [DEPTH];
 	reg [$clog2(DEPTH)-1:0] addr_r;
-	
+
 	// Port A
 	always @(posedge CLK) begin
 		if(EN) begin
@@ -36,7 +36,7 @@ module sram_sp
 			addr_r <= ADDR;
 		end
 	end
-	
+
 	assign DO = ram[addr_r];
 
 endmodule
