@@ -1,0 +1,5 @@
+HOME := $(dir $(lastword $(MAKEFILE_LIST)))
+RTL_SRC +=\
+	$(HOME)/opcodes.vh \
+	$(HOME)/core_alu.sv \
+	$(HOME)/core_reg_file.sv

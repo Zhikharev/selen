@@ -117,7 +117,7 @@ class draft_test extends sl_core_base_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     uvm_config_db#(uvm_object_wrapper)::set(this,
-    "*core_i_agent.sequencer.main_phase", "default_sequence", draft_seq::type_id::get());
+    "*core_i_agent.sequencer.main_phase", "default_sequence", core_alu_seq::type_id::get());
   endfunction
 endclass
 

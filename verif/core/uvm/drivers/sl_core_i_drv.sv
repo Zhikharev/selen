@@ -82,7 +82,6 @@ class sl_core_i_drv extends uvm_driver #(rv32_transaction);
   task drive_item(rv32_transaction item);
     $display("%0s (%0t)",item.sprint(), $time());
     vif.req_ack <= 1'b1;
-    $display("%0h", item.encode());
     vif.req_ack_data <= item.encode();
   endtask
 
