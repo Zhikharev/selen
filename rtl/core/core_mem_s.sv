@@ -37,7 +37,8 @@ module core_mem (
 	output[31:0]	reg 	mem_pc_4_reg_out,
 	output 			reg 	mem_we_reg_file_out_reg,
 	output 			reg 	mem_mux_out_reg,
-	output[2:0]		reg 	mem_wb_sx_type_out_reg
+	output[2:0]		reg 	mem_wb_sx_type_out_reg,
+	output[4:0]		reg 	mem_rd_out_reg
 );
 wire cash_ucash;
 always @(posedge clk) begin 
@@ -48,6 +49,7 @@ always @(posedge clk) begin
 		mem_we_reg_file_out_reg <= 	mem_we_reg_file_in;
 		mem_mux_out_reg <=			mem_mux_in;
 		mem_wb_sx_type_out_reg <=	mem_wb_sx_in;
+		mem_rd_out_reg <=			mem_hazrd_bus_in[4:0];
 	end
 	if(mem_kill) begin
 		mem_alu_result_reg_out <= 	0;
@@ -56,6 +58,7 @@ always @(posedge clk) begin
 		mem_we_reg_file_out_reg <= 	0;
 		mem_mux_out_reg <=			0;
 		mem_wb_sx_type_out_reg <=	0;
+		mem_rd_out_reg <= 0;
 	end	
 end
 assign mem_wrt_data_in = (mem_bp_mux_in)?mem_bp_from_wb_data_in:mem_wrt_data_in;

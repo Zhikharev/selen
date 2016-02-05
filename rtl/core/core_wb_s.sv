@@ -6,7 +6,7 @@
 // AUTHOR                 : Alexsandr Bolotnokov
 // AUTHOR'S EMAIL 				:	AlexBolotnikov@gmail.com 			
 // ----------------------------------------------------------------------------
-// DESCRIPTION        : iwrite back phase of pipline 
+// DESCRIPTION        : write back phase of pipline 
 // ----------------------------------------------------------------------------
 module core_wb_s(
 

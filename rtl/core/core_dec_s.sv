@@ -35,7 +35,7 @@ module cpu_dec_s(
 	output[3:0]		reg		dec_alu_op_out_reg,	
 	output[2:0] 	reg 	dec_alu_cnd_out_reg,// the MSB equals 1 means there is a branch command
 	output[14:0]	reg		dec_hazard_bus_out_reg,
-	output[1:0]		reg		dec_hazard_type_out_reg
+	output[1:0]		reg		dec_hazard_type_out_reg// signals to hazard
 );
 reg 			dec_order_loc;
 reg[2:0] 		sx_loc;
@@ -243,7 +243,6 @@ end
 			dec_pc_4_out_reg <= dec_pc_4_loc;
 			dec_sx_imm_out_reg <= dec_sx_loc;
 			dec_we_reg_file_out_reg <= dec_we_reg_file_loc;
-			dec_hazard_bus_out_reg <= dec_hazard_bus_loc;
 		end	
 		else begin
 		end	
@@ -259,7 +258,6 @@ end
 			dec_pc_4_out_reg <=  	0;
 			dec_sx_imm_out_reg <= 0;
 			dec_we_reg_file_out_reg <= 0;
-			dec_hazard_bus_out_reg <= 0;
 		end	
 end 
 assign dec_hazard_bus_loc = {rs1,rs2,dec_inst[11:7]};

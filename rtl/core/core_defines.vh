@@ -16,20 +16,6 @@
 `define PC_4_SRC1_MUX		3
 `define PC_MUX3_MUX			4
 `define ALU_MEM_MUX			5
-// forwarding bus bellow 
-`define M2E_SRC1_BP 4'bxxx0
-`define W2E_SRC1_BP 4'bxx01
-`define M2E_SRC2_BP 4'bx0xx
-`define W2E_SRC2_BP 4'b01xx
-`define W2M_BP_ON 1'b1
-`define W2M_BP_OFF 1'b1
-`define BP_INIT 4'b1111
-`define BP_OFF 4'b1111
-
-`define M2E_SRC1_MUX 0
-`define W2E_SRC1_MUX 1
-`define M2E_SRC2_MUX 2
-`define W2E_SRC2_MUX 3
 //regiser file 
 `define ORDER_ON  	1'b1 // change order of source opperands
 `define ORDER_OFF 	1'b0 // don't change order of source opperands
@@ -90,9 +76,28 @@
 `define SX_UJ_JAL			3'b011
 `define SX_ST				3'b010
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 //hazard type of instruction
 `define HZRD_LOAD 			2'b11
 `define HZRD_JUMP 			2'b10
 `define HZRD_BRNCH			2'b01
 `define HZRD_OTHER 			2'b00 
+
+// forwarding bus bellow 
+`define M2E_SRC1_BP 2'bx0
+`define W2E_SRC1_BP 2'b01
+`define M2E_SRC2_BP 2'bx0
+`define W2E_SRC2_BP 2'b01
+`define W2M_BP_ON 1'b1
+`define W2M_BP_OFF 1'b1
+`define BP_INIT 2'b11
+`define BP_OFF 2'b11
+
+`define M2E_SRC1_MUX 0
+`define W2E_SRC1_MUX 1
+`define M2E_SRC2_MUX 2
+`define W2E_SRC2_MUX 3
+
+
