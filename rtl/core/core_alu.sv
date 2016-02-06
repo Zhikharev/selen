@@ -28,8 +28,8 @@ always @* begin
 			else alu_result = 32'b0;
 		end 	
 		SLTU_ALU: begin
-			if((~src2)+32'b1 < (~src1)+32'b1) alu_result = 32'b1 //I ll try to do it better after I read the article about sign computation in verilog 2001
-				else
+			if($unsign(src2) < $unsign(src1)) alu_result = 32'b1
+			else alu_result = 31'b0;
 		end
 		SUB_ALU: alu_result = src1 - src2;
 		SLL_ALU: alu_result = src1 << src2[4:0];

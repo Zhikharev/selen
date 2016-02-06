@@ -58,151 +58,151 @@ wire [4:0]		rs2;
 //controll unit
 always @* begin
 	//initial assinging
-	dec_we_reg_file_loc = WE_OFF;
-	dec_order_loc = ORDER_OFF;
-	dec_ld1_loc = NOT_REQ;
-	dec_wb_sx_op_loc = WB_SX_BP;
+	dec_we_reg_file_loc = `WE_OFF;
+	dec_order_loc = `ORDER_OFF;
+	dec_ld1_loc = `NOT_REQ;
+	dec_wb_sx_op_loc = `WB_SX_BP;
 	sx_loc = 3'bx
-	dec_hazard_type_out_reg = HZRD_OTHER;
+	dec_hazard_type_out_reg = `HZRD_OTHER;
 	case(dec_inst[5:0])
 		R_OPCODE:begin
-			dec_mux_bus_loc = R_MUX;
-			dec_we_reg_file_loc = WE_ON;
+			dec_mux_bus_loc = `R_MUX;
+			dec_we_reg_file_loc = `WE_ON;
 			case(dec_inst[31:25])// function 7 feald case
-				FNCT7_1:begin
+				`FNCT7_1:begin
 					case(dec_inst[14:12])//functoin 3 feald case
-						ADD: 	alu_op = ADD_ALU;
-						SLT: 	alu_op = SLT_ALU;
-						SLTU: alu_op = SLTU_ALU;
-						AND: 	alu_op = AND_ALU;
-						OR:		alu_op = OR_ALU;
-						XOR:	alu_op = XOR_ALU;
-						SLL:	alu_op = SLL_ALU;
-						SRL:	alu_op = SRL_ALU;
+						`ADD: 	alu_op = 	`ADD_ALU;
+						`SLT: 	alu_op = 	`SLT_ALU;
+						`SLTU: alu_op = 	`SLTU_ALU;
+						`AND: 	alu_op = 	`AND_ALU;
+						`OR:		alu_op = 	`OR_ALU;
+						`XOR:	alu_op = 		`XOR_ALU;
+						`SLL:	alu_op = 		`SLL_ALU;
+						`SRL:	alu_op = 		`SRL_ALU;
 					endcase//FNCT3	
 				end//FNCT7_1		
-				FNCT7_2:begin
+				`FNCT7_2:begin
 					case(dec_inst[14:12])
-						SUB:	alu_op = SUB_ALU;
-						SRA:	alu_op = SRA_ALU;
-						AM:		alu_op = AM_ALU;
+						`SUB:	alu_op = `SUB_ALU;
+						`SRA:	alu_op = `SRA_ALU;
+						`AM:	alu_op = `AM_ALU;
 					endcase//FNCT3	
 				end	// FNCT7_2
 			endcase // FNCT7	
 		end// R_OPCODE
 		
-		I_R_OPCODE: begin 
-			dec_mux_bus_loc = I_R_MUX;
-			dec_we_reg_file_loc = WE_ON;
-			sx_loc = SX_LD_I_R_JALR;
+		`I_R_OPCODE: begin 
+			dec_mux_bus_loc = `I_R_MUX;
+			dec_we_reg_file_loc = `WE_ON;
+			sx_loc = `SX_LD_I_R_JALR;
 			case(dec_inst[14:12])//functoin 3 feald case
-				ADD: 	alu_op = ADD_ALU;
-				SLT: 	alu_op = SLT_ALU;
-				SLTU: alu_op = SLTU_ALU;
-				AND: 	alu_op = AND_ALU;
-				OR:		alu_op = OR_ALU;
-				XOR:	alu_op = XOR_ALU;
-				SLL:	alu_op = SLL_ALU;
-				SRL:	alu_op = SRL_ALU;
+				`ADD: 	alu_op = `ADD_ALU;
+				`SLT: 	alu_op = `SLT_ALU;
+				`SLTU: 	alu_op = `SLTU_ALU;
+				`AND: 	alu_op = `AND_ALU;
+				`OR:		alu_op = `OR_ALU;
+				`XOR:		alu_op = `XOR_ALU;
+				`SLL:		alu_op = `SLL_ALU;
+				`SRL:		alu_op = `SRL_ALU;
 			endcase//FNCT3
 		end//I_R_OPCODE
 		
-		LUI__OPCODE:begin
-			dec_mux_bus_loc = LUI_MUX;
-			sx_loc = SX_AUIPC_LUI;
-			dec_wb_sx_op_loc = WB_SX_IMM;
+		`LUI__OPCODE:begin
+			dec_mux_bus_loc = `LUI_MUX;
+			sx_loc = `SX_AUIPC_LUI;
+			dec_wb_sx_op_loc = `WB_SX_IMM;
 		end // LUI__OPCODE:
-		AUIPC_OPCODE: begin
-			sx_loc = SX_AUIPC_LUI; 
-			dec_mux_bus_loc = AUIPC_MUX;
-			dec_we_reg_file_loc = WE_ON;
-			alu_op = ADD_ALU;
+		`AUIPC_OPCODE: begin
+			sx_loc = `SX_AUIPC_LUI; 
+			dec_mux_bus_loc = `AUIPC_MUX;
+			dec_we_reg_file_loc = `WE_ON;
+			alu_op = `ADD_ALU;
 		end//AUIPC_OPCODE
 		
-		SB_OPCODE: begin
-			sx_loc = SX_SB:
-			dec_mux_bus_loc = SB_MUX;
-			dec_hazard_type_out = HZRD_BRNCH;
+		`SB_OPCODE: begin
+			sx_loc = `SX_SB:
+			dec_mux_bus_loc = `SB_MUX;
+			dec_hazard_type_out = `HZRD_BRNCH;
 			case(dec_inst[14:12])
-				BEQ:begin
-					dec_order_loc = ORDER_OFF;
-					dec_alu_cnd_loc = {1'b1,ALU_BEQ};
+				`BEQ:begin
+					dec_order_loc = `ORDER_OFF;
+					dec_alu_cnd_loc = {1'b1,`ALU_BEQ};
 				end
-				BNE:begin
-					dec_order_loc = ORDER_OFF;
-					dec_alu_cnd_loc = {1'b1,ALU_BNE};
+				`BNE:begin
+					dec_order_loc = `ORDER_OFF;
+					dec_alu_cnd_loc = {1'b1,`ALU_BNE};
 				end	
-				BLT:begin
-					dec_order_loc = ORDER_OFF;
-					dec_alu_cnd_loc = {1'b1,ALU_BLT};
+				`BLT:begin
+					dec_order_loc = `ORDER_OFF;
+					dec_alu_cnd_loc = {1'b1,`ALU_BLT};
 				end
-				BLTU:begin
-					dec_order_loc = ORDER_OFF;
-					dec_alu_cnd_loc = {1'b1,ALU_BLTU};
+				`BLTU:begin
+					dec_order_loc = `ORDER_OFF;
+					dec_alu_cnd_loc = {1'b1,`ALU_BLTU};
 				end
-				BGE:begin
-					dec_order_loc = ORDER_ON;
-					dec_alu_cnd_loc = {1'b1,ALU_BLT};
+				`BGE:begin
+					dec_order_loc = `ORDER_ON;
+					dec_alu_cnd_loc = {1'b1,`ALU_BLT};
 				end
-				BGEU:begin
-					dec_order_loc = ORDER_ON;
-					dec_alu_cnd_loc = {1'b1,ALU_BLTU};
+				`BGEU:begin
+					dec_order_loc = `ORDER_ON;
+					dec_alu_cnd_loc = {1'b1,`ALU_BLTU};
 				end
 			endcase // FNCT3 for branches
 		end
 		
-		UJ_OPCODE:begin 
-			sx_loc = SX_UJ_JAL;
-			dec_mux_bus_loc = UJ_MUX;
-			dec_we_reg_file_loc = WE_ON;
-			dec_wb_sx_op_loc = WB_SX_PC_4;
-			dec_hazard_type_out_reg = HZRD_JUMP;
+		`UJ_OPCODE:begin 
+			sx_loc = `SX_UJ_JAL;
+			dec_mux_bus_loc = `UJ_MUX;
+			dec_we_reg_file_loc = `WE_ON;
+			dec_wb_sx_op_loc = `WB_SX_PC_4;
+			dec_hazard_type_out_reg = `HZRD_JUMP;
 		end
 		
-		JALR_OPCODE: begin
-			sx_loc = SX_LD_I_R_JALR;
-			dec_mux_bus_loc  = JALR_MUX;
-			dec_we_reg_file_loc = WE_ON;
-			dec_wb_sx_op_loc = WB_SX_PC_4;
-			dec_hazard_type_out_reg = HZRD_JUMP;
+		`JALR_OPCODE: begin
+			sx_loc = `SX_LD_I_R_JALR;
+			dec_mux_bus_loc  = `JALR_MUX;
+			dec_we_reg_file_loc = `WE_ON;
+			dec_wb_sx_op_loc = `WB_SX_PC_4;
+			dec_hazard_type_out_reg = `HZRD_JUMP;
 		end
 		
-		LD_OPCODE: begin
-			dec_mux_bus_loc = LD_OPCODE;
-			dec_we_reg_file_loc = WE_ON;
-			sx_loc = SX_LD_I_R;
-			dec_hazard_type_out_reg = HZRD_LOAD;		
+		`LD_OPCODE: begin
+			dec_mux_bus_loc = `LD_OPCODE;
+			dec_we_reg_file_loc = `WE_ON;
+			sx_loc = `SX_LD_I_R;
+			dec_hazard_type_out_reg = `HZRD_LOAD;		
 			case(dec_inst[14:12])
-				LW:begin
-					dec_ld1_loc = LW_DL1;
-					dec_wb_sx_op_loc = WB_SX_BP;
+				`LW:begin
+					dec_ld1_loc = `LW_DL1;
+					dec_wb_sx_op_loc = `WB_SX_BP;
 				end
-				LH:begin
-					dec_ld1_loc = LH_DL1;
-					dec_wb_sx_op_loc = WB_SX_SHALF;
+				`LH:begin
+					dec_ld1_loc = `LH_DL1;
+					dec_wb_sx_op_loc = `WB_SX_SHALF;
 				end
-				LHU:begin
-					dec_ld1_loc = LH_DL1;
-					dec_wb_sx_op_loc = WB_SX_HU;
+				`LHU:begin
+					dec_ld1_loc = `LH_DL1;
+					dec_wb_sx_op_loc = `WB_SX_HU;
 				end
-				LB:begin
-					dec_ld1_loc = LB_DL1;
-					dec_wb_sx_op_loc = WB_SX_B;
+				`LB:begin
+					dec_ld1_loc = `LB_DL1;
+					dec_wb_sx_op_loc = `WB_SX_B;
 				end
-				LBU:begin
-					dec_ld1_loc = LB_DL1;
-					dec_wb_sx_op_loc = WB_SX_BU;
+				`LBU:begin
+					dec_ld1_loc = `LB_DL1;
+					dec_wb_sx_op_loc = `WB_SX_BU;
 				end	
 			endcase // FNCT3 for load 
 		end
 		
-		ST_OPCODE: begin 
-			dec_mux_bus_loc = ST_MUX;
-			sx_loc = SX_ST;
+		`ST_OPCODE: begin 
+			dec_mux_bus_loc = `ST_MUX;
+			sx_loc = `SX_ST;
 			case(dec_inst[14:12])
-				SW: dec_ld1_loc = SW_LD1;
-				SH: dec_ld1_loc = SH_LD1;
-				SB: dec_ld1_loc = SB_DL1;
+				`SW: dec_ld1_loc = `SW_LD1;
+				`SH: dec_ld1_loc = `SH_LD1;
+				`SB: dec_ld1_loc = `SB_DL1;
 			endcase // FNCT3	
 		end
 	endcase // OPCODE DECODE main case
@@ -210,11 +210,11 @@ end
 //sign extension
 always @* begin
 	case(sx_loc)
-		SX_LD_I_R_JALR:dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:20]});
-		SX_AUIPC_LUI: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:12]});
-		SX_SB: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31],dec_inst[7],dec_inst[30:25],dec_inst[11:8]});
-		SX_UJ_JAL: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31],dec_inst[19:12],dec_inst[20],dec_inst[30:21]});
-		SX_ST: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:25],dec_inst[11:7]});
+		`SX_LD_I_R_JALR:dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:20]});
+		`SX_AUIPC_LUI: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:12]});
+		`SX_SB: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31],dec_inst[7],dec_inst[30:25],dec_inst[11:8]});
+		`SX_UJ_JAL: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31],dec_inst[19:12],dec_inst[20],dec_inst[30:21]});
+		`SX_ST: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:25],dec_inst[11:7]});
 	endcase//sx_loc	
 end	
 	//conections of register file
@@ -262,8 +262,8 @@ end
 end 
 assign dec_hazard_bus_loc = {rs1,rs2,dec_inst[11:7]};
 assign dec_stall = (dec_il1_ack)? 1'b0;1'b1;
-assign dec_ld1_loc = (dec_nop_gen)?NOT_REQ : dec_ld1_loc;
-assign dec_we_reg_file_loc = (dec_nop_gen)? WE_OFF : dec_we_reg_file_loc;
+assign dec_ld1_loc = (dec_nop_gen)?`NOT_REQ : dec_ld1_loc;
+assign dec_we_reg_file_loc = (dec_nop_gen)? `WE_OFF : dec_we_reg_file_loc;
 assign rs1 = (dec_nop_gen)? 5'b0: dec_inst[19:15];
 assign rs2 = (dec_nop_gen)? 5'b0: dec_inst[24:20];	
 endmodule // cpu_dec_s
