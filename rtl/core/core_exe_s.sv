@@ -43,14 +43,13 @@ module core_exe_s (
 	output[31:0]	reg 	exe_pc_4_out_reg,
 	output[31:0]	reg 	exe_w_data_out_reg,
 	output[31:0]	reg 	exe_addr_out_reg,
-	output 				reg 	exe_brnch_takenn_out_reg
+	output 						 	exe_brnch_takenn_out
 );
 wire[31:0] 		alu_src1;
 wire[31:0] 		alu_src2;
 wire[31:0] 		src1_or_imm;
 wire[31:0]	 	src2_or_pc;
 wire[31:0]	 	exe_alu_result_loc;
-wire					exe_brnch_takenn_loc
 wire [31:0]		exe_addr_src_loc;
 wire[31:0]		exe_addr_loc;
 
@@ -65,14 +64,13 @@ core_alu core_alu(
 	.alu_op(exe_alu_op_in),
 	.brnch_cnd(exe_alu_cnd_in),
 	.alu_result(exe_alu_result_loc),
-	.brnch_takenn(exe_brnch_takenn_loc)		
+	.brnch_takenn(exe_brnch_takenn_out)		
 	);
 assign exe_addr_src_oc = (exe_mux_bus_in[`PC_MUX3_MUX])?(exe_pc_in):((exe_mux_bus_in[`PC_4_SRC_MUX])?(exe_src1_in):(exe_pc_4_in));
 assign exe_addr_loc = exe_sx_imm_in + exe_addr_src_oc;
 always @(posedge clk) begin 
 	if(exe_enb)begin
 		exe_alu_result_out_reg <= exe_alu_result_loc;
-		exe_brnch_takenn_out_reg <= exe_brnch_takenn_loc;
 		exe_sx_imm_out_reg <= exe_sx_imm_in;
 		exe_pc_4_out_reg <= exe_pc_4_in;
 		exe_w_data_out_reg <= exe_src2_in;
@@ -84,7 +82,6 @@ always @(posedge clk) begin
 	end	
 	if(exe_kill) begin
 		exe_alu_result_out_reg <= 0;
-		exe_brnch_takenn_out_reg <= 0;
 		exe_sx_imm_out_reg <= 0;
 		exe_pc_4_out_reg <= 0;
 		exe_w_data_out_reg <= 0;

@@ -24,15 +24,11 @@ module core_wb_s(
 	input 							wb_ack_from_lid_in,
 	input 							wb_we_reg_file_in,
 
-	output  		reg 		wb_we_reg_file_out_reg,
+	output  					 	wb_we_reg_file,
 	output[31:0]				wb_data_out,
 	output 							wb_stall_out		
 );
 wire[31:0] mux_out_loc;
-always @(posedge clk) begin
-	if(wb_enb) wb_we_reg_file_out_reg <= wb_we_reg_file_in;
-	if(wb_kill) wb_we_reg_file_out_reg <= 1'b0;
-end // always @(posedge clk)
 
 assign mux_out_loc = (wb_mux_in)?wb_alu_result_in:wb_mem_data_in;
 
@@ -50,4 +46,6 @@ always @* begin
 end
 assign wb_data_out = data_out_loc;
 assign wb_stall_out = (wb_ack_from_lid_in) 1'b0:1'b1;
+assign wb_data_out = data_out_loc;
+assign wb_we_reg_file_out = wb_we_reg_file_in;
 endmodule // core_wb_s	

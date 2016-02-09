@@ -46,6 +46,13 @@ wire 				exe2mem_mux_alu_mem_loc;
 wire[14:0]	exe2mem_haz_bus;
 wire 				exe2mem_we_reg_file_loc;
 wire[2:0] 	exe2mem_wb_sx_cmnd;
+// wires for mem to wb
+wire[31:0]	mem2wb_alu_result;
+wire[31:0]	mem2wb_imm;
+wire[31:0]	mem2wb_pc_4;
+wire[2:0] 	mem2wb_sx_op;
+wire 				mem2wb_mux_alu_mem;
+wire 				mem2wb_we_reg_file;
 core_if_s if_s (
 	.clk(clk), 
 	.rst_n(rst_n), 
@@ -115,22 +122,22 @@ core_exe_s	exe_s(
 .exe_alu_cnd_in(dec2exe_alu_cnd_loc),
 .exe_we_reg_file_in(dec2exe_we_reg_file_loc),
 .exe_wb_sx_op_in(dec2exe_wb_sx_op_loc),
-
+// forwarding
 .exe_result_frm_m(),
 .exe_result_frm_w(),
 .exe_bp_in(),
-//tomemmory
-.regexe_wb_sx_op_out_reg(),
-.regexe_l1d_bus_out_reg(),
-.regexe_we_reg_file_out_reg(),
-.regexe_mux_out_reg(),
+//to memmory
+.exe_wb_sx_op_out_reg(exe2mem_wb_sx_cmnd),
+.exe_l1d_bus_out_reg(exe2mem_l1d_bus_loc),
+.exe_we_reg_file_out_reg(exe2mem_we_reg_file_loc),
+.exe_mux_out_reg(exe2mem_mux_alu_mem_loc),
 
-.regexe_alu_result_out_reg(),
-.regexe_sx_imm_out_reg(),
-.regexe_pc_4_out_reg(),
-.regexe_w_data_out_reg(),
-.regexe_addr_out_reg(),
-.regexe_brnch_takenn_out_reg
+.exe_alu_result_out_reg(exe2mem_alu_result_loc),
+.exe_sx_imm_out_reg(exe2mem_sx_imm_loc),
+.exe_pc_4_out_reg(exe2mem_pc_4_loc),
+.exe_w_data_out_reg(exe2mem_wdata_loc),
+.exe_addr_out_reg(exe2mem_addr_loc),
+.exe_brnch_takenn_out_reg()//be aware  
 );
 
 core_mem_s mem_s (
@@ -153,15 +160,42 @@ core_mem_s mem_s (
 .mem_hazrd_bus_in(exe2mem_haz_bus),
 
 .mem_bp_mux_in(),
+.mem2exe_bp_data_out(),
 
-.mem_ld1_bus_out(),
-.mem_wrt_data_.mem_out(),
+.mem2l1d_req_val_out_reg(pl_l1d_req_val_out),//global
+.mem2l1d_req_size_out_reg(pl_l1d_req_size_out),//global
+.mem2l1d_req_cop_out_reg(pl_l1d_req_cop_out),//global
 
-.mem_alu_result_reg_out(),
-.mem_sx_imm_reg_out(),
-.mem_pc_4_reg_out(),
-.mem_we_reg_file_out_reg(),
-.mem_mux_out_reg(),
-.mem_wb_sx_type_out_reg(),
-.mem_rd_out_reg
+.mem_wrt_data_mem_out_reg(),
+
+.mem_alu_result_reg_out(mem2wb_alu_result),
+.mem_sx_imm_reg_out(mem2wb_imm),
+.mem_pc_4_reg_out(mem2wb_pc_4),
+.mem_we_reg_file_out_reg(mem2wb_we_reg_file),
+.mem_mux_out_reg(mem2wb_mux_alu_mem),
+.mem_wb_sx_type_out_reg(mem2wb_sx_op),
+
+.mem_rd_out_reg()
+);
+
+core_wb_s wb_s(
+.clk(clk),
+.rst_n(rst_n),
+
+.wb_enb(),
+.wb_kill(),
+
+.wb_alu_result_in(mem2wb_alu_result),
+.wb_mem_data_in(pl_l1d_ack_rdata_in),//global
+.wb_pc_4_in(mem2wb_pc_4),
+.wb_sx_op_in(mem2wb_sx_op),
+.wb_sx_imm_in(mem2wb_imm),
+.wb_mux_in(mem2wb_mux_alu_mem),
+
+.wb_ack_from_lid_in(pl_l1d_ack_ack_in),//global
+.wb_we_file_out_regfile_in(),
+
+.wb_we_reg_file_out(),
+.wb_data_out(),
+.wb_stall_out(),
 );
