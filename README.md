@@ -4,11 +4,11 @@ Academic System on Chip based on RISC-V core, developed from scratch.
 SoC contains:
 - RISC-V in order, 5 stage pipeline core
 - L1 instruction and L1 data caches, 4-way associativitе write-through no-write-allocate
-- Interconnect Wishbone commutator
-- RAM, ROM plugs
-- IO hub with UART
+- Wishbone Interconnect (AXI for private needs)
+- SRAM, ROM wishbone controllers
+- IO hub with SPI and GPIO
 
-Target platfrom FPGA Spartan-6.
+Target platfrom FPGA Spartan-6 (see main block diagram https://github.com/Zhikharev/selen/blob/master/doc/selen/selen.png).
 
 We introduce assembler for RISC-V ISA, which supports our custom instructions. 
 At last we designed simple ISA simulator to execute binary memory images.
