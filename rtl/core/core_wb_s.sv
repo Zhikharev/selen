@@ -10,23 +10,23 @@
 // ----------------------------------------------------------------------------
 module core_wb_s(
 
-	input						clk,
-	input 						rst_n,
-	input						wb_enb,
-	input 						wb_kill,
+	input								clk,
+	input 							rst_n,
+	input								wb_enb,
+	input 							wb_kill,
 
 	input[31:0] 				wb_alu_result_in,
 	input[31:0]					wb_mem_data_in,
 	input[31:0]					wb_pc_4_in,
 	input[2:0]					wb_sx_op_in,
 	input[31:0]					wb_sx_imm_in,
-	input						wb_mux_in,
-	input 						wb_ack_from_lid_in,
-	input 						wb_we_reg_file_in,
+	input								wb_mux_in,
+	input 							wb_ack_from_lid_in,
+	input 							wb_we_reg_file_in,
 
 	output  		reg 		wb_we_reg_file_out_reg,
 	output[31:0]				wb_data_out,
-	output 						wb_stall_out		
+	output 							wb_stall_out		
 );
 wire[31:0] mux_out_loc;
 always @(posedge clk) begin

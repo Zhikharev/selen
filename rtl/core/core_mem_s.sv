@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        : memory phase of pipline 
 // ----------------------------------------------------------------------------
-module core_mem (
+module core_mem_s (
 	input 							clk,
 	input 							rst_n,
 	input								mem_enb,
@@ -29,8 +29,10 @@ module core_mem (
 	input[14:0]					mem_hazrd_bus_in,
 	input								mem_bp_mux_in,
 
-	output[6:0]					mem_ld1_bus_out,
-	output 							mem_wrt_data_mem_out,
+// l1d bus
+	output   			reg		mem2l1d_req_val_out_reg,
+	output[2:0]		reg 	mem2l1d_req_size_out_reg,
+	output[2:0]		reg 	mem2l1d_req_cop_out_reg,
 
 	output[31:0]	reg 	mem_alu_result_reg_out,
 	output[31:0]	reg 	mem_sx_imm_reg_out,
@@ -63,6 +65,6 @@ always @(posedge clk) begin
 end
 assign mem_wrt_data_in = (mem_bp_mux_in)?mem_bp_from_wb_data_in:mem_wrt_data_in;
 assign cash_ucash = (mem_alu_result_in > mem_cahs_reg_in) `CASHBLE:`UNCASHEBLE;
-assign mem_ld1_bus_out[`CASH_BIT] = cash_ucash;
+
 
 endmodule // core_mem

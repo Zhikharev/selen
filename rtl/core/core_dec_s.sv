@@ -9,20 +9,23 @@
 // DESCRIPTION        : decode phase of pipline 
 // ----------------------------------------------------------------------------
 module cpu_dec_s(
-	input					clk,//system clock
-	input 					rst_n,//system reset
-	input 					dec_nop_gen,//
-	input[31:0]				dec_inst,//instruction from level 1 instruction cashe
-	input[31:0]				dec_data_wrt,//data for write to register file
-	input					dec_kill,// clear decode/execution register
-	input 					dec_enb,
-	input					dec_il1_ack,// acknowlegment from level 1 instruction cashe
-	input					dec_we_reg_file_in,// write enable for register file
-	output					dec_stall,// signal detecting absent of data from cashe
-	output 			reg 	dec_order_out_reg,// order for register file, exsist only inside of decode stage
-
+	input								clk,//system clock
+	input 							rst_n,//system reset
+	//reg cntrl 
+	input 							dec_enb,
+	input								dec_kill,// clear decode/execution register
+	//inside terminals
+	input 							dec_nop_gen_in,//
+	input[31:0]					dec_inst_in,//instruction from level 1 instruction cashe
+	input[31:0]					dec_data_wrt_in,//data for write to register file
+	input								dec_il1_ack_in,// acknowlegment from level 1 instruction cashe
+	input								dec_we_reg_file_in,// write enable for register file
+	//input form if station
+	input[31:0]					dec_pc_in,
+	input[31:0]					dec_pc_4_in,
+	// 2 exe station
 	output[2:0]		reg 	dec_wb_sx_op_out_reg,
-	output			reg 	dec_we_reg_file_out_reg,		
+	output				reg 	dec_we_reg_file_out_reg,		
 	output[31:0]	reg		dec_src1_out_reg,
 	output[31:0]	reg		dec_src2_out_reg,
 	output[31:0]	reg		dec_pc_out_reg,
@@ -31,21 +34,20 @@ module cpu_dec_s(
 	output[6:0]		reg		dec_ld1_out_reg,// consistes of the MSB is validation of request, then 1'b0 is rezerved after  
 	//the nex 2 bits are  casheble or uncasheble and read or write respectively the last 3 bits mean size of request to mem
 	output[5:0]		reg		dec_mux_bus_out_reg,
-	output[2:0]		reg		dec_brnch_cnd_out_reg,
 	output[3:0]		reg		dec_alu_op_out_reg,	
 	output[2:0] 	reg 	dec_alu_cnd_out_reg,// the MSB equals 1 means there is a branch command
 	output[14:0]	reg		dec_hazard_bus_out_reg,
-	output[1:0]		reg		dec_hazard_type_out_reg// signals to hazard
+	// for hazard 
+	output[1:0]		reg		dec_hazard_type_out_reg,// signals to hazard
+	output							dec_stall_out// signal detecting absent of data from cashe
 );
-reg 			dec_order_loc;
+reg 				dec_order_loc;
 reg[2:0] 		sx_loc;
 reg[2:0]		wb_sx_loc;
 reg[2:0] 		dec_wb_sx_op_loc;
-reg 			dec_we_reg_file_loc;		
+reg 				dec_we_reg_file_loc;		
 reg[31:0]		dec_src1_loc;
 reg[31:0		dec_src2_loc;
-reg[31:0]		dec_pc_loc;
-reg[31:0]		dec_pc_4_loc;
 reg[31:0]		dec_sx_imm_loc;
 reg[31:0]		dec_ld1_loc;
 reg[5:0]		dec_mux_bus_loc;
@@ -54,7 +56,7 @@ reg[3:0]		dec_alu_op_loc;
 reg[3:0] 		dec_alu_cnd_loc;
 reg[14:0]		dec_hazard_bus_loc;
 wire[4:0]		rs1;
-wire [4:0]		rs2;
+wire [4:0]	rs2;
 //controll unit
 always @* begin
 	//initial assinging
@@ -64,13 +66,13 @@ always @* begin
 	dec_wb_sx_op_loc = `WB_SX_BP;
 	sx_loc = 3'bx
 	dec_hazard_type_out_reg = `HZRD_OTHER;
-	case(dec_inst[5:0])
+	case(dec_inst_in[5:0])
 		R_OPCODE:begin
 			dec_mux_bus_loc = `R_MUX;
 			dec_we_reg_file_loc = `WE_ON;
-			case(dec_inst[31:25])// function 7 feald case
+			case(dec_inst_in[31:25])// function 7 feald case
 				`FNCT7_1:begin
-					case(dec_inst[14:12])//functoin 3 feald case
+					case(dec_inst_in[14:12])//functoin 3 feald case
 						`ADD: 	alu_op = 	`ADD_ALU;
 						`SLT: 	alu_op = 	`SLT_ALU;
 						`SLTU: alu_op = 	`SLTU_ALU;
@@ -82,7 +84,7 @@ always @* begin
 					endcase//FNCT3	
 				end//FNCT7_1		
 				`FNCT7_2:begin
-					case(dec_inst[14:12])
+					case(dec_inst_in[14:12])
 						`SUB:	alu_op = `SUB_ALU;
 						`SRA:	alu_op = `SRA_ALU;
 						`AM:	alu_op = `AM_ALU;
@@ -95,7 +97,7 @@ always @* begin
 			dec_mux_bus_loc = `I_R_MUX;
 			dec_we_reg_file_loc = `WE_ON;
 			sx_loc = `SX_LD_I_R_JALR;
-			case(dec_inst[14:12])//functoin 3 feald case
+			case(dec_inst_in[14:12])//functoin 3 feald case
 				`ADD: 	alu_op = `ADD_ALU;
 				`SLT: 	alu_op = `SLT_ALU;
 				`SLTU: 	alu_op = `SLTU_ALU;
@@ -123,7 +125,7 @@ always @* begin
 			sx_loc = `SX_SB:
 			dec_mux_bus_loc = `SB_MUX;
 			dec_hazard_type_out = `HZRD_BRNCH;
-			case(dec_inst[14:12])
+			case(dec_inst_in[14:12])
 				`BEQ:begin
 					dec_order_loc = `ORDER_OFF;
 					dec_alu_cnd_loc = {1'b1,`ALU_BEQ};
@@ -172,7 +174,7 @@ always @* begin
 			dec_we_reg_file_loc = `WE_ON;
 			sx_loc = `SX_LD_I_R;
 			dec_hazard_type_out_reg = `HZRD_LOAD;		
-			case(dec_inst[14:12])
+			case(dec_inst_in[14:12])
 				`LW:begin
 					dec_ld1_loc = `LW_DL1;
 					dec_wb_sx_op_loc = `WB_SX_BP;
@@ -199,7 +201,7 @@ always @* begin
 		`ST_OPCODE: begin 
 			dec_mux_bus_loc = `ST_MUX;
 			sx_loc = `SX_ST;
-			case(dec_inst[14:12])
+			case(dec_inst_in[14:12])
 				`SW: dec_ld1_loc = `SW_LD1;
 				`SH: dec_ld1_loc = `SH_LD1;
 				`SB: dec_ld1_loc = `SB_DL1;
@@ -210,11 +212,11 @@ end
 //sign extension
 always @* begin
 	case(sx_loc)
-		`SX_LD_I_R_JALR:dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:20]});
-		`SX_AUIPC_LUI: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:12]});
-		`SX_SB: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31],dec_inst[7],dec_inst[30:25],dec_inst[11:8]});
-		`SX_UJ_JAL: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31],dec_inst[19:12],dec_inst[20],dec_inst[30:21]});
-		`SX_ST: dec_sx_imm_loc = $signed({{dec_inst[31]},dec_inst[31:25],dec_inst[11:7]});
+		`SX_LD_I_R_JALR:dec_sx_imm_loc = $signed({{dec_inst_in[31]},dec_inst_in[31:20]});
+		`SX_AUIPC_LUI: dec_sx_imm_loc = $signed({{dec_inst_in[31]},dec_inst_in[31:12]});
+		`SX_SB: dec_sx_imm_loc = $signed({{dec_inst_in[31]},dec_inst_in[31],dec_inst_in[7],dec_inst_in[30:25],dec_inst_in[11:8]});
+		`SX_UJ_JAL: dec_sx_imm_loc = $signed({{dec_inst_in[31]},dec_inst_in[31],dec_inst_in[19:12],dec_inst_in[20],dec_inst_in[30:21]});
+		`SX_ST: dec_sx_imm_loc = $signed({{dec_inst_in[31]},dec_inst_in[31:25],dec_inst_in[11:7]});
 	endcase//sx_loc	
 end	
 	//conections of register file
@@ -223,8 +225,8 @@ end
 		.rst_n(rst_n),
 		.rs1(rs1),
 		.rs2(rs2),
-		.rd(dec_inst[11:7]),
-		.data_in(dec_data_wrt),
+		.rd(dec_inst_in[11:7]),
+		.data_in(dec_data_wrt_in),
 		.we(dec_we_reg_file_in),
 		.order(dec_order_loc),
 		.src1_out_r(dec_src1_loc),
@@ -239,8 +241,8 @@ end
 			dec_alu_op_out_reg <= dec_alu_op_loc;
 			dec_src1_out_reg <= dec_src1_loc;	
 			dec_src2_out_reg <= dec_src2_loc;
-			dec_pc_out_reg <=  	dec_pc_loc;
-			dec_pc_4_out_reg <= dec_pc_4_loc;
+			dec_pc_out_reg <=  	dec_pc_in;
+			dec_pc_4_out_reg <= dec_pc_4_in;
 			dec_sx_imm_out_reg <= dec_sx_loc;
 			dec_we_reg_file_out_reg <= dec_we_reg_file_loc;
 		end	
@@ -260,11 +262,11 @@ end
 			dec_we_reg_file_out_reg <= 0;
 		end	
 end 
-assign dec_hazard_bus_loc = {rs1,rs2,dec_inst[11:7]};
-assign dec_stall = (dec_il1_ack)? 1'b0;1'b1;
-assign dec_ld1_loc = (dec_nop_gen)?`NOT_REQ : dec_ld1_loc;
-assign dec_we_reg_file_loc = (dec_nop_gen)? `WE_OFF : dec_we_reg_file_loc;
-assign rs1 = (dec_nop_gen)? 5'b0: dec_inst[19:15];
-assign rs2 = (dec_nop_gen)? 5'b0: dec_inst[24:20];	
+assign dec_hazard_bus_loc = {rs1,rs2,dec_inst_in[11:7]};
+assign dec_stall_in = (dec_il1_ack_in)? 1'b0;1'b1;
+assign dec_ld1_loc = (dec_nop_gen_in)?`NOT_REQ : dec_ld1_loc;
+assign dec_we_reg_file_loc = (dec_nop_gen_in)? `WE_OFF : dec_we_reg_file_loc;
+assign rs1 = (dec_nop_gen_in)? 5'b0: dec_inst_in[19:15];
+assign rs2 = (dec_nop_gen_in)? 5'b0: dec_inst_in[24:20];	
 endmodule // cpu_dec_s
 

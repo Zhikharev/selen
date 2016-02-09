@@ -1,4 +1,5 @@
 `define PS_START 32'b0
+`define CASHEBLE_ADDR 32'h0000ffff
 /// mux bus bellow 
 `define R_MUX 6'b0xx000
 `define I_R_MUX 6'b0xx010
@@ -64,17 +65,17 @@
 
 // the write back sign extebcion controll
 `define WB_SX_UH	3'b101
-`define WB_SX_H	3'b001
+`define WB_SX_H		3'b001
 `define WB_SX_UB	3'b100
-`define WB_SX_B 3'b000
+`define WB_SX_BP 	3'b000
 `define WB_SX_PC	3'b111
-`define WB_SX_BP	1'b010
+`define WB_SX_B 	3'b010
 //decode sx input
 `define SX_AUIPC_LUI		3'b000
 `define SX_LD_I_R_JALR 	3'b001
-`define SX_SB 				3'b010
-`define SX_UJ_JAL			3'b011
-`define SX_ST				3'b010
+`define SX_SB		 				3'b010
+`define SX_UJ_JAL				3'b011
+`define SX_ST						3'b010
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -107,9 +108,12 @@
 `define KILL_FULL_ON  4'b1111
 `define ENB_FULL_ON	4'b1111
 `define REG_KILL_ON 1'b1
+`define KILL_BRNCH 4'b0011
 `define REG_KILL_OFF 1'b0
 `define REG_ENB_ON 1'b1
 `define REG_ENB_OFF 1'b0
+
+
 `define REG_IF_DEC 0
 `define REG_DEC_EXE 1
 `define REG_EXE_MEM 2
