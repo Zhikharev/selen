@@ -20,6 +20,8 @@
 //                          for slave 1 (must be same width as addr_o)
 //                          WB_COM_S1_AMASK - adress mask for slave 1 
 // ----------------------------------------------------------------------------
+`ifndef INC_WB_COM_DEFINES
+`define INC_WB_COM_DEFINES
 
 
 `define WB_COM_AWIDTH            32
