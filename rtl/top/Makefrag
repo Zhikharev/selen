@@ -5,11 +5,19 @@ TOP_RTL_SRC :=\
 	$(MAKEHOME)/selen_cpu_cluster.sv \
 	$(MAKEHOME)/selen_top.sv
 
+# ----------------------------------
+# X-bar
 include $(RTL_HOME)/wb_com/Makefrag
 TMP := $(RTL_SRC)
-
+# ----------------------------------
+# Core
+include $(RTL_HOME)/core/Makefrag
+TMP += $(RTL_SRC)
+# ----------------------------------
+# L1-cache
 include $(RTL_HOME)/l1_cache/Makefrag
 TMP += $(RTL_SRC)
+# ----------------------------------
 
 TMP += $(TOP_RTL_SRC)
 RTL_SRC = $(TMP)
