@@ -64,3 +64,4 @@ assign full = (rd_ptr[SIZE] != wr_ptr[SIZE]) & (rd_ptr[SIZE-1:0] == wr_ptr[SIZE-
 assign empty = (wr_ptr == rd_ptr);
 
 endmodule
+`endif
