@@ -1,3 +1,18 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME            : wb_com_slave.v
+// PROJECT              : Selen
+// AUTHOR               : Pavel Petrakov
+// AUTHOR'S EMAIL       : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION          :   common logic for wishbone slaves in wishbone
+//                          commutator. 
+// ----------------------------------------------------------------------------
+
+`ifndef INC_WB_COM_SLAVE
+`define INC_WB_COM_SLAVE
+
 module  wb_com_slave 
 (
 clk,

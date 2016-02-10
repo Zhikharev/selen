@@ -1,4 +1,19 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME            : wb_com_top.v
+// PROJECT              : Selen
+// AUTHOR               : Pavel Petrakov
+// AUTHOR'S EMAIL       : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION          : top module of wishbone commutator with 2 masters and
+//                          2 slaves
+// ----------------------------------------------------------------------------
 //`include    "wb_com_defines.v"
+
+`ifndef INC_WB_COM_TOP
+`define INC_WB_COM_TOP
+
 module wb_com_top
 (
 clk_i,

@@ -1,3 +1,18 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME            : wb_com_master.v
+// PROJECT              : Selen
+// AUTHOR               : Pavel Petrakov
+// AUTHOR'S EMAIL       : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION          :   common logic for wishbone masters in wishbone
+//                          commutator. Generates err_i if addr_o wasn't in
+//                          s0 or s1 range.
+// ----------------------------------------------------------------------------
+`ifndef INC_WB_COM_MASTER
+`define INC_WB_COM_MASTER
+
 module wb_com_master
 (
 clk,
