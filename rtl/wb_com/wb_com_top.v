@@ -1,4 +1,4 @@
-`include    "wb_com_defines.v"
+//`include    "wb_com_defines.v"
 module wb_com_top
 (
 clk_i,

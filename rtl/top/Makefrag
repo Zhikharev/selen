@@ -1,0 +1,15 @@
+MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
+RTL_HOME := $(MAKEHOME)../../rtl
+
+TOP_RTL_SRC :=\
+	$(MAKEHOME)/selen_cpu_cluster.sv \
+	$(MAKEHOME)/selen_top.sv
+
+include $(RTL_HOME)/wb_com/Makefrag
+TMP := $(RTL_SRC)
+
+include $(RTL_HOME)/l1_cache/Makefrag
+TMP += $(RTL_SRC)
+
+TMP += $(TOP_RTL_SRC)
+RTL_SRC = $(TMP)
