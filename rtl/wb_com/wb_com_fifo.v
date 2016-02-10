@@ -1,3 +1,20 @@
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+// FILE NAME            : wb_com_fifo.v
+// PROJECT              : Selen
+// AUTHOR               : Pavel Petrakov
+// AUTHOR'S EMAIL       : 
+// ----------------------------------------------------------------------------
+// DESCRIPTION          :   synchronous fifo that used in wishbone commutator
+//                          parameters used:
+//                          DATA_W  - data width
+//                          SIZE    - size of address bits for internal 
+//                          memory(depends on depth of fifo)
+// ----------------------------------------------------------------------------
+`ifndef INC_WB_COM_FIFO
+`define INC_WB_COM_FIFO
+
 module          wb_com_fifo
 (
 clk,
@@ -47,3 +64,4 @@ assign full = (rd_ptr[SIZE] != wr_ptr[SIZE]) & (rd_ptr[SIZE-1:0] == wr_ptr[SIZE-
 assign empty = (wr_ptr == rd_ptr);
 
 endmodule
+`endif

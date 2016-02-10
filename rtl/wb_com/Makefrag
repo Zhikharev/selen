@@ -1,0 +1,8 @@
+MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
+
+RTL_SRC :=\
+	$(MAKEHOME)/wb_com_defines.v \
+	$(MAKEHOME)/wb_com_fifo.v \
+	$(MAKEHOME)/wb_com_master.v \
+	$(MAKEHOME)/wb_com_slave.v \
+	$(MAKEHOME)/wb_com_top.v

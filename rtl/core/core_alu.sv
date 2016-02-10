@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        : arithmetico logical unit
 // ----------------------------------------------------------------------------
-`include "core_defines.vh"
+
 module(
 	input[31:0] signed						src1,
 	input[31:0] signed						src2,

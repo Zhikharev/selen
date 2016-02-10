@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_top.sv
 // PROJECT        : Selen
@@ -17,7 +17,7 @@ module l1_top
 (
 	input 													clk,
 	input 													rst_n,
-	
+
 	// L1I interface
 	input 													l1i_req_val,
 	input 	[`CORE_ADDR_WIDTH-1:0] 	l1i_req_addr,
@@ -68,7 +68,7 @@ module l1_top
 	wire 	[`L1_LINE_SIZE-1:0] 		l1d_mau_ack_data;
 	wire                          l1d_mau_ack_nc;
 
-	l1i_top l1i 
+	l1i_top l1i
 	(
 		.clk 						 (clk),
 		.rst_n 					 (rst_n),
@@ -82,9 +82,9 @@ module l1_top
 		.mau_ack_data 	 (l1i_mau_ack_data)
 	);
 
-	l1d_top l1d 
+	l1d_top l1d
 	(
-		.clk 						(clk), 
+		.clk 						(clk),
 		.rst_n 					(rst_n),
 		.core_req_val 	(l1d_req_val),
 		.core_req_addr 	(l1d_req_addr),
@@ -143,3 +143,4 @@ module l1_top
 
 
 endmodule
+`endif
