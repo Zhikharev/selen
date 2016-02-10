@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME            : core_if_s.sv
+// FILE NAME        	    : core_if_s.sv
 // PROJECT                : Selen
 // AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexBolotnikov@gmail.com 			
+// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com 			
 // ----------------------------------------------------------------------------
-// DESCRIPTION        : decode phase of pipline 
+// DESCRIPTION        		: decode phase of pipline 
 // ----------------------------------------------------------------------------
 module cpu_dec_s(
 	input								clk,//system clock
@@ -38,7 +38,7 @@ module cpu_dec_s(
 	output[2:0] 	reg 	dec_alu_cnd_out_reg,// the MSB equals 1 means there is a branch command
 	output[14:0]	reg		dec_hazard_bus_out_reg,
 	// for hazard 
-	output[1:0]		reg		dec_hazard_type_out_reg,// signals to hazard
+	output[1:0]		reg		dec_hazard_cmd_out_reg,// signals to hazard
 	output							dec_stall_out// signal detecting absent of data from cashe
 );
 reg 				dec_order_loc;

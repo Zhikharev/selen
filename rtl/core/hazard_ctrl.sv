@@ -1,3 +1,11 @@
+// ----------------------------------------------------------------------------
+// FILE NAME            	: core_if_s.sv
+// PROJECT                : Selen
+// AUTHOR                 : Alexsandr Bolotnokov
+// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com 			
+// ----------------------------------------------------------------------------
+// DESCRIPTION        		: hazard controll
+// ----------------------------------------------------------------------------
 module hazard_ctrl(
 	input 						rst_n,
 	// register controll 
@@ -78,9 +86,10 @@ always @* begin
 		end
 		if(haz_cmd_exe_s_in == `HZRD_JMP)begin
 			haz_nop_gen_loc = `NOP_GEN_ON;
+			mux_1_loc = 1'b1;
 		end
 		if(haz_cmd_mem_s_in == `HZRD_JMP)begin
-			mux_1_loc = 1'b1;
+			//mux_1_loc = 1'b1;
 			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_ON;
 			haz_nop_gen_loc = `NOP_GEN_ON;			
 		end
@@ -107,6 +116,8 @@ always @* begin
 			haz_enb_bus_loc = `ENB_FULL_OFF;
 		end
 		if(haz_stall_dec_in)begin
+			
+		end
 			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
 			haz_nop_gen_loc = `NOP_GEN_ON; 
 		end

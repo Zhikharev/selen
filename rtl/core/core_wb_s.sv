@@ -4,16 +4,14 @@
 // FILE NAME            : core_if_s.sv
 // PROJECT                : Selen
 // AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexBolotnikov@gmail.com 			
+// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com 			
 // ----------------------------------------------------------------------------
-// DESCRIPTION        : write back phase of pipline 
+// DESCRIPTION    		    : write back phase of pipline 
 // ----------------------------------------------------------------------------
 module core_wb_s(
 
 	input								clk,
 	input 							rst_n,
-	input								wb_enb,
-	input 							wb_kill,
 
 	input[31:0] 				wb_alu_result_in,
 	input[31:0]					wb_mem_data_in,
@@ -24,7 +22,7 @@ module core_wb_s(
 	input 							wb_ack_from_lid_in,
 	input 							wb_we_reg_file_in,
 
-	output  					 	wb_we_reg_file,
+	output  					 	wb_we_reg_file_out,
 	output[31:0]				wb_data_out,
 	output 							wb_stall_out		
 );

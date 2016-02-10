@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME            : core_if_s.sv
+// FILE NAME            	: core_if_s.sv
 // PROJECT                : Selen
 // AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexBolotnikov@gmail.com 			
+// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com 			
 // ----------------------------------------------------------------------------
-// DESCRIPTION        : instruction fetch phase of pipline 
+// DESCRIPTION        		: instruction fetch phase of pipline 
 // ----------------------------------------------------------------------------
 module core_if_s (
 	input 							clk,// system clock 

@@ -1,5 +1,9 @@
 `define PS_START 32'b0
 `define CASHEBLE_ADDR 32'h0000ffff
+//regs
+`define CSR_WIDTH 32
+`define CSR_DEPTH 16
+`define TIMER_BITWISE 32
 /// mux bus bellow 
 `define R_MUX 6'b0xx000
 `define I_R_MUX 6'b0xx010
