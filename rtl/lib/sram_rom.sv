@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : sram_rom.v
+// FILE NAME      : sram_rom.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhikharev
 // AUTHOR'S EMAIL :
@@ -30,6 +30,9 @@ module sram_rom
 	no_addr_x_p:
 		assert property(@(posedge clk) ~$isunknown(ADDR))
 		else $fatal("Found X on ADDR!");
+	no_clk_x_p:
+		assert property(~$isunknown(CLK))
+		else $fatal("Found X on ADDR!");
 
 	// Port A
 	always @(posedge CLK) begin
@@ -38,7 +41,7 @@ module sram_rom
 		end
 	end
 
-	assign DO = ram[addr_r];
+	assign DO = rom[addr_r];
 
 endmodule
 
