@@ -23,11 +23,21 @@ module selen_top
 	wire                              cpu_wb_cyc_o;
 	wire                              cpu_wb_stb_o;
 	wire                              cpu_wb_we_o;
-
 	wire	[`WB_COM_DWIDTH - 1:0]      cpu_wb_dat_i;
 	wire                              cpu_wb_stall_i;
 	wire                              cpu_wb_ack_i;
 	wire                              cpu_wb_err_i;
+
+	wire  [`WB_COM_AWIDTH - 1:0]      com_mem_wb_addr_o;
+	wire  [`WB_COM_DWIDTH - 1:0]      com_mem_wb_dat_o;
+	wire  [`WB_COM_DWIDTH/8 - 1:0]    com_mem_wb_sel_o;
+	wire                              com_mem_wb_cyc_o;
+	wire                              com_mem_wb_stb_o;
+	wire                              com_mem_wb_we_o;
+	wire	[`WB_COM_DWIDTH - 1:0]      com_mem_wb_dat_i;
+	wire                              com_mem_wb_stall_i;
+	wire                              com_mem_wb_ack_i;
+	wire                              com_mem_wb_err_i;
 
 	selen_cpu_cluster cpu_cluster
 	(
@@ -78,15 +88,15 @@ module selen_top
 		.m1_wb_ack_i 		(),
 		.m1_wb_err_i 		(),
 		// Slave 0 wb interface
-		.s0_wb_addr_o 	(),
-		.s0_wb_dat_o 		(),
-		.s0_wb_sel_o 		(),
-		.s0_wb_cyc_o 		(),
-		.s0_wb_stb_o 		(),
-		.s0_wb_we_o 		(),
-		.s0_wb_dat_i 		(),
-		.s0_wb_stall_i 	(),
-		.s0_wb_ack_i 		(),
+		.s0_wb_addr_o 	(com_mem_wb_addr_o),
+		.s0_wb_dat_o 		(com_mem_wb_dat_o),
+		.s0_wb_sel_o 		(com_mem_wb_sel_o),
+		.s0_wb_cyc_o 		(com_mem_wb_cyc_o),
+		.s0_wb_stb_o 		(com_mem_wb_stb_o),
+		.s0_wb_we_o 		(com_mem_wb_we_o),
+		.s0_wb_dat_i 		(com_mem_wb_we_o),
+		.s0_wb_stall_i 	(com_mem_wb_stall_i),
+		.s0_wb_ack_i 		(com_mem_wb_ack_i),
 		// Slave 1 wb interface
 		.s1_wb_addr_o 	(),
 		.s1_wb_dat_o 		(),
@@ -97,6 +107,21 @@ module selen_top
 		.s1_wb_dat_i 		(),
 		.s1_wb_stall_i 	(1'b0),
 		.s1_wb_ack_i 		(1'b0)
+	);
+
+	wb_rom rom_1kB
+	(
+  	.wb_clk_i 	(clk),
+  	.wb_rst_i 	(~rst_n),
+  	.wb_dat_i 	(com_mem_wb_dat_o),
+  	.wb_dat_o 	(com_mem_wb_dat_i),
+  	.wb_adr_i 	(com_mem_wb_ack_o),
+  	.wb_sel_i 	(com_mem_wb_sel_o),
+  	.wb_we_i 		(com_mem_wb_we_o),
+  	.wb_cyc_i 	(com_mem_wb_cyc_o),
+  	.wb_stb_i 	(com_mem_wb_stb_o),
+  	.wb_ack_o 	(com_mem_wb_ack_i),
+  	.wb_err_o 	(com_mem_wb_err_i)
 	);
 
 endmodule
