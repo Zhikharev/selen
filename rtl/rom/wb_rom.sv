@@ -52,11 +52,12 @@ wire    [DW-1:0]        rom_dat_o;
 
 // ----------------------------------------------------------------------------
 // Inst of ROM
-sram_rom rom_1kB
+sram_rom
 #(
   .WIDTH (32),
   .DEPTH (256)
 )
+rom_1kB
 (
   .EN   (rom_en_i),
   .CLK  (rom_clk_i),
