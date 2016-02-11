@@ -97,11 +97,11 @@ output  [WB_DATA_WIDTH - 1:0]       m_to_s1_data_o;
 input                               m_to_s1_drden;
 output                              m_to_s1_hempty;
 
-input   [WB_DATA_WIDTH - 1:0]       s0_to_m_data_o;
+input   [WB_DATA_WIDTH:0]           s0_to_m_data_o;
 output                              s0_to_m_drden;
 input                               s0_to_m_dempty;
 
-input   [WB_DATA_WIDTH - 1:0]       s1_to_m_data_o;
+input   [WB_DATA_WIDTH:0]           s1_to_m_data_o;
 output                              s1_to_m_drden;
 input                               s1_to_m_dempty;
 
@@ -131,11 +131,12 @@ else if (m_wb_cyc_o & m_wb_stb_o & !m_wb_stall_i & !(m_wb_ack_i | m_wb_err_i))  
 wire m_arb      = |(m_dir_fst & m_dir_sel);
 wire m_error    = |(m_dir_fst & m_err_sel);
 
-assign m_wb_ack_i  = !m_error & (m_arb ? !s1_to_m_dempty  :   !s0_to_m_dempty);
-assign m_wb_dat_i  = m_arb ? s1_to_m_data_o   :   s0_to_m_data_o;
+assign m_wb_ack_i   = !m_error & (m_arb ? !s1_to_m_dempty & !s1_to_m_data_o[WB_DATA_WIDTH]  :   !s0_to_m_dempty & !s0_to_m_data_o[WB_DATA_WIDTH]);
+assign m_wb_err_i   = m_error | (m_arb ? !s1_to_m_dempty & s1_to_m_data_o[WB_DATA_WIDTH]    :   !s0_to_m_dempty & s0_to_m_data_o[WB_DATA_WIDTH]);
+assign m_wb_dat_i   = m_arb ? s1_to_m_data_o[WB_DATA_WIDTH-1:0]                             :   s0_to_m_data_o[WB_DATA_WIDTH-1:0];
+
 assign m_wb_stall_i = m_addr_s0_hit & m_to_s0_hfull | m_addr_s1_hit & m_to_s1_hfull | m_dir_fst[WB_M_BSCALE -1];
 
-assign m_wb_err_i  = m_error;
 
 assign s1_to_m_drden = m_arb & m_wb_ack_i & !m_error;
 assign s0_to_m_drden = !m_arb & m_wb_ack_i & !m_error;

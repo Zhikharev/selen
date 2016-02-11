@@ -56,6 +56,7 @@ s0_wb_we_o,
 s0_wb_dat_i,
 s0_wb_stall_i,
 s0_wb_ack_i,
+s0_wb_err_i,
 
 //Slave 1 wb interface
 s1_wb_addr_o,
@@ -67,7 +68,8 @@ s1_wb_we_o,
 
 s1_wb_dat_i,
 s1_wb_stall_i,
-s1_wb_ack_i
+s1_wb_ack_i,
+s1_wb_err_i
 );
 parameter   WB_ADDR_WIDTH       =   `WB_COM_AWIDTH;
 parameter   WB_DATA_WIDTH       =   `WB_COM_DWIDTH;
@@ -123,6 +125,7 @@ output                              s0_wb_we_o;
 input   [WB_DATA_WIDTH - 1:0]       s0_wb_dat_i;
 input                               s0_wb_stall_i;
 input                               s0_wb_ack_i;
+input                               s0_wb_err_i;
 
 //wb slave 1
 output  [WB_ADDR_WIDTH - 1:0]       s1_wb_addr_o;
@@ -135,10 +138,11 @@ output                              s1_wb_we_o;
 input   [WB_DATA_WIDTH - 1:0]       s1_wb_dat_i;
 input                               s1_wb_stall_i;
 input                               s1_wb_ack_i;
+input                               s1_wb_err_i;
 
-wire    [WB_HDR_WIDTH - 1:0]       m0_to_s0_header_o, m0_to_s1_header_o, m1_to_s0_header_o, m1_to_s1_header_o;
-wire    [WB_DATA_WIDTH - 1:0]        m0_to_s0_data_o, m0_to_s1_data_o, m1_to_s0_data_o, m1_to_s1_data_o,
-                                    s0_to_m0_data_o, s0_to_m1_data_o, s1_to_m0_data_o, s1_to_m1_data_o;
+wire    [WB_HDR_WIDTH - 1:0]        m0_to_s0_header_o, m0_to_s1_header_o, m1_to_s0_header_o, m1_to_s1_header_o;
+wire    [WB_DATA_WIDTH - 1:0]       m0_to_s0_data_o, m0_to_s1_data_o, m1_to_s0_data_o, m1_to_s1_data_o;
+wire    [WB_DATA_WIDTH:0]           s0_to_m0_data_o, s0_to_m1_data_o, s1_to_m0_data_o, s1_to_m1_data_o;
 
 //direction to slave fifo's
 reg [WB_TIME_TAG -1:0]       time_tag;
@@ -256,6 +260,7 @@ s0_part
 .s_wb_dat_i         (s0_wb_dat_i        ),
 .s_wb_stall_i       (s0_wb_stall_i      ),
 .s_wb_ack_i         (s0_wb_ack_i        ),
+.s_wb_err_i         (s0_wb_err_i        ),
                      
 //DATA from M0                          
 .m0_to_s_header_o   (m0_to_s0_header_o  ),
@@ -300,6 +305,7 @@ s1_part
 .s_wb_dat_i         (s1_wb_dat_i        ),
 .s_wb_stall_i       (s1_wb_stall_i      ),
 .s_wb_ack_i         (s1_wb_ack_i        ),
+.s_wb_err_i         (s1_wb_err_i        ),
                      
 //DATA from M0                          
 .m0_to_s_header_o   (m0_to_s1_header_o  ),
