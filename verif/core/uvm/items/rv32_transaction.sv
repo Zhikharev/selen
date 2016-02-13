@@ -62,9 +62,9 @@ class rv32_transaction extends uvm_sequence_item;
           7'b0100000: begin
             case(data[14:12])
               3'b000: opcode = SUB;
-              3'b001: opcode = SRA;
+              3'b101: opcode = SRA;
               3'b010: opcode = AM;
-              default: $error("Unknown [14:12] for R_TYPE");
+              default: $error("Unknown [14:12] for R_TYPE, found 3'b%3b", data[14:12]);
             endcase
           end
           default: $error("Unknown [31:25] for R_TYPE");
