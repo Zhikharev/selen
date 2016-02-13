@@ -80,7 +80,7 @@ class sl_core_i_drv extends uvm_driver #(rv32_transaction);
 
   // Drive item
   task drive_item(rv32_transaction item);
-    $display("%0s (%0t)",item.sprint(), $time());
+    `uvm_info("DRV(I)", item.sprint(), UVM_LOW)
     vif.req_ack <= 1'b1;
     vif.req_ack_data <= item.encode();
   endtask

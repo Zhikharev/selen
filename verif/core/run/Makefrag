@@ -1,5 +1,8 @@
+SIM_HOME := $(BENCH_HOME)/../../sim
+
 VLOG_OPTS+=\
 	+incdir+$(BENCH_HOME) \
+	+incdir+$(BENCH_HOME)/../common \
 	$(BENCH_HOME)/testbench/core_model_dpi.sv \
 	$(BENCH_HOME)/testbench/core_if.sv \
 	$(BENCH_HOME)/testbench/core_assembled.sv \
@@ -7,4 +10,8 @@ VLOG_OPTS+=\
 	$(BENCH_HOME)/testbench/core_tb_top.sv
 
 ELAB_OPTS+=\
-	$(BENCH_HOME)/testbench/core_model_dpi.c
+	-CFLAGS "-std=c++11 -g -Wall -O3" \
+	-CFLAGS -I$(SIM_HOME)/isa \
+	-CFLAGS -I$(SIM_HOME) \
+	$(SIM_HOME)/isa/src.cpp \
+	$(SIM_HOME)/dpi/core_model_dpi.cpp
