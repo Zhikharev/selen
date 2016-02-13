@@ -17,6 +17,7 @@ class sl_core_env extends uvm_env;
   sl_core_slave_agent core_data_agent;
 
   sl_rv32_layer_sequencer virtual_seqr;
+  sl_core_scrb core_scrb;
 
   int model_status;
   core_model::s_model_params model_params;
@@ -33,6 +34,7 @@ class sl_core_env extends uvm_env;
     core_data_agent  = sl_core_slave_agent::type_id::create("core_data_agent", this);
 
     virtual_seqr = sl_rv32_layer_sequencer::type_id::create("virtual_seqr", this);
+    core_scrb = sl_core_scrb::type_id::create("core_scrb", this);
 
     `uvm_info(get_full_name(), "Creating model...", UVM_LOW)
     model_params.pc_start   = 32'h0000_0123;
@@ -47,6 +49,8 @@ class sl_core_env extends uvm_env;
   function void connect_phase(uvm_phase phase);
   	super.connect_phase(phase);
     virtual_seqr.core_sequencer = core_instr_agent.sequencer;
+    core_instr_agent.item_collected_port.connect(core_scrb.item_collected_instr);
+    core_data_agent.item_collected_port.connect(core_scrb.item_collected_data);
   endfunction
 
 endclass

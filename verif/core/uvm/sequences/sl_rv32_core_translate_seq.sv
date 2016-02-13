@@ -32,7 +32,6 @@ class sl_rv32_core_translate_seq extends uvm_sequence #(sl_core_bus_item);
       `uvm_send(core_bus_item)
       get_response(core_bus_item);
       up_sequencer.item_done();
-      `uvm_info("RV32", rv32_item.sprint(), UVM_LOW)
       up_sequencer.put_response(rv32_item);
     end
   endtask
