@@ -110,12 +110,15 @@ class draft_test extends sl_core_base_test;
 
   `uvm_component_utils(draft_test)
 
+  int model_status;
+
   function new(string name = "draft_test", uvm_component parent=null);
     super.new(name,parent);
   endfunction : new
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
+    model_status = core_model::step();
     uvm_config_db#(uvm_object_wrapper)::set(this,
     "*core_i_agent.sequencer.main_phase", "default_sequence", core_alu_seq::type_id::get());
   endfunction
