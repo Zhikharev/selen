@@ -5,6 +5,7 @@ UVM_HOME = $(BENCH_HOME)/../tools/uvm-1.2
 TOP=core_tb_top
 SEED=1
 
+include $(BENCH_HOME)/../../rtl/core/Makefrag
 include $(BENCH_HOME)/run/Makefrag
 
 GCC     = g++
@@ -14,7 +15,7 @@ BITS    ?= 32
 DPI_SRC = $(UVM_HOME)/src/dpi/uvm_dpi.cc
 DPI_LIB_NAME = uvm_dpi
 DPI_LIB_DIR  = dpi_lib
-DPI_VSIM_OPT = -sv_lib $(DPI_LIB_DIR)/uvm_dpi 
+DPI_VSIM_OPT = -sv_lib $(DPI_LIB_DIR)/uvm_dpi
 
 # Model files
 MODEL_SRC = $(BENCH_HOME)/testbench/core_model_dpi.c
@@ -40,3 +41,8 @@ build: dpi_lib model_lib
 sim:
 	vsim -novopt $(DPI_VSIM_OPT) $(MODEL_VSIM_OPT) \
 	-sv_seed $(SEED) -do 'run -all' -l run.log $(SIM_OPTS) $(TOP)
+
+build_rtl_only:
+	vlib work; \
+	vmap work work; \
+	vlog -l build.log -mfcu -sv +incdir+$(UVM_HOME)/src $(RTL_SRC)
