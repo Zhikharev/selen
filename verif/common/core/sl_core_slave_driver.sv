@@ -1,23 +1,23 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : sl_core_i_drv.sv
+// FILE NAME      : sl_core_slave_driver.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhikharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : Driver with core interface for instruction port
+// DESCRIPTION    : Driver with core interface
 // ----------------------------------------------------------------------------
 
-`ifndef INC_SL_CORE_I_DRV
-`define INC_SL_CORE_I_DRV
+`ifndef INC_SL_CORE_SLAVE_DRIVER
+`define INC_SL_CORE_SLAVE_DRIVER
 
-class sl_core_i_drv extends uvm_driver #(rv32_transaction);
+class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
 
   virtual core_if vif;
-  rv32_transaction tr_item;
+  sl_core_bus_item tr_item;
 
-  `uvm_component_utils(sl_core_i_drv)
+  `uvm_component_utils(sl_core_slave_driver)
 
   function new (string name, uvm_component parent);
     super.new(name, parent);
@@ -44,7 +44,7 @@ class sl_core_i_drv extends uvm_driver #(rv32_transaction);
         if(vif.drv.req_val) begin
           seq_item_port.try_next_item(tr_item);
           if(tr_item != null) begin
-            rv32_transaction ret_item;
+            sl_core_bus_item ret_item;
             assert($cast(ret_item, tr_item.clone()));
             ret_item.set_id_info(tr_item);
             ret_item.accept_tr();
@@ -79,10 +79,9 @@ class sl_core_i_drv extends uvm_driver #(rv32_transaction);
   endtask
 
   // Drive item
-  task drive_item(rv32_transaction item);
-    `uvm_info("DRV(I)", item.sprint(), UVM_LOW)
+  task drive_item(sl_core_bus_item item);
     vif.req_ack <= 1'b1;
-    vif.req_ack_data <= item.encode();
+    vif.req_ack_data <= item.data;
   endtask
 
 endclass

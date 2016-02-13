@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : core_assembled.sv
+// FILE NAME      : sl_core_agent_cfg.sv
 // PROJECT        : Selen
 // AUTHOR         :
 // AUTHOR'S EMAIL :
@@ -9,21 +9,19 @@
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
-`ifndef INC_CORE_ASSEMBLED
-`define INC_CORE_ASSEMBLED
+`ifndef INC_SL_CORE_AGENT_CFG
+`define INC_SL_CORE_AGENT_CFG
 
+class sl_core_agent_cfg extends uvm_object;
 
-module core_assembled (
-	input 				clk,
-	input 				rst,
-	core_if 			i_intf,
-	core_if 			d_intf
-);
+	core_port_t port;
 
-	// Instantiate CPU DUT here
-	assign i_intf.req_val = 1;
-	assign i_intf.req_cop = 3'b000;
+	`uvm_object_utils_begin(sl_core_agent_cfg)
+		`uvm_field_enum(core_port_t, port, UVM_DEFAULT)
+	`uvm_object_utils_end
 
-endmodule
-
+	function new(string name = "core_agent_cfg");
+		super.new(name);
+	endfunction
+endclass
 `endif

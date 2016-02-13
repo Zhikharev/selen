@@ -1,25 +1,25 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
-// FILE NAME      : core_if.sv
+// FILE NAME      : sl_core_if.sv
 // PROJECT        : Selen
-// AUTHOR         : 
-// AUTHOR'S EMAIL : 
+// AUTHOR         :
+// AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
-`ifndef INC_CORE_IF
-`define INC_CORE_IF
+`ifndef INC_SL_CORE_IF
+`define INC_SL_CORE_IF
 
 interface core_if(input wire clk, input wire rst);
-	logic 			 req_val;
-	logic [2:0]  req_cop;
-	logic [2:0]  req_size;
-	logic [31:0] req_addr;
-	logic [31:0] req_wdata;
-	logic        req_ack;
-	logic [31:0] req_ack_data;
+	logic 				req_val;
+	logic [2:0]  	req_cop;
+	logic [2:0]  	req_size;
+	logic [31:0] 	req_addr;
+	logic [31:0] 	req_wdata;
+	logic        	req_ack;
+	logic [31:0] 	req_ack_data;
 
 	clocking drv @(posedge clk);
 		input req_val;
@@ -39,7 +39,7 @@ interface core_if(input wire clk, input wire rst);
 		input req_wdata;
 		input req_ack;
 		input req_ack_data;
-	endclocking	
+	endclocking
 endinterface
 
 `endif

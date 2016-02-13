@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : core_assembled.sv
+// FILE NAME      : sl_core_sequencer.sv
 // PROJECT        : Selen
 // AUTHOR         :
 // AUTHOR'S EMAIL :
@@ -9,21 +9,9 @@
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
-`ifndef INC_CORE_ASSEMBLED
-`define INC_CORE_ASSEMBLED
+`ifndef INC_SL_CORE_SEQUENCER
+`define INC_SL_CORE_SEQUENCER
 
-
-module core_assembled (
-	input 				clk,
-	input 				rst,
-	core_if 			i_intf,
-	core_if 			d_intf
-);
-
-	// Instantiate CPU DUT here
-	assign i_intf.req_val = 1;
-	assign i_intf.req_cop = 3'b000;
-
-endmodule
+typedef uvm_sequencer#(sl_core_bus_item) sl_core_sequencer;
 
 `endif

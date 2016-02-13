@@ -19,6 +19,9 @@ class sl_core_base_test extends uvm_test;
   int          num_pkts;
   bit          test_pass;
 
+  sl_core_agent_cfg core_instr_agent_cfg;
+  sl_core_agent_cfg core_data_agent_cfg;
+
   function new(string name = "core_base_test", uvm_component parent=null);
     super.new(name,parent);
   endfunction : new
@@ -32,6 +35,14 @@ class sl_core_base_test extends uvm_test;
     tb_env = sl_core_env::type_id::create("tb_env", this);
     uvm_default_line_printer.knobs.reference = 0;
     uvm_default_line_printer.knobs.footer = 0;
+
+    // Core agent configuration
+    core_instr_agent_cfg = sl_core_agent_cfg::type_id::create("core_instr_agent_cfg");
+    core_instr_agent_cfg.port = INSTR;
+    uvm_config_db #(sl_core_agent_cfg)::set(this, "*core_instr_agent*", "cfg", core_instr_agent_cfg);
+    core_data_agent_cfg = sl_core_agent_cfg::type_id::create("core_data_agent_cfg");
+    core_data_agent_cfg.port = DATA;
+    uvm_config_db #(sl_core_agent_cfg)::set(this, "*core_data_agent*", "cfg", core_data_agent_cfg);
 
     // Simulation opts
     if($value$plusargs("num_pkts=%d", num_pkts));
@@ -116,7 +127,7 @@ class draft_test extends sl_core_base_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     uvm_config_db#(uvm_object_wrapper)::set(this,
-    "*core_i_agent.sequencer.main_phase", "default_sequence", core_alu_seq::type_id::get());
+    "*virtual_seqr.main_phase", "default_sequence", core_alu_seq::type_id::get());
   endfunction
 endclass
 
