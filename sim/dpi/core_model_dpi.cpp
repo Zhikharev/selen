@@ -178,4 +178,11 @@ FUNC_BEGIN
 }
 FUNC_END
 
+int step()
+FUNC_BEGIN
+{
+    return model.step();
+}
+FUNC_END
+
 } //extern "C"

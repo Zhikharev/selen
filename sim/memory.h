@@ -38,8 +38,15 @@ class memory_t :
         public std::vector<byte_t>
 {
 public:
-    //inherit all constructors
-    using std::vector<byte_t>::vector;
+    memory_t () :
+        std::vector<byte_t>()
+    {
+    }
+
+    memory_t (size_t& size) :
+        std::vector<byte_t>(size)
+    {
+    }
 
     //read/write
 
