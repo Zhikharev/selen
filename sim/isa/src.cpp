@@ -166,6 +166,15 @@ void isa::perform(State& state, const selen::instruction_t instr)
 }
 
 
+instruction_t isa::fetch(State& state)
+{
+    if(state.pc > state.mem.size() + selen::WORD_SIZE)
+        throw std::runtime_error("PC refers to invalid address: "
+                                 "out of memory range");
+
+    return state.mem.read<word_t>(state.pc);
+}
+
 std::string isa::disassemble(const selen::instruction_t instr)
 {
     std::string product;

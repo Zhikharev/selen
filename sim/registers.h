@@ -13,10 +13,10 @@ namespace selen
 union reg_t
 {
     //two complement
-    word_t s = {0};
+    sword_t s = {0};
 
     //raw binary
-    sword_t u;
+    word_t u;
 
     //parts
     hword_t hw[2];

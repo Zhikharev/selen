@@ -62,7 +62,7 @@ void Simulator::cycle(const size_t steps_limit)
         if(state.pc == selen::SIMEXIT)
             break;
 
-        instruction_t instr = fetch();
+        instruction_t instr = isa::fetch(state);
 
         //Tracing
         if(config.trace)
@@ -77,15 +77,6 @@ void Simulator::cycle(const size_t steps_limit)
 
         status.steps_made_last++;
     }
-}
-
-instruction_t Simulator::fetch() const
-{
-    if(state.pc > state.mem.size() + selen::WORD_SIZE)
-        throw std::runtime_error("PC refers to invalid address: "
-                                 "out of memory range");
-
-    return state.mem.read<word_t>(state.pc);
 }
 
 void Simulator::dump_registers(std::ostream& out) const
