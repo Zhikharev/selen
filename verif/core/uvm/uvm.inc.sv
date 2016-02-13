@@ -6,6 +6,9 @@
 
 import uvm_pkg::*;
 
+// Common
+`include "smart_report_server.sv"
+
 `include "uvm/items/rv32_typedefs.sv"
 `include "uvm/items/rv32_transaction.sv"
 `include "uvm/drivers/sl_core_i_drv.sv"

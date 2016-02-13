@@ -1,0 +1,42 @@
+MTI_HOME = /opt/questasim_v6/questasim/questasim
+export LM_LICENSE_FILE=$(MTI_HOME)/../license.dat
+BENCH_HOME := $(dir $(lastword $(MAKEFILE_LIST)))/..
+UVM_HOME = $(BENCH_HOME)/../tools/uvm-1.2
+TOP=core_tb_top
+SEED=1
+
+include $(BENCH_HOME)/run/Makefrag
+
+GCC     = g++
+BITS    ?= 32
+
+# DPI files
+DPI_SRC = $(UVM_HOME)/src/dpi/uvm_dpi.cc
+DPI_LIB_NAME = uvm_dpi
+DPI_LIB_DIR  = dpi_lib
+DPI_VSIM_OPT = -sv_lib $(DPI_LIB_DIR)/uvm_dpi 
+
+# Model files
+MODEL_SRC = $(BENCH_HOME)/testbench/core_model_dpi.c
+MODEL_LIB_NAME = model
+MODEL_LIB_DIR = model_lib
+MODEL_SO = $(MODEL_LIB_DIR)/$(MODEL_LIB_NAME).so
+MODEL_VSIM_OPT  = -sv_lib $(MODEL_LIB_DIR)/$(MODEL_LIB_NAME)
+
+dpi_lib:
+	mkdir -p $(DPI_LIB_DIR);
+	$(GCC) -m$(BITS) -fPIC -DQUESTA -g -W -shared -x c -I$(MTI_HOME)/include \
+	$(DPI_SRC) -o $(DPI_LIB_DIR)/$(DPI_LIB_NAME).so
+
+model_lib:
+	mkdir -p $(MODEL_LIB_DIR);
+	$(GCC) -fPIC -W -shared -I$(MTI_HOME)/include $(MODEL_SRC) -o $(MODEL_SO)
+
+build: dpi_lib model_lib
+	vlib work; \
+	vmap work work; \
+	vlog -l build.log -mfcu -sv +incdir+$(UVM_HOME)/src $(RTL_SRC) $(VLOG_OPTS)
+
+sim:
+	vsim -novopt $(DPI_VSIM_OPT) $(MODEL_VSIM_OPT) \
+	-sv_seed $(SEED) -do 'run -all' -l run.log $(SIM_OPTS) $(TOP)
