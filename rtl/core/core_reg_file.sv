@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        : register file 
 // ----------------------------------------------------------------------------
-module(
+module core_reg_file (
 	input 				clk,
 	input 				rst_n,
 	input[4:0]			rs1,
@@ -17,8 +17,8 @@ module(
 	input[31:0]			data_in,
 	input 				we,
 	input 				order,
-	output[31:0] reg 	src1_out_r,
-	output[31:0] reg 	src2_out_r
+	output reg [31:0]  	src1_out_r,
+	output reg [31:0]  	src2_out_r
 );
 int i;
 reg [31:0] reg_file [31:0];
@@ -35,7 +35,7 @@ always @(negedge clk) begin
 // writing to regester file 
 always @(posedge clk) begin
 	if(~rst_n) begin
-		 for(i=0;i<32;i=++)
+		 for(i=0;i<32;i=i+1);
 	end // if(~rst_n)
 	else begin
 		if(we) begin

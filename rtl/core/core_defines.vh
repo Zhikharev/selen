@@ -1,4 +1,4 @@
-`define PS_START 32'b0
+`define PC_START 32'b0
 `define CASHEBLE_ADDR 32'h0000ffff
 //regs
 `define CSR_WIDTH 32
@@ -54,26 +54,27 @@
 `define DL1_SIZE_HALF		3'b001
 `define DL1_SIZE_WORD	3'b010
 
-`define LW_L1D 			{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_WORD}
-`define LH_L1D 			{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_HALF}
-`define LB_L1D 			{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_BYTE}
-`define SW_L1D 			{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_WORD}
-`define SH_L1D 			{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_HALF}
-`define SB_L1D 			{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_BYTE}
-`define NOT_REQ			{DL1_VAL_OFF,6'bx}
+`define LW_L1D 			7'b10x0010//{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_WORD}
+`define LH_L1D 			7'b10x0001//{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_HALF}
+`define LB_L1D 			7'b10x0000//{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_BYTE}
+`define SW_L1D 			7'b10x1010//{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_WORD}
+`define SH_L1D 			7'b10x1001//{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_HALF}
+`define SB_L1D 			7'b10x1000//{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_BYTE}
+`define NOT_REQ			7'b00x0000//{DL1_VAL_OFF,6'bx}
 
-`define  CASHEBLE 1'b0
-`define  UNCAHEBLE 1'b1
+`define  CASHABLE 1'b0
+`define  UNCASHABLE 1'b1
 
 `define  CASH_BIT 5
 
 // the write back sign extebcion controll
 `define WB_SX_UH	3'b101
-`define WB_SX_H		3'b001
+`define WB_SX_H	3'b001
 `define WB_SX_UB	3'b100
 `define WB_SX_BP 	3'b000
 `define WB_SX_PC	3'b111
 `define WB_SX_B 	3'b010
+`define  WB_SX_IMM 3'b011
 //decode sx input
 `define SX_AUIPC_LUI		3'b000
 `define SX_LD_I_R_JALR 	3'b001

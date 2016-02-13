@@ -13,36 +13,36 @@ module core_pipeline(
 	input 						pl_csr_addr_cach_uncash,	
 	// l1i
 
-	input[31:0]				pl_l1i_ack_rdata_in,
+	input[31:0]					pl_l1i_ack_rdata_in,
 	input 						pl_l1i_ack_in,
 	output 						pl_l1i_req_val_out,
-	output[31:0]			pl_l1i_req_aadr_out,
+	output[31:0]				pl_l1i_req_aadr_out,
 	
 	//l1d
 
 	output						pl_l1d_req_val_out,
-	output[31:0] 			pl_l1d_req_addr_out,
-	output[2:0] 			pl_l1d_req_cop_out,
-	output[31:0] 			pl_l1d_req_wdata_out,
-	output[2:0]				pl_l1d_req_size_out,
+	output[31:0] 				pl_l1d_req_addr_out,
+	output[2:0] 				pl_l1d_req_cop_out,
+	output[31:0] 				pl_l1d_req_wdata_out,
+	output[2:0]					pl_l1d_req_size_out,
 	input 						pl_l1d_ack_ack_in,
-	input[31:0]				pl_l1d_ack_rdata_in
+	input[31:0]					pl_l1d_ack_rdata_in
 );
 // if 2 dec wires
 wire[31:0]	if2dec_pc_loc;
 wire[31:0]	if2dec_pc_4_loc;
 //decode 2 exe wires
-wire[6:0]		dec2exe_l1d_bus_loc;
-wire[2:0]		dec2exe_wb_sx_op_loc;
+wire[6:0]	dec2exe_l1d_bus_loc;
+wire[2:0]	dec2exe_wb_sx_op_loc;
 wire[5:0] 	dec2exe_mux_bus_loc;
-wire[2:0]		dec2exe_alu_cnd_loc;
-wire[3:0]		dec2exe_alu_op_loc;
+wire[2:0]	dec2exe_alu_cnd_loc;
+wire[3:0]	dec2exe_alu_op_loc;
 wire[31:0]	dec2exe_src1_loc;
 wire[31:0]	dec2exe_src2_loc;
 wire[31:0]	dec2exe_pc_loc;
 wire[31:0]	dec2exe_pc_4_loc;
 wire[31:0]	dec2exe_sx_imm_loc;
-wire 				dec2exe_we_reg_file_loc;		
+wire 		dec2exe_we_reg_file_loc;		
 wire[14:0]	dec2exe_haz_bus_loc;
 // wires from exe to memmory
 wire[31:0] 	exe2mem_alu_result_loc;
@@ -51,50 +51,52 @@ wire[31:0]	exe2mem_wdata_loc;
 wire[31:0]	exe2mem_pc_4_loc;
 wire[31:0]	exe2if_addr_loc;
 wire[31:0]	exe2mem_l1d_bus_loc;
-wire 				exe2mem_mux_alu_mem_loc;
+wire 		exe2mem_mux_alu_mem_loc;
 wire[14:0]	exe2mem_haz_bus;
-wire 				exe2mem_we_reg_file_loc;
+wire 		exe2mem_we_reg_file_loc;
 wire[2:0] 	exe2mem_wb_sx_cmnd;
 // wires for mem to wb
 wire[31:0]	mem2wb_alu_result;
 wire[31:0]	mem2wb_imm;
 wire[31:0]	mem2wb_pc_4;
 wire[2:0] 	mem2wb_sx_op;
-wire 				mem2wb_mux_alu_mem;
-wire 				mem2wb_we_reg_file;
+wire 		mem2wb_mux_alu_mem;
+wire 		mem2wb_we_reg_file;
 
-wire[4:0] 	mem2wb_rd
+wire[4:0] 	mem2wb_rd;
 //hazard wires 
-wire[2:0]		haz2regs_enb_bus;
-wire[2:0]		haz2regs_kill_bus;
+wire[3:0]	haz2regs_enb_bus;
+wire[3:0]	haz2regs_kill_bus;
 
-wire 				haz2if_ps_stop;
-wire 				haz2exe_mux_trn;
+wire 		haz2if_ps_stop;
+wire 		haz2exe_mux_trn;
 
-wire[3:0]		haz2exe_bp_mux;
-wire 				haz2mem_bp_mux;
+wire[3:0]	haz2exe_bp_mux;
+wire 		haz2mem_bp_mux;
 
-wire 				haz2dec_nop_gen;
-wire 				dec2haz_stall;
+wire 		haz2dec_nop_gen;
+wire 		dec2haz_stall;
 wire[1:0] 	dec2haz_cmd; 	
-wire 				mem2haz_we_reg_file;
+wire 		mem2haz_we_reg_file;
 
 wire[1:0] 	exe2haz_cmd;
 wire[14:0]	exe2haz_reg_bus;
-wire 				exe2haz_brnch_tknn;
-wire 				mem2haz_we_reg_file;
+wire 		exe2haz_brnch_tknn;
+//wire 		mem2haz_we_reg_file;
 
-wire[1:0]		mem2haz_cmd;
+wire[1:0]	mem2haz_cmd;
 wire[14:0]	mem2haz_reg_bus;
-wire 				mem2haz_we_reg_file;
+//wire 		mem2haz_we_reg_file;
 
-wire[4:0]		wb2haz_rd;
-wire 				wb2haz_we_reg_file;
-wire 				wb2haz_stall;
-wire[1:0]		wb2haz_cmd;
+wire[4:0]	wb2haz_rd;
+wire 		wb2haz_we_reg_file;
+wire 		wb2haz_stall;
+wire[1:0]	wb2haz_cmd;
 //
 wire[31:0]	wb2dec_data_wrt;
-wire 				wb2dec_we_reg_file;
+wire 		wb2dec_we_reg_file;
+
+
 core_if_s if_s (
 	.clk(clk), 
 	.rst_n(rst_n), 
@@ -177,7 +179,7 @@ core_exe_s	exe_s(
 .exe_addr_out_reg(exe2if_addr_loc),
 .exe2haz_brnch_tknn(exe2haz_brnch_tknn_loc),//be aware  
 
-.exe_s_frm_haz_mux_trn_in(haz2exe_mux_trn)
+.exe_s_frm_haz_mux_trn_in(haz2exe_mux_trn),
 .exe_mux_trn_out_reg(exe2if_mux_trn)
 );
 
@@ -215,9 +217,9 @@ core_mem_s mem_s (
 .mem_mux_out_reg(mem2wb_mux_alu_mem),
 .mem_wb_sx_type_out_reg(mem2wb_sx_op),
 
-.mem_rd_out_reg(mem2wb_rd)
+.mem_rd_out_reg(mem2wb_rd),
+.mem_bp_from_wb(wb2dec_data_wrt)
 );
-
 core_wb_s wb_s(
 .clk(clk),
 .rst_n(rst_n),
@@ -234,7 +236,7 @@ core_wb_s wb_s(
 
 .wb_we_reg_file_out(wb2dec_we_reg_file),
 .wb_data_out(wb2dec_data_wrt),
-.wb_stall_out(wb2haz_stall),
+.wb_stall_out(wb2haz_stall)
 );
 
 hazard_ctrl	haz_ctrl(
@@ -268,3 +270,5 @@ hazard_ctrl	haz_ctrl(
 .haz_cmd_mem_s_in(mem2haz_cmd),
 .haz_cmd_wb_s_in(wb2haz_cmd)
 );
+
+endmodule // core_pipeline
