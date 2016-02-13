@@ -27,7 +27,7 @@ class sl_core_base_test extends uvm_test;
     super.build_phase(phase);
 
     // Report server
-    // set_my_server();
+     set_my_server();
 
     tb_env = sl_core_env::type_id::create("tb_env", this);
     uvm_default_line_printer.knobs.reference = 0;
@@ -88,9 +88,9 @@ class sl_core_base_test extends uvm_test;
     end
   endfunction
 
-/*
+
   function void set_my_server();
-      advanced_report_server my_server;
+      smart_report_server my_server;
       int hwidth, fwidth;
       my_server = new();
       if($test$plusargs("DEFAULT_SERVER"))
@@ -102,7 +102,6 @@ class sl_core_base_test extends uvm_test;
       end
       $timeformat(-9, 1, "ns", 4);
   endfunction
-*/
 
 endclass
 
@@ -110,15 +109,12 @@ class draft_test extends sl_core_base_test;
 
   `uvm_component_utils(draft_test)
 
-  int model_status;
-
   function new(string name = "draft_test", uvm_component parent=null);
     super.new(name,parent);
   endfunction : new
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    model_status = core_model::step();
     uvm_config_db#(uvm_object_wrapper)::set(this,
     "*core_i_agent.sequencer.main_phase", "default_sequence", core_alu_seq::type_id::get());
   endfunction
