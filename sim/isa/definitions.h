@@ -37,9 +37,11 @@ typedef word_t instruction_t;
 namespace isa
 {
 
+//get next instruction, throw
+instruction_t fetch(State& state);
+
 //perform instruction (also increment pc) on the state, throw.
 void perform(State& state, const instruction_t instr);
-
 
 //disassemble unstruction, nothrow
 std::string disassemble(const instruction_t inst);

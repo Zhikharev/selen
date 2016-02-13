@@ -91,7 +91,6 @@ public:
 
 private:
     void cycle(const size_t num_steps);
-    instruction_t fetch() const;
     
     State  state;
     Config config;

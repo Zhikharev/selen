@@ -27,7 +27,7 @@ struct I_R
         data.i = i;
     }
 
-    #define OPERATION (State& st, reg_id_t s1, addr_t imm, reg_id_t d)
+    #define OPERATION (State& st, reg_id_t s1, sword_t imm, reg_id_t d)
     typedef std::function<void OPERATION> operation_t;
 
     void perform(State& st) const
