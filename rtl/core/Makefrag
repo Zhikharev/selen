@@ -1,6 +1,6 @@
 MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
 RTL_SRC :=\
-	$(MAKEHOME)/opcodes.vh\
+	$(MAKEHOME)/opcodes.vh \
 	$(MAKEHOME)/core_defines.vh \
 	$(MAKEHOME)/core_reg_file.sv \
 	$(MAKEHOME)/core_dec_s.sv \
@@ -9,5 +9,6 @@ RTL_SRC :=\
 	$(MAKEHOME)/core_if_s.sv \
 	$(MAKEHOME)/core_mem_s.sv \
 	$(MAKEHOME)/core_wb_s.sv \
-	$(MAKEHOME)/core_pipeline.sv\
-	$(MAKEHOME)/core_top.sv\
+	$(MAKEHOME)/core_pipeline.sv \
+	$(MAKEHOME)/core_csr.sv \
+	$(MAKEHOME)/core_top.sv

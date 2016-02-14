@@ -1,33 +1,43 @@
-module core_csr(
-	input clk,
-	input	rst_n,
-	input[(`CSR_WIDTH-1):0] csr_data_wrt,
-	input[($clog2(`CSR_DEPTH):0] csr_addr,
+// ----------------------------------------------------------------------------
+// FILE NAME            	: core_csr.sv
+// PROJECT                : Selen
+// AUTHOR                 :
+// AUTHOR'S EMAIL 				:
+// ----------------------------------------------------------------------------
+// DESCRIPTION        		:
+// ----------------------------------------------------------------------------
+`ifndef INC_CORE_CSR
+`define INC_CORE_CSR
 
-	output[(`CSR_WIDTH-1):0] csr_data_out,
-	output[(`TIMER_BITWISE-1):0] csr_time_out,
+module core_csr
+	(
+		input clk,
+		input	rst_n,
+		output [31:0] ncache_base,
+		output [31:0] ncache_mask
 	);
 
-	reg [(`CSR_WIDTH-1):0] regs [(`CSR_DEPTH-1):0];
-	reg[(`TIMER_BITWISE-1):0] counter;
-	integer i;
-	always @(posedge clk) begin
+	reg [32:0] ncache_base_r;
+	reg [32:0] ncache_mask_r;
+
+	always_ff @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
-			for(i=0;i<(`CSR_DEPTH-1);i++) begin
-				regs[i] <= 0;
-			end
-		end
-		else begin
-			regs[csr_addr] <= csr_data_wrt;
+			ncache_base_r <= `NCACHE_BASE_ADDR;
+			ncache_mask_r <= `NCACHE_MASK_ADDR;
 		end
 	end
-always @(posedge clk) begin
-	if(~rst_n) begin
-		counter <= 0;
+
+	assign ncache_base = ncache_base_r;
+	assign ncache_mask = ncache_mask_r;
+
+	// WDT
+	reg [`TIMER_BITWISE-1:0] counter_r;
+
+	always @(posedge clk, negedge rst_n) begin
+		if(~rst_n) counter_r <= 0;
+		else counter_r <= counter_r + 1'b1;
 	end
-	else begin
-		counter <= counter_next;
-	end
-end
-assign counter_next = counter + 1'b1;
+
 endmodule
+
+`endif

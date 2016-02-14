@@ -2,22 +2,23 @@
 // FILE NAME            	: core_pipeline.sv
 // PROJECT                : Selen
 // AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com 			
+// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION        		: connection bwtwine all modules of stage and hazard controll  
+// DESCRIPTION        		: connection bwtwine all modules of stage and
+//                          hazard controll
 // ----------------------------------------------------------------------------
 module core_pipeline(
 	input 						clk,
 	input  						rst_n,
 
-	input 						pl_csr_addr_cach_uncash,	
+	input 						pl_csr_addr_cach_uncash,
 	// l1i
 
 	input[31:0]					pl_l1i_ack_rdata_in,
 	input 						pl_l1i_ack_in,
 	output 						pl_l1i_req_val_out,
 	output[31:0]				pl_l1i_req_aadr_out,
-	
+
 	//l1d
 
 	output						pl_l1d_req_val_out,
@@ -42,7 +43,7 @@ wire[31:0]	dec2exe_src2_loc;
 wire[31:0]	dec2exe_pc_loc;
 wire[31:0]	dec2exe_pc_4_loc;
 wire[31:0]	dec2exe_sx_imm_loc;
-wire 		dec2exe_we_reg_file_loc;		
+wire 		dec2exe_we_reg_file_loc;
 wire[14:0]	dec2exe_haz_bus_loc;
 // wires from exe to memmory
 wire[31:0] 	exe2mem_alu_result_loc;
@@ -111,7 +112,7 @@ core_if_s if_s (
 	.if_pc_4(if2dec_pc_4_loc)  				
 );
 
-cpu_dec_s(
+cpu_dec_s dec_s(
 .clk(clk),//system clock
 .rst_n(rst_n),//system reset
 // cntrl 
