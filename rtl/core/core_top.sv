@@ -9,7 +9,7 @@
 // DESCRIPTION        		: top module for pipeline CPU include interconection
 //                          betwin pipline module and CRS module
 // ----------------------------------------------------------------------------
-module cpu_top
+module core_top
 	(
 		input 					core_sys_clk,
 		input 					core_sys_rst,
