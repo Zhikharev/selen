@@ -71,6 +71,8 @@ class sl_core_monitor extends uvm_monitor;
     if(core_agent_cfg.port == INSTR) begin
       assert(vif.mon.req_cop == RD)
       else `uvm_fatal("WRONG COP", "For INSTR port cop expected to be only RD")
+      assert(vif.mon.req_size == 4)
+      else `uvm_error("WRONG SIZE", "For INSTR port size expected to be only 4 bytes")
     end
   endfunction
 
