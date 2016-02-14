@@ -11,8 +11,8 @@
 // ----------------------------------------------------------------------------
 module core_top
 	(
-		input 					core_sys_clk,
-		input 					core_sys_rst,
+		input 					clk,
+		input 					rst_n,
 
 		//instruction inteface
 		output 					i_req_val,
