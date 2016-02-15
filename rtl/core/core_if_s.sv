@@ -47,6 +47,10 @@ always @(posedge clk)begin
 	if(if_enb) begin
 		if_pc<= pc_loc;
 		if_pc_4  <=  pc_4_adder;
+		if(if_kill) begin
+			if_pc <= 31'b0;
+			if_pc_4 <= 31'b0;
+		end // if(if_kill)
 	end
 	if(if_kill) begin
 		if_pc <= 31'b0;

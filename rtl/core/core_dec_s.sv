@@ -41,13 +41,13 @@ module cpu_dec_s(
 	output reg [1:0]					dec_hazard_cmd_out_reg,// signals to hazard
 	output								dec_stall_out// signal detecting absent of data from cashe
 );
-reg 			dec_we_reg_file_loc_nop;
-reg 			dec_ld1_loc_nop;
-reg 			dec_order_loc;
+reg 				dec_we_reg_file_loc_nop;
+reg 				dec_ld1_loc_nop;
+reg 				dec_order_loc;
 reg[2:0] 		sx_loc;
 reg[2:0]		wb_sx_loc;
 reg[2:0] 		dec_wb_sx_op_loc;
-reg 			dec_we_reg_file_loc;		
+reg 				dec_we_reg_file_loc;		
 reg[31:0]		dec_src1_loc;
 reg[31:0]		dec_src2_loc;
 reg[31:0]		dec_sx_imm_loc;
@@ -58,7 +58,7 @@ reg[3:0]		alu_op;
 reg[3:0] 		dec_alu_cnd_loc;
 reg[14:0]		dec_hazard_bus_loc;
 wire[4:0]		rs1;
-wire [4:0]		rs2;
+wire [4:0]	rs2;
 reg[1:0]		dec_hazard_cmd_loc;
 //controll unit
 always @* begin

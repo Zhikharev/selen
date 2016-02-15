@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		: hazard controll
 // ----------------------------------------------------------------------------
-module hazard_ctrl(
+module core_hazard_ctrl(
 	input 						rst_n,
 	// register controll 
 	output[3:0]				haz_enb_bus_out,
@@ -17,19 +17,19 @@ module hazard_ctrl(
 	output					haz_mux_trn_out,
 	// forwarding
 	output[3:0] 			haz_bp_mux_exe_out,
-	output					haz_bp_mux_mem_out,
+	output						haz_bp_mux_mem_out,
 	// sourses and destinations
 	input[14:0]				haz_bus_exe_s_in,
 	input[14:0]				haz_bus_mem_s_in,
 	input[4:0]				haz_rd_wb_s_in,
 	//we of reg file
-	input					haz_we_reg_file_exe_s_in,
-	input					haz_we_reg_file_mem_s_in,//exsessive pin 
+	input						haz_we_reg_file_exe_s_in,
+	input						haz_we_reg_file_mem_s_in,//exsessive pin 
 	input 					haz_we_reg_file_wb_s_in,
 	// brnch taken from alu
 	input 					haz_brnch_tknn_in,
 	// stall of cahe
-	input					haz_stall_dec_in,
+	input						haz_stall_dec_in,
 	input 					haz_stall_wb_in,
 	// comand from each stages 
 	input[1:0]				haz_cmd_dec_s_in,
@@ -116,8 +116,6 @@ always @* begin
 			haz_enb_bus_loc = `ENB_FULL_OFF;
 		end
 		if(haz_stall_dec_in)begin
-			
-		end
 			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
 			haz_nop_gen_loc = `NOP_GEN_ON; 
 		end

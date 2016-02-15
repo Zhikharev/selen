@@ -22,14 +22,14 @@ module core_reg_file (
 );
 int i;
 reg [31:0] reg_file [31:0];
-always @(negedge clk) begin 
+always @ begin 
 	if(order) begin
 			src1_out_r <= reg_file[rs2];
 			src2_out_r <= reg_file[rs1];
 		end
 		else begin
-			src2_out_r <= reg_file[rs2];
-			src1_out_r <= reg_file[rs1];
+			src1_out_r <= reg_file[rs2];
+			src2_out_r <= reg_file[rs1];
 		end
 	end
 // writing to regester file 
