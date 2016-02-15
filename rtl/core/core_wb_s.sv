@@ -25,6 +25,7 @@ module core_wb_s(
 	output 					 	wb_we_reg_file_out,
 	output[31:0]				wb_data_out,
 	output						wb_stall_out		
+	
 );
 wire[31:0] mux_out_loc;
 

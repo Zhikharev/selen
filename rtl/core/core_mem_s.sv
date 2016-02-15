@@ -41,8 +41,9 @@ module core_mem_s (
 	output reg 			 		mem_we_reg_file_out_reg,
 	output reg 				 	mem_mux_out_reg,
 	output reg [2:0]	 		mem_wb_sx_type_out_reg,
-	output reg [4:0]			mem_rd_out_reg
+	output reg [4:0]			mem_rd_out_reg,
 
+	output 						mem2haz_we_reg_file_out
 );
 wire cash_ucash;
 always @(posedge clk) begin 
@@ -76,5 +77,5 @@ end
 assign mem_wrt_data_in = (mem_bp_mux_in)?mem_bp_from_wb_data_in:mem_wrt_data_in;
 assign cash_ucash = (mem_alu_result_in > mem_cahs_reg_in)? `CASHABLE:`UNCASHABLE;
 assign mem2exe_bp_data_out = mem_alu_result_in;
-
+assign mem2haz_we_reg_file_out = mem_we_reg_file_in;
 endmodule // core_mem

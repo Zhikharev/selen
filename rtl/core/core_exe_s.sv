@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
 // 
 // ----------------------------------------------------------------------------
-// FILE NAME         		  : core_if_s.sv
-// PROJECT                : Selen
-// AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com 			
+// FILE NAME         		: core_if_s.sv
+// PROJECT 		            : Selen
+// AUTHOR         	      : Alexsandr Bolotnokov
+// AUTHOR'S EMAIL 	     	:AlexsandrBolotnikov@gmail.com 			
 // ----------------------------------------------------------------------------
-// DESCRIPTION        		: execution phase of pipline 
+// DESCRIPTION        	: execution phase of pipline 
 // ----------------------------------------------------------------------------
 module core_exe_s (
 	input						clk,
@@ -46,7 +46,9 @@ module core_exe_s (
 	output reg [31:0]	 		exe_w_data_out_reg,
 	output reg [31:0]	 		exe_addr_out_reg,
 	output reg				 	exe_mux_trn_out_reg,
-	output						exe2haz_brnch_tknn 				
+	output						exe2haz_brnch_tknn, 				
+
+	output 						exe2haz_we_reg_file_out
 );
 wire[31:0] 		alu_src1;
 wire[31:0] 		alu_src2;
@@ -69,8 +71,8 @@ core_alu core_alu(
 	.alu_result(exe_alu_result_loc),
 	.brnch_takenn(brnch_takenn_loc)		
 	);
-assign exe_addr_src_oc = (exe_mux_bus_in[`PC_MUX3_MUX])?(exe_pc_in):((exe_mux_bus_in[`PC_4_SRC1_MUX])?(exe_src1_in):(exe_pc_4_in));
-assign exe_addr_loc = exe_sx_imm_in + exe_addr_src_oc;
+assign exe_addr_src_loc = (exe_mux_bus_in[`PC_MUX3_MUX])?(exe_pc_in):((exe_mux_bus_in[`PC_4_SRC1_MUX])?(exe_src1_in):(exe_pc_4_in));
+assign exe_addr_loc = exe_sx_imm_in + exe_addr_src_loc;
 always @(posedge clk) begin 
 	if(exe_enb)begin
 		exe_alu_result_out_reg <= exe_alu_result_loc;
@@ -98,4 +100,5 @@ always @(posedge clk) begin
 	end	
 end
 assign exe2haz_brnch_tknn = brnch_takenn_loc;
+assign exe2haz_we_reg_file_out = exe_we_reg_file_in;
 endmodule		  

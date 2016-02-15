@@ -46,11 +46,11 @@ wire[4:0] rs1_mem_loc;
 wire[4:0] rs2_mem_loc;
 wire[4:0] rd_mem_loc;
 reg[3:0]	hazard_exe_bp_loc;
-reg 			hazard_mem_bp_loc;
+reg			hazard_mem_bp_loc;
 reg[3:0]	haz_enb_bus_loc;
 reg[3:0]	haz_kill_bus_loc; 
-reg 			haz_nop_gen_loc;
-reg 			mux_1_loc;
+reg			haz_nop_gen_loc;
+reg			mux_1_loc;
 assign rs1_exe_loc =	haz_bus_exe_s_in[14:10];
 assign rs2_exe_loc =	haz_bus_exe_s_in[9:4];
 assign rd_exe_loc =  	haz_bus_exe_s_in[4:0];
@@ -116,8 +116,6 @@ always @* begin
 			haz_enb_bus_loc = `ENB_FULL_OFF;
 		end
 		if(haz_stall_dec_in)begin
-			
-		end
 			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
 			haz_nop_gen_loc = `NOP_GEN_ON; 
 		end
