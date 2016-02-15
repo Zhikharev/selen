@@ -15,7 +15,7 @@
 class sl_core_monitor extends uvm_monitor;
 
   virtual core_if vif;
-  sl_core_agent_cfg core_agent_cfg;
+  sl_core_agent_cfg cfg;
 
   uvm_analysis_port#(sl_core_bus_item) item_collected_port;
 
@@ -30,8 +30,8 @@ class sl_core_monitor extends uvm_monitor;
     super.build_phase(phase);
     assert(uvm_config_db#(virtual core_if)::get(this, "" ,"vif", vif))
     else `uvm_fatal("NOVIF", {"Virtual interface must be set for: ", get_full_name(),".vif"});
-    assert(uvm_config_db#(sl_core_agent_cfg)::get(this, "" ,"cfg", core_agent_cfg))
-    else `uvm_fatal("NOCFG", {"CFG must be set for: ", get_full_name(),".core_agent_cfg"});
+    assert(uvm_config_db#(sl_core_agent_cfg)::get(this, "" ,"cfg", cfg))
+    else `uvm_fatal("NOCFG", {"CFG must be set for: ", get_full_name(),".cfg"});
   endfunction
 
   task run_phase(uvm_phase phase);
@@ -55,7 +55,7 @@ class sl_core_monitor extends uvm_monitor;
           while(!vif.mon.req_ack);
           if(!item.is_wr())item.data = vif.mon.req_ack_data;
           item_collected_port.write(item);
-          `uvm_info($sformatf("MON %0s",core_agent_cfg.port.name()), item.sprint(uvm_default_line_printer), UVM_MEDIUM)
+          `uvm_info($sformatf("MON %0s",cfg.port.name()), item.sprint(uvm_default_line_printer), UVM_MEDIUM)
         end
         else begin
           @(vif.mon);
@@ -68,7 +68,7 @@ class sl_core_monitor extends uvm_monitor;
   endtask
 
   function void check();
-    if(core_agent_cfg.port == INSTR) begin
+    if(cfg.port == INSTR) begin
       assert(vif.mon.req_cop == RD)
       else `uvm_fatal("WRONG COP", "For INSTR port cop expected to be only RD")
       assert(vif.mon.req_size == 4)

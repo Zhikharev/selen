@@ -16,6 +16,7 @@ class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
 
   virtual core_if vif;
   sl_core_bus_item tr_item;
+  sl_core_agent_cfg cfg;
 
   `uvm_component_utils(sl_core_slave_driver)
 
@@ -27,13 +28,20 @@ class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
     super.build_phase(phase);
     assert(uvm_config_db#(virtual core_if)::get(this, "" ,"vif", vif))
     else `uvm_fatal("NOVIF", {"Virtual interface must be set for: ", get_full_name(),".vif"});
+    assert(uvm_config_db#(sl_core_agent_cfg)::get(this, "" ,"cfg", cfg))
+    else `uvm_fatal("NOCFG", {"CFG must be set for: ", get_full_name(),".cfg"});
   endfunction
 
   function int rand_delay();
     int delay;
-    std::randomize(delay) with {
-      delay dist {0 :/ 90, [5:20] :/ 10};
-    };
+    if(cfg.drv_fixed_delay) begin
+      delay = cfg.drv_delay_max;
+    end
+    else begin
+      std::randomize(delay) with {
+        delay dist {0 :/ 90, [1:cfg.drv_delay_max] :/ 10};
+      };
+    end
     return(delay);
   endfunction
 
