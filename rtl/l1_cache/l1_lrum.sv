@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_lrum.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 `ifndef INC_L1_LRUM
 `define INC_L1_LRUM
@@ -60,7 +60,7 @@ module l1_lrum
     input [`L1_WAY_NUM-1:0] vec; //when vec==0,ms1_vec=0!
     integer i,j;
     reg     res0;
-    for (i=0; i<`L1_WAY_NUM; i=i+1) 
+    for (i=0; i<`L1_WAY_NUM; i=i+1)
       if (i<(`L1_WAY_NUM-1)) begin
         res0=1'b0;
         for (j=i+1; j<`L1_WAY_NUM; j=j+1) res0=res0|vec[j];
@@ -77,7 +77,7 @@ module l1_lrum
     if(~rst_n) begin
       rst_state_r <= IDLE;
     end else begin
-      if(rst_state_r == IDLE) begin 
+      if(rst_state_r == IDLE) begin
         if(rst_addr_r == '1) rst_state_r <= READY;
       end
     end
@@ -129,7 +129,7 @@ module l1_lrum
   assign lru_used_upd  = lru_used | way_vect;
   assign lru_used_next = (&lru_used_upd) ? way_vect : lru_used_upd;
 
-  sram_dp 
+  sram_dp
   #(
     .WIDTH (`L1_WAY_NUM),
     .DEPTH (`L1_SET_NUM)
@@ -141,14 +141,14 @@ module l1_lrum
     .ENA    (req),
     .CLKA   (clk),
     .ADDRA  (idx),
-    .DIA    (), 
+    .DIA    (),
     .DOA    (lru_used_sram),
     // PORT B
     .WEB    (1'b1),
     .ENB    (wr_en),
     .CLKB   (clk),
     .ADDRB  (wr_addr),
-    .DIB    (wr_wdata), 
+    .DIB    (wr_wdata),
     .DOB    ()
   );
 

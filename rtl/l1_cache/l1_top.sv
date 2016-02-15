@@ -104,7 +104,6 @@ module l1_top
 		.mau_ack_nc    	(l1d_mau_ack_nc)
 	);
 
-
 	l1_mau mau
 	(
 		// L1I interface
@@ -140,7 +139,6 @@ module l1_top
 		.wb_tgc_o 			 (wb_tgc_o), 	// not used now
 		.wb_we_o 				 (wb_we_o)
 	);
-
 
 endmodule
 `endif

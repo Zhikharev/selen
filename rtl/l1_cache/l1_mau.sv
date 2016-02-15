@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_mau.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 `ifndef INC_L1_MAU
 `define INC_L1_MAU
@@ -143,19 +143,19 @@ module l1_mau
 	assign wait_ack = {wait_ack_type, wait_ack_we, wait_ack_nc, wait_ack_cnt};
 	assign {ack_type, ack_we, ack_nc, ack_cnt} = ack;
 
-	fifo 
+	fifo
 	#(
 		.WIDTH (BUF_WIDTH),
 		.DEPTH (2)
-	) 
+	)
 	ack_type_q
 	(
-  	.clk 		(wb_clk_i), 
+  	.clk 		(wb_clk_i),
   	.rst 		(wb_rst_i),
-  	.rd 		(ack_received), 
+  	.rd 		(ack_received),
   	.wr 		(ack_wait),
   	.w_data (wait_ack),
-  	.empty 	(ack_waiting_n), 
+  	.empty 	(ack_waiting_n),
   	.full 	(buf_full),
   	.r_data (ack)
 	);
@@ -245,7 +245,7 @@ module l1_mau
 
 	assign l1i_req_ack = ack_received & (ack_type == ACK_I);
 	assign l1d_req_ack = (l1d_req_we) ? d_val : (ack_received & (ack_type == ACK_D) & (ack_we == 1'b0));
-	
+
 	assign l1i_ack_data = ack_data_r;
 	assign l1d_ack_data = ack_data_r;
 
@@ -344,8 +344,6 @@ module l1_mau
 	// -----------------------------------------------------------
 	// ASSERTIONS
 	// -----------------------------------------------------------
-
-
 
 endmodule
 

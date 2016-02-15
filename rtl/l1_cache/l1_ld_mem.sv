@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_ld_mem.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 `ifndef INC_L1_LD_MEM
 `define INC_L1_LD_MEM
@@ -15,7 +15,7 @@ module l1_ld_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
-) 
+)
 (
 	input 											CLK,
 	input 											RST_N,
@@ -42,7 +42,7 @@ module l1_ld_mem
 		if(~RST_N) begin
 			rst_state_r <= IDLE;
 		end else begin
-			if(rst_state_r == IDLE) begin 
+			if(rst_state_r == IDLE) begin
 				if(rst_addr_r == '1) rst_state_r <= READY;
 			end
 		end
@@ -74,7 +74,7 @@ module l1_ld_mem
 		.EN 		(en),
 		.CLK 		(CLK),
 		.ADDR 	(addr),
-		.DI 		(wdata), 
+		.DI 		(wdata),
 		.DO 		(RDATA)
 	);
 

@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_dm_mem.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 `ifndef INC_L1_DM_MEM
 `define INC_L1_DM_MEM
@@ -15,7 +15,7 @@ module l1_dm_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
-) 
+)
 (
 	input 											CLK,
 	input                       EN,
@@ -36,7 +36,7 @@ module l1_dm_mem
 		.EN 		(EN),
 		.CLK 		(CLK),
 		.ADDR 	(ADDR),
-		.DI 		(WDATA), 
+		.DI 		(WDATA),
 		.DO 		(RDATA)
 	);
 
