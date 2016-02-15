@@ -36,7 +36,10 @@ module core_assembled (
 		.d_req_ack 		(d_intf.req_ack),
 		.d_ack_rdata 	(d_intf.req_ack_data)
 	);
-
+/*
+	assign i_intf.req_val = 1'b1;
+	assign d_intf.req_val = 1'b0;
+*/
 	assign i_intf.req_cop  = 3'b000;
 	assign i_intf.req_size = 4;
 
