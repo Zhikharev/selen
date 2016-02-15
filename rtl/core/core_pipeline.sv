@@ -46,6 +46,7 @@ wire[31:0]	dec2exe_sx_imm_loc;
 wire 		dec2exe_we_reg_file_loc;
 wire[14:0]	dec2exe_haz_bus_loc;
 // wires from exe to memmory
+wire 		exe2if_mux_trn;
 wire[31:0] 	exe2mem_alu_result_loc;
 wire[31:0]	exe2mem_sx_imm_loc;
 wire[31:0]	exe2mem_wdata_loc;
@@ -56,7 +57,11 @@ wire 		exe2mem_mux_alu_mem_loc;
 wire[14:0]	exe2mem_haz_bus;
 wire 		exe2mem_we_reg_file_loc;
 wire[2:0] 	exe2mem_wb_sx_cmnd;
+wire 		exe2haz_brnch_tknn_loc;
+wire 		exe2haz_we_reg_file;
+
 // wires for mem to wb
+wire[31:0] 	mem2exe_bp_data_loc;
 wire[31:0]	mem2wb_alu_result;
 wire[31:0]	mem2wb_imm;
 wire[31:0]	mem2wb_pc_4;
@@ -83,16 +88,16 @@ wire 		mem2haz_we_reg_file;
 wire[1:0] 	exe2haz_cmd;
 wire[14:0]	exe2haz_reg_bus;
 wire 		exe2haz_brnch_tknn;
-//wire 		mem2haz_we_reg_file;
 
 wire[1:0]	mem2haz_cmd;
 wire[14:0]	mem2haz_reg_bus;
-//wire 		mem2haz_we_reg_file;
 
 wire[4:0]	wb2haz_rd;
 wire 		wb2haz_we_reg_file;
 wire 		wb2haz_stall;
 wire[1:0]	wb2haz_cmd;
+wire [31:0]	wb2exe_bp_data_loc;
+
 //
 wire[31:0]	wb2dec_data_wrt;
 wire 		wb2dec_we_reg_file;
@@ -181,7 +186,8 @@ core_exe_s	exe_s(
 .exe2haz_brnch_tknn(exe2haz_brnch_tknn_loc),//be aware  
 
 .exe_s_frm_haz_mux_trn_in(haz2exe_mux_trn),
-.exe_mux_trn_out_reg(exe2if_mux_trn)
+.exe_mux_trn_out_reg(exe2if_mux_trn),
+.exe2haz_we_reg_file_out(exe2haz_we_reg_file)
 );
 
 core_mem_s mem_s (
@@ -219,7 +225,8 @@ core_mem_s mem_s (
 .mem_wb_sx_type_out_reg(mem2wb_sx_op),
 
 .mem_rd_out_reg(mem2wb_rd),
-.mem_bp_from_wb(wb2dec_data_wrt)
+.mem_bp_from_wb(wb2dec_data_wrt),
+.mem2haz_we_reg_file_out(mem2haz_we_reg_file)
 );
 core_wb_s wb_s(
 .clk(clk),
@@ -239,7 +246,8 @@ core_wb_s wb_s(
 .wb_data_out(wb2dec_data_wrt),
 .wb_stall_out(wb2haz_stall)
 );
-
+assign wb2exe_bp_data_loc = wb2dec_data_wrt;
+assign wb2haz_we_reg_file = wb2dec_we_reg_file;// excesive
 hazard_ctrl	haz_ctrl(
 .rst_n(rst_n),
 // register controll 
@@ -258,7 +266,7 @@ hazard_ctrl	haz_ctrl(
 .haz_rd_wb_s_in(wb2haz_rd),
 //we of reg file
 .haz_we_reg_file_exe_s_in(exe2haz_we_reg_file),
-.haz_we_reg_file_mem_s_in(mem2haz_we_reg_file),//exsessive pin 
+.haz_we_reg_file_mem_s_in(mem2haz_we_reg_file), 
 .haz_we_reg_file_wb_s_in(wb2haz_we_reg_file),
 // brnch taken from alu
 .haz_brnch_tknn_in(exe2haz_brnch_tknn_loc),

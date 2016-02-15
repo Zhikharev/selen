@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_reg_dm_mem.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 `ifndef INC_L1_REG_DM_MEM
 `define INC_L1_REG_DM_MEM
@@ -15,7 +15,7 @@ module l1_reg_dm_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
-) 
+)
 (
 	input 											clk,
 	input 											rst_n,
@@ -34,9 +34,9 @@ module l1_reg_dm_mem
 	assign rdata = mem[raddr];
 
 	genvar i;
-	generate 
+	generate
 		for(i = 0; i < WIDTH/8; i = i + 1) begin
-			assign mask_data[i*8+:8] = (wbe[i]) ? wdata[i*8+:8] : mem[waddr][i*8+:8]; 
+			assign mask_data[i*8+:8] = (wbe[i]) ? wdata[i*8+:8] : mem[waddr][i*8+:8];
 		end
 	endgenerate
 
@@ -50,7 +50,6 @@ module l1_reg_dm_mem
 			if(wen) mem[waddr] <= mask_data;
 		end
 	end
-
 
 endmodule
 `endif

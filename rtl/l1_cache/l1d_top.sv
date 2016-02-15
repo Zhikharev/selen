@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1d_top.sv
 // PROJECT        : Selen
@@ -13,7 +13,7 @@
 `ifndef INC_L1D_TOP
 `define INC_L1D_TOP
 
-module l1d_top 
+module l1d_top
 (
 	input 															clk,
 	input 															rst_n,
@@ -44,10 +44,10 @@ module l1d_top
     reg [`L1_WAY_NUM-1:0] tmp;
     for(i = 0; i < $clog2(`L1_WAY_NUM); i++) begin
       for(j = 0; j < `L1_WAY_NUM; j++) begin
-        tmp[j] = one_hot_vector[j] & j[i];  
+        tmp[j] = one_hot_vector[j] & j[i];
       end
       one_hot_num[i] = |tmp;
-    end  
+    end
   endfunction
 
   wire 														cache_ready;
@@ -94,7 +94,7 @@ module l1d_top
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_wdata;
 	wire  													ld_wr_val;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_wr_tag;
- 
+
 	wire                            lru_ready;
 	wire [`L1_WAY_NUM-1:0] 					lru_way_vect;
 	reg  [`L1_WAY_NUM-1:0] 					lru_way_vect_r;
@@ -118,7 +118,7 @@ module l1d_top
 	assign cache_ready = &ld_ready_vect & lru_ready;
 
   // -----------------------------------------------------
-	// REQ 
+	// REQ
 	// -----------------------------------------------------
 
 	assign req_val = core_req_val & ~req_was_send_r;
@@ -153,10 +153,10 @@ module l1d_top
 	// DELAYED BUFFER
 	// -----------------------------------------------------
 
-	assign del_buf_clean = (~mau_req_ack | mau_ack_nc) & 
+	assign del_buf_clean = (~mau_req_ack | mau_ack_nc) &
 	                       (~core_req_val | (core_req_val & core_req_nc));
 
-	assign del_buf_dm_access = (core_req_val & core_req_wr) | 
+	assign del_buf_dm_access = (core_req_val & core_req_wr) |
 														 (core_req_val & core_req_nc) |
 														 ~core_req_val;
 
@@ -171,7 +171,7 @@ module l1d_top
 	end
 
 	always_ff @(posedge clk) begin
-		if(core_req_val & core_req_wr) begin 
+		if(core_req_val & core_req_wr) begin
 				del_buf_addr_r <= core_req_addr;
 				del_buf_data_r <= core_req_wdata;
 				del_buf_be_r   <= req_be;
@@ -187,7 +187,7 @@ module l1d_top
 	end
 
 	always_ff @(posedge clk) begin
-		if(req_val_r & ~del_buf_dm_access) begin 
+		if(req_val_r & ~del_buf_dm_access) begin
 			del_buf_way_vect_r <= lru_way_vect;
 		end
 	end
@@ -214,24 +214,24 @@ module l1d_top
 	// DM
 	// -----------------------------------------------------
 	always @* begin
-		if(req_val & core_req_rd) begin 
+		if(req_val & core_req_rd) begin
 			dm_en_vect = {`L1_WAY_NUM{1'b1}};
 			dm_we_vect = {`L1_WAY_NUM{1'b0}};
 			dm_addr    = req_idx;
 		end
-		else begin 
-			if(mau_req_ack) begin 
+		else begin
+			if(mau_req_ack) begin
 				dm_en_vect = lru_way_vect_r;
 				dm_we_vect = lru_way_vect_r;
 				dm_addr    = req_idx_r;
 			end
 			else begin
-				if(del_buf_val_r && del_buf_way_val_r) begin 
+				if(del_buf_val_r && del_buf_way_val_r) begin
 					dm_en_vect = del_buf_way_vect_r;
 					dm_we_vect = del_buf_way_vect_r;
 					dm_addr    = del_buf_idx;
 				end
-				else begin 
+				else begin
 					dm_en_vect = lru_way_vect & {`L1_WAY_NUM{del_buf_val_r}};
 					dm_we_vect = lru_way_vect;
 					dm_addr    = del_buf_idx;
@@ -274,7 +274,7 @@ module l1d_top
 	// -----------------------------------------------------
 	assign core_req_ack   = req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
-	
+
 	always @* begin
 		if(mau_ack_nc) core_ack_data = mau_ack_data[`CORE_DATA_WIDTH-1:0];
 		else if(del_buf_hit_r) core_ack_data = del_buf_data_r;
@@ -286,21 +286,21 @@ module l1d_top
 	// -----------------------------------------------------
 
 	genvar way;
-	generate 
+	generate
 		for(way = 0; way < `L1_WAY_NUM; way = way + 1) begin
 
 			assign {ld_rd_val_vect[way], ld_rd_tag[way]} = ld_rdata[way];
 			assign tag_cmp_vect[way] = (ld_rd_tag[way] == req_tag_r);
 
 			// -----------------------------------------------------
-			// LD tag memories 
+			// LD tag memories
 			// -----------------------------------------------------
-			l1_ld_mem 
+			l1_ld_mem
 			#(
-				.WIDTH (`L1_LD_MEM_WIDTH), 
+				.WIDTH (`L1_LD_MEM_WIDTH),
 				.DEPTH (`L1_SET_NUM)
 			)
-			ld_mem 
+			ld_mem
 			(
 				.CLK 		(clk),
 				.RST_N 	(rst_n),
@@ -315,12 +315,12 @@ module l1d_top
 			// -----------------------------------------------------
 			// Data memories
 			// -----------------------------------------------------
-			l1_dm_mem 
+			l1_dm_mem
 			#(
-				.WIDTH (`L1_LINE_SIZE), 
+				.WIDTH (`L1_LINE_SIZE),
 				.DEPTH (`L1_SET_NUM)
 			)
-			dm_mem 
+			dm_mem
 			(
 				.CLK 		(clk),
 				.EN 		(dm_en_vect[way]),

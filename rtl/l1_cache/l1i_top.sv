@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1i_top.sv
 // PROJECT        : Selen
@@ -15,7 +15,7 @@
 `ifndef INC_L1I_TOP
 `define INC_L1I_TOP
 
-module l1i_top 
+module l1i_top
 (
 	input 															clk,
 	input 															rst_n,
@@ -66,7 +66,7 @@ module l1i_top
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_wdata;
 	wire  													ld_wr_val;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_wr_tag;
- 
+
 	wire                            lru_ready;
 	wire [`L1_WAY_NUM-1:0] 					lru_way_vect;
 	reg  [`L1_WAY_NUM-1:0] 					lru_way_vect_r;
@@ -89,10 +89,10 @@ module l1i_top
     reg [`L1_WAY_NUM-1:0] tmp;
     for(i = 0; i < $clog2(`L1_WAY_NUM); i++) begin
       for(j = 0; j < `L1_WAY_NUM; j++) begin
-        tmp[j] = one_hot_vector[j] & j[i];  
+        tmp[j] = one_hot_vector[j] & j[i];
       end
       one_hot_num[i] = |tmp;
-    end  
+    end
   endfunction
 
   // -----------------------------------------------------
@@ -111,9 +111,9 @@ module l1i_top
 		else core_req_val_r <= core_req_val;
 	end
 
-	always_ff @(posedge clk) 
+	always_ff @(posedge clk)
 		if(~core_req_val_r) core_req_addr_r <= core_req_addr;
-	
+
 	always @(posedge clk, negedge rst_n)
 		if(~rst_n) req_val_r <= 1'b0;
 		else req_val_r <= req_val;
@@ -165,24 +165,24 @@ module l1i_top
 	assign dm_we_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
 	assign dm_addr  = (req_val) ? req_idx : req_idx_r;
 	assign dm_wdata = mau_ack_data;
-	assign dm_wr_be = '1; 
+	assign dm_wr_be = '1;
 
 	genvar way;
-	generate 
+	generate
 		for(way = 0; way < `L1_WAY_NUM; way = way + 1) begin
-			
+
 			assign {ld_rd_val_vect[way], ld_rd_tag[way]} = ld_rdata[way];
 			assign tag_cmp_vect[way] = (ld_rd_tag[way] == req_tag_r);
 
 			// -----------------------------------------------------
-			// LD tag memories 
+			// LD tag memories
 			// -----------------------------------------------------
-			l1_ld_mem 
+			l1_ld_mem
 			#(
-				.WIDTH (`L1_LD_MEM_WIDTH), 
+				.WIDTH (`L1_LD_MEM_WIDTH),
 				.DEPTH (`L1_SET_NUM)
 			)
-			ld_mem 
+			ld_mem
 			(
 				.CLK 		(clk),
 				.RST_N 	(rst_n),
@@ -200,7 +200,7 @@ module l1i_top
 
 			l1_dm_mem
 			#(
-				.WIDTH (`L1_LD_MEM_WIDTH), 
+				.WIDTH (`L1_LD_MEM_WIDTH),
 				.DEPTH (`L1_SET_NUM)
 			)
 			dm_mem
@@ -262,7 +262,7 @@ module l1i_top
 						if(lru_hit) str = {str, $sformatf("hit way=%0d data=%0h", lru_way_pos, dm_rdata[lru_way_pos])};
 						else str = {str, $sformatf("miss I->S way=%0d", lru_way_pos)};
 						$display("%0s (%0t)", str, $time());
-						if(lru_evict_val) begin 
+						if(lru_evict_val) begin
 							str = $sformatf("L1I EVICT way=%0d tag=%0h idx=%0h ", lru_way_pos, ld_rd_tag[lru_way_pos], core_req_idx);
 							$display("%0s (%0t)", str, $time());
 						end
@@ -271,7 +271,7 @@ module l1i_top
 				end
 			end
 		end
-			
+
 		// DM
 		initial begin
 			string str;

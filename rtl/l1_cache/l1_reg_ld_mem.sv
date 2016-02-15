@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : l1_reg_ld_mem.sv
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 `ifndef INC_L1_REG_LD_MEM
 `define INC_L1_REG_LD_MEM
@@ -15,7 +15,7 @@ module l1_reg_ld_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
-) 
+)
 (
 	input 											clk,
 	input 											rst_n,
@@ -40,7 +40,6 @@ module l1_reg_ld_mem
 			if(wen) mem[waddr] <= wdata;
 		end
 	end
-
 
 endmodule
 `endif

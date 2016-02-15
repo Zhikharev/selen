@@ -268,7 +268,7 @@ end
 		end	
 end 
 assign dec_hazard_bus_loc = {rs1,rs2,dec_inst_in[11:7]};
-assign dec_stall_in = (dec_il1_ack_in)? 1'b0:1'b1;
+assign dec_stall_out = (dec_il1_ack_in)? 1'b0:1'b1;
 assign dec_ld1_loc_nop = (dec_nop_gen_in)?`NOT_REQ : dec_ld1_loc;
 assign dec_we_reg_file_loc_nop = (dec_nop_gen_in)? `WE_OFF : dec_we_reg_file_loc;
 assign rs1 = (dec_nop_gen_in)? 5'b0: dec_inst_in[19:15];
