@@ -1,0 +1,15 @@
+MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
+RTL_SRC :=\
+	$(MAKEHOME)/opcodes.vh \
+	$(MAKEHOME)/core_defines.vh \
+	$(MAKEHOME)/core_reg_file.sv \
+	$(MAKEHOME)/core_dec_s.sv \
+	$(MAKEHOME)/core_alu.sv \
+	$(MAKEHOME)/core_exe_s.sv \
+	$(MAKEHOME)/core_if_s.sv \
+	$(MAKEHOME)/core_mem_s.sv \
+	$(MAKEHOME)/core_wb_s.sv \
+	$(MAKEHOME)/core_hazard_ctrl.sv \
+	$(MAKEHOME)/core_pipeline.sv \
+	$(MAKEHOME)/core_csr.sv \
+	$(MAKEHOME)/core_top.sv
