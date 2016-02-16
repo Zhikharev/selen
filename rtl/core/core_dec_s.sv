@@ -224,17 +224,18 @@ always @* begin
 end	
 	//conections of register file
 	core_reg_file reg_file (
-		.clk(clk),
-		.rst_n(rst_n),
-		.rs1(rs1),
-		.rs2(rs2),
-		.rd(dec_inst_in[11:7]),
-		.data_in(dec_data_wrt_in),
-		.we(dec_we_reg_file_in),
-		.order(dec_order_loc),
-		.src1_out_r(dec_src1_loc),
-		.src2_out_r(dec_src2_loc)
+		.clk 				(clk),
+		.rst_n 			(rst_n),
+		.rs1 				(rs1),
+		.rs2 				(rs2),
+		.rd 				(dec_inst_in[11:7]),
+		.data_in 		(dec_data_wrt_in),
+		.we 				(dec_we_reg_file_in),
+		.order 			(dec_order_loc),
+		.src1_out 	(dec_src1_loc),
+		.src2_out 	(dec_src2_loc)
 		);
+
 	always@(posedge clk) begin
 		if(dec_enb)begin
 			dec_ld1_out_reg <= dec_ld1_loc_nop;
