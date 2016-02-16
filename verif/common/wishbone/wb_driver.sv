@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // FILE NAME      : wb_driver.sv
 // PROJECT        : Selen
-// AUTHOR         : Maksim Kobar
+// AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
 // DESCRIPTION    :

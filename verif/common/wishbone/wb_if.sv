@@ -1,7 +1,7 @@
-`ifndef INC_L1_INTERFACE
-`define INC_L1_INTERFACE
+`ifndef INC_WB_INTERFACE
+`define INC_WB_INTERFACE
 
-interface l1_if (input logic clk, input logic rst);
+interface wb_if (input logic clk, input logic rst);
 
 	logic 												clk_i;
 	logic 											 	rst_i;
