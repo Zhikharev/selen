@@ -35,6 +35,9 @@ class sl_core_bus_item extends uvm_sequence_item;
     return(cop inside {WR, WRNC});
   endfunction
 
+  function bit is_nc();
+    return(cop inside {RDNC, WRNC});
+  endfunction
 endclass
 
 `endif
