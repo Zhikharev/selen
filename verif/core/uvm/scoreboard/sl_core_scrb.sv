@@ -78,13 +78,25 @@ class sl_core_scrb extends uvm_scoreboard;
   // --------------------------------------------
   function void write_inner(sl_core_bus_item item);
     while(!sem.try_get());
+    if(!compare_state()) `uvm_error("SCRB", "State compare failed!")
     assert(core_model::step())
     else `uvm_error("MODEL", "step failed!")
-    if(!compare_state()) `uvm_error("SCRB", "State compare failed!")
     sem.put();
   endfunction
 
   function bit compare_state();
+    bit [31:0] core_reg;
+    bit [31:0] model_reg;
+    bit retval = 1;
+    for(int i = 0; i < 32; i++) begin
+      assert(core_model::get_reg(i, model_reg))
+      else `uvm_error("MODEL", "get_reg failed!")
+      if(core_reg != model_reg) begin
+        retval = 0;
+        `uvm_error("SCRB", $sformatf("REG[%0d] compare failed. Received: %32h Expected: %32h", i, core_reg, model_reg))
+      end
+    end
+    return(retval);
   endfunction
 
 endclass

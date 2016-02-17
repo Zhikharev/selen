@@ -134,4 +134,21 @@ class draft_test extends sl_core_base_test;
   endfunction
 endclass
 
+class core_run_opcodes_test extends sl_core_base_test;
+
+  `uvm_component_utils(core_run_opcodes_test)
+
+  function new(string name = "core_run_opcodes_test", uvm_component parent=null);
+    super.new(name,parent);
+  endfunction : new
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    core_instr_agent_cfg.drv_fixed_delay = 1;
+    core_instr_agent_cfg.drv_delay_max = 5;
+    uvm_config_db#(uvm_object_wrapper)::set(this,
+    "*virtual_seqr.main_phase", "default_sequence", core_run_opcodes_seq::type_id::get());
+  endfunction
+endclass
+
 `endif

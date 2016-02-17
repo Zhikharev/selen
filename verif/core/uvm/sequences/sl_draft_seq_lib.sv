@@ -55,3 +55,29 @@ class core_alu_seq extends core_base_seq;
 	endtask
 
 endclass
+
+class core_run_opcodes_seq extends core_base_seq;
+
+	`uvm_object_utils(core_run_opcodes_seq)
+
+	randc opcode_t cop;
+
+	function new(string name = "core_run_opcodes_seq");
+  	super.new(name);
+	endfunction
+
+	task body();
+		`uvm_info(get_full_name(), "Start of core_run_opcodes_seq", UVM_MEDIUM)
+		repeat(100) begin
+			`uvm_create(req)
+			this.randomize();
+			assert(req.randomize() with {
+				req.opcode == cop;
+			});
+			`uvm_send(req)
+			get_response(rsp);
+		end
+		`uvm_info(get_full_name(), "End of core_run_opcodes_seq", UVM_MEDIUM)
+	endtask
+
+endclass
