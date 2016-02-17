@@ -49,6 +49,7 @@ class wb_driver extends uvm_driver#(wb_item);
           end
           void'(begin_tr(ret_item, "wb_driver"));
           drive_item(ret_item);
+          clear_interface();
           seq_item_port.item_done();
           end_tr(ret_item);
           seq_item_port.put_response(ret_item);
@@ -93,8 +94,16 @@ class wb_driver extends uvm_driver#(wb_item);
   // TASK: drive_item
   // --------------------------------------------
   task drive_item(wb_item item);
-
+    vif.drv.sel_o <= 1'b1;
+    vif.drv.adr_o <= item.address;
+    if(item.cop == WRITE) begin
+      vif.drv.we_o <= 1'b1;
+      vif.drv.dat_o <= item.data.pop_front();
+    else begin
+      vif.drv.we_o <= 1'b0;
     end
+    while(!vif.drv.ack_i)
+      @(vif.drv);
   endtask
 
 endclass
