@@ -18,12 +18,14 @@ class sl_core_monitor extends uvm_monitor;
   sl_core_agent_cfg cfg;
 
   uvm_analysis_port#(sl_core_bus_item) item_collected_port;
+  uvm_analysis_port#(sl_core_bus_item) item_request_port;
 
   `uvm_component_utils(sl_core_monitor)
 
   function new (string name, uvm_component parent);
     super.new(name, parent);
     item_collected_port = new("item_collected_port", this);
+    item_request_port   = new("item_request_port", this);
   endfunction
 
   function void build_phase(uvm_phase phase);
@@ -44,13 +46,14 @@ class sl_core_monitor extends uvm_monitor;
         if(vif.mon.req_val) begin
           sl_core_bus_item item;
           item = sl_core_bus_item::type_id::create("item");
-          check();
           item.cop  = vif.mon.req_cop;
           item.size = vif.mon.req_size;
           item.addr = vif.mon.req_addr;
           if(item.is_wr()) begin
             item.data = vif.mon.req_wdata;
           end
+          bus_check(item);
+          item_request_port.write(item);
           do @(vif.mon);
           while(!vif.mon.req_ack);
           if(!item.is_wr())item.data = vif.mon.req_ack_data;
@@ -67,11 +70,11 @@ class sl_core_monitor extends uvm_monitor;
     end
   endtask
 
-  function void check();
+  function void check(sl_core_bus_item item);
     if(cfg.port == INSTR) begin
-      assert(vif.mon.req_cop == RD)
+      assert(item.cop == RD)
       else `uvm_fatal("WRONG COP", "For INSTR port cop expected to be only RD")
-      assert(vif.mon.req_size == 4)
+      assert(item.size == 4)
       else `uvm_error("WRONG SIZE", "For INSTR port size expected to be only 4 bytes")
     end
   endfunction
