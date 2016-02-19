@@ -29,7 +29,7 @@ riscv64-unknown-elf-gcc -m32 -c -o prog.o prog.cpp
 ```
 флаг -m32 означает 32 битный RISCV
 
-если надо посмотреть инструкции (главное чтобы были те что у нас пока есть)
+если надо посмотреть инструкции
 ```
 riscv64-unknown-elf-gcc -m32 -S -o prog.s prog.cpp
 ```
