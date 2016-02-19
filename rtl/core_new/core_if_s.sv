@@ -47,6 +47,7 @@ end
 assign pc_next= (if_mux_trn_s_in)?(if_addr_mux_trn_in):(pc_adder);
 assign pc_adder = pc + 4;
 assign if_addr_l1i_cash_out = pc;
+assign if_val_l1i_cahe_out = 1'b1;
 //register if/decode
 always @(posedge clk, posedge (~n_rst)) begin
 	if(~n_rst) begin
