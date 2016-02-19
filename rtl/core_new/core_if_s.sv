@@ -49,8 +49,8 @@ assign pc_adder = pc + 4;
 assign if_addr_l1i_cash_out = pc;
 assign if_val_l1i_cahe_out = 1'b1;
 //register if/decode
-always @(posedge clk, posedge (~n_rst)) begin
-	if(~n_rst) begin
+always @(posedge clk, posedge if_kill) begin
+	if(if_kill) begin
 		if_pc_reg_out <= 0;
 		if_pc_4_reg_out <= 0;
 	end
