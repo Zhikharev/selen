@@ -1,0 +1,8 @@
+VLOG_OPTS+=\
+	+incdir+$(BENCH_HOME) \
+	+incdir+$(BENCH_HOME)/../common \
+	$(BENCH_HOME)/uvm/uvm.inc.sv \
+	$(BENCH_HOME)/testbench/l1_assembled.sv \
+	$(BENCH_HOME)/testbench/l1_tb_top.sv
+
+ELAB_OPTS+=
