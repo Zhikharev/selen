@@ -70,7 +70,7 @@ class sl_core_monitor extends uvm_monitor;
     end
   endtask
 
-  function void check(sl_core_bus_item item);
+  function void bus_check(sl_core_bus_item item);
     if(cfg.port == INSTR) begin
       assert(item.cop == RD)
       else `uvm_fatal("WRONG COP", "For INSTR port cop expected to be only RD")
