@@ -16,6 +16,8 @@ class wb_driver extends uvm_driver#(wb_item);
   typedef virtual wb_if vif_t;
   vif_t vif;
 
+  bit m_random;
+  int m_delay;
   wb_cfg cfg;
 
   function new (string name = "wb_driver", uvm_component parent);
@@ -94,8 +96,10 @@ class wb_driver extends uvm_driver#(wb_item);
   // TASK: drive_item
   // --------------------------------------------
   task drive_item(wb_item item);
-    repeat(m_delay)
-      @(vif.drv_s);
+    if(m_random) begin
+      repeat(m_delay)
+        @(vif.drv_s);
+    end
     vif.drv.ack_i   <= 1;
     if(vif.drv.we_o)
       vif.drv.dat_i <= item.data.pop_front();

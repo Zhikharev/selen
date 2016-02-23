@@ -37,7 +37,7 @@ class wb_monitor extends uvm_monitor;
   task manage_packet();
     forever begin
       @(vif.mon);
-      if(vif.mon.MEM_req) begin
+      if(vif.mon.cyc_o) begin
         wb_item item;
         item = wb_item::type_id::create("item");
         collect_packet(item);
@@ -55,11 +55,15 @@ class wb_monitor extends uvm_monitor;
     item.cop      = vif.mon.we_o;
     item.address  = vif.mon.adr_o;
     item.strb     = vif.mon.stb_o;
-    item.err      = vif.mon.err_i;
     if(item.cop == WRITE)
       item.data     = vif.mon.dat_o;
     else
       item.data     = vif.mon.dat_i;
+    while(vif.mon.ack_i)
+      @(vif.mon);
+    item.err      = vif.mon.err_i;
+    item.stall    = vif.mon.stall_i;
+    item.rty      = vif.mon.rty_i;
   endtask
 
 endclass

@@ -11,7 +11,7 @@
 
 class wb_agent_s extends uvm_agent;
 
-	wb_driver 		 driver;
+	wb_driver_s 	 driver_s;
 	wb_monitor 	   monitor;
 	wb_sequencer   sequencer;
 
@@ -20,7 +20,7 @@ class wb_agent_s extends uvm_agent;
 	uvm_analysis_port #(wb_item) item_collected_port;
 
 	`uvm_component_utils_begin(wb_agent_s)
-    `uvm_field_object(driver,    UVM_DEFAULT)
+    `uvm_field_object(driver_s,    UVM_DEFAULT)
     `uvm_field_object(monitor,   UVM_DEFAULT)
     `uvm_field_object(sequencer, UVM_DEFAULT)
   `uvm_component_utils_end
@@ -36,7 +36,7 @@ class wb_agent_s extends uvm_agent;
     monitor = wb_monitor::type_id::create("monitor", this);
     end
     if(this.get_is_active() == UVM_ACTIVE) begin
-    	driver    = wb_driver::type_id::create("driver", this);
+    	driver_s    = wb_driver_s::type_id::create("driver_s", this);
     	sequencer = wb_sequencer::type_id::create("sequencer", this);
     end
   endfunction
@@ -44,7 +44,7 @@ class wb_agent_s extends uvm_agent;
   function void connect_phase(uvm_phase phase);
     monitor.item_collected_port.connect(item_collected_port);
     if(this.get_is_active() == UVM_ACTIVE) begin
-      driver.seq_item_port.connect(sequencer.seq_item_export);
+      driver_s.seq_item_port.connect(sequencer.seq_item_export);
     end
   endfunction
 
