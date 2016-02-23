@@ -16,11 +16,15 @@ class wb_item extends uvm_sequence_item;
 	rand bit 											strb;
 	rand bit 											err;
 	rand cop_t 										cop;
+	rand bit 											stall;
+	rand bit 											rty;
 
 	`uvm_object_utils_begin(wb_item)
 		`uvm_field_int(address,         			UVM_DEFAULT)
 		`uvm_field_int(strb,         					UVM_DEFAULT)
 		`uvm_field_int(err,         					UVM_DEFAULT)
+		`uvm_field_int(rty,         					UVM_DEFAULT)
+		`uvm_field_int(stall,         				UVM_DEFAULT)
 		`uvm_field_int_queue(data,         		UVM_DEFAULT)
 		`uvm_field_int_enum(cop, cop_t,       UVM_DEFAULT)
 	`uvm_object_utils_end

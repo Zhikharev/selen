@@ -27,7 +27,10 @@ module l1_tb_top;
   rst_if rst_intf(sys_clk);
   assign reset = rst_intf.rst | rst_intf.soft_rst;
 
-  wb_if    	wb_intf(sys_clk, reset);
+  wb_if  wb_intf(sys_clk, reset);
+  assign wb_intf.clk_i = sys_clk;
+  assign wb_intf.rst_i = reset;
+
   core_if   l1i_intf(sys_clk, reset);
   core_if   lid_intf(sys_clk, reset);
 
