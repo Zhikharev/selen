@@ -31,8 +31,8 @@ module l1_tb_top;
   assign wb_intf.clk_i = sys_clk;
   assign wb_intf.rst_i = reset;
 
-  core_if   l1i_intf(sys_clk, reset);
-  core_if   lid_intf(sys_clk, reset);
+  core_if l1i_intf(sys_clk, reset);
+  core_if lid_intf(sys_clk, reset);
 
   l1_assembled dut
   (
@@ -48,9 +48,9 @@ module l1_tb_top;
 
   initial begin
     uvm_config_db#(virtual rst_if)::set(null,  "*rst_agent*", "vif", rst_intf)	;
-    uvm_config_db#(core_if)::set(uvm_root::get(),"*l1i_agent*", "vif", l1i_intf);
-    uvm_config_db#(core_if)::set(uvm_root::get(),"*lid_agent*", "vif", l1d_intf);
-    uvm_config_db#(v_wb)::set(uvm_root::get(),		"*wb_agent*", "vif", wbintf)	;
+    uvm_config_db#(v_core)::set(uvm_root::get(),"*l1i_agent*", "vif", l1i_intf);
+    uvm_config_db#(v_core)::set(uvm_root::get(),"*lid_agent*", "vif", lid_intf);
+    uvm_config_db#(v_wb)::set(uvm_root::get(),		"*wb_agent*", "vif", wb_intf)	;
   end
 
   bit [31:0] seed;

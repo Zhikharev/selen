@@ -8,6 +8,11 @@
 // ----------------------------------------------------------------------------
 `ifndef INC_WB_ITEM
 `define INC_WB_ITEM
+	
+typedef enum bit {
+	READ 	= 1'b0,
+	WRITE = 1'b1
+} cop_t;
 
 class wb_item extends uvm_sequence_item;
 
@@ -25,8 +30,8 @@ class wb_item extends uvm_sequence_item;
 		`uvm_field_int(err,         					UVM_DEFAULT)
 		`uvm_field_int(rty,         					UVM_DEFAULT)
 		`uvm_field_int(stall,         				UVM_DEFAULT)
-		`uvm_field_int_queue(data,         		UVM_DEFAULT)
-		`uvm_field_int_enum(cop, cop_t,       UVM_DEFAULT)
+		`uvm_field_queue_int(data,         		UVM_DEFAULT)
+		`uvm_field_enum(cop_t, cop,       UVM_DEFAULT)
 	`uvm_object_utils_end
 
 	function new(string name = "wb_item");

@@ -16,9 +16,9 @@ class wb_slave_driver extends uvm_driver#(wb_item);
   typedef virtual wb_if vif_t;
   vif_t vif;
 
-  bit m_random;
-  int m_delay;
-  wb_cfg cfg;
+  bit           m_random;
+  int           m_delay;
+  wb_agent_cfg cfg;
 
   function new (string name = "wb_slave_driver", uvm_component parent);
     super.new(name, parent);
@@ -31,7 +31,7 @@ class wb_slave_driver extends uvm_driver#(wb_item);
       if(m_random) `uvm_info("KNOBS", $sformatf("Max Delay (%0d) was set for: %0s", m_delay, get_full_name()), UVM_MEDIUM)
       else`uvm_info("KNOBS", $sformatf("Delay (%0d) was set for: %0s", m_delay, get_full_name()), UVM_MEDIUM)
     end
-		if(!uvm_config_db#(wb_cfg)::get(this, "", "cfg", cfg))
+		if(!uvm_config_db#(wb_agent_cfg)::get(this, "", "cfg", cfg))
       `uvm_fatal("NOCFG", {"Configuration must be set for ", get_full_name(), "cfg"})
   endfunction
 
@@ -59,7 +59,7 @@ class wb_slave_driver extends uvm_driver#(wb_item);
             assert($cast(ret_item, req.clone()));
             ret_item.set_id_info(req);
             ret_item.accept_tr();
-            repeat(rand_delay(m_delay)) begin
+            repeat(rand_delay()) begin
               clear_interface();
               if(vif.rst) break;
             end

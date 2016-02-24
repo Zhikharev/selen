@@ -6,7 +6,7 @@ module l1_assembled
 	input 	clk,
 	input 	rst_n,
   core_if l1i_intf,
-  core_if l1d_intf
+  core_if l1d_intf,
 	wb_if 	wb_intf
 );
 

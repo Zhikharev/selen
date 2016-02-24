@@ -9,5 +9,6 @@ import uvm_pkg::*;
 // Common
 `include "smart_report_server.sv"
 `include "core/sl_core_inc.sv"
+`include "wishbone/wb_inc.sv"
 
 `endif

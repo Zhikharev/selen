@@ -11,16 +11,16 @@
 
 class wb_slave_agent extends uvm_agent;
 
-	wb_slave_drive driver_s;
-	wb_monitor 	   monitor;
-	wb_sequencer   sequencer;
+	wb_slave_driver  driver;
+	wb_monitor 	     monitor;
+	wb_sequencer     sequencer;
 
-  wb_cfg       cfg;
+  wb_agent_cfg     cfg;
 
 	uvm_analysis_port #(wb_item) item_collected_port;
 
 	`uvm_component_utils_begin(wb_slave_agent)
-    `uvm_field_object(driver_s,    UVM_DEFAULT)
+    `uvm_field_object(driver,    UVM_DEFAULT)
     `uvm_field_object(monitor,   UVM_DEFAULT)
     `uvm_field_object(sequencer, UVM_DEFAULT)
   `uvm_component_utils_end
@@ -30,13 +30,12 @@ class wb_slave_agent extends uvm_agent;
   endfunction
 
   function void build_phase(uvm_phase phase);
-    if(!uvm_config_db#(wb_cfg)::get(this, "", "cfg", cfg))
+    if(!uvm_config_db#(wb_agent_cfg)::get(this, "", "cfg", cfg))
       `uvm_fatal("NOCFG", {"Configuration must be set for ", get_full_name(), ".cfg"})
     item_collected_port = new("item_collected_port", this);
     monitor = wb_monitor::type_id::create("monitor", this);
-    end
     if(this.get_is_active() == UVM_ACTIVE) begin
-    	driver_s    = wb_slave_drive::type_id::create("driver_s", this);
+    	driver    = wb_slave_driver::type_id::create("driver", this);
     	sequencer = wb_sequencer::type_id::create("sequencer", this);
     end
   endfunction
@@ -44,7 +43,7 @@ class wb_slave_agent extends uvm_agent;
   function void connect_phase(uvm_phase phase);
     monitor.item_collected_port.connect(item_collected_port);
     if(this.get_is_active() == UVM_ACTIVE) begin
-      driver_s.seq_item_port.connect(sequencer.seq_item_export);
+      driver.seq_item_port.connect(sequencer.seq_item_export);
     end
   endfunction
 

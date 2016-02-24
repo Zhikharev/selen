@@ -3,8 +3,8 @@
 
 `include "testbench/l1_rtl_inc.sv"
 
-`include "testbench/wb_if.sv"
-`include "../../core/testbench/core_if.sv"
+`include "wb_if.sv"
+`include "sl_core_if.sv"
 
 import uvm_pkg::*;
 
