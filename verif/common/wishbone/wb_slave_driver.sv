@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------------
-// FILE NAME      : wb_driver.sv
+// FILE NAME      : wb_slave_driver.sv
 // PROJECT        : Selen
 // AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
-`ifndef INC_WB_DRIVER
-`define INC_WB_DRIVER
+`ifndef INC_WB_SLAVE_DRIVER
+`define INC_WB_SLAVE_DRIVER
 
-class wb_driver extends uvm_driver#(wb_item);
+class wb_slave_driver extends uvm_driver#(wb_item);
 
-	`uvm_component_utils(wb_driver)
+	`uvm_component_utils(wb_slave_driver)
 
   typedef virtual wb_if vif_t;
   vif_t vif;
@@ -20,7 +20,7 @@ class wb_driver extends uvm_driver#(wb_item);
   int m_delay;
   wb_cfg cfg;
 
-  function new (string name = "wb_driver", uvm_component parent);
+  function new (string name = "wb_slave_driver", uvm_component parent);
     super.new(name, parent);
   endfunction
 
@@ -35,37 +35,49 @@ class wb_driver extends uvm_driver#(wb_item);
       `uvm_fatal("NOCFG", {"Configuration must be set for ", get_full_name(), "cfg"})
   endfunction
 
+  function int rand_delay();
+    int delay;
+    if(cfg.drv_fixed_delay) begin
+      delay = cfg.drv_delay_max;
+    end
+    else begin
+      std::randomize(delay) with {
+        delay dist {0 :/ 90, [1:cfg.drv_delay_max] :/ 10};
+      };
+    end
+    return(delay);
+  endfunction
+
   task run_phase(uvm_phase phase);
     forever begin
+      @(vif.drv_s);
       if(!vif.rst) begin
         wb_item ret_item;
-        seq_item_port.try_next_item(req);
-        if(req != null) begin
-          assert($cast(ret_item, req.clone()));
-          ret_item.set_id_info(req);
-          ret_item.accept_tr();
-          repeat(rand_delay(m_delay)) begin
-            clear_interface();
-            @(vif.drv_s);
-            if(vif.rst) break;
-          end
-          void'(begin_tr(ret_item, "wb_driver"));
-          if(vif.drv_s.cyc_o)
+        if(vif.drv_s.cyc_o) begin
+          seq_item_port.try_next_item(req);
+          if(req != null) begin
+            assert($cast(ret_item, req.clone()));
+            ret_item.set_id_info(req);
+            ret_item.accept_tr();
+            repeat(rand_delay(m_delay)) begin
+              clear_interface();
+              if(vif.rst) break;
+            end
+            void'(begin_tr(ret_item, "wb_slave_driver"));
             drive_item(ret_item);
-          clear_interface();
-          seq_item_port.item_done();
-          end_tr(ret_item);
-          seq_item_port.put_response(ret_item);
+            clear_interface();
+            seq_item_port.item_done();
+            end_tr(ret_item);
+            seq_item_port.put_response(ret_item);
+          end
+          else
+            clear_interface();
         end
-        else begin
-          clear_interface();
-          @(vif.drv_s);
-        end
+        else
+          reset_interface();
       end
-      else begin
+      else
         reset_interface();
-        @(vif.drv_s);
-      end
     end
   endtask
 
@@ -96,10 +108,6 @@ class wb_driver extends uvm_driver#(wb_item);
   // TASK: drive_item
   // --------------------------------------------
   task drive_item(wb_item item);
-    if(m_random) begin
-      repeat(m_delay)
-        @(vif.drv_s);
-    end
     vif.drv.ack_i   <= 1;
     if(vif.drv.we_o)
       vif.drv.dat_i <= item.data.pop_front();

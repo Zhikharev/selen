@@ -13,7 +13,7 @@
 `define INC_SL_CORE_IF
 
 interface core_if(input wire clk, input wire rst);
-	logic 				req_val;
+	logic 			req_val;
 	logic [2:0]  	req_cop;
 	logic [2:0]  	req_size;
 	logic [31:0] 	req_addr;
@@ -21,7 +21,17 @@ interface core_if(input wire clk, input wire rst);
 	logic        	req_ack;
 	logic [31:0] 	req_ack_data;
 
-	clocking drv @(posedge clk);
+	clocking drv_m @(posedge clk);
+		input req_val;
+		input req_cop;
+		input req_size;
+		input req_addr;
+		input req_wdata;
+		output req_ack;
+		output req_ack_data;
+	endclocking
+
+	clocking drv_s @(posedge clk);
 		input req_val;
 		input req_cop;
 		input req_size;

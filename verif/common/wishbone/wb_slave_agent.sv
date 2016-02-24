@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------------
-// FILE NAME      : wb_agent_s.sv
+// FILE NAME      : wb_slave_agent.sv
 // PROJECT        : Selen
 // AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
-`ifndef INC_WB_AGENT_s
-`define INC_WB_AGENT_s
+`ifndef INC_WB_SLAVE_AGENT
+`define INC_WB_SLAVE_AGENT
 
-class wb_agent_s extends uvm_agent;
+class wb_slave_agent extends uvm_agent;
 
-	wb_driver_s 	 driver_s;
+	wb_slave_drive driver_s;
 	wb_monitor 	   monitor;
 	wb_sequencer   sequencer;
 
@@ -19,13 +19,13 @@ class wb_agent_s extends uvm_agent;
 
 	uvm_analysis_port #(wb_item) item_collected_port;
 
-	`uvm_component_utils_begin(wb_agent_s)
+	`uvm_component_utils_begin(wb_slave_agent)
     `uvm_field_object(driver_s,    UVM_DEFAULT)
     `uvm_field_object(monitor,   UVM_DEFAULT)
     `uvm_field_object(sequencer, UVM_DEFAULT)
   `uvm_component_utils_end
 
-  function new(string name = "wb_agent_s", uvm_component parent = null);
+  function new(string name = "wb_slave_agent", uvm_component parent = null);
     super.new(name, parent);
   endfunction
 
@@ -36,7 +36,7 @@ class wb_agent_s extends uvm_agent;
     monitor = wb_monitor::type_id::create("monitor", this);
     end
     if(this.get_is_active() == UVM_ACTIVE) begin
-    	driver_s    = wb_driver_s::type_id::create("driver_s", this);
+    	driver_s    = wb_slave_drive::type_id::create("driver_s", this);
     	sequencer = wb_sequencer::type_id::create("sequencer", this);
     end
   endfunction

@@ -22,7 +22,7 @@ class l1_env extends uvm_env;
 
   l1_agent       l1i_agent;
   l1_agent       l1d_agent;
-  wb_agent       wb_agent;
+  wb_slave_agent       wb_agent;
 
   function new(string name = "l1_env", uvm_component parent = null);
     super.new(name, parent);
@@ -37,7 +37,7 @@ class l1_env extends uvm_env;
       l1i_agent.is_active = UVM_ACTIVE;
       l1d_agent = l1_agent::type_id::create("l1d_agent", this);
       l1d_agent.is_active = UVM_PASSIVE;
-      wb_agent = wb_agent::type_id::create("wb_agent", this);
+      wb_agent = wb_slave_agent::type_id::create("wb_agent", this);
       wb_agent.is_active = UVM_ACTIVE;
   endfunction : build_phase
 
