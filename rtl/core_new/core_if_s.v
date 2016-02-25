@@ -35,20 +35,20 @@ always @(posedge clk, posedge (~n_rst))begin
 	end
 	else begin
 		if(if_pc_stop_in) begin
-			pc_reg <= pc_next;	
+			 pc_reg <= pc;
 		end
 		else begin
-			 pc_reg <= pc;
+			pc_reg <= pc_next;	
 		end
 	end
 end
 //adder and mux
 assign pc_next= (if_mux_trn_s_in)?(if_addr_mux_trn_in):(pc_adder);
-assign pc_adder = pc + 4;
+assign pc_adder = pc_reg + 4;
 assign if_addr_l1i_cash_out = pc_reg;
 assign if_val_l1i_cahe_out = 1'b1;
 //register if/decode
-always @(posedge clk, posedge if_kill) begin
+always @(posedge clk) begin
 	if(if_kill) begin
 		if_pc_reg_out <= 0;
 		if_pc_4_reg_out <= 0;
