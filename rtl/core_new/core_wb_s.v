@@ -11,7 +11,7 @@
 module core_wb_s(
 
 	input						clk,
-	input 					rst_n,
+	input 					n_rst,
 	//control
 	input						wb_mux_in,
 	input 					wb_ack_from_lid_in,
@@ -28,6 +28,7 @@ module core_wb_s(
 	output					wb_stall_out		
 	
 );
+include core_defines.vh;
 wire[31:0] mux_out_loc;
 
 assign mux_out_loc = (wb_mux_in)?wb_alu_result_in:wb_mem_data_in;

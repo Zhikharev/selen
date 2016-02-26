@@ -14,12 +14,17 @@ module 	core_alu (
 	output reg  signed[31:0]		alu_result,
 	output reg									brnch_takenn			
 );
-wire[3:0] alu_op_loc;
+include core_defines.vh;
+reg[3:0] alu_op_loc;
 reg[1:0] brnch_control_loc;
-assign alu_op_loc = (brnch_cnd[2]) brnch_control_loc:alu_op;
+//assign alu_op_loc = (brnch_cnd[2])?brnch_control_loc:alu_op;
 //brnch_control
 always@* begin
 		brnch_takenn = 1'b0;
+		if(brnch_cnd[2])begin
+			alu_op_loc = brnch_control_loc;
+		end 
+		else alu_op_loc = alu_op; 
 		case(brnch_cnd)
 			`ALU_BEQ: begin
 				brnch_control_loc = `SUB_ALU;

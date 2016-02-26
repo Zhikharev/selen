@@ -22,7 +22,7 @@ module core_reg_file (
 	output [31:0]  	src2_out
 );
 
-	int i;
+	integer i;
 	reg [31:0] reg_file [31:0];
 
 	always@(posedge clk or negedge rst_n) begin
