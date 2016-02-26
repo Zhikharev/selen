@@ -23,7 +23,7 @@ module core_assembled (
 	core_top core
 	(
 		.clk 					(clk),
-		.rst_n  			(rst_n),
+		.rst_n  			(!rst),
 		.i_req_val 		(i_intf.req_val),
 		.i_req_addr 	(i_intf.req_addr),
 		.i_req_ack 		(i_intf.req_ack),

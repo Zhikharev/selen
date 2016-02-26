@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : core_tb_top.sv
 // PROJECT        : Selen
-// AUTHOR         : 
-// AUTHOR'S EMAIL : 
+// AUTHOR         :
+// AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
 `ifndef INC_CORE_TB_TOP
@@ -42,8 +42,8 @@ module core_tb_top ();
 	);
 
   initial begin
-    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_i*", "vif", i_intf);  
-    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_d*", "vif", d_intf); 
+    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_i*", "vif", i_intf);
+    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_d*", "vif", d_intf);
   end
 
   initial begin
