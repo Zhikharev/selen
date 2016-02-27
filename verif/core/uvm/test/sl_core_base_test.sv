@@ -45,7 +45,7 @@ class sl_core_base_test extends uvm_test;
     uvm_config_db #(sl_core_agent_cfg)::set(this, "*core_data_agent*", "cfg", core_data_agent_cfg);
 
     // Simulation opts
-    if($value$plusargs("num_pkts=%d", num_pkts));
+    if(!$value$plusargs("num_pkts=%d", num_pkts)) num_pkts = 1;
     uvm_config_db #(int)::set(null, "*", "num_pkts", num_pkts);
 
   endfunction : build_phase
@@ -57,7 +57,6 @@ class sl_core_base_test extends uvm_test;
 
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
-    phase.phase_done.set_drain_time(this, 5000);
   endtask
 
   function void extract_phase(uvm_phase phase);
@@ -132,6 +131,7 @@ class draft_test extends sl_core_base_test;
     uvm_config_db#(uvm_object_wrapper)::set(this,
     "*virtual_seqr.main_phase", "default_sequence", core_alu_seq::type_id::get());
   endfunction
+
 endclass
 
 class core_run_opcodes_test extends sl_core_base_test;

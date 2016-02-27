@@ -46,7 +46,7 @@ class sl_core_monitor extends uvm_monitor;
         if(vif.mon.req_val) begin
           sl_core_bus_item item;
           item = sl_core_bus_item::type_id::create("item");
-          item.cop  = vif.mon.req_cop;
+          item.cop  = core_cop_t'(vif.mon.req_cop);
           item.size = vif.mon.req_size;
           item.addr = vif.mon.req_addr;
           if(item.is_wr()) begin

@@ -23,10 +23,18 @@ class core_base_seq extends uvm_sequence #(rv32_transaction);
 
 	`uvm_object_utils(core_base_seq)
 
+	int num_pkts;
+
 	function new(string name = "core_base_seq");
   	super.new(name);
   	set_automatic_phase_objection(1);
 	endfunction
+
+	task pre_body();
+		uvm_phase phase = get_starting_phase();
+		phase.phase_done.set_drain_time(this, 500);
+		uvm_config_db#(int)::get(null, get_full_name(), "num_pkts", num_pkts);
+	endtask
 
 endclass
 
@@ -40,7 +48,7 @@ class core_alu_seq extends core_base_seq;
 
 	task body();
 		`uvm_info(get_full_name(), "Start of core_alu_seq", UVM_MEDIUM)
-		repeat(100) begin
+		repeat(num_pkts) begin
 			`uvm_create(req)
 			assert(req.randomize() with {
 				req.opcode inside {
@@ -68,7 +76,7 @@ class core_run_opcodes_seq extends core_base_seq;
 
 	task body();
 		`uvm_info(get_full_name(), "Start of core_run_opcodes_seq", UVM_MEDIUM)
-		repeat(100) begin
+		repeat(num_pkts) begin
 			`uvm_create(req)
 			this.randomize();
 			assert(req.randomize() with {
@@ -78,6 +86,33 @@ class core_run_opcodes_seq extends core_base_seq;
 			get_response(rsp);
 		end
 		`uvm_info(get_full_name(), "End of core_run_opcodes_seq", UVM_MEDIUM)
+	endtask
+
+endclass
+
+class core_raw_seq extends core_base_seq;
+
+	`uvm_object_utils(core_raw_seq)
+
+	rv32_transaction raw;
+
+	function new(string name = "core_raw_seq");
+  	super.new(name);
+	endfunction
+
+	task body();
+		`uvm_info(get_full_name(), "Start of core_raw_seq", UVM_MEDIUM)
+		`uvm_create(req)
+		assert(req.randomize());
+		`uvm_send(req)
+		get_response(rsp);
+		`uvm_create(raw)
+		assert(raw.randomize() with {
+			(raw.rs1 == req.rd) || (raw.rs2 == req.rd);
+		});
+		`uvm_send(raw)
+		get_response(rsp);
+		`uvm_info(get_full_name(), "End of core_raw_seq", UVM_MEDIUM)
 	endtask
 
 endclass
