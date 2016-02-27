@@ -27,6 +27,7 @@ class sl_core_scrb extends uvm_scoreboard;
   uvm_analysis_imp_commit #(sl_core_bus_item, sl_core_scrb) item_collected_commit;
 
   uvm_queue #(rv32_transaction) rv32_instr_q;
+  uvm_queue #(core_addr_t) pc_q;
 
   semaphore sem;
 
@@ -41,6 +42,7 @@ class sl_core_scrb extends uvm_scoreboard;
     item_collected_commit = new("item_collected_commit", this);
 
     rv32_instr_q = new("rv32_instr_q");
+    pc_q = new("pc_q");
 
     sem = new(1);
 
@@ -59,6 +61,7 @@ class sl_core_scrb extends uvm_scoreboard;
     `uvm_info("SCRB", rv32_item.sprint(), UVM_LOW)
     assert(core_model::set_mem(item.addr, item.data))
     else `uvm_error("MODEL", "set_mem failed!")
+    pc_q.push_back(item.addr);
     do_compare = 1;
     sem.put();
   endfunction
@@ -96,7 +99,17 @@ class sl_core_scrb extends uvm_scoreboard;
   function bit compare_state();
     bit [31:0] core_reg;
     bit [31:0] model_reg;
+    core_addr_t model_pc;
+    core_addr_t core_pc;
     bit retval = 1;
+    if(pc_q.size() == 0) `uvm_fatal("SCRB", "No items at commit stage expected!")
+    core_pc = pc_q.pop_front();
+    assert(core_model::get_pc(model_pc))
+    else `uvm_error("MODEL", "get_pc failed!")
+    if(core_pc != model_pc) begin
+      retval = 0;
+     `uvm_error("SCRB", $sformatf("PC compare failed. Received: %32h Expected: %32h", core_pc, model_pc))
+    end
     for(int i = 0; i < 32; i++) begin
       assert(core_model::get_reg(i, model_reg))
       else `uvm_error("MODEL", "get_reg failed!")
