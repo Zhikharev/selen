@@ -52,7 +52,7 @@ class sl_core_base_test extends uvm_test;
 
   function void end_of_elaboration_phase(uvm_phase phase);
     `uvm_info(get_type_name(),$psprintf("Printing the test topology :\n%s", this.sprint()), UVM_HIGH)
-    uvm_top.set_report_id_action_hier("MON INSTR", UVM_NO_ACTION);
+    //uvm_top.set_report_id_action_hier("MON INSTR", UVM_NO_ACTION);
   endfunction : end_of_elaboration_phase
 
   task run_phase(uvm_phase phase);

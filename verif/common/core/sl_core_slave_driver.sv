@@ -58,7 +58,7 @@ class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
             ret_item.accept_tr();
             repeat(rand_delay()) begin
               clear_interface();
-              @(vif.mon);
+              @(vif.drv_s);
             end
             drive_item(ret_item);
             seq_item_port.item_done();
@@ -77,19 +77,19 @@ class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
 
   // Reset interface
   task reset_interface();
-    vif.req_ack <= 0;
-    vif.req_ack_data <= 0;
+    vif.drv_s.req_ack <= 0;
+    vif.drv_s.req_ack_data <= 0;
   endtask
 
   // Clear interface
   task clear_interface();
-    vif.req_ack <= 0;
+    vif.drv_s.req_ack <= 0;
   endtask
 
   // Drive item
   task drive_item(sl_core_bus_item item);
-    vif.req_ack <= 1'b1;
-    vif.req_ack_data <= item.data;
+    vif.drv_s.req_ack <= 1'b1;
+    vif.drv_s.req_ack_data <= item.data;
   endtask
 
 endclass
