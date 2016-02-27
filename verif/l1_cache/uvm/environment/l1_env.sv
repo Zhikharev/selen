@@ -43,8 +43,10 @@ class l1_env extends uvm_env;
 
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    l1i_agent.monitor.item_collected_port.connect(scrb.item_collected_instr);
-    l1d_agent.monitor.item_collected_port.connect(scrb.item_collected_data);
+    l1i_agent.monitor.item_request_port.connect(scrb.item_collected_req);
+    l1d_agent.monitor.item_request_port.connect(scrb.item_collected_req);
+    l1i_agent.monitor.item_collected_port.connect(scrb.item_collected_rsp);
+    l1d_agent.monitor.item_collected_port.connect(scrb.item_collected_rsp);
     wb_agent.monitor.item_collected_port.connect(scrb.item_collected_mau);
   endfunction : connect_phase
 
