@@ -6,6 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of exeqution station
 // ----------------------------------------------------------------------------
+include core_defines.vh;
 module core_exe_s (
 	input							clk,
 	input							rst_n, 
@@ -37,6 +38,7 @@ module core_exe_s (
 	input[31:0]				exe_result_frm_m,
 	input[31:0]				exe_result_frm_w,
 	input[3:0]				exe_bp_in,
+	input[1:0]				exe_haz_cmd_in,	
  	// to memmory
 	output reg[2:0]		exe_wb_sx_op_out_reg,
 	output reg 				exe_l1d_cop_out_reg,
@@ -51,18 +53,21 @@ module core_exe_s (
 	output reg[31:0]	exe_w_data_out_reg,
 	output reg[31:0]	exe_addr_out_reg,
 	output reg				exe_mux_trn_out_reg,
+	output reg[31:0]	exe_wrt_data_out_reg,
 	//
 	output reg[4:0]		exe_rs1_out_reg,
 	output reg[4:0] 	exe_rs2_out_reg,
 	output reg[4:0]  	exe_rd_out_reg,
+	output reg[1:0]		exe_haz_cmd_out_reg,
 	//inner pins
-	output						exe2haz_brnch_tknn, 				
+	output						exe2haz_brnch_tknn_out, 				
 	output 						exe2haz_we_reg_file_out,
-	output[4:0] 			exe2haz_rs1,
-	output[4:0] 			exe2haz_rs2,
-	output[4:0]				exe2haz_rd
-);
-include core_defines.vh;
+	output[4:0] 			exe2haz_rs1_out,
+	output[4:0] 			exe2haz_rs2_out,
+	output[4:0]				exe2haz_rd_out,
+	output[1:0]				exe2haz_cmd
+);	
+
 wire[31:0] 		alu_src1;
 wire[31:0] 		alu_src2;
 wire[31:0] 		src1_or_imm;
@@ -106,6 +111,8 @@ always @(posedge clk) begin
 		exe_rs1_out_reg <= exe_rs1_in;
 		exe_rs2_out_reg <= exe_rs2_in;
 		exe_rd_out_reg <= exe_rd_in;
+		exe_haz_cmd_out_reg <= exe_haz_cmd_in;
+		exe_wrt_data_out_reg <= exe_src2_in;
 	end	
 	if(exe_kill) begin
 		exe_alu_result_out_reg <= 0;
@@ -123,6 +130,8 @@ always @(posedge clk) begin
 		exe_rs1_out_reg <= 0;
 		exe_rs2_out_reg <=0;
 		exe_rd_out_reg <=0;
+		exe_haz_cmd_out_reg <=0;
+		exe_wrt_data_out_reg<=0;
 	end	
 end
 assign exe2haz_brnch_tknn = brnch_takenn_loc;
@@ -130,4 +139,5 @@ assign exe2haz_we_reg_file_out = exe_we_reg_file_in;
 assign exe2haz_rs1 = exe_rs1_in;
 assign exe2haz_rs2 = exe_rs2_in;
 assign exe2haz_rd = exe2haz_rd;
+assign exe2haz_cmd = exe_haz_cmd_in;
 endmodule		  

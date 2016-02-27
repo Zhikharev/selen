@@ -6,6 +6,8 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of decode station
 // ----------------------------------------------------------------------------
+include core_defines.vh;
+include opcodes.vh;
 module core_dec_s(
 	input							clk,
 	input							rst_n,
@@ -15,7 +17,7 @@ module core_dec_s(
 	input 						dec_nop_gen_in,
 	input[31:0]				dec_inst_in,
 	input[31:0]				dec_data_wrt_in,
-	input							dec_il1_ack_in,
+	input							dec_l1i_ack_in,
 	input							dec_we_reg_file_in,
 	//input form if station
 	input[31:0]				dec_pc_in,
@@ -27,7 +29,6 @@ module core_dec_s(
 	output reg 				dec_we_reg_file_out_reg,		
 	output reg[3:0]		dec_alu_op_out_reg,	
 	output reg[2:0] 	dec_alu_cnd_out_reg,
-	output reg[1:0]		dec_hazard_cmd_out_reg,
 	//cahs
 	output reg 				dec_l1i_req_val_out_reg,
 	output reg 			 	dec_l1i_req_cop_out_reg,
@@ -38,15 +39,14 @@ module core_dec_s(
 	output reg[31:0]	dec_sx_imm_out_reg,
 	output reg[31:0]	dec_pc_out_reg,
 	output reg[31:0]	dec_pc_4_out_reg,
+	//
 	output reg[4:0]		dec_rs1_out_reg,
 	output reg[4:0]		dec_rs2_out_reg,
 	output reg[4:0]		dec_rd_out_reg,
 	// for hazard 
-include core_defines.vh;
-include opcodes.vh;
-	output [1:0]		dec2haz_cmd_out,
+	output reg[1:0]		dec_hazard_cmd_out_reg,
+	output[1:0]				dec2haz_cmd_out,
 	output						dec_stall_out
-
 );
 wire				dec_we_reg_file_loc_nop;
 
@@ -313,7 +313,7 @@ end
 			dec_rd_out_reg <=0;
 		end	
 end 
-assign dec_stall_out = (dec_il1_ack_in)? 1'b0:1'b1;
+assign dec_stall_out = (dec_l1i_ack_in)? 1'b0:1'b1;
 assign l1i_val_loc_nop = (dec_nop_gen_in)? 1'b0:l1i_val_loc;
 assign dec_we_reg_file_loc_nop = (dec_nop_gen_in)? `WE_OFF : dec_we_reg_file_loc;
 assign rs1 = (dec_nop_gen_in)? 5'b0: dec_inst_in[19:15];

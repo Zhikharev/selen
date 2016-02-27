@@ -6,6 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		: hazard controll
 // ----------------------------------------------------------------------------
+include core_defines.vh;
 module core_hazard_ctrl(
 	input 					rst_n,
 	// register controll 
@@ -39,9 +40,8 @@ module core_hazard_ctrl(
 	input[1:0]			haz_cmd_dec_s_in,
 	input[1:0]			haz_cmd_exe_s_in,
 	input[1:0]			haz_cmd_mem_s_in,
-	input[1:0]			haz_cmd_wb_s_in
+	//input[1:0]			haz_cmd_wb_s_in
 );
-include core_defines.vh;
 // forwarding 
 // for exe station 
 wire[4:0] rs1_exe_loc;

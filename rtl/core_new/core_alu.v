@@ -6,6 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	ALU
 // ------------------------------------------
+include core_defines.vh;
 module 	core_alu (
 	input signed[31:0]	 				src1,
 	input signed[31:0]					src2,
@@ -14,7 +15,6 @@ module 	core_alu (
 	output reg  signed[31:0]		alu_result,
 	output reg									brnch_takenn			
 );
-include core_defines.vh;
 reg[3:0] alu_op_loc;
 reg[1:0] brnch_control_loc;
 //assign alu_op_loc = (brnch_cnd[2])?brnch_control_loc:alu_op;

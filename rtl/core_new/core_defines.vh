@@ -3,9 +3,9 @@
 
 // CSR
 `define TIMER_BITWISE 32
-`define NCACHE_BASE_ADDR 	32'h0000_0000;
-`define NCACHE_MASK_ADDR  32'h0000_ffff;
-
+`define ADDR_BASE 	32'h0000_0000
+`define ADDR_MASK  32'h0000_ffff
+`define ADDR_WIDTH 32
 /// mux bus bellow
 `define R_MUX 6'b0xx000
 `define I_R_MUX 6'b0xx010

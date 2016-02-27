@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of instruction fetch station
 // ----------------------------------------------------------------------------
-
+include core_defines.vh;
 
 module core_if_s (
 	input							clk,
@@ -27,7 +27,7 @@ module core_if_s (
 	output 	reg[31:0]	if_pc_4_reg_out
 );
 
-include core_defines.vh;
+
 
 reg[31:0] 	pc_reg;
 wire[31:0] 	pc_adder;
