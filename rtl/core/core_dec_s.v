@@ -1,74 +1,88 @@
 // ----------------------------------------------------------------------------
-// 
+// FILE NAME            	: core_csr.sv
+// PROJECT                : Selen
+// AUTHOR                 :	Alexandr Bolotnikov	
+// AUTHOR'S EMAIL 				:	AlexsanrBolotnikov@gmail.com
 // ----------------------------------------------------------------------------
-// FILE NAME        	   	:core_if_s.sv
-// PROJECT                	:Selen
-// AUTHOR              		: Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 		:AlexsandrBolotnikov@gmail.com 			
+// DESCRIPTION        		:	A description of decode station
 // ----------------------------------------------------------------------------
-// DESCRIPTION        	:decode phase of pipline 
-// ----------------------------------------------------------------------------
-module cpu_dec_s(
-	input								clk,//system clock
-	input 								rst_n,//system reset
-	//reg cntrl 	
-	input 								dec_enb,
-	input								dec_kill,// clear decode/execution register
+include core_defines.vh;
+include opcodes.vh;
+module core_dec_s(
+	input							clk,
+	input							rst_n,
+	input 						dec_enb,
+	input							dec_kill,
 	//inside terminals
-	input 								dec_nop_gen_in,//
-	input[31:0]							dec_inst_in,//instruction from level 1 instruction cashe
-	input[31:0]							dec_data_wrt_in,//data for write to register file
-	input								dec_il1_ack_in,// acknowlegment from level 1 instruction cashe
-	input								dec_we_reg_file_in,// write enable for register file
+	input 						dec_nop_gen_in,
+	input[31:0]				dec_inst_in,
+	input[31:0]				dec_data_wrt_in,
+	input							dec_l1i_ack_in,
+	input							dec_we_reg_file_in,
 	//input form if station
-	input[31:0]							dec_pc_in,
-	input[31:0]							dec_pc_4_in,
+	input[31:0]				dec_pc_in,
+	input[31:0]				dec_pc_4_in,
 	// 2 exe station
-	output reg [2:0]		 			dec_wb_sx_op_out_reg,
-	output reg 							dec_we_reg_file_out_reg,		
-	output reg [31:0]					dec_src1_out_reg,
-	output reg [31:0]					dec_src2_out_reg,
-	output reg [31:0]					dec_pc_out_reg,
-	output reg [31:0]					dec_pc_4_out_reg,
-	output reg [31:0]					dec_sx_imm_out_reg,
-	output reg [6:0]					dec_ld1_out_reg,// consistes of the MSB is validation of request, then 1'b0 is rezerved after  
-	//the nex 2 bits are  casheble or uncasheble and read or write respectively the last 3 bits mean size of request to mem
-	output reg [5:0]					dec_mux_bus_out_reg,
-	output reg [3:0]					dec_alu_op_out_reg,	
-	output reg [2:0] 	 				dec_alu_cnd_out_reg,// the MSB equals 1 means there is a branch command
-	output reg[ 14:0]					dec_hazard_bus_out_reg,
+	//control pins
+	output reg[2:0]		dec_wb_sx_op_out_reg,
+	output reg[5:0]		dec_mux_bus_out_reg,
+	output reg 				dec_we_reg_file_out_reg,		
+	output reg[3:0]		dec_alu_op_out_reg,	
+	output reg[2:0] 	dec_alu_cnd_out_reg,
+	//cahs
+	output reg 				dec_l1i_req_val_out_reg,
+	output reg 			 	dec_l1i_req_cop_out_reg,
+	output reg[2:0]		dec_l1i_req_size_out_reg,
+	//	information pins
+	output reg[31:0]	dec_src1_out_reg,
+	output reg[31:0]	dec_src2_out_reg,
+	output reg[31:0]	dec_sx_imm_out_reg,
+	output reg[31:0]	dec_pc_out_reg,
+	output reg[31:0]	dec_pc_4_out_reg,
+	//
+	output reg[4:0]		dec_rs1_out_reg,
+	output reg[4:0]		dec_rs2_out_reg,
+	output reg[4:0]		dec_rd_out_reg,
 	// for hazard 
-	output reg [1:0]					dec_hazard_cmd_out_reg,// signals to hazard
-	output								dec_stall_out// signal detecting absent of data from cashe
+	output reg[1:0]		dec_hazard_cmd_out_reg,
+	output[1:0]				dec2haz_cmd_out,
+	output						dec_stall_out
 );
-reg 				dec_we_reg_file_loc_nop;
-reg 				dec_ld1_loc_nop;
+wire				dec_we_reg_file_loc_nop;
+
+reg 				l1i_val_loc;
+reg[2:0] 		l1i_size_loc; 
+reg 				l1i_cop_loc;
+
 reg 				dec_order_loc;
 reg[2:0] 		sx_loc;
 reg[2:0]		wb_sx_loc;
 reg[2:0] 		dec_wb_sx_op_loc;
 reg 				dec_we_reg_file_loc;		
+reg[6:0]		dec_ld1_loc;
+reg[2:0]		dec_brnch_cnd_loc;
+reg[5:0]		dec_mux_bus_loc;
+reg[3:0]		alu_op;	
+
 reg[31:0]		dec_src1_loc;
 reg[31:0]		dec_src2_loc;
 reg[31:0]		dec_sx_imm_loc;
-reg[31:0]		dec_ld1_loc;
-reg[5:0]		dec_mux_bus_loc;
-reg[2:0]		dec_brnch_cnd_loc;
-reg[3:0]		alu_op;	
 reg[3:0] 		dec_alu_cnd_loc;
 reg[14:0]		dec_hazard_bus_loc;
 wire[4:0]		rs1;
-wire [4:0]	rs2;
+wire[4:0]		rs2;
+wire[4:0]		rd;
 reg[1:0]		dec_hazard_cmd_loc;
+wire 				l1i_val_loc_nop;
 //controll unit
 always @* begin
 	//initial assinging
 	dec_we_reg_file_loc = `WE_OFF;
 	dec_order_loc = `ORDER_OFF;
-	dec_ld1_loc = `NOT_REQ;
 	dec_wb_sx_op_loc = `WB_SX_BP;
 	sx_loc = 3'b000;
 	dec_hazard_cmd_loc = `HZRD_OTHER;
+	l1i_val_loc = `DL1_VAL_OFF;
 	case(dec_inst_in[5:0])
 		`R_OPCODE:begin
 			dec_mux_bus_loc = `R_MUX;
@@ -80,10 +94,10 @@ always @* begin
 						`SLT: 	alu_op = 	`SLT_ALU;
 						`SLTU:  alu_op = 	`SLTU_ALU;
 						`AND: 	alu_op = 	`AND_ALU;
-						`OR:	alu_op = 	`OR_ALU;
-						`XOR:	alu_op = 	`XOR_ALU;
-						`SLL:	alu_op = 	`SLL_ALU;
-						`SRL:	alu_op = 	`SRL_ALU;
+						`OR:		alu_op = 	`OR_ALU;
+						`XOR:		alu_op = 	`XOR_ALU;
+						`SLL:		alu_op = 	`SLL_ALU;
+						`SRL:		alu_op = 	`SRL_ALU;
 					endcase//FNCT3	
 				end//FNCT7_1		
 				`FNCT7_2:begin
@@ -173,29 +187,39 @@ always @* begin
 		end
 		
 		`LD_OPCODE: begin
-			dec_mux_bus_loc = `LD_OPCODE;
+			dec_mux_bus_loc = `LD_MUX;
 			dec_we_reg_file_loc = `WE_ON;
 			sx_loc = `SX_LD_I_R_JALR;
 			dec_hazard_cmd_loc = `HZRD_LOAD;		
 			case(dec_inst_in[14:12])
 				`LW:begin
-					dec_ld1_loc = `LW_L1D;
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_READ;
+					l1i_size_loc = `DL1_SIZE_WORD;
 					dec_wb_sx_op_loc = `WB_SX_BP;
 				end
 				`LH:begin
-					dec_ld1_loc = `LH_L1D;
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_READ;
+					l1i_size_loc = `DL1_SIZE_HALF;
 					dec_wb_sx_op_loc = `WB_SX_H;
 				end
 				`LHU:begin
-					dec_ld1_loc = `LH_L1D;
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_READ;
+					l1i_size_loc = `DL1_SIZE_HALF;
 					dec_wb_sx_op_loc = `WB_SX_UH;
 				end
 				`LB:begin
-					dec_ld1_loc = `LB_L1D;
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_READ;
+					l1i_size_loc = `DL1_SIZE_BYTE;
 					dec_wb_sx_op_loc = `WB_SX_B;
 				end
 				`LBU:begin
-					dec_ld1_loc = `LB_L1D;
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_READ;
+					l1i_size_loc = `DL1_SIZE_BYTE;
 					dec_wb_sx_op_loc = `WB_SX_UB;
 				end	
 			endcase // FNCT3 for load 
@@ -205,9 +229,24 @@ always @* begin
 			dec_mux_bus_loc = `ST_MUX;
 			sx_loc = `SX_ST;
 			case(dec_inst_in[14:12])
-				`SW: dec_ld1_loc = `SW_L1D;
-				`SH: dec_ld1_loc = `SH_L1D;
-				`SB: dec_ld1_loc = `SB_L1D;
+				`SW: begin
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_WRT;
+					l1i_size_loc = `DL1_SIZE_WORD;
+					dec_wb_sx_op_loc = `WB_SX_BP;
+				end
+				`SH: begin
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_WRT;
+					l1i_size_loc = `DL1_SIZE_HALF;
+					dec_wb_sx_op_loc = `WB_SX_H;
+				end
+				`SB: begin
+					l1i_val_loc = `DL1_VAL_ON;
+					l1i_cop_loc = `DL1_WRT;
+					l1i_size_loc = `DL1_SIZE_WORD;
+					dec_wb_sx_op_loc = `WB_SX_B;
+				end
 			endcase // FNCT3	
 		end
 	endcase // OPCODE DECODE main case
@@ -236,11 +275,12 @@ end
 		.src2_out 	(dec_src2_loc)
 		);
 
-	always@(posedge clk) begin
+	always@(negedge clk) begin
 		if(dec_enb)begin
-			dec_ld1_out_reg <= dec_ld1_loc_nop;
+			dec_l1i_req_val_out_reg <= l1i_val_loc_nop;
+			dec_l1i_req_cop_out_reg <= l1i_cop_loc;
+			dec_l1i_req_size_out_reg <= l1i_size_loc;
 			dec_mux_bus_out_reg <= dec_mux_bus_loc;
-			dec_hazard_bus_out_reg <= dec_hazard_bus_loc;
 			dec_alu_cnd_out_reg <= dec_alu_cnd_loc;
 			dec_alu_op_out_reg <= alu_op;
 			dec_src1_out_reg <= dec_src1_loc;	
@@ -250,29 +290,35 @@ end
 			dec_sx_imm_out_reg <= sx_loc;
 			dec_we_reg_file_out_reg <= dec_we_reg_file_loc_nop;
 			dec_hazard_cmd_out_reg <= dec_hazard_cmd_loc;
-		end	
-		else begin
+			dec_rs1_out_reg <=rs1;
+			dec_rs2_out_reg <=rs2;
+			dec_rd_out_reg <=rd;
 		end	
 		if(dec_kill)begin
-			dec_ld1_out_reg <= 0;
+			dec_l1i_req_val_out_reg<=0;
+			dec_l1i_req_cop_out_reg<=0;
+			dec_l1i_req_size_out_reg<=0;
 			dec_mux_bus_out_reg <= 0;
-			dec_hazard_bus_out_reg <= 0;
 			dec_alu_cnd_out_reg <= 0;
 			dec_alu_op_out_reg <= 0;
-			dec_src1_out_reg <= 	0;
-			dec_src2_out_reg <= 	0;
-			dec_pc_out_reg <=  		0;
-			dec_pc_4_out_reg <=  	0;
+			dec_src1_out_reg <= 0;
+			dec_src2_out_reg <= 0;
+			dec_pc_out_reg <= 0;
+			dec_pc_4_out_reg <= 0;
 			dec_sx_imm_out_reg <= 0;
 			dec_we_reg_file_out_reg <= 0;
 			dec_hazard_cmd_out_reg <= 0;
+			dec_rs1_out_reg <=0;
+			dec_rs2_out_reg <=0;
+			dec_rd_out_reg <=0;
 		end	
 end 
-assign dec_hazard_bus_loc = {rs1,rs2,dec_inst_in[11:7]};
-assign dec_stall_out = (dec_il1_ack_in)? 1'b0:1'b1;
-assign dec_ld1_loc_nop = (dec_nop_gen_in)?`NOT_REQ : dec_ld1_loc;
+assign dec_stall_out = (dec_l1i_ack_in)? 1'b0:1'b1;
+assign l1i_val_loc_nop = (dec_nop_gen_in)? 1'b0:l1i_val_loc;
 assign dec_we_reg_file_loc_nop = (dec_nop_gen_in)? `WE_OFF : dec_we_reg_file_loc;
 assign rs1 = (dec_nop_gen_in)? 5'b0: dec_inst_in[19:15];
 assign rs2 = (dec_nop_gen_in)? 5'b0: dec_inst_in[24:20];	
+assign rd = (dec_nop_gen_in)? 5'b0: dec_inst_in[11:7];
+assign dec2haz_cmd_out = dec_hazard_cmd_loc;
 endmodule // cpu_dec_s
 

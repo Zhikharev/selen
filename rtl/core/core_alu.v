@@ -1,24 +1,59 @@
 // ----------------------------------------------------------------------------
-// 
-// ----------------------------------------------------------------------------
-// FILE NAME            : core_alu.sv
+// FILE NAME            	: core_csr.sv
 // PROJECT                : Selen
-// AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexBolotnikov@gmail.com 			
+// AUTHOR                 :	Alexandr Bolotnikov	
+// AUTHOR'S EMAIL 				:	AlexsanrBolotnikov@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION        : arithmetico logical unit
-// ----------------------------------------------------------------------------
-
+// DESCRIPTION        		:	ALU
+// ------------------------------------------
+include core_defines.vh;
 module 	core_alu (
-	input signed [31:0] 						src1,
-	input signed [31:0]							src2,
+	input signed[31:0]	 				src1,
+	input signed[31:0]					src2,
 	input[3:0]									alu_op,
 	input[2:0]									brnch_cnd,
-	output reg  signed  [31:0]	 				alu_result,
-	output 		 					reg			brnch_takenn			
+	output reg  signed[31:0]		alu_result,
+	output reg									brnch_takenn			
 );
+reg[3:0] alu_op_loc;
+reg[1:0] brnch_control_loc;
+//assign alu_op_loc = (brnch_cnd[2])?brnch_control_loc:alu_op;
+//brnch_control
+always@* begin
+		brnch_takenn = 1'b0;
+		if(brnch_cnd[2])begin
+			alu_op_loc = brnch_control_loc;
+		end 
+		else alu_op_loc = alu_op; 
+		case(brnch_cnd)
+			`ALU_BEQ: begin
+				brnch_control_loc = `SUB_ALU;
+				if(alu_result == 0) begin
+					brnch_takenn = 1'b1;
+				end
+			end	
+			//	
+			`ALU_BNE: begin
+				brnch_control_loc = `SUB_ALU;
+				if(alu_result != 0) begin
+					brnch_takenn = 1'b1;
+				end
+			end
+			//
+			`ALU_BLT: begin
+				brnch_control_loc = `SLT_ALU;
+				if(alu_result) brnch_takenn = 1'b1;
+			end
+			//
+			`ALU_BLTU: begin
+				alu_op_loc = `SLTU_ALU;
+				if(alu_result) brnch_takenn = 1'b1;
+			end
+		endcase // brnch_cnd	
+end
+//general alu
 always @* begin  
-	case(alu_op)
+	case(alu_op_loc)
 		`ADD_ALU: alu_result = src1 + src2;
 		`AND_ALU: alu_result = src1 | src2;
 		`OR_ALU:	alu_result = src1 & src2;
@@ -40,37 +75,4 @@ always @* begin
 		`AM_ALU:  alu_result = (src1 + src2) >> 1'b1;
 	endcase // alu_op
 end
-
-always @* begin
-	if(brnch_cnd[2]) begin
-		case(brnch_cnd)
-			`ALU_BEQ: begin
-					if(src1 == src2) brnch_takenn = 1'b1;
-					else brnch_takenn = 1'b0;
-			end
-			`ALU_BNE: begin
-				if(src1 != src2) begin
-					brnch_takenn = 1'b1;
-				end
-				else brnch_takenn = 1'b0;
-			end
-			`ALU_BLT: begin
-				if(src1 < src2) begin
-					brnch_takenn = 1'b1;	
-				end	
-				else	brnch_takenn = 1'b0;
-			end
-			`ALU_BLTU: begin
-				if((~src1 + 32'b1) < (~src1 + 32'b1)) begin
-					brnch_takenn = 1'b1;
-				end
-				else begin
-					brnch_takenn = 1'b0;
-				end
-			end
-		endcase // brnch_cnd	
-	end
-	else brnch_takenn = 1'b0;
-end
-
 endmodule

@@ -30,34 +30,36 @@ module core_top
 		input[31:0]			d_ack_rdata
 	);
 
-wire[31:0] csr2pl_cash_uncahe_addr;
+wire [31:0] csr_nc_base;
+wire [31:0] csr_nc_mask;
 
 core_pipeline pipeline
 (
-	.clk 											(clk),
-	.rst_n 									 	(rst_n),
-	.pl_csr_addr_cach_uncash 	(csr2pl_cash_uncahe_addr),
+	.clk 								(clk),
+	.rst_n 							(rst_n),
+	.csr_nc_base 				(csr_nc_base),
+	.csr_nc_mask 				(csr_nc_mask),
 	//l1i
-	.pl_l1i_ack_rdata_in 			(i_ack_rdata),
-	.pl_l1i_ack_in 						(i_req_ack),
-	.pl_l1i_req_val_out 			(i_req_val),
-	.pl_l1i_req_aadr_out 			(i_req_addr),
+	.pl_l1i_ack_rdata 	(i_ack_rdata),
+	.pl_l1i_ack 				(i_req_ack),
+	.pl_l1i_req_val 		(i_req_val),
+	.pl_l1i_req_aadr 		(i_req_addr),
 	//l1d
-	.pl_l1d_req_val_out 			(d_req_val),
-	.pl_l1d_req_addr_out 			(d_req_addr),
-	.pl_l1d_req_cop_out 			(d_req_cop),
-	.pl_l1d_req_wdata_out 		(d_req_wdata),
-	.pl_l1d_req_size_out 			(d_req_size),
-	.pl_l1d_ack_ack_in 				(d_req_ack),
-	.pl_l1d_ack_rdata_in 			(d_ack_rdata)
+	.pl_l1d_req_val 		(d_req_val),
+	.pl_l1d_req_addr 		(d_req_addr),
+	.pl_l1d_req_cop 		(d_req_cop),
+	.pl_l1d_req_wdata 	(d_req_wdata),
+	.pl_l1d_req_size 		(d_req_size),
+	.pl_l1d_ack_ack 		(d_req_ack),
+	.pl_l1d_ack_rdata 	(d_ack_rdata)
 );
 
 core_csr csr
 (
 	.clk 			 			(clk),
 	.rst_n 					(rst_n),
-	.ncache_base    (),
-	.ncache_mask 		()
+	.ncache_base    (csr_nc_base),
+	.ncache_mask 		(csr_nc_mask)
 );
 
 /*
