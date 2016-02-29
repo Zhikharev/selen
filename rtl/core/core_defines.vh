@@ -1,6 +1,7 @@
 `define PC_START 32'b0
 `define CASHEBLE_ADDR 32'h0000ffff
-
+`define NCACHE_BASE_ADDR  32'h0000ffff
+`define NCACHE_MASK_ADDR  32'h0000ffff
 // CSR
 `define TIMER_BITWISE 32
 `define ADDR_BASE 	32'h0000_0000

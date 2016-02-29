@@ -6,19 +6,19 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of decode station
 // ----------------------------------------------------------------------------
-include core_defines.vh;
-include opcodes.vh;
+//include core_defines.vh;
+//include opcodes.vh;
 module core_dec_s(
-	input							clk,
-	input							rst_n,
-	input 						dec_enb,
-	input							dec_kill,
+	input					clk,
+	input					rst_n,
+	input 					dec_enb,
+	input					dec_kill,
 	//inside terminals
-	input 						dec_nop_gen_in,
+	input 					dec_nop_gen_in,
 	input[31:0]				dec_inst_in,
 	input[31:0]				dec_data_wrt_in,
-	input							dec_l1i_ack_in,
-	input							dec_we_reg_file_in,
+	input					dec_l1i_ack_in,
+	input					dec_we_reg_file_in,
 	//input form if station
 	input[31:0]				dec_pc_in,
 	input[31:0]				dec_pc_4_in,
@@ -26,7 +26,7 @@ module core_dec_s(
 	//control pins
 	output reg[2:0]		dec_wb_sx_op_out_reg,
 	output reg[5:0]		dec_mux_bus_out_reg,
-	output reg 				dec_we_reg_file_out_reg,		
+	output reg 			dec_we_reg_file_out_reg,		
 	output reg[3:0]		dec_alu_op_out_reg,	
 	output reg[2:0] 	dec_alu_cnd_out_reg,
 	//cahs

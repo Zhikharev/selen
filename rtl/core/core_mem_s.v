@@ -8,24 +8,24 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		: memory phase of pipline 
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_mem_s (
-	input 						clk,
-	input 						n_rst,
-	input							mem_enb,
-	input							mem_kill,
+	input 					clk,
+	input 					rst_n,
+	input					mem_enb,
+	input					mem_kill,
 	//control pins
 	input[2:0]				mem_wb_sx_op_in,
-	input 		 				mem_l1d_req_val_in,
+	input 		 			mem_l1d_req_val_in,
 	input[1:0]			 	mem_l1d_req_cop_in,
 	input[2:0]				mem_l1d_req_size_in,
-	input							mem_we_reg_file_in,
-	input							mem_mux_alu_mem_in,
+	input					mem_we_reg_file_in,
+	input					mem_mux_alu_mem_in,
 	//
 	input[31:0]				mem_csr_ms_mask_in,//casheble or uncashble 
 	input[31:0]				mem_csr_nc_base_in,
 	//data pins
-	input						mem_alu_result_in,
+	input					mem_alu_result_in,
 	input[31:0]				mem_sx_imm_in,
 	input[31:0]				mem_pc_4_in,
 	input[31:0]				mem_wrt_data_in,
@@ -34,31 +34,33 @@ module core_mem_s (
 	input[4:0]				mem_rs1_in,
 	input[4:0]				mem_rs2_in,
 	input[4:0]				mem_rd_in,
-	input						mem_bp_mux_in,
+	input[1:0]				mem_haz_cmd_in,
+	input					mem_bp_mux_in,
 	input[31:0]				mem_bp_from_wb_data_in,
 	
 	//l1d bus
-	output  					mem2l1d_req_val_out,
+	output  				mem2l1d_req_val_out,
 	output 					mem2l1d_req_size_out,
 	output 					mem2l1d_req_cop_out,
 	output 					mem_wrt_data_mem_out,
 	//
 	output[31:0]			mem2exe_bp_data_out,
 	//data outs 
-	output reg[31:0]	mem_alu_result_reg_out,
-	output reg[31:0]	mem_sx_imm_reg_out,
-	output reg[31:0]	mem_pc_4_reg_out,
+	output reg[31:0]		mem_alu_result_reg_out,
+	output reg[31:0]		mem_sx_imm_reg_out,
+	output reg[31:0]		mem_pc_4_reg_out,
 	//control outs
 	output reg 				mem_mux_alu_mem_out_reg,
 	output reg 			 	mem_we_reg_file_out_reg,
-	output reg[2:0]	 	mem_wb_sx_op_out_reg,
+	output reg[2:0]	 		mem_wb_sx_op_out_reg,
 	// 2 hazard 
-	output reg[4:0]		mem_rd_out_reg,
+	output reg[4:0]			mem_rd_out_reg,
 	output 					mem2haz_we_reg_file_out,
 	//
 	output[4:0]				mem2haz_rs1_out,
 	output[4:0]				mem2haz_rs2_out,
-	output[4:0]				mem2haz_rd_out
+	output[4:0]				mem2haz_rd_out,
+	output[1:0]				mem2haz_cmd_out
 );
 wire cash_uncash;
 always @(posedge clk) begin 
@@ -81,6 +83,7 @@ always @(posedge clk) begin
 		mem_rd_out_reg <= 0;
 	end	 
 end
+assign mem2haz_cmd_out = mem_haz_cmd_in;
 assign mem_wrt_data_mem_out = mem_wrt_data_in;
 assign mem2l1d_req_cop_out = {1'b0,cash_uncash,mem_l1d_req_cop_in};
 assign mem2l1d_req_val_out =  mem_l1d_req_val_in;
@@ -90,7 +93,7 @@ assign mem_wrt_data_in = (mem_bp_mux_in)?mem_bp_from_wb_data_in:mem_wrt_data_in;
 assign cash_uncash = (mem_alu_result_in &~({`ADDR_WIDTH{1'b0}} | `ADDR_MASK)) == `ADDR_BASE;
 assign mem2exe_bp_data_out = mem_alu_result_in;
 assign mem2haz_we_reg_file_out = mem_we_reg_file_in;
-assign mem2haz_rs1 =  mem_rs1_in;
-assign mem2haz_rs2 = mem_rs2_in;
-assign mem2haz_rd = mem_rd_in;
+assign mem2haz_rs1_out =  mem_rs1_in;
+assign mem2haz_rs2_out = mem_rs2_in;
+assign mem2haz_rd_out = mem_rd_in;
 endmodule // core_mem

@@ -1,13 +1,13 @@
 // ----------------------------------------------------------------------------
-// FILE NAME            	: core_pipeline.sv
-// PROJECT                : Selen
-// AUTHOR                 : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 				:	AlexsandrBolotnikov@gmail.com
+// FILE NAME          :core_pipeline.sv
+// PROJECT              :Selen
+// AUTHOR              :Alexsandr Bolotnokov
+// AUTHOR'S EMAIL	:AlexsandrBolotnikov@gmail.com
 // ----------------------------------------------------------------------------
-// DESCRIPTION        		: connection bwtwine all modules of stage and
-//                          hazard controll
+// DESCRIPTION      :connection bwtwine all modules of stage and
+//                            hazard controll
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_pipeline
 	(
 		input 					clk,
@@ -32,34 +32,39 @@ module core_pipeline
 		input 	[31:0]	pl_l1d_ack_rdata
 	);
 //hazard wires
-wire[3:0] 	haz_kill_bus_loc;
+wire[3:0] 		haz_kill_bus_loc;
 wire[3:0]		haz_enb_bus_loc;
-wire 				haz2if_s_pc_stop;
-wire 				haz2exe_s_mux_trn_out;
-wire 				haz2dec_s_nop_gen;
+wire 			haz2if_s_pc_stop;
+wire 			haz2exe_s_mux_trn_out;
+wire 			haz2dec_s_nop_gen;
 wire[3:0]		haz2exe_bp_mux_exe;
-wire 				haz2mem_bp_mux_mem;
+wire 			haz2mem_bp_mux_mem;
 wire[4:0]		wb2haz_rd;
 wire[1:0]		dec2haz_cmd;
-wire 				dec2haz_stall;				
-wire 				mem2haz_we_reg_file;
+wire 			dec2haz_stall;				
+wire 			mem2haz_we_reg_file;
+
 //
 wire[4:0]		exe2haz_rs1;
 wire[4:0]		exe2haz_rs2;
 wire[4:0]		exe2haz_rd;
-wire 				exe2haz_brnch_tknn;
-wire 				exe2haz_cmd;
-wire 				exe2haz_we_reg_file;
-wire 				wb2haz_stall;
+wire 			exe2haz_brnch_tknn;
+wire 			exe2haz_cmd;
+wire 			exe2haz_we_reg_file;
+wire 			wb2haz_stall;
+wire[4:0]		mem2haz_rs1;
+wire[4:0]		mem2haz_rs2;
+wire[4:0]		mem2haz_rd;
+wire[1:0]		mem2haz_cmd;
 // from  or 2 if
-wire 				exe2if_mux_trn_s;
-wire[31:0]	exe2if_addr;
-wire[31:0]	if2dec_pc;
-wire[31:0]	if2dec_pc_4;
+wire 			exe2if_mux_trn_s;
+wire[31:0]		exe2if_addr;
+wire[31:0]		if2dec_pc;
+wire[31:0]		if2dec_pc_4;
 //
 core_if_s core_if_s (
 .clk(clk),
-.n_rst(n_rst),
+.rst_n(rst_n),
 //register control
 .if_kill(haz_kill_bus_loc[`REG_IF_DEC]),
 .if_enb(haz_enb_bus_loc[`REG_IF_DEC]),
@@ -100,7 +105,7 @@ wire[4:0]		dec2exe_rs2;
 wire[4:0]		dec2exe_rd;
 core_dec_s core_dec_s(
 .clk(clk),
-.rst_n(n_rst),
+.rst_n(rst_n),
 .dec_enb(haz_enb_bus_loc[`REG_DEC_EXE]),
 .dec_kill(haz_kill_bus_loc[`REG_DEC_EXE]),
 //inside terminals
@@ -140,21 +145,22 @@ core_dec_s core_dec_s(
 );
 //exe's wire
 
-wire[31:0] 	mem2exe_bp_data;
-wire[31:0]	wb2exe_bp_data;
+wire[31:0] 		mem2exe_bp_data;
+wire[31:0]		wb2exe_bp_data;
 assign 			wb2exe_bp_data = wb2dec_wrt_data;
-wire[2:0] 	exe2mem_wb_sx_op;
+wire[2:0] 		exe2mem_wb_sx_op;
 wire[2:0]		exe2mem_l1d_cop;
 wire[2:0]		exe2mem_l1d_size;
-wire 				exe2mem_l1d_val;
-wire 				exe2mem_we_reg_file;
-wire 				exe2mem_mux_alu_mem;
+wire 			exe2mem_l1d_val;
+wire 			exe2mem_we_reg_file;
+wire 			exe2mem_mux_alu_mem;
+wire[31:0]		exe2mem_wrt_data;
 //
-wire[31:0]	exe2mem_alu_result;
-wire[31:0]	exe2mem_sx_imm;
-wire[31:0]	exe2mem_pc_4;
-wire[31:0]	exe2mem_w_data;
-wire[31:0]	exe2mem_addr;
+wire[31:0]		exe2mem_alu_result;
+wire[31:0]		exe2mem_sx_imm;
+wire[31:0]		exe2mem_pc_4;
+wire[31:0]		exe2mem_w_data;
+wire[31:0]		exe2mem_addr;
 //
 wire[4:0]		exe2mem_rs1;
 wire[4:0]		exe2mem_rs2;
@@ -162,7 +168,7 @@ wire[4:0]		exe2mem_rd;
 wire[1:0]		exe2mem_haz_cmd;
 core_exe_s core_exe_s( 
 .clk(clk),
-.rst_n(n_rst),
+.rst_n(rst_n),
 .exe_enb(haz_enb_bus_loc[`REG_EXE_MEM]),
 .exe_kill(haz_kill_bus_loc[`REG_EXE_MEM]),
 //
@@ -224,7 +230,7 @@ wire[2:0]		mem2wb_wb_sx_op;
 wire[4:0] 	mem2wb_rd;
 core_mem_s core_mem_s(
 .clk(clk),
-.n_rst(n_rst),
+.rst_n(rst_n),
 .mem_enb(haz_enb_bus_loc[`REG_MEM_WB]),
 .mem_kill(haz_kill_bus_loc[`REG_MEM_WB]),
 //controlpins
@@ -269,11 +275,12 @@ core_mem_s core_mem_s(
 .mem2haz_we_reg_file_out(mem2haz_we_reg_file),
 .mem2haz_rs1_out(mem2haz_rs1),
 .mem2haz_rs2_out(mem2haz_rs2),
-.mem2haz_rd_out(mem2haz_rd)
+.mem2haz_rd_out(mem2haz_rd),
+.mem2haz_cmd_out(mem2haz_cmd)
 );
 core_wb_s core_wb_s(
 .clk(clk),
-.n_rst(n_rst),
+.rst_n(rst_n),
 //control
 .wb_mux_alu_mem_in(mem2wb_mux_alu_mem),
 .wb_ack_from_lid_in(pl_l1d_ack_ack),
@@ -292,7 +299,7 @@ core_wb_s core_wb_s(
 );
 
 core_hazard_ctrl core_hazard_ctrl(
-.rst_n(n_rst),
+.rst_n(rst_n),
 //istercontroll
 .haz_enb_bus_out(haz_enb_bus_loc),
 .haz_kill_bus_out(haz_kill_bus_loc),

@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of exeqution station
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_exe_s (
 	input							clk,
 	input							rst_n, 
@@ -134,10 +134,10 @@ always @(posedge clk) begin
 		exe_wrt_data_out_reg<=0;
 	end	
 end
-assign exe2haz_brnch_tknn = brnch_takenn_loc;
+assign exe2haz_brnch_tknn_out = brnch_takenn_loc;
 assign exe2haz_we_reg_file_out = exe_we_reg_file_in;
-assign exe2haz_rs1 = exe_rs1_in;
-assign exe2haz_rs2 = exe_rs2_in;
-assign exe2haz_rd = exe2haz_rd;
+assign exe2haz_rs1_out = exe_rs1_in;
+assign exe2haz_rs2_out = exe_rs2_in;
+assign exe2haz_rd_out = exe_rd_in;
 assign exe2haz_cmd = exe_haz_cmd_in;
 endmodule		  
