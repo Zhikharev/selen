@@ -28,10 +28,10 @@ module sram_rom
 	reg [$clog2(DEPTH)-1:0] addr_r;
 
 	no_addr_x_p:
-		assert property(@(posedge clk) ~$isunknown(ADDR))
+		assert property(@(posedge CLK) ~$isunknown(ADDR))
 		else $fatal("Found X on ADDR!");
 	no_clk_x_p:
-		assert property(~$isunknown(CLK))
+		assert property(@(posedge CLK) ~$isunknown(CLK))
 		else $fatal("Found X on ADDR!");
 
 	// Port A

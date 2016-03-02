@@ -8,6 +8,7 @@
 // AUTHOR'S EMAIL  :
 // ----------------------------------------------------------------------------
 // DESCRIPTION     :
+// 1.1    02.03.16    Добавлена конвейерная выдача из памяти
 // ----------------------------------------------------------------------------
 `ifndef INC_WB_ROM
 `define INC_WB_ROM
@@ -75,7 +76,7 @@ assign wb_dat_o  = rom_dat_o;
 always @(posedge wb_clk_i or posedge wb_rst_i) begin
     if (wb_rst_i)
         wb_ack_r <= 1'b0;
-    else if(wb_cyc_i & wb_stb_i & ~wb_err_o & ~wb_ack_r)
+    else if(wb_cyc_i & wb_stb_i & ~wb_err_o)
         wb_ack_r <= 1'b1;
     else
         wb_ack_r <= 1'b0;
