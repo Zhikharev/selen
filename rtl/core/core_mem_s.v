@@ -75,6 +75,7 @@ always @(posedge clk) begin
 		mem_mux_alu_mem_out_reg <=	mem_mux_alu_mem_in;
 		mem_wb_sx_op_out_reg <=	mem_wb_sx_op_in;
 		mem_rd_out_reg <= mem_rd_in;
+		mem_val_inst_out_reg <= mem_val_inst_in;
 	end
 	if(mem_kill) begin
 		mem_alu_result_reg_out <= 0;
@@ -84,6 +85,7 @@ always @(posedge clk) begin
 		mem_mux_alu_mem_out_reg <=	0;
 		mem_wb_sx_op_out_reg <=	0;
 		mem_rd_out_reg <= 0;
+		mem_val_inst_out_reg <=0;
 	end	 
 end
 assign mem2haz_cmd_out = mem_haz_cmd_in;

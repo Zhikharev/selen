@@ -280,9 +280,9 @@ end
 
 	always@(negedge clk) begin
 		if(dec_enb)begin
-			dec_l1i_req_val_out_reg <= l1i_val_loc_nop;
-			dec_l1i_req_cop_out_reg <= l1i_cop_loc;
-			dec_l1i_req_size_out_reg <= l1i_size_loc;
+			dec_l1d_req_val_out_reg <= l1i_val_loc_nop;
+			dec_l1d_req_cop_out_reg <= l1i_cop_loc;
+			dec_l1d_req_size_out_reg <= l1i_size_loc;
 			dec_mux_bus_out_reg <= dec_mux_bus_loc;
 			dec_alu_cnd_out_reg <= dec_alu_cnd_loc;
 			dec_alu_op_out_reg <= alu_op;
@@ -299,9 +299,9 @@ end
 			dec_val_inst_out_reg <= ~dec_nop_gen_in;
 		end	
 		if(dec_kill)begin
-			dec_l1i_req_val_out_reg<=0;
-			dec_l1i_req_cop_out_reg<=0;
-			dec_l1i_req_size_out_reg<=0;
+			dec_l1d_req_val_out_reg<=0;
+			dec_l1d_req_cop_out_reg<=0;
+			dec_l1d_req_size_out_reg<=0;
 			dec_mux_bus_out_reg <= 0;
 			dec_alu_cnd_out_reg <= 0;
 			dec_alu_op_out_reg <= 0;

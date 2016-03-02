@@ -67,8 +67,8 @@ module core_exe_s (
 	output[4:0] 			exe2haz_rs2_out,
 	output[4:0]				exe2haz_rd_out,
 	output[1:0]				exe2haz_cmd_out,
-	
-	output 				exe_val_inst_out_reg
+
+	output  reg				exe_val_inst_out_reg
 );	
 
 wire[31:0] 		alu_src1;
@@ -144,5 +144,5 @@ assign exe2haz_we_reg_file_out = exe_we_reg_file_in;
 assign exe2haz_rs1_out = exe_rs1_in;
 assign exe2haz_rs2_out = exe_rs2_in;
 assign exe2haz_rd_out = exe_rd_in;
-assign exe2haz_cmd = exe_haz_cmd_in;
+assign exe2haz_cmd_out = exe_haz_cmd_in;
 endmodule		  

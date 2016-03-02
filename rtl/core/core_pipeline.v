@@ -290,7 +290,7 @@ core_mem_s core_mem_s(
 .mem2haz_rd_out(mem2haz_rd),
 .mem2haz_cmd_out(mem2haz_cmd),
 //
-.mem_val_inst_out_reg(pl_val_instr)
+.mem_val_inst_out_reg(pl_val_inst)
 );
 core_wb_s core_wb_s(
 .clk(clk),
@@ -312,8 +312,8 @@ core_wb_s core_wb_s(
 .wb2haz_rd_out(wb2haz_rd)
 );
 
-core_hazard_ctrl core_hazard_ctrl(
-.rst_n(rst_n),
+core_hazard_ctrl core_hazard_ctrl(.
+rst_n(rst_n),
 //istercontroll
 .haz_enb_bus_out(haz_enb_bus_loc),
 .haz_kill_bus_out(haz_kill_bus_loc),
