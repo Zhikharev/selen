@@ -28,7 +28,7 @@
  	assign ncache_mask = ncache_mask_r;
  
  	// WDT
- 	reg [`TIMER_BITWISE:0] counter_r;
+ 	reg [`TIMER_BITWISE-1:0] counter_r;
  
  	always @(posedge clk, negedge rst_n) begin
  		if(~rst_n) counter_r <= 0;

@@ -29,7 +29,9 @@ module core_pipeline
 		output  [31:0] 	pl_l1d_req_wdata,
 		output 	[2:0]		pl_l1d_req_size,
 		input 					pl_l1d_ack_ack,
-		input 	[31:0]	pl_l1d_ack_rdata
+		input 	[31:0]	pl_l1d_ack_rdata,
+	//val_inst
+		output 			pl_val_inst
 	);
 //hazard wires
 wire[3:0] 		haz_kill_bus_loc;
@@ -43,7 +45,6 @@ wire[4:0]		wb2haz_rd;
 wire[1:0]		dec2haz_cmd;
 wire 			dec2haz_stall;				
 wire 			mem2haz_we_reg_file;
-
 //
 wire[4:0]		exe2haz_rs1;
 wire[4:0]		exe2haz_rs2;
@@ -62,24 +63,6 @@ wire[31:0]		exe2if_addr;
 wire[31:0]		if2dec_pc;
 wire[31:0]		if2dec_pc_4;
 //
-core_if_s core_if_s (
-.clk(clk),
-.rst_n(rst_n),
-//register control
-.if_kill(haz_kill_bus_loc[`REG_IF_DEC]),
-.if_enb(haz_enb_bus_loc[`REG_IF_DEC]),
-//from hazard control
-.if_pc_stop_in(haz2if_s_pc_stop),
-.if_mux_trn_s_in(exe2if_mux_trn_s),
-// for transfer of address
-.if_addr_mux_trn_in(exe2if_addr),
-//for l1i $
-.if_addr_l1i_cash_out(pl_l1i_req_aadr),
-.if_val_l1i_cahe_out(pl_l1i_req_val),//global
-//register if/dec
-.if_pc_reg_out(if2dec_pc),
-.if_pc_4_reg_out(if2dec_pc_4)
-);
 //decode's wire
 wire[31:0]	wb2dec_wrt_data;
 wire 				wb2dec_we_reg_file;
@@ -103,6 +86,58 @@ wire[31:0]  dec2exe_pc_4;
 wire[4:0]		dec2exe_rs1;
 wire[4:0]		dec2exe_rs2;
 wire[4:0]		dec2exe_rd;
+
+wire[31:0] 		mem2exe_bp_data;
+wire[31:0]		wb2exe_bp_data;
+assign 			wb2exe_bp_data = wb2dec_wrt_data;
+wire[2:0] 		exe2mem_wb_sx_op;
+wire[2:0]		exe2mem_l1d_cop;
+wire[2:0]		exe2mem_l1d_size;
+wire 			exe2mem_l1d_val;
+wire 			exe2mem_we_reg_file;
+wire 			exe2mem_mux_alu_mem;
+wire[31:0]		exe2mem_wrt_data;
+//
+wire[31:0]		exe2mem_alu_result;
+wire[31:0]		exe2mem_sx_imm;
+wire[31:0]		exe2mem_pc_4;
+wire[31:0]		exe2mem_w_data;
+wire[31:0]		exe2mem_addr;
+//
+wire[4:0]		exe2mem_rs1;
+wire[4:0]		exe2mem_rs2;
+wire[4:0]		exe2mem_rd;
+wire[1:0]		exe2mem_haz_cmd;
+// mem's wire
+wire[31:0]	mem2wb_sx_imm;
+wire[31:0]	mem2wb_alu_result;
+wire[31:0] 	mem2wb_pc_4;	 
+wire 				mem2wb_mux_alu_mem;
+wire 				mem2wb_we_reg_file;
+wire[2:0]		mem2wb_wb_sx_op;
+wire[4:0] 	mem2wb_rd;
+///validation of instruction
+wire 	dec2exe_val_instr;
+wire 	exe2mem_val_instr;
+///
+core_if_s core_if_s (
+.clk(clk),
+.rst_n(rst_n),
+//register control
+.if_kill(haz_kill_bus_loc[`REG_IF_DEC]),
+.if_enb(haz_enb_bus_loc[`REG_IF_DEC]),
+//from hazard control
+.if_pc_stop_in(haz2if_s_pc_stop),
+.if_mux_trn_s_in(exe2if_mux_trn_s),
+// for transfer of address
+.if_addr_mux_trn_in(exe2if_addr),
+//for l1i $
+.if_addr_l1i_cash_out(pl_l1i_req_aadr),
+.if_val_l1i_cahe_out(pl_l1i_req_val),//global
+//register if/dec
+.if_pc_reg_out(if2dec_pc),
+.if_pc_4_reg_out(if2dec_pc_4)
+);
 core_dec_s core_dec_s(
 .clk(clk),
 .rst_n(rst_n),
@@ -113,7 +148,7 @@ core_dec_s core_dec_s(
 .dec_inst_in(pl_l1d_ack_rdata),//global l1i
 .dec_data_wrt_in(wb2dec_wrt_data),
 .dec_l1i_ack_in(pl_l1i_ack),//global l1i
-.dec_we_file_in(wb2dec_we_reg_file),
+.dec_we_reg_file_in(wb2dec_we_reg_file),
 //. form if station
 .dec_pc_in(if2dec_pc),
 .dec_pc_4_in(if2dec_pc_4),
@@ -140,33 +175,14 @@ core_dec_s core_dec_s(
 .dec_rd_out_reg(dec2exe_rd),
 // for hazard 
 .dec2haz_cmd_out(dec2haz_cmd),
-.dec_stall_out(dec2haz_stall)
+.dec_stall_out(dec2haz_stall),
 
+.dec_val_instr_out_reg(dec2exe_val_instr)
 );
 //exe's wire
-
-wire[31:0] 		mem2exe_bp_data;
-wire[31:0]		wb2exe_bp_data;
-assign 			wb2exe_bp_data = wb2dec_wrt_data;
-wire[2:0] 		exe2mem_wb_sx_op;
-wire[2:0]		exe2mem_l1d_cop;
-wire[2:0]		exe2mem_l1d_size;
-wire 			exe2mem_l1d_val;
-wire 			exe2mem_we_reg_file;
-wire 			exe2mem_mux_alu_mem;
-wire[31:0]		exe2mem_wrt_data;
-//
-wire[31:0]		exe2mem_alu_result;
-wire[31:0]		exe2mem_sx_imm;
-wire[31:0]		exe2mem_pc_4;
-wire[31:0]		exe2mem_w_data;
-wire[31:0]		exe2mem_addr;
-//
-wire[4:0]		exe2mem_rs1;
-wire[4:0]		exe2mem_rs2;
-wire[4:0]		exe2mem_rd;
-wire[1:0]		exe2mem_haz_cmd;
 core_exe_s core_exe_s( 
+.exe_val_inst_in(dec2exe_val_instr),
+
 .clk(clk),
 .rst_n(rst_n),
 .exe_enb(haz_enb_bus_loc[`REG_EXE_MEM]),
@@ -175,7 +191,7 @@ core_exe_s core_exe_s(
 .exe_s_frm_haz_mux_trn_in(haz2exe_s_mux_trn_out),
 //fromdeceode
 //controlpins
-.exe_we_file_in(dec2exe_we_reg_file),
+.exe_we_reg_file_in(dec2exe_we_reg_file),
 .exe_wb_sx_op_in(dec2exe_wb_sx_op),
 .exe_mux_bus_in(dec2exe_mux_bus),
 .exe_alu_op_in(dec2exe_alu_op),
@@ -218,17 +234,13 @@ core_exe_s core_exe_s(
 .exe2haz_rs1_out(exe2haz_rs1),
 .exe2haz_rs2_out(exe2haz_rs2),
 .exe2haz_rd_out(exe2haz_rd),
-.exe2haz_cmd_out(exe2haz_cmd)
+.exe2haz_cmd_out(exe2haz_cmd),
+//
+.exe2mem_val_inst_out_reg(exe2mem_val_instr)
 );
-// mem's wire
-wire[31:0]	mem2wb_sx_imm;
-wire[31:0]	mem2wb_alu_result;
-wire[31:0] 	mem2wb_pc_4;	 
-wire 				mem2wb_mux_alu_mem;
-wire 				mem2wb_we_reg_file;
-wire[2:0]		mem2wb_wb_sx_op;
-wire[4:0] 	mem2wb_rd;
 core_mem_s core_mem_s(
+.mem_val_inst_in(exe2mem_val_instr),
+
 .clk(clk),
 .rst_n(rst_n),
 .mem_enb(haz_enb_bus_loc[`REG_MEM_WB]),
@@ -256,9 +268,9 @@ core_mem_s core_mem_s(
 .mem_rs2_in(exe2mem_rs2),
 .mem_rd_in(exe2mem_rd),
 //l1d bus
-.meml1d_req_val_out(pl_l1d_req_val),//global
-.meml1d_req_size_out(pl_l1d_req_size),//global
-.meml1d_req_cop_out(pl_l1d_req_cop),//global
+.mem2l1d_req_val_out(pl_l1d_req_val),//global
+.mem2l1d_req_size_out(pl_l1d_req_size),//global
+.mem2l1d_req_cop_out(pl_l1d_req_cop),//global
 .mem_wrt_data_mem_out(pl_l1i_req_aadr),//global
 //
 .mem2exe_bp_data_out(mem2exe_bp_data),
@@ -276,7 +288,9 @@ core_mem_s core_mem_s(
 .mem2haz_rs1_out(mem2haz_rs1),
 .mem2haz_rs2_out(mem2haz_rs2),
 .mem2haz_rd_out(mem2haz_rd),
-.mem2haz_cmd_out(mem2haz_cmd)
+.mem2haz_cmd_out(mem2haz_cmd),
+//
+.mem_val_inst_out_reg(pl_val_instr)
 );
 core_wb_s core_wb_s(
 .clk(clk),

@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------
 //include core_defines.vh;
 module core_mem_s (
+	input 					mem_val_inst_in,
 	input 					clk,
 	input 					rst_n,
 	input					mem_enb,
@@ -22,7 +23,7 @@ module core_mem_s (
 	input					mem_we_reg_file_in,
 	input					mem_mux_alu_mem_in,
 	//
-	input[31:0]				mem_csr_ms_mask_in,//casheble or uncashble 
+	input[31:0]				mem_csr_nc_mask_in,//casheble or uncashble 
 	input[31:0]				mem_csr_nc_base_in,
 	//data pins
 	input					mem_alu_result_in,
@@ -60,7 +61,9 @@ module core_mem_s (
 	output[4:0]				mem2haz_rs1_out,
 	output[4:0]				mem2haz_rs2_out,
 	output[4:0]				mem2haz_rd_out,
-	output[1:0]				mem2haz_cmd_out
+	output[1:0]				mem2haz_cmd_out,
+
+	output 					mem_val_inst_out_reg
 );
 wire cash_uncash;
 always @(posedge clk) begin 

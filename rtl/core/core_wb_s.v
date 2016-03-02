@@ -10,24 +10,24 @@
 // ----------------------------------------------------------------------------
 //include core_defines.vh;
 module core_wb_s(
-	input						clk,
+	input					clk,
 	input 					rst_n,
 	//control
-	input						wb_mux_alu_mem_in,
+	input					wb_mux_alu_mem_in,
 	input 					wb_ack_from_lid_in,
 	input 					wb_we_reg_file_in,
-	input[2:0]			wb_sx_op_in,
-	input[4:0]			wb_rd_in,
+	input[2:0]				wb_sx_op_in,
+	input[4:0]				wb_rd_in,
 	//data terminals
-	input[31:0] 		wb_alu_result_in,
-	input[31:0]			wb_sx_imm_in,
-	input[31:0]			wb_pc_4_in,
-	input[31:0]			wb_mem_data_in,
+	input[31:0] 			wb_alu_result_in,
+	input[31:0]				wb_sx_imm_in,
+	input[31:0]				wb_pc_4_in,
+	input[31:0]				wb_mem_data_in,
 
 	output 					wb_we_reg_file_out,
-	output[31:0]		wb_data_out,
+	output[31:0]			wb_data_out,
 	output					wb_stall_out,		
-	output[4:0]			wb2haz_rd_out
+	output[4:0]				wb2haz_rd_out
 );
 wire[31:0] mux_out_loc;
 

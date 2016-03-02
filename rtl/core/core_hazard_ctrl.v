@@ -119,7 +119,7 @@ always @* begin
 		end
 	end
 end
-assign haz_pc_stop_out = (haz_enb_bus_loc == `ENB_FULL_ON)?1'b0:1'b1;
+assign haz_pc_stop_out = (haz_enb_bus_loc[0] & haz_enb_bus_loc[1] & haz_enb_bus_loc[2] & haz_enb_bus_loc[3])?1'b0:1'b1;
 
 
 assign haz_bp_mux_exe_out = hazard_exe_bp_loc;

@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 //include core_defines.vh;
 module core_exe_s (
+	input 					exe_val_inst_in,
 	input							clk,
 	input							rst_n, 
 	input							exe_enb,
@@ -65,7 +66,9 @@ module core_exe_s (
 	output[4:0] 			exe2haz_rs1_out,
 	output[4:0] 			exe2haz_rs2_out,
 	output[4:0]				exe2haz_rd_out,
-	output[1:0]				exe2haz_cmd
+	output[1:0]				exe2haz_cmd_out,
+	
+	output 				exe_val_inst_out_reg
 );	
 
 wire[31:0] 		alu_src1;
@@ -113,6 +116,7 @@ always @(posedge clk) begin
 		exe_rd_out_reg <= exe_rd_in;
 		exe_haz_cmd_out_reg <= exe_haz_cmd_in;
 		exe_wrt_data_out_reg <= exe_src2_in;
+		exe_val_inst_out_reg <= exe_val_inst_in;
 	end	
 	if(exe_kill) begin
 		exe_alu_result_out_reg <= 0;
@@ -132,6 +136,7 @@ always @(posedge clk) begin
 		exe_rd_out_reg <=0;
 		exe_haz_cmd_out_reg <=0;
 		exe_wrt_data_out_reg<=0;
+		exe_val_inst_out_reg<=0;
 	end	
 end
 assign exe2haz_brnch_tknn_out = brnch_takenn_loc;

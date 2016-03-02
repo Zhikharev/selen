@@ -30,9 +30,9 @@ module core_dec_s(
 	output reg[3:0]		dec_alu_op_out_reg,	
 	output reg[2:0] 	dec_alu_cnd_out_reg,
 	//cahs
-	output reg 				dec_l1i_req_val_out_reg,
-	output reg 			 	dec_l1i_req_cop_out_reg,
-	output reg[2:0]		dec_l1i_req_size_out_reg,
+	output reg 				dec_l1d_req_val_out_reg,
+	output reg 			 	dec_l1d_req_cop_out_reg,
+	output reg[2:0]		dec_l1d_req_size_out_reg,
 	//	information pins
 	output reg[31:0]	dec_src1_out_reg,
 	output reg[31:0]	dec_src2_out_reg,
@@ -46,7 +46,10 @@ module core_dec_s(
 	// for hazard 
 	output reg[1:0]		dec_hazard_cmd_out_reg,
 	output[1:0]				dec2haz_cmd_out,
-	output						dec_stall_out
+	output						dec_stall_out,
+
+	//validation of instruction 
+	output reg 			dec_val_inst_out_reg
 );
 wire				dec_we_reg_file_loc_nop;
 
@@ -293,6 +296,7 @@ end
 			dec_rs1_out_reg <=rs1;
 			dec_rs2_out_reg <=rs2;
 			dec_rd_out_reg <=rd;
+			dec_val_inst_out_reg <= ~dec_nop_gen_in;
 		end	
 		if(dec_kill)begin
 			dec_l1i_req_val_out_reg<=0;
@@ -311,6 +315,7 @@ end
 			dec_rs1_out_reg <=0;
 			dec_rs2_out_reg <=0;
 			dec_rd_out_reg <=0;
+			dec_val_inst_out_reg <=0;
 		end	
 end 
 assign dec_stall_out = (dec_l1i_ack_in)? 1'b0:1'b1;
