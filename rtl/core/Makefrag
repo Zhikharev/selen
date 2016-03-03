@@ -17,5 +17,5 @@ RTL_SRC :=\
 VCS_RTL_INC :=
 
 RTL_DEFINE :=\
-	+define+COMMIT_VAL_PATH=core_pipeline.pl_val_inst
+	+define+COMMIT_VAL_PATH=core_pipeline.pl_val_inst \
 	+define+REG_FILE_PATH=core_pipeline.core_dec_s.reg_file.reg_file
