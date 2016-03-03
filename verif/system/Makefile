@@ -7,6 +7,6 @@ include $(BENCH_HOME)/Makefrag
 
 build: analyze elaborate
 
-draft_test:
-	./simv +UVM_NO_RELNOTES -l test.log +UVM_TESTNAME=draft_test $(RUN_OPTS) $(SIM_OPTS)
+sim:
+	./simv -l test.log $(RUN_OPTS) $(SIM_OPTS)
 

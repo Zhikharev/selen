@@ -47,6 +47,21 @@ module selen_tb_top ();
 		$finish();
 	end
 
+  `ifdef WAVES_FSDB
+  initial begin
+    $fsdbDumpfile("tdm_tb_top");
+    $fsdbDumpvars;
+  end
+  `elsif WAVES_VCD
+  initial begin
+     $dumpvars;
+  end
+  `elsif WAVES
+  initial begin
+    $vcdpluson;
+  end
+  `endif
+
 endmodule
 
 `endif

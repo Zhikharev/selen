@@ -38,7 +38,7 @@ LINT = +lint=all,noVCDE,noZERO
 VLOG_OPTS = \
 	+incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv \
 	+verilog2001ext+v +libext+.v  -sverilog $(LINT) +nospecify +notimingchecks -l vlogan.log \
-	$(RTL_SRC) $(VCS_RTL_INC) $(RTL_DEFINE) $(MODEL_SRC)
+	$(RTL_SRC) $(VCS_RTL_INC) $(RTL_DEFINE) $(MODEL_SRC) $(TB_DEFINES)
 
 ifneq ($(VLOG_OPT_FILE), )
 	VLOG_OPTS += -f $(VLOG_OPT_FILE)
@@ -94,4 +94,5 @@ info::
 	@ echo
 	@ echo	VCS_RTL_INC = $(VCS_RTL_INC)
 	@ echo  RTL_DEFINE  = $(RTL_DEFINE)
+	@ echo	TB_DEFINES  = $(TB_DEFINES)
 	@ echo  -----------------------------------------------------------
