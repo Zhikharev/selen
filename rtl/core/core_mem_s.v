@@ -63,7 +63,7 @@ module core_mem_s (
 	output[4:0]				mem2haz_rd_out,
 	output[1:0]				mem2haz_cmd_out,
 
-	output 					mem_val_inst_out_reg
+	output 	reg				mem_val_inst_out_reg
 );
 wire cash_uncash;
 always @(posedge clk) begin 
