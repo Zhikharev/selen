@@ -37,7 +37,7 @@ model_lib:
 build: dpi_lib
 	vlib work; \
 	vmap work work; \
-	vlog -l build.log -mfcu +define+UVM_NO_DPI -sv +incdir+$(UVM_HOME)/src $(RTL_SRC) $(VLOG_OPTS)
+	vlog -l build.log -mfcu +define+UVM_NO_DPI -sv +incdir+$(UVM_HOME)/src $(RTL_SRC) $(RTL_DEFINE) $(VLOG_OPTS)
 
 sim:
 	vsim -novopt $(DPI_VSIM_OPT) $(MODEL_VSIM_OPT) \
