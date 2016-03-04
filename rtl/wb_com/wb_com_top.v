@@ -1,13 +1,13 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME            : wb_com_top.v
 // PROJECT              : Selen
 // AUTHOR               : Pavel Petrakov
-// AUTHOR'S EMAIL       : 
+// AUTHOR'S EMAIL       :
 // ----------------------------------------------------------------------------
 // DESCRIPTION          : top module of wishbone commutator with 2 masters and
-//                          2 slaves
+//                        2 slaves
 // ----------------------------------------------------------------------------
 //`include    "wb_com_defines.v"
 
@@ -76,8 +76,8 @@ parameter   WB_DATA_WIDTH       =   `WB_COM_DWIDTH;
 parameter   WB_FIFO_ASIZE       =   `WB_COM_F_ASIZE;
 parameter   S0_ADDR_BASE        =   `WB_COM_S0_ABASE;
 parameter   S0_ADDR_MASK        =   `WB_COM_S0_AMASK;
-parameter   S1_ADDR_BASE        =   `WB_COM_S0_ABASE;
-parameter   S1_ADDR_MASK        =   `WB_COM_S0_AMASK;
+parameter   S1_ADDR_BASE        =   `WB_COM_S1_ABASE;
+parameter   S1_ADDR_MASK        =   `WB_COM_S1_AMASK;
 
 
 parameter   WB_TIME_TAG         =   WB_FIFO_ASIZE + 2;
