@@ -6,8 +6,8 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of decode station
 // ----------------------------------------------------------------------------
-include core_defines.vh;
-include opcodes.vh;
+//include core_defines.vh;
+//include opcodes.vh;
 module core_dec_s(
 	input							clk,
 	input							rst_n,
@@ -105,7 +105,7 @@ always @(negedge clk) begin
 		dec_mux_bus_out_reg <= ctrl2dec_mux_bus;
 		dec_alu_op_out_reg <= ctrl2dec_alu_op;
 		dec_alu_cnd_out_reg <= ctrl2dec_alu_cnd;
-		dec_we_reg_file_in <= ctrl2dec_we_reg_file;
+		dec_we_reg_file_out_reg <= ctrl2dec_we_reg_file;
 		dec_rs1_out_reg <= dec_inst_in[19:15];
 		dec_rs2_out_reg <= dec_inst_in[24:20]; 
 		dec_rd_out_reg <= dec_inst_in[11:7];
@@ -120,7 +120,7 @@ always @(negedge clk) begin
 		dec_mux_bus_out_reg <= 0;
 		dec_alu_op_out_reg <= 0;
 		dec_alu_cnd_out_reg <= 0;
-		dec_we_reg_file_in <= 0;
+		dec_we_reg_file_out_reg <= 0;
 		dec_rs1_out_reg <= 0;
 		dec_rs2_out_reg <= 0; 
 		dec_rd_out_reg <= 0;
