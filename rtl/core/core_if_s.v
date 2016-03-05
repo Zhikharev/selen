@@ -6,15 +6,16 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of instruction fetch station
 // ----------------------------------------------------------------------------
-`ifndef CORE_IF_S
-`define CORE_IF_S
+//include core_defines.vh;
+
 module core_if_s (
 	input							clk,
-	input							n_rst,
+	input							rst_n,
 	//register control
 	input 						if_kill,
 	input 						if_enb,
 	//from hazard control
+	input 						if_pc_stop_in,
 	input 						if_mux_trn_s_in,
 	// for transfer of address
 	input[31:0]				if_addr_mux_trn_in,
@@ -23,41 +24,43 @@ module core_if_s (
 	output						if_val_l1i_cahe_out,
 	//register if/dec
 	output	reg[31:0]	if_pc_reg_out,	
-	output 	reg[31:0]	if_pc_4_reg_out,
+	output 	reg[31:0]	if_pc_4_reg_out
 );
 
-reg[31:0] 	pc;
+
+
+reg[31:0] 	pc_reg;
 wire[31:0] 	pc_adder;
 wire[31:0] 	pc_next;
 //program counter
-always @(posedge clk, posedge (~n_rst))begin
-	if(~n_rst) begin
-		pc <= `PC_START;
+always @(posedge clk, posedge (~rst_n))begin
+	if(~rst_n) begin
+		pc_reg <= `PC_START;
 	end
 	else begin
-		if(if_enb) begin
-			pc <= pc_next;	
+		if(if_pc_stop_in) begin
+			 pc_reg <= pc_reg;
 		end
 		else begin
-			 pc <= pc;
+			pc_reg <= pc_next;	
 		end
 	end
 end
 //adder and mux
 assign pc_next= (if_mux_trn_s_in)?(if_addr_mux_trn_in):(pc_adder);
-assign pc_adder = pc + 4;
-assign if_addr_l1i_cash_out = pc;
+assign pc_adder = pc_reg + 4;
+assign if_addr_l1i_cash_out = pc_reg;
 assign if_val_l1i_cahe_out = 1'b1;
 //register if/decode
-always @(posedge clk, posedge if_kill) begin
+always @(posedge clk) begin
 	if(if_kill) begin
 		if_pc_reg_out <= 0;
 		if_pc_4_reg_out <= 0;
 	end
 	if(if_enb)begin
 		if_pc_4_reg_out <= pc_adder;
-		if_pc_reg_out <= pc;
+		if_pc_reg_out <= pc_reg;
 	end
 end
 endmodule
-`endif
+

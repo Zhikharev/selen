@@ -96,6 +96,7 @@ module selen_top
 		.s0_wb_we_o 		(com_mem_wb_we_o),
 		.s0_wb_dat_i 		(com_mem_wb_we_o),
 		.s0_wb_stall_i 	(com_mem_wb_stall_i),
+		.s0_wb_err_i 		(com_mem_wb_err_i),
 		.s0_wb_ack_i 		(com_mem_wb_ack_i),
 		// Slave 1 wb interface
 		.s1_wb_addr_o 	(),
@@ -106,6 +107,7 @@ module selen_top
 		.s1_wb_we_o 		(),
 		.s1_wb_dat_i 		(),
 		.s1_wb_stall_i 	(1'b0),
+		.s1_wb_err_i 		(1'b0),
 		.s1_wb_ack_i 		(1'b0)
 	);
 
@@ -123,6 +125,8 @@ module selen_top
   	.wb_ack_o 	(com_mem_wb_ack_i),
   	.wb_err_o 	(com_mem_wb_err_i)
 	);
+
+	assign com_mem_wb_stall_i = 1'b0;
 
 endmodule
 

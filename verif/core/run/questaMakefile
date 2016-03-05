@@ -1,5 +1,5 @@
 MTI_HOME = /opt/questasim_v6/questasim
-export LM_LICENSE_FILE=$(MTI_HOME)/../license.dat
+#export LM_LICENSE_FILE=$(MTI_HOME)/../license.dat
 BENCH_HOME := $(dir $(lastword $(MAKEFILE_LIST)))/..
 UVM_HOME = $(BENCH_HOME)/../tools/uvm-1.2
 SIM_HOME := $(BENCH_HOME)/../../sim
@@ -34,10 +34,10 @@ model_lib:
 	mkdir -p $(MODEL_LIB_DIR);
 	$(GCC) -fPIC -std=c++11 -g -Wall -O3 -W -shared -I$(MTI_HOME)/include $(MODEL_SRC) -o $(MODEL_SO)
 
-build: dpi_lib
+build: dpi_lib model_lib
 	vlib work; \
 	vmap work work; \
-	vlog -l build.log -mfcu +define+UVM_NO_DPI -sv +incdir+$(UVM_HOME)/src $(RTL_SRC) $(VLOG_OPTS)
+	vlog -l build.log -mfcu +define+UVM_NO_DPI -sv +incdir+$(UVM_HOME)/src $(RTL_SRC) $(RTL_DEFINE) $(VLOG_OPTS)
 
 sim:
 	vsim -novopt $(DPI_VSIM_OPT) $(MODEL_VSIM_OPT) \

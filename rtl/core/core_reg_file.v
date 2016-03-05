@@ -4,13 +4,10 @@
 // FILE NAME          : core_reg_file.sv
 // PROJECT            : Selen
 // AUTHOR             : Alexsandr Bolotnokov
-// AUTHOR'S EMAIL 		:	AlexBolotnikov@gmail.com
+// AUTHOR'S EMAIL 		:	AlexsandrBolotnikov@gmail.com
 // ----------------------------------------------------------------------------
 // DESCRIPTION        : register file
 // ----------------------------------------------------------------------------
-
-`ifndef INC_CORE_REG_FILE
-`define INC_CORE_REG_FILE
 
 module core_reg_file (
 	input 					clk,
@@ -25,10 +22,10 @@ module core_reg_file (
 	output [31:0]  	src2_out
 );
 
-	int i;
+	integer i;
 	reg [31:0] reg_file [31:0];
 
-	always_ff @(posedge clk or negedge rst_n) begin
+	always@(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
 			for(i = 0; i< 32; i = i + 1)
 				reg_file[i] <= 0;
@@ -37,8 +34,7 @@ module core_reg_file (
 		end
 	end
 
-	assign src1_out = (order) ? reg_file[rs1] :  reg_file[rs2];
-	assign src2_out = (order) ? reg_file[rs2] :  reg_file[rs1];
+	assign src1_out = (order) ? reg_file[rs1] : reg_file[rs2];
+	assign src2_out = (order) ? reg_file[rs2] : reg_file[rs1];
 
 endmodule
-`endif

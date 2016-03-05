@@ -46,7 +46,7 @@ class sl_core_monitor extends uvm_monitor;
         if(vif.mon.req_val) begin
           sl_core_bus_item item;
           item = sl_core_bus_item::type_id::create("item");
-          item.cop  = vif.mon.req_cop;
+          item.cop  = core_cop_t'(vif.mon.req_cop);
           item.size = vif.mon.req_size;
           item.addr = vif.mon.req_addr;
           if(item.is_wr()) begin
@@ -70,7 +70,7 @@ class sl_core_monitor extends uvm_monitor;
     end
   endtask
 
-  function void check(sl_core_bus_item item);
+  function void bus_check(sl_core_bus_item item);
     if(cfg.port == INSTR) begin
       assert(item.cop == RD)
       else `uvm_fatal("WRONG COP", "For INSTR port cop expected to be only RD")

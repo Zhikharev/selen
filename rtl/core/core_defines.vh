@@ -1,11 +1,12 @@
 `define PC_START 32'b0
 `define CASHEBLE_ADDR 32'h0000ffff
-
+`define NCACHE_BASE_ADDR  32'h0000ffff
+`define NCACHE_MASK_ADDR  32'h0000ffff
 // CSR
 `define TIMER_BITWISE 32
-`define NCACHE_BASE_ADDR 	32'h0000_0000;
-`define NCACHE_MASK_ADDR  32'h0000_ffff;
-
+`define ADDR_BASE 	32'h0000_0000
+`define ADDR_MASK  32'h0000_ffff
+`define ADDR_WIDTH 32
 /// mux bus bellow
 `define R_MUX 6'b0xx000
 `define I_R_MUX 6'b0xx010
@@ -46,23 +47,16 @@
 `define ALU_BLT 2'b01
 `define ALU_BLTU 2'b11
 /// level one case for data descrirtion of buss
-`define DL1_VAL_ON 		1'b1
+`define DL1_VAL_ON 			1'b1
 `define DL1_VAL_OFF 		1'b0
-`define DL1_READ 			1'b0
-`define DL1_WRT			1'b1
+`define DL1_READ 				1'b0
+`define DL1_WRT					1'b1
 `define DL1_CASH_ON 		1'b1
 `define DL1_CASH_OFF 		1'b0
 `define DL1_SIZE_BYTE		3'b000
 `define DL1_SIZE_HALF		3'b001
-`define DL1_SIZE_WORD	3'b010
+`define DL1_SIZE_WORD		3'b010
 
-`define LW_L1D 			7'b10x0010//{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_WORD}
-`define LH_L1D 			7'b10x0001//{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_HALF}
-`define LB_L1D 			7'b10x0000//{DL1_VAL_ON,1'b0,1'bx,DL1_READ,DL1_SIZE_BYTE}
-`define SW_L1D 			7'b10x1010//{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_WORD}
-`define SH_L1D 			7'b10x1001//{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_HALF}
-`define SB_L1D 			7'b10x1000//{DL1_VAL_ON,1'b0,1'bx,DL1_WRT,DL1_SIZE_BYTE}
-`define NOT_REQ			7'b00x0000//{DL1_VAL_OFF,6'bx}
 
 `define  CASHABLE 1'b0
 `define  UNCASHABLE 1'b1
@@ -113,6 +107,7 @@
 
 `define KILL_FULL_OFF 4'b0000
 `define KILL_FULL_ON  4'b1111
+`define ENB_FULL_OFF 4'b0000
 `define ENB_FULL_ON	4'b1111
 `define REG_KILL_ON 1'b1
 `define KILL_BRNCH 4'b0011

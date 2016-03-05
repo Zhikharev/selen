@@ -1,7 +1,0 @@
-+incdir+$BENCH_HOME
-+incdir+$BENCH_HOME/../common
-
-+define+CLK_HALF_PERIOD=1
-+libext+.v
-
-$BENCH_HOME/testbench/l1_tb_top.inc.sv

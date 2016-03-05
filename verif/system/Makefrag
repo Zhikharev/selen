@@ -1,0 +1,7 @@
+VLOG_OPTS+=\
+	+incdir+$(BENCH_HOME) \
+	+incdir+$(BENCH_HOME)/../common \
+	+define+CLK_HALF_PERIOD=1 \
+	$(BENCH_HOME)/selen_tb_top.sv
+
+ELAB_OPTS+=

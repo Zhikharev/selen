@@ -1,21 +1,25 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // ----------------------------------------------------------------------------
 // FILE NAME      : core_tb_top.sv
 // PROJECT        : Selen
-// AUTHOR         : 
-// AUTHOR'S EMAIL : 
+// AUTHOR         :
+// AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
-// DESCRIPTION    : 
+// DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
 `ifndef INC_CORE_TB_TOP
 `define INC_CORE_TB_TOP
 
+`define STRINGIFY(x) `"x`"
+
 module core_tb_top ();
 
 	logic clk;
 	logic rst;
+
+	string core_reg_file_path;
 
   initial $timeformat(-9, 1, "ns", 4);
 
@@ -33,6 +37,16 @@ module core_tb_top ();
 	core_if 	i_intf (clk, rst);
 	core_if 	d_intf (clk, rst);
 
+	core_commit_if commit_intf(clk, rst);
+
+	assign commit_intf.val = dut.core.`COMMIT_VAL_PATH;
+
+	initial begin
+		core_reg_file_path = {"core_tb_top.dut.core.", `STRINGIFY(`REG_FILE_PATH)};
+    `uvm_info("DBG", "Set all core registers to zero...", UVM_NONE)
+		foreach(dut.core.`REG_FILE_PATH[i]) dut.core.`REG_FILE_PATH[i] = 0;
+	end
+
 	core_assembled dut
 	(
 		.clk 		(clk),
@@ -42,8 +56,10 @@ module core_tb_top ();
 	);
 
   initial begin
-    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_i*", "vif", i_intf);  
-    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_d*", "vif", d_intf); 
+    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_i*", "vif", i_intf);
+    uvm_config_db#(virtual core_if)::set(uvm_root::get(), "*core_d*", "vif", d_intf);
+    uvm_config_db#(virtual core_commit_if)::set(uvm_root::get(), "*commit_monitor*", "vif", commit_intf);
+    uvm_config_db#(string)::set(uvm_root::get(), "*", "core_reg_file_path", core_reg_file_path);
   end
 
   initial begin

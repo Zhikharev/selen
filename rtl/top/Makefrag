@@ -12,7 +12,8 @@ TMP := $(RTL_SRC)
 # ----------------------------------
 # Core
 #include $(RTL_HOME)/core/Makefrag
-#TMP += $(RTL_SRC)
+include $(RTL_HOME)/vscale/Makefrag
+TMP += $(RTL_SRC)
 # ----------------------------------
 # L1-cache
 include $(RTL_HOME)/l1_cache/Makefrag

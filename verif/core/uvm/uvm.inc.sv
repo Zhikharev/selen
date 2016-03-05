@@ -13,6 +13,7 @@ import uvm_pkg::*;
 `include "uvm/items/rv32_typedefs.sv"
 `include "uvm/items/rv32_transaction.sv"
 `include "uvm/sequencer/sl_rv32_layer_sequencer.sv"
+`include "uvm/monitors/sl_core_commit_monitor.sv"
 `include "uvm/scoreboard/sl_core_scrb.sv"
 `include "uvm/env/sl_core_env.sv"
 `include "uvm/sequences/sl_rv32_core_translate_seq.sv"

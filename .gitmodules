@@ -1,0 +1,3 @@
+[submodule "rtl/vscale"]
+	path = rtl/vscale
+	url = ../vscale.git

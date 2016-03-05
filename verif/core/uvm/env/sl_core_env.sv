@@ -18,6 +18,7 @@ class sl_core_env extends uvm_env;
 
   sl_rv32_layer_sequencer virtual_seqr;
   sl_core_scrb core_scrb;
+  sl_core_commit_monitor commit_monitor;
 
   int model_status;
   core_model::s_model_params model_params;
@@ -35,9 +36,10 @@ class sl_core_env extends uvm_env;
 
     virtual_seqr = sl_rv32_layer_sequencer::type_id::create("virtual_seqr", this);
     core_scrb = sl_core_scrb::type_id::create("core_scrb", this);
+    commit_monitor = sl_core_commit_monitor::type_id::create("commit_monitor", this);
 
     `uvm_info(get_full_name(), "Creating model...", UVM_LOW)
-    model_params.pc_start   = 32'h0000_0123;
+    model_params.pc_start   = 32'h0000_0200;
     model_params.mem_size   = 1024;
     model_params.verbose    = 1;
     model_params.mem_resize = 0;
@@ -51,6 +53,7 @@ class sl_core_env extends uvm_env;
     virtual_seqr.core_sequencer = core_instr_agent.sequencer;
     core_instr_agent.item_collected_port.connect(core_scrb.item_collected_instr);
     core_data_agent.item_collected_port.connect(core_scrb.item_collected_data);
+    commit_monitor.item_collected_port.connect(core_scrb.item_collected_commit);
   endfunction
 
 endclass
