@@ -2,6 +2,7 @@
 #define TERMINAL_H
 
 #include <string>
+#include <stdexcept>
 
 //terminal handling functions
 
@@ -27,6 +28,9 @@ std::string readline(const std::string& promt)
     static std::string last_valid_command;
 
     char *line = linenoise(promt.c_str());
+
+    if(line == nullptr)
+        throw std::runtime_error("readline error");
 
     std::string token(line);
     //empty line (enter was pressed ) perform last non empty command

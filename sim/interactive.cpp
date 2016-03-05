@@ -126,7 +126,10 @@ static const CommandMap& get_commands_map()
             cmd_names_t{"print","p"},
             "[\\s]+(reg|mem)([\\s]+([\\s\\S]+))*",
             "print register or region of memory",
-            "arguments: reg <name>, or mem <address> [format]- print register or memory, if reg name is empty then dump all registers, [format] arument valid only for memory, specifies output format: b/s/w/i- bytes/symbols/words/disasemled instructions,  x/d - hex/dec (valid only for b and w), ",
+            "arguments: reg <name>, or mem <address> [format] \n\nprint register or memory,\n"
+            "\tif reg name is empty then dump all registers,\n"
+            "\t[format] arument valid only for memory, specifies output format: \n"
+            "\t\tb/s/w/i- bytes/symbols/words/disasemled instructions,  x/d - hex/dec (valid only for b and w), ",
             []CMD_OPERATION
             {
                 std::string type = tokens.str(4);
@@ -232,7 +235,7 @@ void Interactive::print_register(const std::string &name) const
         return;
     }
 
-    const selen::State &state = parent->get_simulator().get_state();
+    const selen::CoreState &state = parent->get_simulator().get_core_state();
     selen::reg_id_t id = selen::name2regid(name);
 
     if(id == selen::R_LAST)
@@ -241,7 +244,8 @@ void Interactive::print_register(const std::string &name) const
                   << compose_reg_names_string() << std::endl;
     else
         std::cout << selen::regid2name(id) << ": "
-                  << std::hex << state.reg[id].u << std::endl;
+                  << std::hex << state.reg.read<selen::word_t>(id)
+                  << std::endl;
 }
 
 void Interactive::exit(int exit_code)
@@ -284,7 +288,7 @@ void Interactive::disassemble(size_t num_words, size_t start_addr) const
                   << std::hex << start_addr
                   << std::endl;
 
-    const selen::memory_t& memory = parent->get_simulator().get_state().mem;
+    const selen::memory_t& memory = parent->get_simulator().get_memory();
 
     memory.dump(std::cout, num_words, start_addr, selen::isa::disasembler_dumper());
 }

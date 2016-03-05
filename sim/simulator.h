@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <string>
-#include "state.h"
+#include "core.h"
 #include "isa/definitions.h"
 
 namespace selen
@@ -42,17 +42,12 @@ struct Status
     size_t steps_made_from_begin = {0};
 };
 
-class Simulator
+class Machine
 {
 public:
-    Simulator()
+    Machine()
     {
-    }
-
-    Simulator(Config &conf)
-    {
-        state.clear();
-        set_config(conf);
+        core.init(&memory);
     }
 
     /**
@@ -68,7 +63,6 @@ public:
      */
     bool load(memory_t &image, bool allow_resize = true, addr_t load_offset = 0);
 
-
     //run simulator
     std::size_t step(size_t num_steps);
     
@@ -80,19 +74,23 @@ public:
     void set_config(const Config& econfig);
     const Config &get_config() const;
 
-    void enable_tracing(bool enable = true);
+    void enable_tracing(const bool enable = true);
 
     const Status &get_status() const;
 
     addr_t get_program_counter() const;
-    void set_program_counter(addr_t new_pc);
+    void set_program_counter(const addr_t value);
 
-    const State &get_state() const;
+    const selen::CoreState& get_core_state() const;
+    const memory_t &get_memory() const;
 
 private:
     void cycle(const size_t num_steps);
     
-    State  state;
+    //now it is only one core!
+    memory_t memory;
+    selen::Core core;
+
     Config config;
     Status status;
 };

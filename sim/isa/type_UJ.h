@@ -4,72 +4,59 @@
 #include <map>
 #include <functional>
 
-#include "formats.h"
+#include "decode.h"
 
 /*
  * UJ-type instruction implementation: JAL and JALR
  */
 
-namespace selen {
+namespace selen
+{
 
-namespace isa {
+namespace isa
+{
 
 struct JAL
 {
-    enum {TARGET = OP_JAL};
-
-    typedef formatU format_t;
-
-    explicit JAL(format_t l) : data(l)
-    {}
-
-    void perform(State& st) const
+    static const std::vector<isa::descriptor_t>& getDescriptors()
     {
+        static const std::vector<isa::descriptor_t> product =
+        {
+            {
+                0, 0,
+                "JAL", OP_JAL,
+                [] ISA_OPERATION
+                {
+                    core.set_reg<word_t>(i.rd(), core.get_pc());
+                    core.increment_pc(i.immUJ());
+                }
+            }
+            };
 
-        st.reg[data.rd].u = st.pc + sizeof(instruction_t);
-
-        st.pc = st.pc + data.get_J_immediate();
+        return product;
     }
-
-    void print(std::ostream& s) const
-    {
-        s << std::setw(MF_WIDHT) << "JAL" << "\t"
-          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
-          << std::hex << std::showbase
-          << data.get_J_immediate();
-    }
-
-private:
-    format_t data;
 }; //JAL
 
 struct JALR
 {
-    enum {TARGET = OP_JALR};
-
-    typedef formatI format_t;
-
-
-    explicit JALR(format_t l) : data(l)
-    {}
-
-    void perform(State& st) const
+    static const std::vector<isa::descriptor_t>& getDescriptors()
     {
-        st.reg[data.rd].u = st.pc + sizeof(instruction_t);
+        static const std::vector<isa::descriptor_t> product =
+        {
+            {
+                0, 0,
+                "JALR", OP_JALR,
+                [] ISA_OPERATION
+                {
+                    core.set_reg<word_t>(i.rd(), core.get_pc());
+                    sword_t value = (core.get_reg<sword_t>(i.rs1()) + i.immI()) & ~(1ul);
+                    core.set_pc(value);
+                }
+            }
+            };
 
-        st.pc = (st.reg[data.rs1].u + data.get_immediate()) & ~(1ul);
+        return product;
     }
-
-    void print(std::ostream& s) const
-    {
-        s << std::setw(MF_WIDHT) << "JALR" << "\t"
-          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
-          << std::hex << std::showbase
-          << data.get_immediate();
-    }
-
-private:
-    format_t data;
 }; //JALR
 
 }//namespcae isa

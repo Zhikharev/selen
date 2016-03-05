@@ -5,28 +5,14 @@
  */
 
 #include <cassert>
+#include <cstring>
 #include "memory.h"
 
 namespace selen
 {
-//register type
-union reg_t
-{
-    //two complement
-    sword_t s = {0};
 
-    //raw binary
-    word_t u;
-
-    //parts
-    hword_t hw[2];
-    byte_t  b[4];
-};
-
-static_assert(sizeof(reg_t) == sizeof(word_t), "Compiler unable to fit register type");
-
-//register id type
-typedef   std::size_t     reg_id_t;
+typedef word_t reg_t;
+typedef std::size_t reg_id_t;
 
 enum : reg_id_t
 {
@@ -75,7 +61,40 @@ enum : reg_id_t
 
 };
 
-constexpr std::size_t NUM_REGISTERS = R_LAST;
+constexpr reg_id_t NUM_REGISTERS = R_LAST;
+
+class Regfile
+{
+public:
+
+  template<class T>
+  void write(const reg_id_t num, const T value)
+  {
+      assert(num >= 0 && num < selen::NUM_REGISTERS);
+
+      if(!zero_reg || num != 0)
+          data[num] = value;
+  }
+
+  template<class T>
+  T read(const reg_id_t num) const
+  {
+      assert(num >= 0 && num < selen::NUM_REGISTERS);
+
+      return data[num];
+  }
+
+  void clear()
+  {
+      ::memset(data, 0x0, sizeof(data));
+  }
+
+private:
+  bool zero_reg = {true};
+
+  reg_t data[NUM_REGISTERS] = {0};
+};
+
 
 //Register names handling
 
@@ -87,8 +106,6 @@ std::string regid2name(const reg_id_t id);
 reg_id_t name2regid(const std::string &name);
 
 const std::vector<std::string>& get_reg_names();
-
-
 
 } //namespace selen
 #endif //REG123456789SELEN

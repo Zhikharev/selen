@@ -3,8 +3,7 @@
 #include <memory>
 #include <tuple>
 #include <algorithm>
-
-#include "handlers.h"
+#include <unordered_map>
 
 #include "type_R.h"
 #include "type_I_R.h"
@@ -13,13 +12,177 @@
 #include "type_UJ.h"
 #include "type_LOAD.h"
 #include "type_STORE.h"
-
+#include "decode.h"
 
 using namespace selen;
 using namespace std;
 
-//table of handlers.
-typedef map<isa::opcode_t, isa::handler_t*> handlers_table_t;
+//opcode -> vector of specific descriptors for that opcode
+typedef std::unordered_map<word_t, const vector<isa::descriptor_t>&> descriptors_table_t;
+
+inline const descriptors_table_t& get_descriptors()
+{
+    using namespace isa;
+
+    static descriptors_table_t product =
+        {
+            {OP_R, R::getDescriptors()},
+            {OP_I_R, I_R::getDescriptors()},
+            {OP_LUI,  LUI::getDescriptors()},
+            {OP_AUIPC, AUIPC::getDescriptors()},
+            {OP_SB, SB::getDescriptors()},
+            {OP_JAL, JAL::getDescriptors()},
+            {OP_JALR, JALR::getDescriptors()},
+            {OP_LOAD, LOAD::getDescriptors()},
+            {OP_STORE, STORE::getDescriptors()}
+        };
+
+    return product;
+}
+
+isa::descriptor_t invalidDescriptor =
+{
+    0, 0, "invalid", 0,
+    []
+    ISA_OPERATION
+    {
+        std::ostringstream out;
+
+        out << "invalid instruction: "
+            << hex << showbase
+            << i
+            << ", op: " << i.opcode()
+            << " rd: " << i.rd()
+            << " rs1:" << i.rs1()
+            << " rs2:" << i.rs2()
+            << " rm:" << i.rm();
+
+        throw std::runtime_error(out.str());
+    }
+};
+
+std::string isa::print_instruction(const std::string& mnemonic,
+                                   const word_t format,
+                                   const isa::instruction_t i)
+{
+    std::ostringstream s;
+    s << std::setw(MF_WIDHT) << mnemonic << "\t";
+
+    switch(format)
+    {
+    case OP_R:
+        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
+          << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", "
+          << regid2name(i.rs2());
+        break;
+
+    case OP_I_R:
+        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
+          << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", "
+          << std::dec << std::showbase
+          << i.immI();
+        break;
+
+    case OP_AUIPC:
+    case OP_LUI:
+        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
+          << std::hex << std::showbase
+          << i.immU();
+        break;
+
+    case OP_SB:
+        s << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", "
+          << std::setw(RN_WIDHT) << regid2name(i.rs2()) << ", ["
+          << std::dec << std::showbase
+          << i.immSB()
+          << " (" << std::hex << i.immSB() << ")]";
+
+    case OP_JAL:
+        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
+          << std::hex << std::showbase
+          << i.immUJ();
+        break;
+
+    case OP_JALR:
+        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
+          << regid2name(i.rs1()) << ", "
+          << std::hex << std::showbase
+          << i.immI();
+        break;
+
+    case OP_LOAD:
+        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", ["
+          << std::setw(RN_WIDHT) << regid2name(i.rs1()) << " + "
+          << std::hex << std::showbase
+          << i.immI() << "]";
+        break;
+
+    case OP_STORE:
+        s << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", ["
+          << std::setw(RN_WIDHT) << regid2name(i.rs2()) << " + "
+          << std::hex << std::showbase
+          << i.immS() << "]";
+        break;
+
+    }
+
+    return s.str();
+}
+
+isa::descriptor_ptr_t find_descriptor(const isa::instruction_t& instruction)
+{
+    static const descriptors_table_t descriptors = get_descriptors();
+
+    isa::descriptor_ptr_t product = nullptr;
+
+    auto iter = descriptors.find(instruction.opcode());
+
+    if(iter == descriptors.end())
+        return product;
+
+    const vector<isa::descriptor_t>& section = iter->second;
+
+    for(const isa::descriptor_t& candidate : section)
+    {
+        if(candidate == instruction)
+        {
+            product = &candidate;
+            break;
+        }
+    }
+
+    return product;
+}
+
+isa::fetch_t inline decode(const isa::instruction_t &instr)
+{
+    isa::descriptor_ptr_t descriptor = find_descriptor(instr);
+
+    if(descriptor == nullptr)
+        descriptor = &invalidDescriptor;
+
+    return isa::fetch_t{instr, descriptor};
+}
+
+void isa::perform(selen::Core& core, const word_t instr)
+{
+    fetch_t f = decode(instr);
+
+    f(core);
+}
+
+std::string isa::disassemble(const word_t instr)
+{
+    return decode(instr).disasemble();
+}
+
+void selen::Core::step()
+{
+    word_t instr = fetch();
+    selen::isa::perform(*this, instr);
+}
+
+//---------------------------------------------------
 
 const std::vector<string>& selen::get_reg_names()
 {
@@ -67,128 +230,4 @@ reg_id_t selen::name2regid(const std::string &name)
     }
 
     return selen::R_LAST;
-}
-
-handlers_table_t inline init_handlers()
-{
-    using namespace isa;
-
-    static tuple<
-            Handler<R>,
-            Handler<I_R>,
-            Handler<LUI>,
-            Handler<AUIPC>,
-            Handler<SB>,
-            Handler<JAL>,
-            Handler<JALR>,
-            Handler<LOAD>,
-            Handler<STORE>
-            > handlers;
-
-    return handlers_table_t
-        {
-            {OP_R,      &get<0>(handlers)},
-            {OP_I_R,    &get<1>(handlers)},
-            {OP_LUI,    &get<2>(handlers)},
-            {OP_AUIPC,  &get<3>(handlers)},
-            {OP_SB,     &get<4>(handlers)},
-            {OP_JAL,    &get<5>(handlers)},
-            {OP_JALR,   &get<6>(handlers)},
-            {OP_LOAD,   &get<7>(handlers)},
-            {OP_STORE,  &get<8>(handlers)}
-        };
-}
-
-isa::opcode_t extract_opcode(const instruction_t instr)
-{
-     return bit_seq(instr, 0, 7);
-}
-
-isa::handler_t& get_handler(const instruction_t instr, const addr_t pc)
-{
-    static handlers_table_t handlers = init_handlers();
-
-    using namespace isa;
-
-    opcode_t op = ::extract_opcode(instr);
-
-    auto iter = handlers.find(op);
-    if(iter == handlers.end())
-    {
-        std::ostringstream out;
-
-        out << hex << showbase
-            << "illegal opcode " << (op&0xff)
-            << ", unable decode instruction: " << instr
-            << " at address " << pc <<"\n"
-            << "valid opcodes:\n";
-
-        for(auto token: handlers)
-            out << (token.first&0xff) <<"\t";
-
-
-        throw runtime_error(out.str());
-    }
-
-    return (*iter->second);
-}
-
-//disassembler variant
-isa::handler_t& get_handler(instruction_t instr)
-{
-    static handlers_table_t handlers = init_handlers();
-
-    using namespace isa;
-
-    opcode_t op = ::extract_opcode(instr);
-
-    auto iter = handlers.find(op);
-
-
-    if(iter == handlers.end())
-    {
-        std::ostringstream out;
-
-        out << hex << showbase
-            << "invalid, opcode: " << (op&0xff);
-
-        throw std::runtime_error(out.str());
-    }
-
-    return (*iter->second);
-}
-
-void isa::perform(State& state, const selen::instruction_t instr)
-{
-    handler_t& h = get_handler(instr, state.pc);
-
-    return h.perform(state, instr);
-}
-
-
-instruction_t isa::fetch(State& state)
-{
-    if(state.pc > state.mem.size() + selen::WORD_SIZE)
-        throw std::runtime_error("PC refers to invalid address: "
-                                 "out of memory range");
-
-    return state.mem.read<word_t>(state.pc);
-}
-
-std::string isa::disassemble(const selen::instruction_t instr)
-{
-    std::string product;
-
-    try
-    {
-        handler_t& h = get_handler(instr);
-
-        product = h.disasemble(instr);
-    }
-    catch(std::exception& e)
-    {
-        product = e.what();
-    }
-
-    return product;
 }

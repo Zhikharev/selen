@@ -7,27 +7,27 @@
 
 using namespace selen;
 
-bool Simulator::load(memory_t &image, bool allow_resize, addr_t load_offset)
+bool Machine::load(memory_t &image, bool allow_resize, addr_t load_offset)
 {
-    size_t required_size = image.size() + load_offset;
-    size_t available_size = state.mem.size();
+    const size_t required_size = image.size() + load_offset;
+    const size_t available_size = memory.size();
 
     if(required_size > available_size)
     {
         if(!allow_resize)
             return false;
 
-        state.mem.resize(required_size);
+        memory.resize(required_size);
     }
 
-    std::copy(image.begin(), image.end(), state.mem.data() + load_offset);
+    std::copy(image.begin(), image.end(), memory.data() + load_offset);
 
     status.image_loaded = true;
 
     return true;
 }
 
-std::size_t Simulator::step(size_t num_steps)
+std::size_t Machine::step(size_t num_steps)
 {
     status.steps_made_last = 0;
     try
@@ -50,7 +50,7 @@ std::size_t Simulator::step(size_t num_steps)
     return status.steps_made_last;
 }
 
-void Simulator::cycle(const size_t steps_limit)
+void Machine::cycle(const size_t steps_limit)
 {
     if(config.trace)
         std::cerr << std::showbase << std::hex
@@ -59,81 +59,86 @@ void Simulator::cycle(const size_t steps_limit)
     status.steps_made_last = 0;
     while (status.steps_made_last < steps_limit)
     {
-        if(state.pc == selen::SIMEXIT)
-            break;
-
-        instruction_t instr = isa::fetch(state);
-
         //Tracing
         if(config.trace)
         {
+            word_t instr = core.fetch();
             std::cerr << std::hex
-                      << std::setw(ADR_WIDHT) << state.pc
+                      << std::setw(ADR_WIDHT) << core.get_pc()
                       << "\t" << std::setw(INST_WIDHT) << instr
                       << "\t" << isa::disassemble(instr) << std::endl;
         }
 
-        isa::perform(state, instr);
+        core.step();
 
         status.steps_made_last++;
     }
 }
 
-void Simulator::dump_registers(std::ostream& out) const
+void Machine::dump_registers(std::ostream& out) const
 {
-    out << std::showbase << std::hex;
+    out << std::showbase;
 
-    out << "PC:\t" << state.pc << std::endl;
+    const CoreState& state = core.get_state();
+
+    out << "PC:\t" << std::hex << state.pc << std::endl;
 
     for (selen::reg_id_t id = 0; id < selen::NUM_REGISTERS; id++)
         out << regid2name(id) << ":\t"
-            << state.reg[id].u << "\n";
+            << state.reg.read<word_t>(id) << std::endl;
 }
 
-void Simulator::dump_memory(std::ostream& out) const
+void Machine::dump_memory(std::ostream& out) const
 {
-    return state.mem.dump(out, state.mem.size());
+    return memory.dump(out, memory.size());
 }
 
-void Simulator::set_config(const Config &econfig)
+void Machine::set_config(const Config &econfig)
 {
+    core.reset();
+
     config = econfig;
 
-    if(state.mem.size() < config.mem_size)
-        state.mem.resize(config.mem_size);
+    if(memory.size() < config.mem_size)
+        memory.resize(config.mem_size);
 
-    state.mem.set_endian(config.endianness);
-    state.pc = config.pc;
+    memory.set_endian(config.endianness);
+    core.set_pc(config.pc);
 }
 
-const Config &Simulator::get_config() const
+const Config &Machine::get_config() const
 {
     return config;
 }
 
-void Simulator::enable_tracing(bool enable)
+void Machine::enable_tracing(const bool enable)
 {
     config.trace = enable;
 }
 
-const Status &Simulator::get_status() const
+const Status &Machine::get_status() const
 {
     return status;
 }
 
-addr_t Simulator::get_program_counter() const
+addr_t Machine::get_program_counter() const
 {
-    return state.pc;
+    return core.get_pc();
 }
 
-void Simulator::set_program_counter(addr_t new_pc)
+void Machine::set_program_counter(const addr_t value)
 {
-    state.pc = new_pc;
+    core.set_pc(value);
 }
 
-const State &Simulator::get_state() const
+const CoreState& Machine::get_core_state() const
 {
-    return state;
+    return core.get_state();
+}
+
+const memory_t& Machine::get_memory() const
+{
+    return memory;
 }
 
 std::ostream &selen::operator<<(std::ostream &os, const Config &cfg)

@@ -7,14 +7,14 @@
 #include <ostream>
 
 #include "memory.h"
-#include "../state.h"
-
+#include "../core.h"
 
 //Bits extraction
 //least n bits
-#define bit_least(val,n) ((val) & ((1<<(n))-1))
-//extract sequence, start inclusive, stop exclusive
-#define bit_seq(val,start,stop) bit_least((val)>>(start),((stop)-(start)))
+#define bit_least(val, n) ((val) & ((1 << (n)) - 1))
+
+//extract sequence, begin inclusive, end exclusive
+#define bit_seq(val, begin, end) bit_least((val) >> (begin), ((end) - (begin)))
 
 //disasembler formated output
 
@@ -31,28 +31,21 @@
 namespace selen
 {
 
-//raw instruction represenattion
-typedef word_t instruction_t;
-
 namespace isa
 {
 
-//get next instruction, throw
-instruction_t fetch(State& state);
-
 //perform instruction (also increment pc) on the state, throw.
-void perform(State& state, const instruction_t instr);
+void perform(selen::Core& core, const word_t instruction);
 
 //disassemble unstruction, nothrow
-std::string disassemble(const instruction_t inst);
-
+std::string disassemble(const word_t instruction);
 
 //dumper for memory_t::dump()
 struct disasembler_dumper
 {
-    typedef selen::instruction_t token_t;
+    typedef word_t token_t;
 
-    void inline operator()(selen::instruction_t token, std::ostream& out)
+    void inline operator()(token_t token, std::ostream& out)
     {
         out << std::setw(10) << token
             << "\t"

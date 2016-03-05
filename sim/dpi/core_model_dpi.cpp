@@ -19,37 +19,38 @@ class Model
 public:
     Model()
     {
+        core.init(&memory);
     }
 
     void reset(const Config& ecfg)
     {
         cfg = ecfg;
-        state.clear();
-        state.mem.resize(cfg.mem_size);
-        state.pc = cfg.start_pc;
-        state.mem.set_endian((cfg.endianness == 0) ?
-                              selen::memory_t::LE :
-                              selen::memory_t::BE);
+        core.reset();
+        memory.resize(cfg.mem_size);
+        core.set_pc(cfg.start_pc);
+        memory.set_endian((cfg.endianness == 0) ?
+                          selen::memory_t::LE :
+                          selen::memory_t::BE);
     }
 
     //all following functions throw
 
     int set_mem(unsigned int addr, unsigned int data)
     {
-        if(addr >= state.mem.size() &&
+        if(addr >= memory.size() &&
            cfg.allow_resize)
         {
-            state.mem.resize(addr + 1);
+            memory.resize(addr + 1);
             // else write will throw
         }
 
-        state.mem.write(addr, data);
+        memory.write(addr, data);
         return RC_SUCCESS;
     }
 
     int get_mem(unsigned int addr, unsigned int *data)
     {
-        unsigned int destination = state.mem.read<unsigned int>(addr);
+        unsigned int destination = memory.read<unsigned int>(addr);
         *data = destination;
         return RC_SUCCESS;
     }
@@ -57,7 +58,7 @@ public:
     int get_reg(int reg_id, unsigned int *data)
     {
         assert(reg_id >= 0 && reg_id < (int)selen::NUM_REGISTERS);
-        *data = state.reg[reg_id].u;
+        *data = core.get_reg<selen::word_t>(reg_id);
 
         return RC_SUCCESS;
     }
@@ -65,34 +66,33 @@ public:
     int set_reg(int reg_id, unsigned int data)
     {
         assert(reg_id >= 0 && reg_id < (int)selen::NUM_REGISTERS);
-        state.reg[reg_id].u = data;
+        core.set_reg(reg_id, data);
 
         return RC_SUCCESS;
     }
 
     int get_pc(unsigned int *data)
     {
-        *data = state.pc;
+        *data = core.get_pc();
         return RC_SUCCESS;
     }
 
     int set_pc(unsigned int data)
     {
-        state.pc = data;
+        core.set_pc(data);
         return RC_SUCCESS;
     }
 
-
     int step()
     {
-        selen::instruction_t instr = selen::isa::fetch(state);
-        selen::isa::perform(state, instr);
+        core.step();
 
         return RC_SUCCESS;
     }
 
 private:
-    selen::State state;
+    selen::Core core;
+    selen::memory_t memory;
     Config cfg;
 };
 

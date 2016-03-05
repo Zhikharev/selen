@@ -151,12 +151,6 @@ static const cloption_map_t& get_cloptions()
     return options;
 }
 
-Application::Application(int argc, char *argv[]) : params(this)
-{
-    parse_cl(argc, argv);
-    sim.set_config(params.sim_config);
-}
-
 string Application::print_help()
 {
     static ostringstream out;
@@ -224,6 +218,12 @@ void Application::dump_state_to_file(const string &filename)
         cout << "State dumped to " << params.final_dump << endl;
 }
 
+void Application::init(int argc, char *argv[])
+{
+    parse_cl(argc, argv);
+    sim.set_config(params.sim_config);
+}
+
 void Application::parse_cl(int argc, char *argv[])
 {
     if(argc < VALID_MIN_ARGC)
@@ -281,7 +281,6 @@ void Application::run_interactive()
 
     return;
 }
-
 
 ostream &operator<<(ostream &os, const Parameters &params)
 {

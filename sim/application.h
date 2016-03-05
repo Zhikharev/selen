@@ -38,14 +38,21 @@ class Application
     int const VALID_MIN_ARGC = 1;
 
 public:
-    Application(int argc, char* argv[]);
 
+    static Application& instance()
+    {
+        static Application app;
+
+        return app;
+    }
+
+    void init(int argc, char *argv[]);
     std::string print_help();
     std::string print_banner();
 
     void exit(int status);
 
-    selen::Simulator& get_simulator()
+    selen::Machine& get_simulator()
     {
         return sim;
     }
@@ -61,6 +68,11 @@ public:
     int run();
     void dump_state_to_file(const std::string& filename);
 
+private:
+    Application() : params(this)
+    {
+    }
+
 protected:
     Application(const Application&) = delete;
     Application& operator=(const Application&) = delete;
@@ -73,7 +85,7 @@ protected:
 
 private:
     Parameters params;
-    selen::Simulator sim;
+    selen::Machine sim;
 };
 
 #endif // APPLICATION_H

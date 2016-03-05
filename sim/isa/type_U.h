@@ -5,71 +5,60 @@
 #include <map>
 #include <functional>
 
-#include "formats.h"
+#include "decode.h"
 
 /*
  * U-type instruction implementation: LUI and AUIPC
  */
 
-namespace selen {
+namespace selen
+{
 
-namespace isa {
+namespace isa
+{
 
 struct LUI
 {
-    enum {TARGET = OP_LUI};
-
-    typedef formatU format_t;
-
-    explicit LUI(format_t l) : data(l)
-    {}
-
-    void perform(State& st) const
+    static const std::vector<isa::descriptor_t>& getDescriptors()
     {
-        st.reg[data.rd].u = data.get_U_immediate();
+        static const std::vector<isa::descriptor_t> product =
+        {
+            {
+                0, 0,
+                "LUI", OP_LUI,
+                [] ISA_OPERATION
+                {
+                    sword_t value = i.immU();
+                    core.set_reg(i.rd(), value);
+                    core.increment_pc();
+                }
+            }
+            };
 
-        st.pc = st.pc + sizeof(instruction_t);
+        return product;
     }
-
-    void print(std::ostream& s) const
-    {
-        s << std::setw(MF_WIDHT) << "LUI" << "\t"
-          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
-          << std::hex << std::showbase
-          << data.get_U_immediate();
-    }
-
-private:
-    format_t data;
 }; //LUI
 
 struct AUIPC
 {
-    enum {TARGET = OP_AUIPC};
-
-    typedef formatU format_t;
-
-
-    explicit AUIPC(format_t l) : data(l)
-    {}
-
-    void perform(State& st) const
+    static const std::vector<isa::descriptor_t>& getDescriptors()
     {
-        st.reg[data.rd].u =  st.pc + data.get_U_immediate();
+        static const std::vector<isa::descriptor_t> product =
+        {
+            {
+                0, 0,
+                "AUIPC", OP_AUIPC,
+                [] ISA_OPERATION
+                {
+                    sword_t value = core.get_pc() + i.immU();
+                    core.set_reg(i.rd(), value);
+                    core.increment_pc();
+                }
+            }
+            };
 
-        st.pc = st.pc + sizeof(instruction_t);
+        return product;
     }
-
-    void print(std::ostream& s) const
-    {
-        s << std::setw(MF_WIDHT) << "AUIPC"
-          << std::setw(RN_WIDHT) << regid2name(data.rd) << ", "
-          << std::hex << std::showbase
-          << data.get_U_immediate();
-    }
-
-private:
-    format_t data;
 }; //AUIPC
 
 } // namespace isa
