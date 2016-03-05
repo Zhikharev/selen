@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of instruction fetch station
 // ----------------------------------------------------------------------------
-//include core_defines.vh;
+include core_defines.vh;
 
 module core_if_s (
 	input							clk,
@@ -26,14 +26,11 @@ module core_if_s (
 	output	reg[31:0]	if_pc_reg_out,	
 	output 	reg[31:0]	if_pc_4_reg_out
 );
-
-
-
 reg[31:0] 	pc_reg;
 wire[31:0] 	pc_adder;
 wire[31:0] 	pc_next;
 //program counter
-always @(posedge clk, posedge (~rst_n))begin
+always @(posedge clk , negedge rst_n)begin//, negedge rst_n)begin
 	if(~rst_n) begin
 		pc_reg <= `PC_START;
 	end
