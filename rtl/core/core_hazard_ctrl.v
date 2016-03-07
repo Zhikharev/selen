@@ -6,15 +6,13 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		: hazard controll
 // ----------------------------------------------------------------------------
-//include core_defines.vh;
+include core_defines.vh;
 module core_hazard_ctrl(
 	input 					rst_n,
 	// register controll 
 	output[3:0]			haz_enb_bus_out,
-	output[3:0]			haz_kill_bus_out,
+	output[1:0]			haz_kill_bus_out,
 	// 
-	output 					haz_pc_stop_out,
-	output					haz_nop_gen_out,
 	output					haz_mux_trn_out,
 	// forwarding
 	output[3:0]			haz_bp_mux_exe_out,
@@ -54,7 +52,7 @@ wire[4:0]	rd_wb_loc;
 reg[3:0]	hazard_exe_bp_loc;
 reg				hazard_mem_bp_loc;
 reg[3:0]	haz_enb_bus_loc;
-reg[3:0]	haz_kill_bus_loc; 
+reg[1:0]	haz_kill_bus_loc; 
 reg				haz_nop_gen_loc;
 reg				mux_1_loc;
 //forwarding of exexution stataion 
@@ -67,65 +65,50 @@ always @* begin
 	if((rd_wb_loc == rs2_exe_loc)&&(rs2_exe_loc !=5'b0)&&(haz_we_reg_file_wb_s_in)) hazard_exe_bp_loc = `W2E_SRC2_BP;
 	if((rd_wb_loc == rs2_mem_loc)&&(rs2_mem_loc !=5'b0)&&(haz_we_reg_file_wb_s_in)) hazard_mem_bp_loc = `W2M_BP_ON;
 end
-//stall
+//stalls and bubbles 
 always @* begin
 	if(~rst_n)begin
 		haz_kill_bus_loc = `KILL_FULL_ON;
 		mux_1_loc = 1'b0;
-		haz_nop_gen_loc = `NOP_GEN_OFF;
 	end
 	else begin
 		haz_enb_bus_loc = `ENB_FULL_ON;
 		haz_kill_bus_loc = `KILL_FULL_OFF;
-		haz_nop_gen_loc = `NOP_GEN_OFF;
-		mux_1_loc = 1'b0;	
+		mux_1_loc = `MUX1_PC;	
 		// jump
 		if(haz_cmd_dec_s_in == `HZRD_JUMP) begin
 			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
 		end
 		if(haz_cmd_exe_s_in == `HZRD_JUMP) begin
-			haz_nop_gen_loc = `NOP_GEN_ON;
-			mux_1_loc = 1'b1;
-		end
-		if(haz_cmd_mem_s_in == `HZRD_JUMP)begin
-			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_ON;
-			haz_nop_gen_loc = `NOP_GEN_OFF;			
+			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
+			haz_kill_bus_loc[`REG_DEC_EXE] = `REG_KILL_ON;
+			mux_1_loc = `MUX1_ADDR;
 		end
 		// jump stall end
 		//brnch begin
 		if(haz_cmd_exe_s_in == `HZRD_BRNCH)begin
 			if(haz_brnch_tknn_in == 1'b1) begin
-				mux_1_loc = 1'b1;
-				haz_kill_bus_loc = `KILL_BRNCH;
+				mux_1_loc = `MUX1_ADDR;
+				haz_kill_bus_loc = `KILL_FULL_ON;
 			end
 			else begin
-				mux_1_loc =1'b0;
+				mux_1_loc =`MUX1_PC;
 				haz_kill_bus_loc = `KILL_FULL_OFF;
 			end
 		end
 		//brnch end
-		// load begin
-		if(haz_cmd_exe_s_in == `HZRD_LOAD) begin
-			haz_nop_gen_loc = `NOP_GEN_ON;
-			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
-		end
-		//load end
 		if(haz_stall_wb_in) begin
 			haz_enb_bus_loc = `ENB_FULL_OFF;
 		end
 		if(haz_stall_dec_in) begin
 			haz_enb_bus_loc[`REG_IF_DEC] = `REG_ENB_OFF;
-			haz_nop_gen_loc = `NOP_GEN_ON; 
+			haz_kill_bus_loc[`REG_DEC_EXE] = `REG_KILL_ON;
 		end
 	end
 end
-assign haz_pc_stop_out = (&haz_enb_bus_loc)?1'b0:1'b1;
-
-
 assign haz_bp_mux_exe_out = hazard_exe_bp_loc;
 assign haz_bp_mux_mem_out	=	hazard_mem_bp_loc;
 assign haz_enb_bus_out = haz_enb_bus_loc;
 assign haz_kill_bus_out = haz_kill_bus_loc; 
-assign haz_nop_gen_out = haz_nop_gen_loc;
 assign haz_mux_trn_out = mux_1_loc;
 endmodule // hazard_ctrl

@@ -7,7 +7,7 @@
 // DESCRIPTION      :connection bwtwine all modules of stage and
 //                            hazard controll
 // ----------------------------------------------------------------------------
-//include core_defines.vh;
+include core_defines.vh;
 module core_pipeline
 	(
 		input 					clk,
@@ -20,7 +20,7 @@ module core_pipeline
 		input[	31:0]		pl_l1i_ack_rdata,
 		input 					pl_l1i_ack,
 		output 					pl_l1i_req_val,
-		output	[31:0]	pl_l1i_req_aadr,
+		output	[31:0]	pl_l1i_req_addr,
 
 	//l1d
 		output					pl_l1d_req_val,
@@ -34,11 +34,9 @@ module core_pipeline
 		output 			pl_val_inst
 	);
 //hazard wires
-wire[3:0] 		haz_kill_bus_loc;
+wire[1:0] 		haz_kill_bus_loc;
 wire[3:0]		haz_enb_bus_loc;
-wire 			haz2if_s_pc_stop;
 wire 			haz2exe_s_mux_trn_out;
-wire 			haz2dec_s_nop_gen;
 wire[3:0]		haz2exe_bp_mux_exe;
 wire 			haz2mem_bp_mux_mem;
 wire[4:0]		wb2haz_rd;
@@ -74,7 +72,7 @@ wire[2:0]	dec2exe_alu_cnd;
 wire[1:0]	dec2exe_hazard_cmd;
 //
 wire 			dec2exe_l1i_req_val;
-wire[2:0]	dec2exe_l1i_req_cop;
+wire 			dec2exe_l1i_req_cop;
 wire[2:0]	dec2exe_l1i_req_size;
 //
 //
@@ -127,12 +125,11 @@ core_if_s core_if_s (
 .if_kill(haz_kill_bus_loc[`REG_IF_DEC]),
 .if_enb(haz_enb_bus_loc[`REG_IF_DEC]),
 //from hazard control
-.if_pc_stop_in(haz2if_s_pc_stop),
 .if_mux_trn_s_in(exe2if_mux_trn_s),
 // for transfer of address
 .if_addr_mux_trn_in(exe2if_addr),
 //for l1i $
-.if_addr_l1i_cash_out(pl_l1i_req_aadr),
+.if_addr_l1i_cash_out(pl_l1i_req_addr),
 .if_val_l1i_cahe_out(pl_l1i_req_val),//global
 //register if/dec
 .if_pc_reg_out(if2dec_pc),
@@ -144,7 +141,6 @@ core_dec_s core_dec_s(
 .dec_enb(haz_enb_bus_loc[`REG_DEC_EXE]),
 .dec_kill(haz_kill_bus_loc[`REG_DEC_EXE]),
 //inside terminals
-.dec_nop_gen_in(haz2dec_s_nop_gen),
 .dec_inst_in(pl_l1d_ack_rdata),//global l1i
 .dec_data_wrt_in(wb2dec_wrt_data),
 .dec_l1i_ack_in(pl_l1i_ack),//global l1i
@@ -177,9 +173,10 @@ core_dec_s core_dec_s(
 .dec2haz_cmd_out(dec2haz_cmd),
 .dec_stall_out(dec2haz_stall),
 
-.dec_val_instr_out_reg(dec2exe_val_instr)
+.dec_val_inst_out_reg(dec2exe_val_instr),
+.dec_rd_reg_file_in(wb2haz2dec_rd)
 );
-//exe's wire
+
 core_exe_s core_exe_s( 
 .exe_val_inst_in(dec2exe_val_instr),
 
@@ -196,6 +193,10 @@ core_exe_s core_exe_s(
 .exe_mux_bus_in(dec2exe_mux_bus),
 .exe_alu_op_in(dec2exe_alu_op),
 .exe_alu_cnd_in(dec2exe_alu_cnd),
+//cash
+.exe_l1d_val_in(dec2exe_l1i_req_val),
+.exe_l1d_size_in(dec2exe_l1i_req_size),
+.exe_l1d_cop_in(dec2exe_l1i_req_cop),
 //informationpins
 .exe_src1_in(dec2exe_src1),
 .exe_src2_in(dec2exe_src2),
@@ -236,7 +237,7 @@ core_exe_s core_exe_s(
 .exe2haz_rd_out(exe2haz_rd),
 .exe2haz_cmd_out(exe2haz_cmd),
 //
-.exe2mem_val_inst_out_reg(exe2mem_val_instr)
+.exe_val_inst_out_reg(exe2mem_val_instr)
 );
 core_mem_s core_mem_s(
 .mem_val_inst_in(exe2mem_val_instr),
@@ -262,6 +263,7 @@ core_mem_s core_mem_s(
 .mem_wrt_data_in(exe2mem_wrt_data),
 .mem_addr_in(exe2mem_addr),
 //hazards
+.mem_haz_cmd_in(exe2mem_haz_cmd),
 .mem_bp_mux_in(haz2mem_bp_mux_mem),
 .mem_bp_from_wb_data_in(wb2dec_wrt_data),
 .mem_rs1_in(exe2mem_rs1),
@@ -271,7 +273,7 @@ core_mem_s core_mem_s(
 .mem2l1d_req_val_out(pl_l1d_req_val),//global
 .mem2l1d_req_size_out(pl_l1d_req_size),//global
 .mem2l1d_req_cop_out(pl_l1d_req_cop),//global
-.mem_wrt_data_mem_out(pl_l1i_req_aadr),//global
+.mem2l1d_wrt_data_mem_out(pl_l1i_req_aadr),//global
 //
 .mem2exe_bp_data_out(mem2exe_bp_data),
 //data outs
@@ -309,7 +311,9 @@ core_wb_s core_wb_s(
 .wb_we_reg_file_out(wb2dec_we_reg_file),
 .wb_data_out(wb2dec_wrt_data),
 .wb_stall_out(wb2haz_stall),
-.wb2haz_rd_out(wb2haz_rd)
+.wb2haz_rd_out(wb2haz2dec_rd),
+
+.wb_rd_in(mem2wb_rd)
 );
 
 core_hazard_ctrl core_hazard_ctrl(.
@@ -318,8 +322,6 @@ rst_n(rst_n),
 .haz_enb_bus_out(haz_enb_bus_loc),
 .haz_kill_bus_out(haz_kill_bus_loc),
 //
-.haz_pc_stop_out(haz2if_s_pc_stop),
-.haz_nop_gen_out(haz2dec_s_nop_gen),
 .haz_mux_trn_out(haz2exe_s_mux_trn_out),
 //forwarding
 .haz_bp_mux_exe_out(haz2exe_bp_mux_exe),

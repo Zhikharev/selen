@@ -35,11 +35,11 @@ always @(posedge clk , negedge rst_n)begin//, negedge rst_n)begin
 		pc_reg <= `PC_START;
 	end
 	else begin
-		if(if_pc_stop_in) begin
-			 pc_reg <= pc_reg;
+		if(if_enb) begin
+			 pc_reg <= pc_next;
 		end
 		else begin
-			pc_reg <= pc_next;	
+			pc_reg <= pc_reg;	
 		end
 	end
 end

@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	ALU
 // ------------------------------------------
-//include core_defines.vh;
+include core_defines.vh;
 module 	core_alu (
 	input signed[31:0]	 				src1,
 	input signed[31:0]					src2,

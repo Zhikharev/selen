@@ -43,7 +43,7 @@ core_pipeline pipeline
 	.pl_l1i_ack_rdata 	(i_ack_rdata),
 	.pl_l1i_ack 				(i_req_ack),
 	.pl_l1i_req_val 		(i_req_val),
-	.pl_l1i_req_aadr 		(i_req_addr),
+	.pl_l1i_req_addr 		(i_req_addr),
 	//l1d
 	.pl_l1d_req_val 		(d_req_val),
 	.pl_l1d_req_addr 		(d_req_addr),
