@@ -26,8 +26,8 @@ output[1:0]		ctrl_haz_cmd_out
 );
 reg[2:0] 	wb_sx_op_loc;
 reg[5:0]	mux_bus_loc;
-reg[3:0] 	alu_op_loc
-reg[1:0]	alu_cnd_loc
+reg[3:0] 	alu_op_loc;
+reg[1:0]	alu_cnd_loc;
 reg 			we_reg_file_loc;
 reg 			l1d_val_loc;
 reg[2:0]	l1d_size_loc;
@@ -45,13 +45,13 @@ always @* begin
 	dec_sx_op_loc = 3'b000;
 	hazard_cmd_loc = `HZRD_OTHER;
 	l1d_val_loc = `DL1_VAL_OFF;
-	case(inst_in[5:0])
+	case(ctrl_inst_in[5:0])
 		`R_OPCODE:begin
 			mux_bus_loc = `R_MUX;
 			we_reg_file_loc = `WE_ON;
-			case(inst_in[31:25])// function 7 feald case
+			case(ctrl_inst_in[31:25])// function 7 feald case
 				`FNCT7_1:begin
-					case(inst_in[14:12])//functoin 3 feald case
+					case(ctrl_inst_in[14:12])//functoin 3 feald case
 						`ADD: 	alu_op_loc = 	`ADD_ALU;
 						`SLT: 	alu_op_loc = 	`SLT_ALU;
 						`SLTU:  alu_op_loc = 	`SLTU_ALU;
@@ -63,7 +63,7 @@ always @* begin
 					endcase//FNCT3	
 				end//FNCT7_1		
 				`FNCT7_2:begin
-					case(inst_in[14:12])
+					case(ctrl_inst_in[14:12])
 						`SUB:	alu_op_loc = `SUB_ALU;
 						`SRA:	alu_op_loc = `SRA_ALU;
 						`AM:	alu_op_loc = `AM_ALU;
@@ -76,7 +76,7 @@ always @* begin
 			mux_bus_loc = `I_R_MUX;
 			we_reg_file_loc = `WE_ON;
 			dec_sx_op_loc = `SX_LD_I_R_JALR;
-			case(inst_in[14:12])//functoin 3 feald case
+			case(ctrl_inst_in[14:12])//functoin 3 feald case
 				`ADD: 	alu_op_loc = `ADD_ALU;
 				`SLT: 	alu_op_loc = `SLT_ALU;
 				`SLTU: 	alu_op_loc = `SLTU_ALU;
@@ -104,7 +104,7 @@ always @* begin
 			dec_sx_op_loc = `SX_SB;
 			mux_bus_loc = `SB_MUX;
 			hazard_cmd_loc = `HZRD_BRNCH;
-			case(inst_in[14:12])
+			case(ctrl_inst_in[14:12])
 				`BEQ:begin
 					order_loc = `ORDER_OFF;
 					alu_cnd_loc = {1'b1,`ALU_BEQ};
@@ -153,7 +153,7 @@ always @* begin
 			we_reg_file_loc = `WE_ON;
 			dec_sx_op_loc = `SX_LD_I_R_JALR;
 			hazard_cmd_loc = `HZRD_LOAD;		
-			case(inst_in[14:12])
+			case(ctrl_inst_in[14:12])
 				`LW:begin
 					l1d_val_loc = `DL1_VAL_ON;
 					l1d_cop_loc = `DL1_READ;
@@ -190,7 +190,7 @@ always @* begin
 		`ST_OPCODE: begin 
 			mux_bus_loc = `ST_MUX;
 			dec_sx_op_loc = `SX_ST;
-			case(inst_in[14:12])
+			case(ctrl_inst_in[14:12])
 				`SW: begin
 					l1d_val_loc = `DL1_VAL_ON;
 					l1d_cop_loc = `DL1_WRT;
@@ -216,7 +216,7 @@ end
 
 assign ctrl_wb_sx_op_out = wb_sx_op_loc;
 assign ctrl_l1d_val_out = l1d_val_loc;
-assign ctrl_ l1d_size_loc = l1d_size_loc;
+assign ctrl_l1d_size_loc = l1d_size_loc;
 assign ctrl_l1d_cop_lsb_out = l1d_cop_loc;
 assign ctrl_mux_bus_out = mux_bus_loc;
 assign ctrl_alu_op_out = alu_op_loc;

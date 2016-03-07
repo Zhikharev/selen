@@ -12,9 +12,7 @@ include core_defines.vh;
 module core_mem_s (
 	input 						mem_val_inst_in,
 	input 						clk,
-	input 						rst_n,
 	input							mem_enb,
-	input							mem_kill,
 	//control pins
 	input[2:0]				mem_wb_sx_op_in,
 	input 		 				mem_l1d_req_val_in,

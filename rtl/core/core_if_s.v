@@ -15,7 +15,6 @@ module core_if_s (
 	input 						if_kill,
 	input 						if_enb,
 	//from hazard control
-	input 						if_pc_stop_in,
 	input 						if_mux_trn_s_in,
 	// for transfer of address
 	input[31:0]				if_addr_mux_trn_in,

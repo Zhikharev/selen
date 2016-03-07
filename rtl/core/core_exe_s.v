@@ -10,9 +10,7 @@ include core_defines.vh;
 module core_exe_s (
 	input 					exe_val_inst_in,
 	input							clk,
-	input							rst_n, 
 	input							exe_enb,
-	input 						exe_kill,
 	//
 	input							exe_s_frm_haz_mux_trn_in,
 	// from deceode 

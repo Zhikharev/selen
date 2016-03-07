@@ -26,12 +26,12 @@ module core_reg_file (
 	reg [31:0] reg_file [31:0];
 
 	always@(posedge clk or negedge rst_n) begin
-		reg_file[0] <= 0;
 		if(~rst_n) begin
 			for(i = 0; i< 32; i = i + 1)
 				reg_file[i] <= 0;
 		end else begin
 			if(we_in) reg_file[rd_in] <= data_in;
+			reg_file[0] <= 0;
 		end
 	end
 	assign src1_out = (order_in) ? reg_file[rs1_in] : reg_file[rs2_in];

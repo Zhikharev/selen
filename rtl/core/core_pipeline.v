@@ -181,9 +181,7 @@ core_exe_s core_exe_s(
 .exe_val_inst_in(dec2exe_val_instr),
 
 .clk(clk),
-.rst_n(rst_n),
 .exe_enb(haz_enb_bus_loc[`REG_EXE_MEM]),
-.exe_kill(haz_kill_bus_loc[`REG_EXE_MEM]),
 //
 .exe_s_frm_haz_mux_trn_in(haz2exe_s_mux_trn_out),
 //fromdeceode
@@ -243,9 +241,7 @@ core_mem_s core_mem_s(
 .mem_val_inst_in(exe2mem_val_instr),
 
 .clk(clk),
-.rst_n(rst_n),
 .mem_enb(haz_enb_bus_loc[`REG_MEM_WB]),
-.mem_kill(haz_kill_bus_loc[`REG_MEM_WB]),
 //controlpins
 .mem_wb_sx_op_in(exe2mem_wb_sx_op),
 .mem_l1d_req_val_in(exe2mem_l1d_val),
@@ -296,7 +292,6 @@ core_mem_s core_mem_s(
 );
 core_wb_s core_wb_s(
 .clk(clk),
-.rst_n(rst_n),
 //control
 .wb_mux_alu_mem_in(mem2wb_mux_alu_mem),
 .wb_ack_from_lid_in(pl_l1d_ack_ack),

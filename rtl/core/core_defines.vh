@@ -102,9 +102,8 @@
 `define M2E_SRC2_MUX 2
 `define W2E_SRC2_MUX 3
 
-`define KILL_FULL_OFF 4'b0000
-`define KILL_FULL_ON  4'b1111
-`define KILL_BRNCH 4'b0011
+`define KILL_FULL_OFF 2'b00
+`define KILL_FULL_ON  2'b11
 `define REG_KILL_ON 1'b1
 `define REG_KILL_OFF 1'b0
 
@@ -113,6 +112,8 @@
 `define REG_ENB_ON 1'b1
 `define REG_ENB_OFF 1'b0
 
+`define MUX1_PC 1'b0
+`define MUX1_ADDR 1'b1
 
 `define REG_IF_DEC 0
 `define REG_DEC_EXE 1

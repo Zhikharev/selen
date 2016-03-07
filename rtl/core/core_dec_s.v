@@ -14,12 +14,11 @@ module core_dec_s(
 	input 						dec_enb,
 	input							dec_kill,
 	//from if
-	input 						dec_nop_gen_in,
 	input[31:0]				dec_inst_in,
 	input							dec_l1i_ack_in,
 	//from wb
 	input							dec_we_reg_file_in,
-	input							dec_rd_reg_file_in,
+	input[4:0]				dec_rd_reg_file_in,
 	input[31:0]				dec_data_wrt_in,
 	//input form if station
 	input[31:0]				dec_pc_in,
