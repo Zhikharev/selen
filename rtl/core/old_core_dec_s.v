@@ -6,8 +6,8 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of decode station
 // ----------------------------------------------------------------------------
-include core_defines.vh;
-include opcodes.vh;
+//include core_defines.vh;
+// include opcodes.vh;
 module core_dec_s(
 	input						clk,
 	input						rst_n,

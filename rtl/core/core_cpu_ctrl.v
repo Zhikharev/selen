@@ -6,8 +6,8 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	The core control unit 
 // ----------------------------------------------------------------------------
-include core_defines.vh;
-include opcodes.vh;
+// include core_defines.vh;
+// include opcodes.vh;
 module core_cpu_ctrl(
 input[31:0] 	ctrl_inst_in,
 //to reg 

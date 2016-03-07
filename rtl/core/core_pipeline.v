@@ -7,7 +7,7 @@
 // DESCRIPTION      :connection bwtwine all modules of stage and
 //                            hazard controll
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_pipeline
 	(
 		input 					clk,
@@ -17,7 +17,7 @@ module core_pipeline
 		input 	[31:0]  csr_nc_mask,
 
 		// l1i
-		input[	31:0]		pl_l1i_ack_rdata,
+		input[31:0]		pl_l1i_ack_rdata,
 		input 					pl_l1i_ack,
 		output 					pl_l1i_req_val,
 		output	[31:0]	pl_l1i_req_addr,
@@ -39,7 +39,6 @@ wire[3:0]		haz_enb_bus_loc;
 wire 			haz2exe_s_mux_trn_out;
 wire[3:0]		haz2exe_bp_mux_exe;
 wire 			haz2mem_bp_mux_mem;
-wire[4:0]		wb2haz_rd;
 wire[1:0]		dec2haz_cmd;
 wire 			dec2haz_stall;				
 wire 			mem2haz_we_reg_file;
@@ -118,6 +117,7 @@ wire[4:0] 	mem2wb_rd;
 wire 	dec2exe_val_instr;
 wire 	exe2mem_val_instr;
 ///
+wire[4:0]	wb2haz2dec_rd;
 core_if_s core_if_s (
 .clk(clk),
 .rst_n(rst_n),
@@ -141,7 +141,7 @@ core_dec_s core_dec_s(
 .dec_enb(haz_enb_bus_loc[`REG_DEC_EXE]),
 .dec_kill(haz_kill_bus_loc[`REG_DEC_EXE]),
 //inside terminals
-.dec_inst_in(pl_l1d_ack_rdata),//global l1i
+.dec_inst_in(pl_l1i_ack_rdata),//global l1i
 .dec_data_wrt_in(wb2dec_wrt_data),
 .dec_l1i_ack_in(pl_l1i_ack),//global l1i
 .dec_we_reg_file_in(wb2dec_we_reg_file),
@@ -269,7 +269,8 @@ core_mem_s core_mem_s(
 .mem2l1d_req_val_out(pl_l1d_req_val),//global
 .mem2l1d_req_size_out(pl_l1d_req_size),//global
 .mem2l1d_req_cop_out(pl_l1d_req_cop),//global
-.mem2l1d_wrt_data_mem_out(pl_l1i_req_aadr),//global
+.mem2l1d_wrt_data_mem_out(pl_l1d_req_wdata),//global
+.mem2l1d_addr_out(pl_l1d_req_addr),//global
 //
 .mem2exe_bp_data_out(mem2exe_bp_data),
 //data outs
@@ -328,7 +329,7 @@ rst_n(rst_n),
 .haz_mem_rs1_in(mem2haz_rs1),
 .haz_mem_rs2_in(mem2haz_rs2),
 .haz_mem_rd_in(mem2haz_rd),
-.haz_wb_rd_in(wb2haz_rd),
+.haz_wb_rd_in(wb2haz2dec_rd),
 //we of regfile
 .haz_we_reg_file_exe_s_in(exe2haz_we_reg_file),
 .haz_we_reg_file_mem_s_in(mem2haz_we_reg_file),//exsessivepin

@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of exeqution station
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_exe_s (
 	input 					exe_val_inst_in,
 	input							clk,

@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		: memory phase of pipline 
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_mem_s (
 	input 						mem_val_inst_in,
 	input 						clk,

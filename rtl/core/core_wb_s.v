@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION    		    : write back phase of pipline 
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 module core_wb_s(
 	input						clk,
 	input 					rst_n,

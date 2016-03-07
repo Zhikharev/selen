@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // DESCRIPTION        		:	A description of instruction fetch station
 // ----------------------------------------------------------------------------
-include core_defines.vh;
+//include core_defines.vh;
 
 module core_if_s (
 	input							clk,
