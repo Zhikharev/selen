@@ -1,6 +1,7 @@
 VLOG_OPTS+=\
 	+incdir+$(BENCH_HOME) \
 	+incdir+$(BENCH_HOME)/../common \
+	+incdir+$(BENCH_HOME)/../l1_cache \
 	+define+CLK_HALF_PERIOD=1 \
 	$(BENCH_HOME)/uvm/uvm.inc.sv \
 	$(BENCH_HOME)/testbench/l1_assembled.sv \
