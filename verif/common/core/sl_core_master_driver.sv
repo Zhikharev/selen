@@ -61,6 +61,7 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
         end
         else
           clear_interface();
+      end
       else
         reset_interface();
     end

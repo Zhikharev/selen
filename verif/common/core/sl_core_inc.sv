@@ -20,5 +20,7 @@
 `include "core/sl_core_sequencer.sv"
 `include "core/sl_core_slave_driver.sv"
 `include "core/sl_core_slave_agent.sv"
+`include "core/sl_core_master_driver.sv"
+`include "core/sl_core_master_agent.sv"
 
 `endif
