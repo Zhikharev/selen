@@ -52,10 +52,10 @@ isa::descriptor_t invalidDescriptor =
             << hex << showbase
             << i
             << ", op: " << i.opcode()
-            << " rd: " << i.rd()
-            << " rs1:" << i.rs1()
-            << " rs2:" << i.rs2()
-            << " rm:" << i.rm();
+            << " rd: " << dec << i.rd()
+            << " rs1:" << dec << i.rs1()
+            << " rs2:" << dec << i.rs2()
+            << " rm:" << hex << i.rm();
 
         throw std::runtime_error(out.str());
     }

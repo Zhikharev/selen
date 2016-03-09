@@ -36,7 +36,7 @@ struct LOAD
 
                     value = (value << 24) >> 24;
                     core.set_reg(i.rd(), value);
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             },
             {
@@ -48,7 +48,7 @@ struct LOAD
 
                     value = (value << 16) >> 16;
                     core.set_reg(i.rd(), value);
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             },
             {
@@ -59,7 +59,7 @@ struct LOAD
                     sword_t value = core.read_mem<sword_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
 
                     core.set_reg(i.rd(), value);
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             },
             {
@@ -70,7 +70,7 @@ struct LOAD
                     byte_t value = core.read_mem<byte_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
 
                     core.set_reg(i.rd(), value);
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             },
             {
@@ -81,7 +81,7 @@ struct LOAD
                     hword_t value = core.read_mem<hword_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
 
                     core.set_reg(i.rd(), value);
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             }
             };

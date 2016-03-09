@@ -120,7 +120,7 @@ FUNC_BEGIN
     assert(params != nullptr);
 
     Config cfg;
-    cfg.allow_resize = true;
+    cfg.mem_size = params->mem_size;
     cfg.start_pc = params->pc_start;
     cfg.allow_resize = (params->mem_resize != 0);
     cfg.endianness = params->endianness;

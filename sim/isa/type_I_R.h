@@ -93,7 +93,7 @@ struct I_R
                 "SLLI", OP_I_R,
                 [] ISA_OPERATION
                 {
-                    word_t value = core.get_reg<word_t>(i.rs1()) >> (i.immI() & 0x1f); // lower five bits
+                    word_t value = core.get_reg<word_t>(i.rs1()) << (i.immI() & 0x1f); // lower five bits
                     core.set_reg(i.rd(), value);
                     core.increment_pc();
                 }
@@ -103,13 +103,13 @@ struct I_R
                 "SRLI", OP_I_R,
                 [] ISA_OPERATION
                 {
-                    word_t value = core.get_reg<word_t>(i.rs1()) << (i.immI() & 0x1f);
+                    word_t value = core.get_reg<word_t>(i.rs1()) >> (i.immI() & 0x1f);
                     core.set_reg(i.rd(), value);
                     core.increment_pc();
                 }
             },
             {
-                mask7_3, func7(0100000) | func3(0b101),
+                mask7_3, func7(0b0100000) | func3(0b101),
                 "SRAI", OP_I_R,
                 [] ISA_OPERATION
                 {

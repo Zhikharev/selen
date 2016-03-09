@@ -35,7 +35,7 @@ struct STORE
 
                     core.write_mem(core.get_reg<word_t>(i.rs1()) + i.immS(), value);
 
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             },
             {
@@ -47,7 +47,7 @@ struct STORE
 
                     core.write_mem(core.get_reg<word_t>(i.rs1()) + i.immS(), value);
 
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             },
             {
@@ -59,7 +59,7 @@ struct STORE
 
                     core.write_mem(core.get_reg<word_t>(i.rs1()) + i.immS(), value);
 
-                    core.increment_pc(value);
+                    core.increment_pc();
                 }
             }
 
