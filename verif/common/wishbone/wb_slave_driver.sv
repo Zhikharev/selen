@@ -9,7 +9,7 @@
 `ifndef INC_WB_SLAVE_DRIVER
 `define INC_WB_SLAVE_DRIVER
 
-class wb_slave_driver extends uvm_driver#(wb_item);
+class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
 
 	`uvm_component_utils(wb_slave_driver)
 
@@ -52,7 +52,7 @@ class wb_slave_driver extends uvm_driver#(wb_item);
     forever begin
       @(vif.drv_s);
       if(!vif.rst) begin
-        wb_item ret_item;
+        sl_wb_bus_item ret_item;
         if(vif.drv_s.cyc_o) begin
           seq_item_port.try_next_item(req);
           if(req != null) begin
@@ -107,7 +107,7 @@ class wb_slave_driver extends uvm_driver#(wb_item);
   // --------------------------------------------
   // TASK: drive_item
   // --------------------------------------------
-  task drive_item(wb_item item);
+  task drive_item(sl_wb_bus_item item);
     vif.drv.ack_i   <= 1;
     if(vif.drv.we_o)
       vif.drv.dat_i <= item.data.pop_front();

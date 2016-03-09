@@ -3,6 +3,7 @@ RTL_SRC :=\
 	$(MAKEHOME)/opcodes.vh \
 	$(MAKEHOME)/core_defines.vh \
 	$(MAKEHOME)/core_reg_file.v \
+	$(MAKEHOME)/core_cpu_ctrl.v \
 	$(MAKEHOME)/core_dec_s.v \
 	$(MAKEHOME)/core_alu.v \
 	$(MAKEHOME)/core_exe_s.v \

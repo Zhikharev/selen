@@ -32,15 +32,15 @@ module l1_tb_top;
   assign wb_intf.rst_i = reset;
 
   core_if l1i_intf(sys_clk, reset);
-  core_if lid_intf(sys_clk, reset);
+  core_if l1d_intf(sys_clk, reset);
 
   l1_assembled dut
   (
   	.clk 			    (sys_clk),
   	.rst_n   	    (!reset),
-  	.wb_intf      (wb_intf),
-    .l1i_intf    	(l1i_intf),
-    .lid_intf   	(lid_intf)
+    .l1i_intf     (l1i_intf),
+    .l1d_intf     (l1d_intf),
+  	.wb_intf      (wb_intf)
   );
 
   typedef virtual core_if   v_core;
@@ -49,7 +49,7 @@ module l1_tb_top;
   initial begin
     uvm_config_db#(virtual rst_if)::set(null,  "*rst_agent*", "vif", rst_intf)	;
     uvm_config_db#(v_core)::set(uvm_root::get(),"*l1i_agent*", "vif", l1i_intf);
-    uvm_config_db#(v_core)::set(uvm_root::get(),"*lid_agent*", "vif", lid_intf);
+    uvm_config_db#(v_core)::set(uvm_root::get(),"*lid_agent*", "vif", l1d_intf);
     uvm_config_db#(v_wb)::set(uvm_root::get(),		"*wb_agent*", "vif", wb_intf)	;
   end
 

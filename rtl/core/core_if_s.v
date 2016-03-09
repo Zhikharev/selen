@@ -15,7 +15,6 @@ module core_if_s (
 	input 						if_kill,
 	input 						if_enb,
 	//from hazard control
-	input 						if_pc_stop_in,
 	input 						if_mux_trn_s_in,
 	// for transfer of address
 	input[31:0]				if_addr_mux_trn_in,
@@ -26,23 +25,20 @@ module core_if_s (
 	output	reg[31:0]	if_pc_reg_out,	
 	output 	reg[31:0]	if_pc_4_reg_out
 );
-
-
-
 reg[31:0] 	pc_reg;
 wire[31:0] 	pc_adder;
 wire[31:0] 	pc_next;
 //program counter
-always @(posedge clk, posedge (~rst_n))begin
+always @(posedge clk , negedge rst_n)begin//, negedge rst_n)begin
 	if(~rst_n) begin
 		pc_reg <= `PC_START;
 	end
 	else begin
-		if(if_pc_stop_in) begin
-			 pc_reg <= pc_reg;
+		if(if_enb) begin
+			 pc_reg <= pc_next;
 		end
 		else begin
-			pc_reg <= pc_next;	
+			pc_reg <= pc_reg;	
 		end
 	end
 end

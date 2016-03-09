@@ -10,5 +10,16 @@ import uvm_pkg::*;
 `include "smart_report_server.sv"
 `include "core/sl_core_inc.sv"
 `include "wishbone/wb_inc.sv"
+`include "rst_ifc/rst_ifc.inc.sv"
+
+`include "uvm/scrb/sl_cache_typedefs.sv"
+`include "uvm/scrb/sl_mem.sv"
+`include "uvm/scrb/sl_cache_line.sv"
+`include "uvm/scrb/sl_cache_mem.sv"
+`include "uvm/scrb/sl_cache_scrb.sv"
+
+`include "uvm/environment/l1_env.sv"
+
+`include "uvm/tests/l1_base_test.sv"
 
 `endif

@@ -12,12 +12,12 @@
 module core_reg_file (
 	input 					clk,
 	input 					rst_n,
-	input[4:0]			rs1,
-	input[4:0]			rs2,
-	input[4:0]			rd,
+	input[4:0]			rs1_in,
+	input[4:0]			rs2_in,
+	input[4:0]			rd_in,
 	input[31:0]			data_in,
-	input 					we,
-	input 					order,
+	input 					we_in,
+	input 					order_in,
 	output [31:0]  	src1_out,
 	output [31:0]  	src2_out
 );
@@ -30,11 +30,11 @@ module core_reg_file (
 			for(i = 0; i< 32; i = i + 1)
 				reg_file[i] <= 0;
 		end else begin
-			if(we) reg_file[rd] <= data_in;
+			if(we_in) reg_file[rd_in] <= data_in;
+			reg_file[0] <= 0;
 		end
 	end
-
-	assign src1_out = (order) ? reg_file[rs1] : reg_file[rs2];
-	assign src2_out = (order) ? reg_file[rs2] : reg_file[rs1];
+	assign src1_out = (order_in) ? reg_file[rs1_in] : reg_file[rs2_in];
+	assign src2_out = (order_in) ? reg_file[rs2_in] : reg_file[rs1_in];
 
 endmodule

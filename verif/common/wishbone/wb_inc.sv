@@ -14,7 +14,7 @@
 
 `include "wishbone/wb_if.sv"
 `include "wishbone/wb_agent_cfg.sv"
-`include "wishbone/wb_item.sv"
+`include "wishbone/sl_wb_bus_item.sv"
 `include "wishbone/wb_monitor.sv"
 `include "wishbone/wb_sequencer.sv"
 `include "wishbone/wb_slave_driver.sv"

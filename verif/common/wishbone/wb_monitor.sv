@@ -16,7 +16,7 @@ class wb_monitor extends uvm_monitor;
 
   `uvm_component_utils(wb_monitor)
 
-  uvm_analysis_port #(wb_item) item_collected_port;
+  uvm_analysis_port #(sl_wb_bus_item) item_collected_port;
 
   function new (string name = "wb_monitor", uvm_component parent = null);
     super.new(name, parent);
@@ -26,8 +26,6 @@ class wb_monitor extends uvm_monitor;
   function void build_phase(uvm_phase phase);
     if(!uvm_config_db#(vif_t)::get(this, "", "vif", vif))
       `uvm_fatal("NOVIF", {"virtual interface must be set for: ", get_full_name(), ".vif"});
-    if(!uvm_config_db#(smt_router_port_cfg)::get(this, "", "port_cfg", port_cfg))
-      `uvm_fatal("NOCFG", {"Configuration must be set for ", get_full_name(), ".port_cfg"})
   endfunction
 
   task run_phase(uvm_phase phase);
@@ -38,8 +36,8 @@ class wb_monitor extends uvm_monitor;
     forever begin
       @(vif.mon);
       if(vif.mon.cyc_o) begin
-        wb_item item;
-        item = wb_item::type_id::create("item");
+        sl_wb_bus_item item;
+        item = sl_wb_bus_item::type_id::create("item");
         collect_packet(item);
         assert(item.randomize(null))
         else `uvm_error(get_full_name(), "Packet doesn't fit constraints!")
@@ -51,7 +49,7 @@ class wb_monitor extends uvm_monitor;
   // --------------------------------------------
   // TASK: collect_packet
   // --------------------------------------------
-  task collect_packet(ref wb_item item);
+  task collect_packet(ref sl_wb_bus_item item);
     item.cop      = vif.mon.we_o;
     item.address  = vif.mon.adr_o;
     item.strb     = vif.mon.stb_o;

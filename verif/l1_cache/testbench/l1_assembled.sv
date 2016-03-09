@@ -9,8 +9,8 @@ module l1_assembled
   core_if l1d_intf,
 	wb_if 	wb_intf
 );
-
-l1_dut l1
+//assign l1i_intf. = 
+l1_top l1
 (
 	.clk                    (clk),
   .rst_n                  (rst_n),
@@ -19,17 +19,17 @@ l1_dut l1
   .l1i_req_val            (l1i_intf.req_val),
   .l1i_req_addr           (l1i_intf.req_addr),
   .l1i_req_ack            (l1i_intf.req_ack),
-  .l1i_ack_data           (l1i_intf.ack_data),
+  .l1i_ack_data           (l1i_intf.req_ack_data),
 
   // L1D interface
   .l1d_req_val            (l1d_intf.req_val),
-  .l1d_req_addr           (l1d_intf.req_addr),
   .l1d_req_cop            (l1d_intf.req_cop),
-  .l1d_req_wdata          (l1d_intf.req_wdata),
   .l1d_req_size           (l1d_intf.req_size),
-  .l1d_req_be             (l1d_intf.req_be),
+  .l1d_req_addr           (l1d_intf.req_addr),
+  .l1d_req_wdata          (l1d_intf.req_wdata),
   .l1d_req_ack            (l1d_intf.req_ack),
-  .l1d_ack_data           (l1d_intf.ack_data),
+  .l1d_ack_data           (l1d_intf.req_ack_data),
+  .l1d_req_be             ( 4'hF ),
 
   // Wishbone B4 interface
   .wb_clk_i               (wb_intf.clk_i),

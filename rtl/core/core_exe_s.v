@@ -10,9 +10,7 @@
 module core_exe_s (
 	input 					exe_val_inst_in,
 	input							clk,
-	input							rst_n, 
 	input							exe_enb,
-	input 						exe_kill,
 	//
 	input							exe_s_frm_haz_mux_trn_in,
 	// from deceode 
@@ -118,7 +116,16 @@ always @(posedge clk) begin
 		exe_wrt_data_out_reg <= exe_src2_in;
 		exe_val_inst_out_reg <= exe_val_inst_in;
 	end	
-	if(exe_kill) begin
+end
+assign exe2haz_brnch_tknn_out = brnch_takenn_loc;
+assign exe2haz_we_reg_file_out = exe_we_reg_file_in;
+assign exe2haz_rs1_out = exe_rs1_in;
+assign exe2haz_rs2_out = exe_rs2_in;
+assign exe2haz_rd_out = exe_rd_in;
+assign exe2haz_cmd_out = exe_haz_cmd_in;
+endmodule
+
+/*if(exe_kill) begin
 		exe_alu_result_out_reg <= 0;
 		exe_l1d_cop_out_reg <= 0;
 		exe_l1d_val_out_reg <=0;
@@ -137,12 +144,4 @@ always @(posedge clk) begin
 		exe_haz_cmd_out_reg <=0;
 		exe_wrt_data_out_reg<=0;
 		exe_val_inst_out_reg<=0;
-	end	
-end
-assign exe2haz_brnch_tknn_out = brnch_takenn_loc;
-assign exe2haz_we_reg_file_out = exe_we_reg_file_in;
-assign exe2haz_rs1_out = exe_rs1_in;
-assign exe2haz_rs2_out = exe_rs2_in;
-assign exe2haz_rd_out = exe_rd_in;
-assign exe2haz_cmd_out = exe_haz_cmd_in;
-endmodule		  
+	end*/		  

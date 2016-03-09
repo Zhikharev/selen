@@ -58,13 +58,13 @@ class sl_cache_scrb extends uvm_scoreboard;
   function void write_req(sl_core_bus_item item);
     while(!sem.try_get());
     if(item.is_nc()) begin
-      `uvm_info("SCRB", $sformatf("Adding to req_nc_pl with key=%0h",item.addr), UVM_MEDIUM)
+      `uvm_info("SCRB", $sformatf("Adding to req_nc_pl with key=%0h", item.addr), UVM_MEDIUM)
       req_nc_pl[item.addr] = item;
     end
     else begin
       cache_addr_t mask_addr;
       mask_addr = get_mask_addr(item.addr);
-      `uvm_info("SCRB", $sformatf("Adding to req_pl with key=%0h", mask_addr, UVM_MEDIUM)
+      `uvm_info("SCRB", $sformatf("Adding to req_pl with key=%0h", mask_addr), UVM_MEDIUM)
       req_pl[mask_addr] = item;
     end
     sem.put();

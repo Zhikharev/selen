@@ -119,6 +119,7 @@ class sl_core_scrb extends uvm_scoreboard;
         retval = 0;
         `uvm_error("SCRB", $sformatf("REG[%0d] compare failed. Received: %32h Expected: %32h", i, core_reg, model_reg))
       end
+      `uvm_info("STATE_TRACE", $sformatf("REG[%0d] %0h",i, model_reg), UVM_LOW)
     end
     return(retval);
   endfunction

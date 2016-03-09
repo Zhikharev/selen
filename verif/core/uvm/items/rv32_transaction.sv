@@ -33,6 +33,9 @@ class rv32_transaction extends uvm_sequence_item;
     super.new(name);
   endfunction
 
+  constraint valid_opcodes {opcode != AM;}
+  //constraint model_bugs {opcode != SRAI;}
+
   function string sprint();
     string str;
     str = {str, opcode.name()};
@@ -85,8 +88,8 @@ class rv32_transaction extends uvm_sequence_item;
           end
           3'b101: begin
             case(data[31:25])
-              7'b0000000: opcode = SLLI;
-              7'b0100000: opcode = SRLI;
+              7'b0000000: opcode = SRLI;
+              7'b0100000: opcode = SRAI;
               default: $error("Unexpected [31:25] for I_TYPE");
             endcase
           end
