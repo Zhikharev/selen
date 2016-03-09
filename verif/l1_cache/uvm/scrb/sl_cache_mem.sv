@@ -14,9 +14,10 @@
 class sl_cache_mem extends uvm_object;
 
 	int cache_data_width = 128;
+	cache_addr_t  cache_addr;
 	semaphore sem;
 
-   protected sl_cache_line #(cache_data_width) lines[cache_addr_t];
+   protected sl_cache_line #(128) lines[cache_addr];
 
 	`uvm_object_utils(sl_cache_mem)
 

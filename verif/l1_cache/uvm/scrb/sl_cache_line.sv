@@ -14,10 +14,10 @@
 class sl_cache_line #(int LINE_WIDTH = 128) extends uvm_object;
 
 	cache_addr_t 					addr;
-	bit [LINE_WIDTH-1:0] 	data;
 	cache_line_state_t 		state;
+	bit [LINE_WIDTH-1:0] 	data;
 
-	`uvm_object_param_utils(sl_cache_line)
+	`uvm_object_param_utils(sl_cache_line#(LINE_WIDTH))
 
 	function new(string name = "sl_cache_line");
 		super.new(name);

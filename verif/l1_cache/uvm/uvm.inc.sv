@@ -13,8 +13,8 @@ import uvm_pkg::*;
 `include "rst_ifc/rst_ifc.inc.sv"
 
 `include "uvm/scrb/sl_cache_typedefs.sv"
-`include "uvm/scrb/sl_mem.sv"
 `include "uvm/scrb/sl_cache_line.sv"
+`include "uvm/scrb/sl_mem.sv"
 `include "uvm/scrb/sl_cache_mem.sv"
 `include "uvm/scrb/sl_cache_scrb.sv"
 

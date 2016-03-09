@@ -86,7 +86,7 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
   endtask
 
   // Drive item
-  task drive_item(sl_core_bus_item item);
+  task drive_item(sl_core_bus_item ret_item);
     vif.req_val <= 1'b1;
     vif.req_cop <= ret_item.cop;
     vif.req_size <= ret_item.size;

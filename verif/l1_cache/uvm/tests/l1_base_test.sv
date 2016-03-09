@@ -15,9 +15,6 @@ class l1_base_test extends uvm_test;
 
   `uvm_component_utils(l1_base_test)
 
-  //l1_reg_block  reg_model;
-  //global_events_t   global_events;
-  //l1_cfg            cfg;
   l1_env            tb_env;
 
   int               num_pkts = 10;
@@ -37,15 +34,6 @@ class l1_base_test extends uvm_test;
 
     uvm_default_line_printer.knobs.reference = 0;
     uvm_default_line_printer.knobs.footer = 0;
-
-    //global_events = global_events_t::type_id::create("global_events");
-    //uvm_config_db #(global_events_t)::set(null, "*", "global_events", global_events);
-
-    // Router configuration
-   //cfg = l1_cfg::type_id::create("cfg");
-    //uvm_config_db #(l1_cfg)::set(null, "*", "cfg", cfg);
-
-    //`uvm_info(get_full_name(), {"\n", cfg.sprint()}, UVM_LOW)
 
     // Register layer
     //uvm_reg::include_coverage("*", UVM_CVR_ADDR_MAP + UVM_CVR_FIELD_VALS);

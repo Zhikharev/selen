@@ -85,10 +85,10 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   // TASK: reset_interface
   // --------------------------------------------
   task reset_interface();
-    vif.drv.ack_i <= 0;
-    vif.drv.dat_i <= 0;
-    vif.drv.err_i <= 0;
-    vif.drv.rty_i <= 0;
+    vif.drv_s.ack_i <= 0;
+    vif.drv_s.dat_i <= 0;
+    vif.drv_s.err_i <= 0;
+    vif.drv_s.rty_i <= 0;
   endtask
 
   // --------------------------------------------
@@ -97,23 +97,23 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   task clear_interface();
     bit [31:0] data;
     std::randomize(data);
-    vif.drv.ack_i <= 0;
-    vif.drv.dat_i <= data;
-    vif.drv.stall_i <= 0;
-    vif.drv.err_i <= 0;
-    vif.drv.rty_i <= 0;
+    vif.drv_s.ack_i <= 0;
+    vif.drv_s.dat_i <= data;
+    vif.drv_s.stall_i <= 0;
+    vif.drv_s.err_i <= 0;
+    vif.drv_s.rty_i <= 0;
   endtask
 
   // --------------------------------------------
   // TASK: drive_item
   // --------------------------------------------
   task drive_item(sl_wb_bus_item item);
-    vif.drv.ack_i   <= 1;
-    if(vif.drv.we_o)
-      vif.drv.dat_i <= item.data.pop_front();
-    vif.drv.stall_i <= item.data.stall;
-    vif.drv.err_i   <= item.err;
-    vif.drv.rty_i   <= item.rty;
+    vif.drv_s.ack_i   <= 1;
+    if(vif.drv_s.we_o)
+      vif.drv_s.dat_i <= item.data.pop_front();
+    vif.drv_s.stall_i <= item.stall;
+    vif.drv_s.err_i   <= item.err;
+    vif.drv_s.rty_i   <= item.rty;
   endtask
 
 endclass

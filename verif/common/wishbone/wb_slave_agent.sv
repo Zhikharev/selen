@@ -17,7 +17,7 @@ class wb_slave_agent extends uvm_agent;
 
   wb_agent_cfg     cfg;
 
-	uvm_analysis_port #(wb_item) item_collected_port;
+	uvm_analysis_port #(sl_wb_bus_item) item_collected_port;
 
 	`uvm_component_utils_begin(wb_slave_agent)
     `uvm_field_object(driver,    UVM_DEFAULT)

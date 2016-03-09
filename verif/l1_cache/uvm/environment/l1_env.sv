@@ -57,7 +57,7 @@ class l1_env extends uvm_env;
   function void report_phase(uvm_phase phase);
     uvm_report_server svr;
     super.report_phase(phase);
-    svr = _global_reporter.get_report_server();
+    //svr = _global_reporter.get_report_server();
 
     if (svr.get_severity_count(UVM_FATAL) + svr.get_severity_count(UVM_ERROR) == 0) begin
       $display(" +-----------------------------------------------------------------------------+");

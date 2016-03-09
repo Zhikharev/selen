@@ -41,10 +41,10 @@ class rst_monitor extends uvm_monitor;
           forever begin
             wait(vif.rst == 1'b1);
             `uvm_info("EVENTS", "Reset detected", UVM_MEDIUM)
-            global_events.rst.trigger();
+            //global_events.rst.trigger();
             wait(vif.rst == 1'b0);
             `uvm_info("EVENTS", "Reset ended", UVM_MEDIUM)
-            global_events.rst.reset();
+            //global_events.rst.reset();
           end
         end
       join
