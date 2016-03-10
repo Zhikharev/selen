@@ -16,7 +16,7 @@ class l1_base_test extends uvm_test;
   `uvm_component_utils(l1_base_test)
 
   l1_env            tb_env;
-
+  bit               test_pass;
   int               num_pkts = 10;
 
   function new(string name = "l1_base_test", uvm_component parent=null);
@@ -62,13 +62,54 @@ class l1_base_test extends uvm_test;
     super.start_of_simulation_phase(phase);
   endfunction : start_of_simulation_phase
 
+  function void extract_phase(uvm_phase phase);
+      uvm_report_server srvr = uvm_report_server::get_server();
+      test_pass = (srvr.get_severity_count(UVM_ERROR) == 0) && (srvr.get_severity_count(UVM_FATAL) == 0);
+  endfunction
+
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     phase.phase_done.set_drain_time(this, 5000);
   endtask
 
+  function void report_phase(uvm_phase phase);
+    if(test_pass) begin
+      $display("                                      :X-");
+      $display("                                    :X###");
+      $display("                                  ;@####@");
+      $display("                                ;x######X");
+      $display("       TEST PASSED            -@#########$");
+      $display("                            .$###########@");
+      $display("                            =M############-");
+      $display("                           +##############$");
+      $display("                         .H############$=.");
+      $display("         ./:            .N##########M:.");
+      $display("      -+@NNN;          -##########M;");
+      $display("    -*M######         :#########M/");
+      $display("  -$M###########     :#########/");
+      $display("   ,:x###########:  =########$.");
+      $display("        ;H#########+#######N=");
+      $display("            ,+##############+");
+      $display("               /M#########@-");
+      $display("                 ;M######*");
+      $display("                   +###:");
+    end
+    else begin
+      $display("            _\\|/_");
+      $display("            (o o)");
+      $display("    +----oOO-{_}-OOo------------+");
+      $display("    |                           |");
+      $display("    |                           |");
+      $display("    |        TEST FAILED        |");
+      $display("    |                           |");
+      $display("    |                           |");
+      $display("    +---------------------------+");
+    end
+  endfunction
+
+
   function void set_my_server();
-      /*advanced_report_server my_server;
+      smart_report_server my_server;
       int hwidth, fwidth;
       my_server = new();
       if($test$plusargs("DEFAULT_SERVER"))
@@ -77,7 +118,7 @@ class l1_base_test extends uvm_test;
           if($value$plusargs("fname_width=%d", fwidth)) my_server.file_name_width = fwidth;
           if($value$plusargs("hier_width=%d", hwidth))  my_server.hier_width = hwidth;
           uvm_report_server::set_server(my_server);
-      end*/
+      end
       $timeformat(-9, 1, "ns", 4);
   endfunction
 

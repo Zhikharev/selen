@@ -41,7 +41,7 @@ class sl_cache_scrb extends uvm_scoreboard;
     item_collected_rsp = new("item_collected_rsp", this);
     item_collected_mau = new("item_collected_mau", this);
     sem = new(1);
-    if(!uvm_config_db#()::get(this, "*", "cache_mem", cache_mem)) begin
+    if(!uvm_config_db#(sl_cache_mem)::get(this, "*", "cache_mem", cache_mem)) begin
       `uvm_info("SCRB", "Creating default cache_mem...", UVM_NONE)
       cache_mem = sl_cache_mem::type_id::create("cache_mem");
     end

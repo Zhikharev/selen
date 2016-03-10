@@ -2,11 +2,11 @@
 // Tecon MT
 // ----------------------------------------------------------------------------
 // FILE NAME        : rst_monitor.sv
-// PROJECT          : Z01
+// PROJECT          : Selen
 // AUTHOR           : Grigoriy Zhiharev
 // AUTHOR'S EMAIL   : zhiharev@tecon.ru
 // ----------------------------------------------------------------------------
-// DESCRIPTION      : 
+// DESCRIPTION      :
 // ----------------------------------------------------------------------------
 
 `ifndef INC_RST_MONITOR
@@ -49,7 +49,7 @@ class rst_monitor extends uvm_monitor;
         end
       join
     endtask
-    
+
 endclass
 
 `endif

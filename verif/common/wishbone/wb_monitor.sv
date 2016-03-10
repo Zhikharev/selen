@@ -54,9 +54,9 @@ class wb_monitor extends uvm_monitor;
     item.address  = vif.mon.adr_o;
     item.strb     = vif.mon.stb_o;
     if(item.cop == WRITE)
-      item.data     = vif.mon.dat_o;
+      item.data[0]     = vif.mon.dat_o;
     else
-      item.data     = vif.mon.dat_i;
+      item.data[0]     = vif.mon.dat_i;
     while(vif.mon.ack_i)
       @(vif.mon);
     item.err      = vif.mon.err_i;

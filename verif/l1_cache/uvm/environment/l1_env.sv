@@ -54,22 +54,5 @@ class l1_env extends uvm_env;
     super.end_of_elaboration_phase(phase);
   endfunction
 
-  function void report_phase(uvm_phase phase);
-    uvm_report_server svr;
-    super.report_phase(phase);
-    //svr = _global_reporter.get_report_server();
-
-    if (svr.get_severity_count(UVM_FATAL) + svr.get_severity_count(UVM_ERROR) == 0) begin
-      $display(" +-----------------------------------------------------------------------------+");
-      $display(" |                                 TEST PASSED                                 |");
-      $display(" +-----------------------------------------------------------------------------+");
-    end
-    else begin
-      $display(" ________________________________________________________________________");
-      $display("|                                                                       |");
-      $display("|                              TEST FAILED                              |");
-      $display("|_______________________________________________________________________|");
-    end
-   endfunction
 endclass
 `endif
