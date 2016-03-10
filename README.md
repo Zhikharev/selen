@@ -8,7 +8,7 @@ SoC contains:
 - SRAM, ROM wishbone controllers
 - IO hub with SPI and GPIO
 
-Target platfrom FPGA Spartan-6 (see main block diagram https://github.com/Zhikharev/selen/blob/master/doc/selen/selen.png).
+Target platfrom FPGA Spartan-6 (see main block diagram https://github.com/Zhikharev/selen/blob/master/doc/selen/selen_03.png).
 
 We introduce assembler for RISC-V ISA, which supports our custom instructions. 
 At last we designed simple ISA simulator to execute binary memory images.
