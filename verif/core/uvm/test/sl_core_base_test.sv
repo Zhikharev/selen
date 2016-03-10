@@ -48,6 +48,9 @@ class sl_core_base_test extends uvm_test;
     if(!$value$plusargs("num_pkts=%d", num_pkts)) num_pkts = 1;
     uvm_config_db #(int)::set(null, "*", "num_pkts", num_pkts);
 
+    uvm_config_db#(uvm_object_wrapper)::set(this,
+    "*core_data_agent.sequencer.main_phase", "default_sequence", sl_core_slave_random_seq::type_id::get());
+
   endfunction : build_phase
 
   function void end_of_elaboration_phase(uvm_phase phase);

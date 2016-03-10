@@ -22,5 +22,6 @@
 `include "core/sl_core_slave_agent.sv"
 `include "core/sl_core_master_driver.sv"
 `include "core/sl_core_master_agent.sv"
+`include "core/sl_core_seq_lib.sv"
 
 `endif
