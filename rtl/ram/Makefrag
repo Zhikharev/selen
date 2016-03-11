@@ -1,0 +1,5 @@
+MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
+
+RTL_SRC :=\
+	$(MAKEHOME)/../lib/sram_sp_be.v \
+	$(MAKEHOME)/wb_ram.sv

@@ -23,6 +23,11 @@ TMP += $(RTL_SRC)
 include $(RTL_HOME)/rom/Makefrag
 TMP += $(RTL_SRC)
 # ----------------------------------
+# ----------------------------------
+# RAM
+include $(RTL_HOME)/ram/Makefrag
+TMP += $(RTL_SRC)
+# ----------------------------------
 
 
 TMP += $(TOP_RTL_SRC)
