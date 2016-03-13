@@ -11,7 +11,7 @@
 module core_cpu_ctrl(
 input[31:0] 	ctrl_inst_in,
 //to reg 
-output[3:0]		ctrl_wb_sx_op_out,
+output[2:0]		ctrl_wb_sx_op_out,
 output[5:0]		ctrl_mux_bus_out,
 output[3:0]		ctrl_alu_op_out,
 output[1:0]		ctrl_alu_cnd_out,

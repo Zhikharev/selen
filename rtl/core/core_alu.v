@@ -63,7 +63,7 @@ always @* begin
 			else alu_result = 32'b0;
 		end 	
 		`SLTU_ALU: begin
-			if($unsign(src2) < $unsign(src1)) begin 
+			if($unsigned(src2) < $unsigned(src1)) begin 
 				alu_result = 32'b1;
 			end
 			else alu_result = 31'b0;

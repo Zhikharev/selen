@@ -46,10 +46,10 @@ wire 			mem2haz_we_reg_file;
 wire[4:0]		exe2haz_rs1;
 wire[4:0]		exe2haz_rs2;
 wire[4:0]		exe2haz_rd;
-wire 			exe2haz_brnch_tknn;
-wire 			exe2haz_cmd;
-wire 			exe2haz_we_reg_file;
-wire 			wb2haz_stall;
+wire 				exe2haz_brnch_tknn;
+wire[1:0]		exe2haz_cmd;
+wire 				exe2haz_we_reg_file;
+wire 				wb2haz_stall;
 wire[4:0]		mem2haz_rs1;
 wire[4:0]		mem2haz_rs2;
 wire[4:0]		mem2haz_rd;
@@ -84,22 +84,22 @@ wire[4:0]		dec2exe_rs1;
 wire[4:0]		dec2exe_rs2;
 wire[4:0]		dec2exe_rd;
 
-wire[31:0] 		mem2exe_bp_data;
-wire[31:0]		wb2exe_bp_data;
+wire[31:0] 	mem2exe_bp_data;
+wire[31:0]	wb2exe_bp_data;
 assign 			wb2exe_bp_data = wb2dec_wrt_data;
-wire[2:0] 		exe2mem_wb_sx_op;
-wire[2:0]		exe2mem_l1d_cop;
+wire[2:0] 	exe2mem_wb_sx_op;
+wire				exe2mem_l1d_cop;
 wire[2:0]		exe2mem_l1d_size;
-wire 			exe2mem_l1d_val;
-wire 			exe2mem_we_reg_file;
-wire 			exe2mem_mux_alu_mem;
-wire[31:0]		exe2mem_wrt_data;
+wire 				exe2mem_l1d_val;
+wire 				exe2mem_we_reg_file;
+wire 				exe2mem_mux_alu_mem;
+wire[31:0]	exe2mem_wrt_data;
 //
-wire[31:0]		exe2mem_alu_result;
-wire[31:0]		exe2mem_sx_imm;
-wire[31:0]		exe2mem_pc_4;
-wire[31:0]		exe2mem_w_data;
-wire[31:0]		exe2mem_addr;
+wire[31:0]	exe2mem_alu_result;
+wire[31:0]	exe2mem_sx_imm;
+wire[31:0]	exe2mem_pc_4;
+wire[31:0]	exe2mem_w_data;
+wire[31:0]	exe2mem_addr;
 //
 wire[4:0]		exe2mem_rs1;
 wire[4:0]		exe2mem_rs2;
@@ -179,7 +179,7 @@ core_dec_s core_dec_s(
 
 core_exe_s core_exe_s( 
 .exe_val_inst_in(dec2exe_val_instr),
-
+//
 .clk(clk),
 .exe_enb(haz_enb_bus_loc[`REG_EXE_MEM]),
 //
@@ -202,6 +202,9 @@ core_exe_s core_exe_s(
 .exe_pc_4_in(dec2exe_pc_4),
 .exe_sx_imm_in(dec2exe_sx_imm),
 //forhazard
+.exe_rs1_in(dec2exe_rs1),
+.exe_rs2_in(dec2exe_rs2),
+.exe_rd_in(dec2exe_rd),
 .exe_result_frm_m(mem2exe_bp_data),
 .exe_result_frm_w(wb2exe_bp_data),
 .exe_bp_in(haz2exe_bp_mux_exe),
