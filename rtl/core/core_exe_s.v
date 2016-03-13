@@ -80,8 +80,9 @@ wire 					brnch_takenn_loc;
 //forwarding
 assign alu_src1 = (exe_bp_in[`M2E_SRC1_MUX])?(exe_bp_in[`W2E_SRC1_MUX]?exe_src1_in:exe_result_frm_w):(exe_result_frm_m);
 assign alu_src2 = (exe_bp_in[`M2E_SRC2_MUX])?(exe_bp_in[`W2E_SRC2_MUX]?exe_src1_in:exe_result_frm_w):(exe_result_frm_m);
+// mux 2 and 3 
 assign src1_or_imm = (exe_mux_bus_in[`SRC1_IMM_MUX])?exe_src1_in:alu_src1;
-assign src2_or_pc =  (exe_mux_bus_in[`SRC2_PC_MUX])?alu_src2:exe_pc_in;
+assign src2_or_pc =  (exe_mux_bus_in[`SRC2_PC_MUX])?exe_pc_in:alu_src2;
 //
 core_alu core_alu(
 	.src1(src1_or_imm),

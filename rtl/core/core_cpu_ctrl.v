@@ -14,7 +14,7 @@ input[31:0] 	ctrl_inst_in,
 output[2:0]		ctrl_wb_sx_op_out,
 output[5:0]		ctrl_mux_bus_out,
 output[3:0]		ctrl_alu_op_out,
-output[1:0]		ctrl_alu_cnd_out,
+output[2:0]		ctrl_alu_cnd_out,
 output 				ctrl_we_reg_file_out,
 output[2:0]		ctrl_l1d_size_out,
 output				ctrl_l1d_cop_lsb_out,
@@ -22,12 +22,14 @@ output 				ctrl_l1d_val_out,
 //inner for decode phase 
 output				ctrl_order_reg_file_out,
 output[2:0]		ctrl_dec_sx_op_out,
-output[1:0]		ctrl_haz_cmd_out
+output[1:0]		ctrl_haz_cmd_out,
+//error
+output 				crtl_error_out
 );
 reg[2:0] 	wb_sx_op_loc;
 reg[5:0]	mux_bus_loc;
 reg[3:0] 	alu_op_loc;
-reg[1:0]	alu_cnd_loc;
+reg[2:0]	alu_cnd_loc;
 reg 			we_reg_file_loc;
 reg 			l1d_val_loc;
 reg[2:0]	l1d_size_loc;
@@ -37,6 +39,7 @@ reg 			order_loc;
 reg[2:0]	dec_sx_op_loc;
 reg[1:0]	hazard_cmd_loc;
 
+reg 			error_loc; 
 always @* begin
 	//initial assinging
 	we_reg_file_loc = `WE_OFF;
@@ -45,6 +48,8 @@ always @* begin
 	dec_sx_op_loc = 3'b000;
 	hazard_cmd_loc = `HZRD_OTHER;
 	l1d_val_loc = `DL1_VAL_OFF;
+	error_loc = 1'b0;
+	alu_cnd_loc[2] = 1'b0;
 	case(ctrl_inst_in[5:0])
 		`R_OPCODE:begin
 			mux_bus_loc = `R_MUX;
@@ -211,17 +216,20 @@ always @* begin
 				end
 			endcase // FNCT3	
 		end
+	default error_loc = 1'b1;
 	endcase // OPCODE DECODE main case
 end
 
 assign ctrl_wb_sx_op_out = wb_sx_op_loc;
 assign ctrl_l1d_val_out = l1d_val_loc;
-assign ctrl_l1d_size_loc = l1d_size_loc;
+assign ctrl_l1d_size_out = l1d_size_loc;
 assign ctrl_l1d_cop_lsb_out = l1d_cop_loc;
 assign ctrl_mux_bus_out = mux_bus_loc;
 assign ctrl_alu_op_out = alu_op_loc;
 assign ctrl_alu_cnd_out = alu_cnd_loc;
 assign ctrl_we_reg_file_out = we_reg_file_loc;
+assign ctrl_order_reg_file_out = order_loc;
 assign ctrl_ctrl_order_reg_file_out = order_loc;
 assign ctrl_dec_sx_op_out = dec_sx_op_loc;
+assign ctrl_haz_cmd_out = hazard_cmd_loc;
 endmodule

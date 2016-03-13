@@ -11,7 +11,7 @@
 //include core_defines.vh;
 module core_wb_s(
 	input						clk,
-	input 					rst_n,
+//	input 					rst_n,
 	//control
 	input							wb_mux_alu_mem_in,
 	input 						wb_ack_from_lid_in,

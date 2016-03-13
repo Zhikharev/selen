@@ -17,7 +17,7 @@ module core_pipeline
 		input 	[31:0]  csr_nc_mask,
 
 		// l1i
-		input[31:0]		pl_l1i_ack_rdata,
+		input[31:0]			pl_l1i_ack_rdata,
 		input 					pl_l1i_ack,
 		output 					pl_l1i_req_val,
 		output	[31:0]	pl_l1i_req_addr,
@@ -31,17 +31,17 @@ module core_pipeline
 		input 					pl_l1d_ack_ack,
 		input 	[31:0]	pl_l1d_ack_rdata,
 	//val_inst
-		output 			pl_val_inst
+		output 					pl_val_inst
 	);
 //hazard wires
-wire[1:0] 		haz_kill_bus_loc;
+wire[1:0] 	haz_kill_bus_loc;
 wire[3:0]		haz_enb_bus_loc;
-wire 			haz2exe_s_mux_trn_out;
+wire 				haz2exe_s_mux_trn_out;
 wire[3:0]		haz2exe_bp_mux_exe;
-wire 			haz2mem_bp_mux_mem;
+wire 				haz2mem_bp_mux_mem;
 wire[1:0]		dec2haz_cmd;
-wire 			dec2haz_stall;				
-wire 			mem2haz_we_reg_file;
+wire 				dec2haz_stall;				
+wire 				mem2haz_we_reg_file;
 //
 wire[4:0]		exe2haz_rs1;
 wire[4:0]		exe2haz_rs2;
@@ -55,10 +55,10 @@ wire[4:0]		mem2haz_rs2;
 wire[4:0]		mem2haz_rd;
 wire[1:0]		mem2haz_cmd;
 // from  or 2 if
-wire 			exe2if_mux_trn_s;
-wire[31:0]		exe2if_addr;
-wire[31:0]		if2dec_pc;
-wire[31:0]		if2dec_pc_4;
+wire 				exe2if_mux_trn_s;
+wire[31:0]	exe2if_addr;
+wire[31:0]	if2dec_pc;
+wire[31:0]	if2dec_pc_4;
 //
 //decode's wire
 wire[31:0]	wb2dec_wrt_data;

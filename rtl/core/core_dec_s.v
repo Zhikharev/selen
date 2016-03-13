@@ -58,7 +58,7 @@ wire[2:0] 	ctrl2dec_l1d_size;
 wire 				ctrl2dec_l1d_cop_lsb;
 wire[5:0] 	ctrl2dec_mux_bus;
 wire[3:0] 	ctrl2dec_alu_op;
-wire[1:0] 	ctrl2dec_alu_cnd;
+wire[2:0] 	ctrl2dec_alu_cnd;
 wire 				ctrl2dec_we_reg_file;
 wire 				ctrl2dec_order_reg_file;
 wire[2:0] 	ctrl2dec_dec_sx_op_out;
@@ -110,6 +110,7 @@ always @(negedge clk) begin
 		dec_rd_out_reg <= dec_inst_in[11:7];
 		dec_src1_out_reg <= reg_file2dec_src1;
 		dec_src2_out_reg <= reg_file2dec_src2;
+		dec_hazard_cmd_out_reg <= ctrl2dec_haz_cmd;
 	end
 	if(dec_kill) begin
 		dec_wb_sx_op_out_reg <= 0;
@@ -123,6 +124,9 @@ always @(negedge clk) begin
 		dec_rs1_out_reg <= 0;
 		dec_rs2_out_reg <= 0; 
 		dec_rd_out_reg <= 0;
+		dec_hazard_cmd_out_reg <=0;
 	end
 end
+assign  dec2haz_cmd_out = ctrl2dec_haz_cmd;
+assign dec_stall_out = ~dec_l1i_ack_in;
 endmodule

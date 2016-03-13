@@ -97,7 +97,7 @@ always @* begin
 			end
 		end
 		//brnch end
-		if(haz_stall_wb_in) begin
+		if((haz_stall_wb_in)&&(haz_cmd_mem_s_in == `HZRD_LOAD)) begin
 			haz_enb_bus_loc = `ENB_FULL_OFF;
 		end
 		if(haz_stall_dec_in) begin
