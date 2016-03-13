@@ -124,6 +124,11 @@ class sl_core_scrb extends uvm_scoreboard;
     return(retval);
   endfunction
 
+  function void extract_phase(uvm_phase phase);
+    super.extract_phase(phase);
+    if(pc_q.size() != 0) `uvm_error("SCRB", $sformatf("pc_q is not empty (%0d)", pc_q.size()))
+  endfunction
+
 endclass
 
 `endif

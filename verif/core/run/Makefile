@@ -1,8 +1,13 @@
 BENCH_HOME := $(dir $(lastword $(MAKEFILE_LIST)))/..
 TOP=core_tb_top
+CPU=SELEN
 
-include $(BENCH_HOME)/../../rtl/core/Makefrag
-#include $(BENCH_HOME)/../../rtl/vscale/Makefrag
+ifeq ($(CPU), SELEN)
+	include $(BENCH_HOME)/../../rtl/core/Makefrag
+else
+	include $(BENCH_HOME)/../../rtl/vscale/Makefrag
+endif
+
 include $(BENCH_HOME)/../tools/Makefile.global
 include $(BENCH_HOME)/run/Makefrag
 
