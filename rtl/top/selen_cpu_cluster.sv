@@ -86,7 +86,7 @@ module selen_cpu_cluster
 	.l1d_ack_data 	(l1d_ack_data),
 	.wb_clk_i 			(wb_clk_i),
 	.wb_rst_i 			(wb_rst_i),
-	.wb_dat_i 			(wb_rst_i),
+	.wb_dat_i 			(wb_dat_i),
 	.wb_dat_o 			(wb_dat_o),
 	.wb_ack_i 			(wb_ack_i),
 	.wb_adr_o 			(wb_adr_o),

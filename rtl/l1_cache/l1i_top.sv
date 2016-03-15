@@ -80,6 +80,7 @@ module l1i_top
 	wire [`CORE_IDX_WIDTH-1:0]      dm_addr;
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
+	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num

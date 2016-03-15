@@ -36,9 +36,10 @@ module selen_tb_top ();
 	initial begin
 		forever begin
 			@(posedge clk);
-			if(selen_top.cpu_cluster.l1i_req_ack) begin
+			if(selen_top.cpu_cluster.core.i_req_ack) begin
 				rv32_transaction item = new("item");
-				item.decode(selen_top.cpu_cluster.l1i_ack_data);
+				item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
+				$display("data=%0h",selen_top.cpu_cluster.core.i_ack_rdata);
 				$display(item.sprint());
 			end
 		end

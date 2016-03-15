@@ -55,9 +55,13 @@ module l1d_top
 	wire [`CORE_TAG_WIDTH-1:0] 			req_tag;
 	wire [`CORE_IDX_WIDTH-1:0] 			req_idx;
 	wire [`CORE_OFFSET_WIDTH-1:0] 	req_offset;
-  reg [`L1_LINE_SIZE/8-1:0]       req_be;
+  reg  [`L1_LINE_SIZE/8-1:0]      req_be;
 	wire                          	req_val;
 	reg                             req_was_send_r;
+
+	wire 														core_req_nc;
+	wire 														core_req_wr;
+	wire 														core_req_rd;
 
   reg 											 			del_buf_val_r;
   reg [`CORE_ADDR_WIDTH-1:0] 			del_buf_addr_r;
@@ -69,6 +73,8 @@ module l1d_top
 	wire [`CORE_TAG_WIDTH-1:0] 			del_buf_tag;
 	wire [`CORE_IDX_WIDTH-1:0] 			del_buf_idx;
 	wire [`CORE_OFFSET_WIDTH-1:0] 	del_buf_offset;
+	wire                            del_buf_clean;
+	wire                            del_buf_dm_access;
 
   reg  [`CORE_ADDR_WIDTH-1:0]     req_addr_r;
 	reg  [`CORE_TAG_WIDTH-1:0] 			req_tag_r;
@@ -102,11 +108,12 @@ module l1d_top
 	wire                            lru_evict_val;
 	wire [$clog2(`L1_WAY_NUM)-1:0]  lru_way_pos;
 
-	reg [`L1_WAY_NUM-1:0]          	dm_en_vect;
-	reg [`L1_WAY_NUM-1:0]          	dm_we_vect;
-	reg [`CORE_IDX_WIDTH-1:0]      	dm_addr;
-	reg [`L1_LINE_SIZE-1:0]        	dm_rdata [`L1_WAY_NUM];
-	reg [`L1_LINE_SIZE-1:0] 				dm_wdata;
+	reg  [`L1_WAY_NUM-1:0]          dm_en_vect;
+	reg  [`L1_WAY_NUM-1:0]          dm_we_vect;
+	reg  [`CORE_IDX_WIDTH-1:0]      dm_addr;
+	reg  [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
+	reg  [`L1_LINE_SIZE-1:0] 				dm_wdata;
+	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
   // -----------------------------------------------------
 	// CACHE
