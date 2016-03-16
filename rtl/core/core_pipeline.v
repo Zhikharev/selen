@@ -113,11 +113,13 @@ wire 				mem2wb_mux_alu_mem;
 wire 				mem2wb_we_reg_file;
 wire[2:0]		mem2wb_wb_sx_op;
 wire[4:0] 	mem2wb_rd;
+wire[1:0]  	mem2wb_haz_cmd;
 ///validation of instruction
 wire 	dec2exe_val_instr;
 wire 	exe2mem_val_instr;
 ///
 wire[4:0]	wb2haz2dec_rd;
+wire[1:0]	wb2haz_cmd;
 core_if_s core_if_s (
 .clk(clk),
 .rst_n(rst_n),
@@ -292,7 +294,8 @@ core_mem_s core_mem_s(
 .mem2haz_rd_out(mem2haz_rd),
 .mem2haz_cmd_out(mem2haz_cmd),
 //
-.mem_val_inst_out_reg(pl_val_inst)
+.mem_val_inst_out_reg(pl_val_inst),
+.mem_haz_cmd_out_reg(mem2wb_haz_cmd)
 );
 core_wb_s core_wb_s(
 .clk(clk),
@@ -306,6 +309,7 @@ core_wb_s core_wb_s(
 .wb_sx_imm_in(mem2wb_sx_imm),
 .wb_pc_4_in(mem2wb_pc_4),
 .wb_mem_data_in(pl_l1d_ack_rdata),
+.wb_haz_cmd_in(mem2haz_cmd),
 
 .wb_we_reg_file_out(wb2dec_we_reg_file),
 .wb_data_out(wb2dec_wrt_data),
@@ -346,7 +350,7 @@ rst_n(rst_n),
 .haz_cmd_dec_s_in(dec2haz_cmd),
 .haz_cmd_exe_s_in(exe2haz_cmd),
 .haz_cmd_mem_s_in(mem2haz_cmd)
-//.haz_cmd_wb_s_in(wb2haz_cmd)
+.haz_cmd_wb_s_in(wb2haz_cmd)
 );
 
 endmodule

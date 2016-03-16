@@ -96,6 +96,7 @@ core_cpu_ctrl cpu_ctrl(
 );
 
 always @(negedge clk) begin
+	dec_val_inst_out_reg <= 1'b0;
 	if(dec_enb) begin
 		dec_wb_sx_op_out_reg <= ctrl2dec_wb_sx_op;
 		dec_l1d_req_val_out_reg <= ctrl2dec_l1d_val;
@@ -111,6 +112,7 @@ always @(negedge clk) begin
 		dec_src1_out_reg <= reg_file2dec_src1;
 		dec_src2_out_reg <= reg_file2dec_src2;
 		dec_hazard_cmd_out_reg <= ctrl2dec_haz_cmd;
+		dec_val_inst_out_reg <= 1'b1;
 	end
 	if(dec_kill) begin
 		dec_wb_sx_op_out_reg <= 0;
@@ -125,6 +127,7 @@ always @(negedge clk) begin
 		dec_rs2_out_reg <= 0; 
 		dec_rd_out_reg <= 0;
 		dec_hazard_cmd_out_reg <=0;
+		dec_val_inst_out_reg <=0;
 	end
 end
 assign  dec2haz_cmd_out = ctrl2dec_haz_cmd;

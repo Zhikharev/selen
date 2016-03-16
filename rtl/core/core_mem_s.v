@@ -55,6 +55,7 @@ module core_mem_s (
 	output reg[2:0]	 	mem_wb_sx_op_out_reg,
 	// 2 hazard 
 	output reg[4:0]		mem_rd_out_reg,
+	output reg[1:0]		mem_haz_cmd_out_reg,
 	output 						mem2haz_we_reg_file_out,
 	//
 	output[4:0]				mem2haz_rs1_out,
@@ -75,6 +76,7 @@ always @(posedge clk) begin
 		mem_wb_sx_op_out_reg <=	mem_wb_sx_op_in;
 		mem_rd_out_reg <= mem_rd_in;
 		mem_val_inst_out_reg <= mem_val_inst_in;
+		mem_haz_cmd_out_reg <= mem_haz_cmd_in;
 	end
 end
 assign mem2haz_cmd_out = mem_haz_cmd_in;

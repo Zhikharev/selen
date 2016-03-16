@@ -23,11 +23,14 @@ module core_wb_s(
 	input[31:0]				wb_sx_imm_in,
 	input[31:0]				wb_pc_4_in,
 	input[31:0]				wb_mem_data_in,
-
+	//
+	input[1:0]				wb_cmd_in,
+	//
 	output 						wb_we_reg_file_out,
 	output[31:0]			wb_data_out,
 	output						wb_stall_out,		
-	output[4:0]				wb2haz_rd_out
+	output[4:0]				wb2haz_rd_out,
+	output[1:0]				wb2haz_cmd_out
 );
 wire[31:0] mux_out_loc;
 
@@ -50,4 +53,5 @@ assign wb_stall_out = (wb_ack_from_lid_in)? 1'b0:1'b1;
 assign wb_data_out = data_out_loc;
 assign wb_we_reg_file_out = wb_we_reg_file_in;
 assign wb2haz_rd_out = wb_rd_in;
+assign wb2haz_cmd_out = wb_cmd_in;
 endmodule // core_wb_s	

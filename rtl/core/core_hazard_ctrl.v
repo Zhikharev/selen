@@ -37,8 +37,8 @@ module core_hazard_ctrl(
 	// comand from each stages 
 	input[1:0]			haz_cmd_dec_s_in,
 	input[1:0]			haz_cmd_exe_s_in,
-	input[1:0]			haz_cmd_mem_s_in
-	//input[1:0]			haz_cmd_wb_s_in
+	input[1:0]			haz_cmd_mem_s_in,
+	input[1:0]			haz_cmd_wb_s_in
 );
 // forwarding 
 // for exe station 
@@ -97,7 +97,7 @@ always @* begin
 			end
 		end
 		//brnch end
-		if((haz_stall_wb_in)&&(haz_cmd_mem_s_in == `HZRD_LOAD)) begin
+		if((haz_stall_wb_in)&&(haz_cmd_wb_s_in == `HZRD_LOAD)) begin
 			haz_enb_bus_loc = `ENB_FULL_OFF;
 		end
 		if(haz_stall_dec_in) begin
