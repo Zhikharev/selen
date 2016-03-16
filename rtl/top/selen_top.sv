@@ -105,7 +105,7 @@ module selen_top
 		.s0_wb_cyc_o 		(com_io_wb_cyc_o),
 		.s0_wb_stb_o 		(com_io_wb_stb_o),
 		.s0_wb_we_o 		(com_io_wb_we_o),
-		.s0_wb_dat_i 		(com_io_wb_we_o),
+		.s0_wb_dat_i 		(com_io_wb_dat_i),
 		.s0_wb_stall_i 	(com_io_wb_stall_i),
 		.s0_wb_err_i 		(com_io_wb_err_i),
 		.s0_wb_ack_i 		(com_io_wb_ack_i),
@@ -116,7 +116,7 @@ module selen_top
 		.s1_wb_cyc_o 		(com_mem_wb_cyc_o),
 		.s1_wb_stb_o 		(com_mem_wb_stb_o),
 		.s1_wb_we_o 		(com_mem_wb_we_o),
-		.s1_wb_dat_i 		(com_mem_wb_we_o),
+		.s1_wb_dat_i 		(com_mem_wb_dat_i),
 		.s1_wb_stall_i 	(com_mem_wb_stall_i),
 		.s1_wb_err_i 		(com_mem_wb_err_i),
 		.s1_wb_ack_i 		(com_mem_wb_ack_i)

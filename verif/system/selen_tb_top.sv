@@ -33,6 +33,18 @@ module selen_tb_top ();
 		rst = 0;
 	end
 
+	initial begin
+		forever begin
+			@(posedge clk);
+			if(selen_top.cpu_cluster.core.i_req_ack) begin
+				rv32_transaction item = new("item");
+				item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
+				$display("data=%0h",selen_top.cpu_cluster.core.i_ack_rdata);
+				$display(item.sprint());
+			end
+		end
+	end
+
 	selen_top selen_top
 	(
 		.clk 		(clk),
@@ -61,6 +73,11 @@ module selen_tb_top ();
     $vcdpluson;
   end
   `endif
+
+  // -----------------------------------------
+  // ROM IMAGE
+  // -----------------------------------------
+  initial $readmemh("rom_image.v", selen_top.wb_rom_1kB.rom_1kB.rom);
 
 endmodule
 

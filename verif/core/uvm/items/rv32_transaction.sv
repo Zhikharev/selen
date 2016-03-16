@@ -12,8 +12,11 @@
 `ifndef INC_RV32_TRANSACTION
 `define INC_RV32_TRANSACTION
 
-
+`ifdef NO_UVM
+class rv32_transaction;
+`else
 class rv32_transaction extends uvm_sequence_item;
+`endif
 
   rand opcode_t  opcode;
   rand bit[4:0]  rd;
@@ -21,6 +24,7 @@ class rv32_transaction extends uvm_sequence_item;
   rand bit[4:0]  rs2;
   rand bit[31:0] imm;
 
+`ifndef NO_UVM
   `uvm_object_utils_begin(rv32_transaction)
     `uvm_field_enum(opcode_t, opcode, UVM_DEFAULT)
     `uvm_field_int(rd,  UVM_DEFAULT)
@@ -28,13 +32,15 @@ class rv32_transaction extends uvm_sequence_item;
     `uvm_field_int(rs2, UVM_DEFAULT)
     `uvm_field_int(imm, UVM_DEFAULT)
   `uvm_object_utils_end
+`endif
 
   function new(string name = "");
+  `ifndef NO_UVM
     super.new(name);
+  `endif
   endfunction
 
   constraint valid_opcodes {opcode != AM;}
-  //constraint model_bugs {opcode != SRAI;}
 
   function string sprint();
     string str;

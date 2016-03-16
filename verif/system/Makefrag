@@ -2,6 +2,9 @@ VLOG_OPTS+=\
 	+incdir+$(BENCH_HOME) \
 	+incdir+$(BENCH_HOME)/../common \
 	+define+CLK_HALF_PERIOD=1 \
+	+define+NO_UVM \
+	$(BENCH_HOME)/../core/uvm/items/rv32_typedefs.sv \
+	$(BENCH_HOME)/../core/uvm/items/rv32_transaction.sv \
 	$(BENCH_HOME)/selen_tb_top.sv
 
 ELAB_OPTS+=
