@@ -98,6 +98,8 @@ core_cpu_ctrl cpu_ctrl(
 always @(negedge clk) begin
 	dec_val_inst_out_reg <= 1'b0;
 	if(dec_enb) begin
+		dec_pc_out_reg <= dec_pc_in;
+		dec_pc_4_out_reg <= dec_pc_4_in;
 		dec_wb_sx_op_out_reg <= ctrl2dec_wb_sx_op;
 		dec_l1d_req_val_out_reg <= ctrl2dec_l1d_val;
 		dec_l1d_req_cop_out_reg <= ctrl2dec_l1d_cop_lsb;

@@ -309,7 +309,7 @@ core_wb_s core_wb_s(
 .wb_sx_imm_in(mem2wb_sx_imm),
 .wb_pc_4_in(mem2wb_pc_4),
 .wb_mem_data_in(pl_l1d_ack_rdata),
-.wb_haz_cmd_in(mem2haz_cmd),
+.wb_cmd_in(mem2haz_cmd),
 
 .wb_we_reg_file_out(wb2dec_we_reg_file),
 .wb_data_out(wb2dec_wrt_data),
@@ -349,7 +349,7 @@ rst_n(rst_n),
 //comand from each stages
 .haz_cmd_dec_s_in(dec2haz_cmd),
 .haz_cmd_exe_s_in(exe2haz_cmd),
-.haz_cmd_mem_s_in(mem2haz_cmd)
+.haz_cmd_mem_s_in(mem2haz_cmd),
 .haz_cmd_wb_s_in(wb2haz_cmd)
 );
 
