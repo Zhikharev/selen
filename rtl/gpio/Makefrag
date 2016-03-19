@@ -1,0 +1,5 @@
+MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
+
+RTL_SRC :=\
+	$(MAKEHOME)/gpio_defines.v \
+	$(MAKEHOME)/gpio_top.v
