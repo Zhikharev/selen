@@ -9,7 +9,8 @@ include $(BENCH_HOME)/../tools/Makefile.global
 include $(BENCH_HOME)/Makefrag
 
 build: analyze elaborate
-	$(AS) $(GIT_HOME)/firmware/sl_ram_jmp.c -o sl_ram_jmp.bin
+	$(AS) $(GIT_HOME)/firmware/sl_ram_jmp.c -o sl_ram_jmp.elf
+	$(OBJCOPY) -O binary sl_ram_jmp.elf sl_ram_jmp.bin
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 sl_ram_jmp.bin rom_bge.bin
 	xxd -c 4 -p rom_bge.bin >> rom_image.v
 
