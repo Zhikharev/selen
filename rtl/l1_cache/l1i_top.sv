@@ -202,7 +202,7 @@ module l1i_top
 
 			l1_dm_mem
 			#(
-				.WIDTH (`L1_LD_MEM_WIDTH),
+				.WIDTH (`L1_LINE_SIZE),
 				.DEPTH (`L1_SET_NUM)
 			)
 			dm_mem
