@@ -71,7 +71,7 @@ rom_1kB
 
 assign rom_en_i  = wb_stb_i;
 assign rom_clk_i = wb_clk_i;
-assign rom_adr_i = wb_adr_i[7:2];
+assign rom_adr_i = wb_adr_i[9:2];
 
 assign wb_dat_o  = rom_dat_o;
 // ----------------------------------------------------------------------------
