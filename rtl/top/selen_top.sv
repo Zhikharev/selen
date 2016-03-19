@@ -137,7 +137,7 @@ module selen_top
   	.wb_err_o 	(com_io_wb_err_i)
 	);
 
-	wb_rom wb_ram_1kB
+	wb_ram wb_ram_1kB
 	(
   	.wb_clk_i 	(clk),
   	.wb_rst_i 	(~rst_n),
