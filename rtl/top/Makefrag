@@ -28,7 +28,11 @@ TMP += $(RTL_SRC)
 include $(RTL_HOME)/ram/Makefrag
 TMP += $(RTL_SRC)
 # ----------------------------------
-
+# ----------------------------------
+# GPIO
+include $(RTL_HOME)/gpio/Makefrag
+TMP += $(RTL_SRC)
+# ----------------------------------
 
 TMP += $(TOP_RTL_SRC)
 RTL_SRC = $(TMP)
