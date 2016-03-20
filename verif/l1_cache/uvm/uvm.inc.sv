@@ -13,12 +13,17 @@ import uvm_pkg::*;
 `include "rst_ifc/rst_ifc.inc.sv"
 
 `include "uvm/scrb/sl_cache_typedefs.sv"
+
+`include "uvm/cfg/l1_cfg.sv"
+
 `include "uvm/scrb/sl_cache_line.sv"
 `include "uvm/scrb/sl_mem.sv"
 `include "uvm/scrb/sl_cache_mem.sv"
 `include "uvm/scrb/sl_cache_scrb.sv"
 
 `include "uvm/environment/l1_env.sv"
+
+`include "uvm/sequences/draft_sequence.sv"
 
 `include "uvm/tests/l1_base_test.sv"
 

@@ -15,7 +15,7 @@
 module l1_tb_top;
 
 	reg sys_clk;
-	wire reset;
+	reg reset;
 
   initial begin
     sys_clk = 1'b0;
@@ -25,14 +25,14 @@ module l1_tb_top;
 
   // Reset interface
   rst_if rst_intf(sys_clk);
-  assign reset = rst_intf.rst | rst_intf.soft_rst;
+  //assign reset = rst_intf.rst | rst_intf.soft_rst;
 
   wb_if  wb_intf(sys_clk, reset);
   assign wb_intf.clk_i = sys_clk;
   assign wb_intf.rst_i = reset;
 
-  core_if l1i_intf(sys_clk, reset);
-  core_if l1d_intf(sys_clk, reset);
+  core_if l1i_intf (sys_clk, reset);
+  core_if l1d_intf (sys_clk, reset);
 
   l1_assembled dut
   (
@@ -48,8 +48,8 @@ module l1_tb_top;
 
   initial begin
     uvm_config_db#(virtual rst_if)::set(null,  "*rst_agent*", "vif", rst_intf)	;
-    uvm_config_db#(v_core)::set(uvm_root::get(),"*l1i_agent*", "vif", l1i_intf);
-    uvm_config_db#(v_core)::set(uvm_root::get(),"*lid_agent*", "vif", l1d_intf);
+    uvm_config_db#(virtual core_if)::set(uvm_root::get(),"*l1i*", "vif", l1i_intf);
+    uvm_config_db#(virtual core_if)::set(uvm_root::get(),"*l1d*", "vif", l1d_intf);
     uvm_config_db#(v_wb)::set(uvm_root::get(),		"*wb_agent*", "vif", wb_intf)	;
   end
 
@@ -60,6 +60,13 @@ module l1_tb_top;
       `uvm_info("DBG", $sformatf("SEED = %0d", seed), UVM_NONE)
       #0;
       run_test();
+    end
+    initial begin
+      reset = 0;
+      #(10);
+      reset = 1;
+      #(50);
+      reset = 0;
     end
 
   initial $timeformat(-9, 1, "ns", 4);

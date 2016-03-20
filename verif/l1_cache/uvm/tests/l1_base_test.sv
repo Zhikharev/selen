@@ -18,6 +18,7 @@ class l1_base_test extends uvm_test;
   l1_env            tb_env;
   bit               test_pass;
   int               num_pkts = 10;
+  l1_cfg            cfg;
 
   function new(string name = "l1_base_test", uvm_component parent=null);
     super.new(name,parent);
@@ -46,6 +47,13 @@ class l1_base_test extends uvm_test;
 
     //uvm_config_db#(router_reg_block)::set(null, "*", "reg_model", reg_model);
     //uvm_config_db#(uvm_reg_block)::set(null, "*", "reg_model", reg_model);
+
+    cfg = l1_cfg::type_id::create("cfg");
+    assert(cfg.randomize());
+    uvm_config_db #(sl_core_agent_cfg)::set(null, "*l1i*", "cfg", cfg.i_cfg);
+    uvm_config_db #(sl_core_agent_cfg)::set(null, "*l1d*", "cfg", cfg.d_cfg);
+    uvm_config_db #(wb_agent_cfg)::set(null, "*wb*",  "cfg", cfg.wb_cfg);
+
 
     tb_env = l1_env::type_id::create("tb_env", this);
 
@@ -120,6 +128,22 @@ class l1_base_test extends uvm_test;
           uvm_report_server::set_server(my_server);
       end
       $timeformat(-9, 1, "ns", 4);
+  endfunction
+
+endclass
+
+class draft_test extends l1_base_test;
+
+  `uvm_component_utils(draft_test)
+
+  function new(string name = "draft_test", uvm_component parent=null);
+    super.new(name,parent);
+  endfunction : new
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
+    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
   endfunction
 
 endclass

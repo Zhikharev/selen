@@ -26,6 +26,8 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
 
   function void build_phase(uvm_phase phase);
   	super.build_phase(phase);
+    assert(uvm_config_db#(virtual wb_if)::get(this, "" ,"vif", vif))
+    else `uvm_fatal("NOVIF", {"Virtual interface must be set for: ", get_full_name(),".vif"});
     uvm_config_db#(bit)::get(this, "", "m_random", m_random);
     if(uvm_config_db#(int)::get(this, "", "m_delay", m_delay)) begin
       if(m_random) `uvm_info("KNOBS", $sformatf("Max Delay (%0d) was set for: %0s", m_delay, get_full_name()), UVM_MEDIUM)
