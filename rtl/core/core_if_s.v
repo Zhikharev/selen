@@ -28,13 +28,28 @@ module core_if_s (
 reg[31:0] 	pc_reg;
 wire[31:0] 	pc_adder;
 wire[31:0] 	pc_next;
+reg 		 		pc_stop;
+reg[1:0] 		counter;
+always @(posedge clk, negedge rst_n) begin
+	pc_stop  <= 1'b0;
+	if(~rst_n)  begin
+		counter <= 2'b0;
+		pc_stop <= 1'b0;
+	end
+	else begin
+		if(if_enb||(counter ==2'b01)||(counter == 2'b10)) counter <= counter + 2'b01;
+		else if(counter == 2'b11) counter <= 2'b0;
+	end
+	if(counter == 2'b01 || counter == 2'b10) pc_stop <= 1'b1;
+end
+
 //program counter
 always @(posedge clk , negedge rst_n)begin//, negedge rst_n)begin
 	if(~rst_n) begin
 		pc_reg <= `PC_START;
 	end
 	else begin
-		if(if_enb) begin
+		if(pc_stop) begin
 			 pc_reg <= pc_next;
 		end
 		else begin
