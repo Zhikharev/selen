@@ -11,6 +11,7 @@ module core_exe_s (
 	input 					exe_val_inst_in,
 	input							clk,
 	input							exe_enb,
+	input 						exe_kill,
 	//
 	input							exe_s_frm_haz_mux_trn_in,
 	// from deceode 
@@ -117,6 +118,9 @@ always @(posedge clk) begin
 		exe_wrt_data_out_reg <= exe_src2_in;
 		exe_val_inst_out_reg <= exe_val_inst_in;
 	end	
+	if(exe_kill) begin
+		exe_mux_trn_out_reg <= 1'b0;
+	end
 end
 assign exe2haz_brnch_tknn_out = brnch_takenn_loc;
 assign exe2haz_we_reg_file_out = exe_we_reg_file_in;

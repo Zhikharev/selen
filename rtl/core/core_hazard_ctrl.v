@@ -11,7 +11,7 @@ module core_hazard_ctrl(
 	input 					rst_n,
 	// register controll 
 	output[3:0]			haz_enb_bus_out,
-	output[1:0]			haz_kill_bus_out,
+	output[2:0]			haz_kill_bus_out,
 	// 
 	output					haz_mux_trn_out,
 	// forwarding
@@ -52,7 +52,7 @@ wire[4:0]	rd_wb_loc;
 reg[3:0]	hazard_exe_bp_loc;
 reg				hazard_mem_bp_loc;
 reg[3:0]	haz_enb_bus_loc;
-reg[1:0]	haz_kill_bus_loc; 
+reg[2:0]	haz_kill_bus_loc; 
 reg				haz_nop_gen_loc;
 reg				mux_1_loc;
 //forwarding of exexution stataion 

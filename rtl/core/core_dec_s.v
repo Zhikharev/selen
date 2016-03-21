@@ -9,6 +9,7 @@
 //include core_defines.vh;
 //include opcodes.vh;
 module core_dec_s(
+	input 						dec_start_in,
 	input							clk,
 	input							rst_n,
 	input 						dec_enb,
@@ -65,7 +66,6 @@ wire[2:0] 	ctrl2dec_dec_sx_op_out;
 wire[31:0] 	reg_file2dec_src1;
 wire[31:0]	reg_file2dec_src2;
 wire[1:0] 	ctrl2dec_haz_cmd;
-
 core_reg_file reg_file(
 .clk(clk),
 .rst_n(rst_n),
@@ -133,5 +133,12 @@ always @(negedge clk) begin
 	end
 end
 assign  dec2haz_cmd_out = ctrl2dec_haz_cmd;
-assign dec_stall_out = ~dec_l1i_ack_in;
+reg stall_loc;
+always @(posedge clk, posedge dec_l1i_ack_in) begin
+	if(~rst_n) stall_loc <= 1'b0;
+	else begin
+		stall_loc <= ~ dec_l1i_ack_in;
+	end
+end
+assign dec_stall_out = stall_loc;
 endmodule
