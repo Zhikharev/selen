@@ -12,6 +12,7 @@
 module core_mem_s (
 	input 						mem_val_inst_in,
 	input 						clk,
+	input 						rst_n,
 	input							mem_enb,
 	//control pins
 	input[2:0]				mem_wb_sx_op_in,

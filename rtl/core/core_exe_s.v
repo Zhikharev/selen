@@ -10,6 +10,7 @@
 module core_exe_s (
 	input 					exe_val_inst_in,
 	input							clk,
+	input 						rst_n,
 	input							exe_enb,
 	input 						exe_kill,
 	//
@@ -97,7 +98,7 @@ core_alu core_alu(
 assign exe_addr_src_loc = (exe_mux_bus_in[`PC_MUX3_MUX])?(exe_pc_in):((exe_mux_bus_in[`PC_4_SRC1_MUX])?(exe_src1_in):(exe_pc_4_in));
 assign exe_addr_loc = exe_sx_imm_in + exe_addr_src_loc;
 
-always @(posedge clk) begin 
+always @(posedge clk,negedge rst_n) begin 
 	if(exe_enb)begin
 		exe_we_reg_file_out_reg <= exe_we_reg_file_in;
 		exe_wb_sx_op_out_reg <= exe_wb_sx_op_in;
@@ -118,8 +119,10 @@ always @(posedge clk) begin
 		exe_wrt_data_out_reg <= exe_src2_in;
 		exe_val_inst_out_reg <= exe_val_inst_in;
 	end	
-	if(exe_kill) begin
+	if(~rst_n) begin
 		exe_mux_trn_out_reg <= 1'b0;
+		exe_l1d_val_out_reg <= 1'b0;
+		exe_we_reg_file_out_reg <= 1'b0;
 	end
 end
 assign exe2haz_brnch_tknn_out = brnch_takenn_loc;

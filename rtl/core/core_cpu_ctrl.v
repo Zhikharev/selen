@@ -24,7 +24,7 @@ output				ctrl_order_reg_file_out,
 output[2:0]		ctrl_dec_sx_op_out,
 output[1:0]		ctrl_haz_cmd_out,
 //error
-output 				crtl_error_out
+output 				ctrl_error_out
 );
 reg[2:0] 	wb_sx_op_loc;
 reg[5:0]	mux_bus_loc;
@@ -232,4 +232,5 @@ assign ctrl_order_reg_file_out = order_loc;
 assign ctrl_ctrl_order_reg_file_out = order_loc;
 assign ctrl_dec_sx_op_out = dec_sx_op_loc;
 assign ctrl_haz_cmd_out = hazard_cmd_loc;
+assign ctrl_error_out =  error_loc;
 endmodule

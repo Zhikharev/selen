@@ -95,7 +95,7 @@ core_cpu_ctrl cpu_ctrl(
 .ctrl_haz_cmd_out(ctrl2dec_haz_cmd)
 );
 
-always @(negedge clk) begin
+always @(negedge clk,negedge rst_n) begin
 	dec_val_inst_out_reg <= 1'b0;
 	if(dec_enb) begin
 		dec_pc_out_reg <= dec_pc_in;
@@ -116,7 +116,24 @@ always @(negedge clk) begin
 		dec_hazard_cmd_out_reg <= ctrl2dec_haz_cmd;
 		dec_val_inst_out_reg <= 1'b1;
 	end
-	if(dec_kill) begin
+	if(dec_kill|(~rst_n)) begin
+		dec_we_reg_file_out_reg<= 1'b0;
+		dec_l1d_req_val_out_reg <= 1'b0;
+		dec_hazard_cmd_out_reg <= `HZRD_OTHER;
+	end
+end
+assign  dec2haz_cmd_out = ctrl2dec_haz_cmd;
+reg stall_loc;
+always @(posedge clk, posedge dec_l1i_ack_in,negedge rst_n) begin
+	if(~rst_n) stall_loc <= 1'b0;
+	else begin
+		stall_loc <= ~ dec_l1i_ack_in;
+	end
+end
+assign dec_stall_out = stall_loc;
+endmodule
+/*
+if(dec_kill) begin
 		dec_wb_sx_op_out_reg <= 0;
 		dec_l1d_req_val_out_reg <= 0;
 		dec_l1d_req_cop_out_reg <= 0;
@@ -130,15 +147,4 @@ always @(negedge clk) begin
 		dec_rd_out_reg <= 0;
 		dec_hazard_cmd_out_reg <=0;
 		dec_val_inst_out_reg <=0;
-	end
-end
-assign  dec2haz_cmd_out = ctrl2dec_haz_cmd;
-reg stall_loc;
-always @(posedge clk, posedge dec_l1i_ack_in) begin
-	if(~rst_n) stall_loc <= 1'b0;
-	else begin
-		stall_loc <= ~ dec_l1i_ack_in;
-	end
-end
-assign dec_stall_out = stall_loc;
-endmodule
+	end*/

@@ -23,8 +23,7 @@ module core_if_s (
 	output						if_val_l1i_cahe_out,
 	//register if/dec
 	output	reg[31:0]	if_pc_reg_out,	
-	output 	reg[31:0]	if_pc_4_reg_out,
-	output 	reg 			if_start_out_reg
+	output 	reg[31:0]	if_pc_4_reg_out
 );
 reg[31:0] 	pc_reg;
 wire[31:0] 	pc_adder;
@@ -49,10 +48,6 @@ assign pc_adder = pc_reg + 4;
 assign if_addr_l1i_cash_out = pc_reg;
 assign if_val_l1i_cahe_out = 1'b1;
 //register if/decode
-always @(posedge clk , negedge rst_n) begin
-	if(~rst_n) if_start_out_reg <= 1'b0;
-	else if_start_out_reg <= 1'b1;
-end
 always @(posedge clk) begin
 	if(if_kill) begin
 		if_pc_reg_out <= 0;

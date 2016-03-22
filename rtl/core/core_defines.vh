@@ -1,4 +1,4 @@
-`define PC_START 32'b0
+`define PC_START  32'h200
 `define CASHEBLE_ADDR 32'h0000ffff
 `define NCACHE_BASE_ADDR  32'h0000ffff
 `define NCACHE_MASK_ADDR  32'h0000ffff
@@ -102,8 +102,8 @@
 `define M2E_SRC2_MUX 2
 `define W2E_SRC2_MUX 3
 
-`define KILL_FULL_OFF 2'b00
-`define KILL_FULL_ON  2'b11
+`define KILL_FULL_OFF 3'b00
+`define KILL_FULL_ON  3'b11
 `define REG_KILL_ON 1'b1
 `define REG_KILL_OFF 1'b0
 

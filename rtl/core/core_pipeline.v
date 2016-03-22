@@ -34,7 +34,7 @@ module core_pipeline
 		output 					pl_val_inst
 	);
 //hazard wires
-wire[2:0] 	haz_kill_bus_loc;
+wire[1:0] 	haz_kill_bus_loc;
 wire[3:0]		haz_enb_bus_loc;
 wire 				haz2exe_s_mux_trn_out;
 wire[3:0]		haz2exe_bp_mux_exe;
@@ -120,7 +120,6 @@ wire 	exe2mem_val_instr;
 ///
 wire[4:0]	wb2haz2dec_rd;
 wire[1:0]	wb2haz_cmd;
-wire if2dec_start;
 core_if_s core_if_s (
 .clk(clk),
 .rst_n(rst_n),
@@ -136,11 +135,9 @@ core_if_s core_if_s (
 .if_val_l1i_cahe_out(pl_l1i_req_val),//global
 //register if/dec
 .if_pc_reg_out(if2dec_pc),
-.if_pc_4_reg_out(if2dec_pc_4),
-.if_start_out_reg(if2dec_start)
+.if_pc_4_reg_out(if2dec_pc_4)
 );
 core_dec_s core_dec_s(
-.dec_start_in(if2dec_start),
 .clk(clk),
 .rst_n(rst_n),
 .dec_enb(haz_enb_bus_loc[`REG_DEC_EXE]),
@@ -186,7 +183,7 @@ core_exe_s core_exe_s(
 .exe_val_inst_in(dec2exe_val_instr),
 //
 .clk(clk),
-.exe_kill(haz_kill_bus_loc[`REG_EXE_MEM]),
+.rst_n(rst_n),
 .exe_enb(haz_enb_bus_loc[`REG_EXE_MEM]),
 //
 .exe_s_frm_haz_mux_trn_in(haz2exe_s_mux_trn_out),
@@ -248,8 +245,8 @@ core_exe_s core_exe_s(
 );
 core_mem_s core_mem_s(
 .mem_val_inst_in(exe2mem_val_instr),
-
 .clk(clk),
+.rst_n(rst_n),
 .mem_enb(haz_enb_bus_loc[`REG_MEM_WB]),
 //controlpins
 .mem_wb_sx_op_in(exe2mem_wb_sx_op),
@@ -323,8 +320,8 @@ core_wb_s core_wb_s(
 .wb_rd_in(mem2wb_rd)
 );
 
-core_hazard_ctrl core_hazard_ctrl(.
-rst_n(rst_n),
+core_hazard_ctrl core_hazard_ctrl(
+.rst_n(rst_n),
 //istercontroll
 .haz_enb_bus_out(haz_enb_bus_loc),
 .haz_kill_bus_out(haz_kill_bus_loc),
