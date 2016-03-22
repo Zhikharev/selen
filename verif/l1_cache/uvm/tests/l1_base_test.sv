@@ -142,8 +142,11 @@ class draft_test extends l1_base_test;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
+    // Запрос в кэш-память данных появится только после того как будет получена инструкция из кэш-памяти
+    // инструкций. По сбросу кэш не сразу готов работать. В $I есть автоматическая блокировка для такого
+    // случая, в $D блокировки нет
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
+    //uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
   endfunction
 
 endclass

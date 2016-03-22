@@ -23,10 +23,13 @@ module l1_tb_top;
     forever #(`CLK_HALF_PERIOD) sys_clk = ~sys_clk;
   end
 
-  // Reset interface
-  rst_if rst_intf(sys_clk);
-  //assign reset = rst_intf.rst | rst_intf.soft_rst;
+    initial begin
+      reset = 1;
+      repeat(5) @(posedge sys_clk);
+      reset = 0;
+    end
 
+  rst_if rst_intf(sys_clk);
   wb_if  wb_intf(sys_clk, reset);
   assign wb_intf.clk_i = sys_clk;
   assign wb_intf.rst_i = reset;
@@ -60,13 +63,6 @@ module l1_tb_top;
       `uvm_info("DBG", $sformatf("SEED = %0d", seed), UVM_NONE)
       #0;
       run_test();
-    end
-    initial begin
-      reset = 0;
-      #(10);
-      reset = 1;
-      #(50);
-      reset = 0;
     end
 
   initial $timeformat(-9, 1, "ns", 4);

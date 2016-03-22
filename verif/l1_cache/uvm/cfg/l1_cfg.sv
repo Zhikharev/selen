@@ -22,6 +22,11 @@ class l1_cfg extends uvm_object;
 
 	function new(string name = "core_agent_cfg");
 		super.new(name);
+		i_cfg = sl_core_agent_cfg::type_id::create("i_cfg");
+		i_cfg.port = INSTR;
+		d_cfg = sl_core_agent_cfg::type_id::create("d_cfg");
+		d_cfg.port = DATA;
+		wb_cfg = wb_agent_cfg::type_id::create("wb_cfg");
 	endfunction
 
 endclass

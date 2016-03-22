@@ -25,7 +25,11 @@ class draft_sequence extends uvm_sequence #(sl_core_bus_item);
 		$display("hello");
 		repeat(100) begin
 			`uvm_create(req)
-			assert(req.randomize());
+			assert(req.randomize() with {
+				req.size == 4;
+				req.addr[1:0] == 2'b0;
+				req.cop == RD;
+			}); // for $I size must be only 4 bytes, cop only RD
 			`uvm_send(req)
 			get_response(rsp);
 		end
