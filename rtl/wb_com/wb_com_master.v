@@ -138,8 +138,8 @@ assign m_wb_dat_i   = m_arb ? s1_to_m_data_o[WB_DATA_WIDTH-1:0]                 
 assign m_wb_stall_i = m_addr_s0_hit & m_to_s0_hfull | m_addr_s1_hit & m_to_s1_hfull | m_dir_fst[WB_M_BSCALE -1];
 
 
-assign s1_to_m_drden = m_arb & m_wb_ack_i & !m_error;
-assign s0_to_m_drden = !m_arb & m_wb_ack_i & !m_error;
+assign s1_to_m_drden = m_arb & !s1_to_m_dempty & !m_error;
+assign s0_to_m_drden = !m_arb & !s0_to_m_dempty & !m_error;
 
 //from master to slave0
 wire m_to_s0_hwren = m_wb_cyc_o & m_wb_stb_o & !m_wb_stall_i & m_addr_s0_hit;

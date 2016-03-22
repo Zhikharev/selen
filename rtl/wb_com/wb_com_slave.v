@@ -133,6 +133,9 @@ assign s_wb_dat_o   = m1_dir ? m1_to_s_data_o : m0_to_s_data_o;
 assign m0_to_s_hrden    = !m1_dir & s_wb_stb_o;
 assign m1_to_s_hrden    = m1_dir & s_wb_stb_o;
 
+assign m0_to_s_drden    = !m1_dir & s_wb_stb_o & s_wb_we_o;
+assign m1_to_s_drden    = m1_dir & s_wb_stb_o & s_wb_we_o;
+
 //to m0
 assign m0_fifo_wren = (|s_dir_fst & !(|(s_dir_fst & s_dir_sel)) | !(|s_dir_fst) & !m1_dir & !m0_to_s_hempty) & (s_wb_ack_i | s_wb_err_i);
 wb_com_fifo     #(WB_DATA_WIDTH + 1, WB_FIFO_ASIZE+1)
