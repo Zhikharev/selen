@@ -295,7 +295,7 @@ core_mem_s core_mem_s(
 .mem2haz_rd_out(mem2haz_rd),
 .mem2haz_cmd_out(mem2haz_cmd),
 //
-.mem_val_inst_out_reg(pl_val_inst),
+.mem_val_inst_out(pl_val_inst),
 .mem_haz_cmd_out_reg(mem2wb_haz_cmd)
 );
 core_wb_s core_wb_s(

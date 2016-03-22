@@ -64,9 +64,10 @@ module core_mem_s (
 	output[4:0]				mem2haz_rd_out,
 	output[1:0]				mem2haz_cmd_out,
 
-	output 	reg				mem_val_inst_out_reg
+	output 					mem_val_inst_out
 );
 wire cash_uncash;
+reg mem_val_inst_out_reg;
 always @(posedge clk) begin 
 	if(mem_enb) begin
 		mem_alu_result_out_reg <= mem_alu_result_in;
@@ -92,6 +93,7 @@ assign mem2haz_we_reg_file_out = mem_we_reg_file_in;
 assign mem2haz_rs1_out =  mem_rs1_in;
 assign mem2haz_rs2_out = mem_rs2_in;
 assign mem2haz_rd_out = mem_rd_in;
+assign mem_val_inst_out = mem_val_inst_out_reg & mem_enb ;
 endmodule // core_mem
 /*	if(mem_kill) begin
 		mem_alu_result_out_reg <= 0;
