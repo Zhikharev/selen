@@ -114,7 +114,7 @@ always @(negedge clk,negedge rst_n) begin
 		dec_src1_out_reg <= reg_file2dec_src1;
 		dec_src2_out_reg <= reg_file2dec_src2;
 		dec_hazard_cmd_out_reg <= ctrl2dec_haz_cmd;
-		dec_val_inst_out_reg <= 1'b1;
+		dec_val_inst_out_reg <= dec_l1i_ack_in;
 	end
 	if(dec_kill|(~rst_n)) begin
 		dec_we_reg_file_out_reg<= 1'b0;
