@@ -167,7 +167,8 @@ module selen_top
 	assign com_mem_wb_stall_i = 1'b0;
 
 	defparam wb_perif_xbar.S0_ADDR_BASE = 32'h0000_0000;
-	defparam wb_perif_xbar.S0_ADDR_MASK = 16'h0fff;
+	//defparam wb_perif_xbar.S0_ADDR_MASK = 16'h0fff;
+	defparam wb_perif_xbar.S0_ADDR_MASK = 16'h1fff;
 	defparam wb_perif_xbar.S1_ADDR_BASE = 32'h0000_2000;
 	defparam wb_perif_xbar.S1_ADDR_MASK = 16'h2fff;
 
