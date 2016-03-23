@@ -169,7 +169,7 @@ module selen_top
 	defparam wb_perif_xbar.S0_ADDR_BASE = 32'h0000_0000;
 	defparam wb_perif_xbar.S0_ADDR_MASK = 16'h0fff;
 	defparam wb_perif_xbar.S1_ADDR_BASE = 32'h0000_2000;
-	defparam wb_perif_xbar.S1_ADDR_MASK = 16'h2fff;
+	defparam wb_perif_xbar.S1_ADDR_MASK = 16'h0fff;
 
 	wb_com_top wb_perif_xbar
 	(
