@@ -283,7 +283,7 @@ module l1d_top
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
 
 	always @* begin
-		if(mau_ack_nc) core_ack_data = mau_ack_data[`CORE_DATA_WIDTH-1:0];
+		if(mau_ack_nc) core_ack_data = mau_ack_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
 		else if(del_buf_hit_r) core_ack_data = del_buf_data_r;
 		else core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
 	end
