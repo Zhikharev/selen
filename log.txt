@@ -1,0 +1,3604 @@
+Fatal License Error.
+System clock has been set back.
+Please contact VCS Customer Support at 1-800-VERILOG for more information.
+
+CPU time: 4.184 seconds to compile
+
+ common elaboration failed
+make: *** [elaborate] Error 255
+[synopsys@localhost ~]$ 
+
+
+UVM_HOME=/opt/uvm-1.2 VCS_HOME=/opt/vcs-mx/K-2015.09-SP1-1 GIT_HOME=/media/sf_selen BENCH_HOME=/media/sf_selen/verif/core/run//.. RTL_PATH= /opt/vcs-mx/K-2015.09-SP1-1/bin/vlogan -full64 +incdir+/opt/uvm-1.2/src -timescale=1ns/1ps +define+USING_VCS +systemverilogext+sv +verilog2001ext+v +libext+.v  -sverilog +lint=all,noVCDE,noZERO +nospecify +notimingchecks -l vlogan.log /media/sf_selen/verif/core/run//../../../rtl/core//opcodes.vh /media/sf_selen/verif/core/run//../../../rtl/core//core_defines.vh /media/sf_selen/verif/core/run//../../../rtl/core//core_reg_file.v /media/sf_selen/verif/core/run//../../../rtl/core//core_cpu_ctrl.v /media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v /media/sf_selen/verif/core/run//../../../rtl/core//core_alu.v /media/sf_selen/verif/core/run//../../../rtl/core//core_exe_s.v /media/sf_selen/verif/core/run//../../../rtl/core//core_if_s.v /media/sf_selen/verif/core/run//../../../rtl/core//core_mem_s.v /media/sf_selen/verif/core/run//../../../rtl/core//core_wb_s.v /media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v /media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v /media/sf_selen/verif/core/run//../../../rtl/core//core_csr.v /media/sf_selen/verif/core/run//../../../rtl/core//core_top.v  +define+COMMIT_VAL_PATH=pipeline.pl_val_inst +define+REG_FILE_PATH=pipeline.core_dec_s.reg_file.reg_file   +incdir+/media/sf_selen/verif/core/run//.. +incdir+/media/sf_selen/verif/core/run//../../common /media/sf_selen/verif/core/run//../testbench/core_model_dpi.sv /media/sf_selen/verif/core/run//../testbench/core_commit_if.sv /media/sf_selen/verif/core/run//../uvm/uvm.inc.sv /media/sf_selen/verif/core/run//../testbench/core_assembled.sv /media/sf_selen/verif/core/run//../testbench/core_tb_top.sv
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.2.1511 (Core) ' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '4.4.1-1.el7.elrepo.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+
+Warning-[ENBL_OPTS] Enabling option(s)
+  Enabling option(s) '+nospecify +notimingchecks ' on the entire design.
+
+                         Chronologic VCS (TM)
+      Version K-2015.09-SP1-1_Full64 -- Wed Mar 23 14:52:05 2016
+               Copyright (c) 1991-2015 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//opcodes.vh'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_defines.vh'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_reg_file.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_cpu_ctrl.v'
+
+Lint-[IWU] Implicit wire is used
+/media/sf_selen/verif/core/run//../../../rtl/core//core_cpu_ctrl.v, 232
+  No type is specified for wire 'ctrl_ctrl_order_reg_file_out'. Default wire 
+  type is being applied according to the IEEE spec.
+  See the Verilog LRM(1364-2005), section 4.5.
+
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_alu.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_exe_s.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_if_s.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_mem_s.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_wb_s.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_csr.v'
+Parsing design file '/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v'
+Parsing design file '/media/sf_selen/verif/core/run//../testbench/core_model_dpi.sv'
+Parsing design file '/media/sf_selen/verif/core/run//../testbench/core_commit_if.sv'
+Parsing design file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'
+Parsing included file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_version_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_global_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_message_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_phase_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_object_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_printer_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_tlm_defines.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm_imps.svh'.
+Back to file '/opt/uvm-1.2/src/macros/uvm_tlm_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_sequence_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_callback_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_reg_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Parsing included file '/opt/uvm-1.2/src/macros/uvm_deprecated_defines.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/dpi/uvm_dpi.svh'.
+Parsing included file '/opt/uvm-1.2/src/dpi/uvm_hdl.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/dpi/uvm_hdl.svh, 90
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/dpi/uvm_dpi.svh'.
+Parsing included file '/opt/uvm-1.2/src/dpi/uvm_svcmd_dpi.svh'.
+Back to file '/opt/uvm-1.2/src/dpi/uvm_dpi.svh'.
+Parsing included file '/opt/uvm-1.2/src/dpi/uvm_regex.svh'.
+Back to file '/opt/uvm-1.2/src/dpi/uvm_dpi.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_coreservice.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_version.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_object_globals.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_misc.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_object.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_pool.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_queue.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_factory.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_registry.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_spell_chkr.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_resource.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource.svh, 295
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource.svh, 1529
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource.svh, 1562
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource.svh, 1666
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_resource_specializations.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 83
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 83
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 104
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 104
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 121
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 121
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 144
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 144
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 167
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_resource_specializations.svh, 167
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_resource_db.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_config_db.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_config_db.svh, 294
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_printer.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_comparer.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_packer.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_links.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_tr_database.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_tr_stream.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_recorder.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_event_callback.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_event.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_event.svh, 69
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_event.svh, 73
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_event.svh, 90
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_event.svh, 94
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_event.svh, 110
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_event.svh, 125
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_barrier.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_barrier.svh, 185
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_callback.svh'.
+Parsing included file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_callback.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_report_message.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_report_catcher.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_report_server.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_report_handler.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_report_object.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_transaction.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_phase.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1312
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1332
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1337
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1345
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1355
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1361
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1376
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1389
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1410
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1424
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1425
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1436
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1439
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1451
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1454
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1472
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1474
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1475
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1478
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1482
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1495
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1499
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1511
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1514
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1555
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1561
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1565
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1567
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1581
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1587
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1602
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1620
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1625
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1627
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1652
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1655
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1769
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1778
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1789
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1793
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1798
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1883
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1886
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1889
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1892
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1937
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1939
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1941
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1943
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1983
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1984
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1985
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1986
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1987
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 1988
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 2037
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 2042
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 2048
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 2168
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_phase.svh, 2216
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_domain.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_bottomup_phase.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_topdown_phase.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_task_phase.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_common_phases.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_runtime_phases.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_component.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_root.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_root.svh, 467
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_root.svh, 506
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_root.svh, 508
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_component.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_component.svh, 3440
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_component.svh, 3616
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_component.svh, 3621
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_objection.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 689
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 751
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 759
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 908
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 909
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 910
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 928
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 930
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 1199
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 1248
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 1254
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 1259
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_objection.svh, 1260
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_heartbeat.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_heartbeat.svh, 285
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_globals.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_globals.svh, 461
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_cmdline_processor.svh'.
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_traversal.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/base/uvm_traversal.svh, 262
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/base/uvm_base.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/dap/uvm_dap.svh'.
+Parsing included file '/opt/uvm-1.2/src/dap/uvm_set_get_dap_base.svh'.
+Back to file '/opt/uvm-1.2/src/dap/uvm_dap.svh'.
+Parsing included file '/opt/uvm-1.2/src/dap/uvm_simple_lock_dap.svh'.
+Back to file '/opt/uvm-1.2/src/dap/uvm_dap.svh'.
+Parsing included file '/opt/uvm-1.2/src/dap/uvm_get_to_lock_dap.svh'.
+Back to file '/opt/uvm-1.2/src/dap/uvm_dap.svh'.
+Parsing included file '/opt/uvm-1.2/src/dap/uvm_set_before_get_dap.svh'.
+Back to file '/opt/uvm-1.2/src/dap/uvm_dap.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm_ifs.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_sqr_ifs.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/base/uvm_port_base.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm_imps.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_imps.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_ports.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_exports.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_analysis_port.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm_fifo_base.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm_fifos.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_tlm_req_rsp.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm1/uvm_sqr_connections.svh'.
+Back to file '/opt/uvm-1.2/src/tlm1/uvm_tlm.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_pair.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_policies.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_in_order_comparator.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_algorithmic_comparator.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_random_stimulus.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_subscriber.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_monitor.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_driver.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_push_driver.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_scoreboard.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_agent.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_env.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Parsing included file '/opt/uvm-1.2/src/comps/uvm_test.svh'.
+Back to file '/opt/uvm-1.2/src/comps/uvm_comps.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequence_item.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequencer_base.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequencer_base.svh, 877
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequencer_base.svh, 938
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequencer_base.svh, 994
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequencer_base.svh, 1112
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequencer_base.svh, 1115
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequencer_analysis_fifo.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequencer_param_base.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequencer.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequencer.svh, 171
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_push_sequencer.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequence_base.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 213
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 324
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 336
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 346
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 350
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 358
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 363
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 372
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 388
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 762
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 1217
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/seq/uvm_sequence_base.svh, 1234
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequence.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequence_library.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Parsing included file '/opt/uvm-1.2/src/seq/uvm_sequence_builtin.svh'.
+Back to file '/opt/uvm-1.2/src/seq/uvm_seq.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_defines.svh'.
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_time.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_time.svh, 123
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_time.svh, 149
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_time.svh, 160
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_generic_payload.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_generic_payload.svh, 892
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_ifs.svh'.
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_imps.svh'.
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_ports.svh'.
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_exports.svh'.
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_sockets_base.svh'.
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Parsing included file '/opt/uvm-1.2/src/tlm2/uvm_tlm2_sockets.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_sockets.svh, 121
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_sockets.svh, 171
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/tlm2/uvm_tlm2_sockets.svh, 242
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/tlm2/uvm_tlm2.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_item.svh'.
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_adapter.svh'.
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_predictor.svh'.
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_sequence.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_sequence.svh, 141
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_sequence.svh, 151
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_cbs.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_cbs.svh, 397
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_cbs.svh, 482
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_backdoor.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_backdoor.svh, 252
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_backdoor.svh, 287
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_backdoor.svh, 329
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_backdoor.svh, 345
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_field.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_field.svh, 808
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_field.svh, 1080
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_field.svh, 1252
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_field.svh, 1531
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_vreg_field.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 497
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 503
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 544
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 580
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 595
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 629
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 648
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 681
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 716
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 779
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 810
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 820
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 842
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 861
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 883
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 911
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg_field.svh, 951
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1173
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1216
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1220
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1245
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1254
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1263
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 1324
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 2750
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 2754
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 2811
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 2839
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 2868
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg.svh, 2897
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 103
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 118
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 139
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 145
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 150
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 180
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 227
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 241
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_indirect.svh, 252
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_fifo.svh'.
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_file.svh'.
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_mem_mam.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 705
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 711
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 720
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 736
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 769
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 788
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 840
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 848
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 873
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 881
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 906
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 940
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 971
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 979
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 1000
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem_mam.svh, 1008
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_vreg.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 748
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 752
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 796
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 800
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 824
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 834
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 844
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 903
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 908
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 913
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 920
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 930
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 937
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 944
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 953
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 976
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 981
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 986
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 994
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1004
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1012
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1022
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1045
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1073
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1084
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1095
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1111
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1122
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1133
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1144
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1155
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1166
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1177
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1198
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1223
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1300
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1329
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1402
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1425
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1447
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1469
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_vreg.svh, 1490
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_mem.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem.svh, 1839
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem.svh, 1909
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem.svh, 1959
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem.svh, 2090
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_mem.svh, 2125
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_map.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1034
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1072
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1089
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1392
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1415
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1547
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1565
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1766
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1806
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1899
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 1933
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 2037
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 2072
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_map.svh, 2104
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/uvm_reg_block.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 979
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 996
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1014
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1031
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1642
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1647
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1653
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1655
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1684
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1693
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1825
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1845
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/uvm_reg_block.svh, 1943
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_reg_hw_reset_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_hw_reset_seq.svh, 72
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_hw_reset_seq.svh, 130
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_hw_reset_seq.svh, 137
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 76
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 129
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 152
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 164
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 171
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 177
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_bit_bash_seq.svh, 233
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 91
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 118
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 131
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 138
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 144
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 152
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 160
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 166
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_walk_seq.svh, 227
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_mem_access_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_access_seq.svh, 70
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_access_seq.svh, 129
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_access_seq.svh, 224
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_mem_access_seq.svh, 270
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_reg_access_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_access_seq.svh, 148
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 77
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 143
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 145
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 150
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 157
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 165
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 169
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 174
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 223
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 256
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 265
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 277
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 285
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 296
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 306
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 322
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_shared_access_seq.svh, 390
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_built_in_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_built_in_seq.svh, 61
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Parsing included file '/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh'.
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 72
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 81
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 141
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 145
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 170
+  Null statement is used in following verilog source.
+  
+
+Back to file '/opt/uvm-1.2/src/reg/uvm_reg_model.svh'.
+Back to file '/opt/uvm-1.2/src/uvm_pkg.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/opt/uvm-1.2/src/uvm_macros.svh'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv, 7
+$unit, "uvm_pkg::*"
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package 
+  content will be shared without implicit import of the package.
+
+Parsing included file '/media/sf_selen/verif/core/run//../../common/smart_report_server.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_if.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_typedefs.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_bus_item.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_agent_cfg.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_monitor.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_monitor.sv, 34
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_monitor.sv, 36
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_monitor.sv, 57
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_monitor.sv, 64
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_monitor.sv, 68
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_sequencer.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_driver.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_driver.sv, 30
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_driver.sv, 32
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_driver.sv, 50
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_driver.sv, 56
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_driver.sv, 61
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_slave_agent.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_master_driver.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_master_driver.sv, 30
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_master_driver.sv, 32
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_master_driver.sv, 50
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_master_driver.sv, 55
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_master_agent.sv'.
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../../common/core/sl_core_seq_lib.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../../common/core/sl_core_seq_lib.sv, 39
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../../common/core/sl_core_inc.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/items/rv32_typedefs.sv'.
+
+Warning-[TMR] Text macro redefined
+/media/sf_selen/verif/core/run//../uvm/items/rv32_typedefs.sv, 9
+  Text macro (JALR) is redefined. The last definition will override previous 
+  ones.
+  In /media/sf_selen/verif/core/run//../../../rtl/core//opcodes.vh, 43, it was
+  defined as 3'b000
+
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/items/rv32_transaction.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/sequencer/sl_rv32_layer_sequencer.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/monitors/sl_core_commit_monitor.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/monitors/sl_core_commit_monitor.sv, 30
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/monitors/sl_core_commit_monitor.sv, 40
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/scoreboard/sl_core_scrb.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/scoreboard/sl_core_scrb.sv, 58
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/scoreboard/sl_core_scrb.sv, 73
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/scoreboard/sl_core_scrb.sv, 90
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/env/sl_core_env.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/sequences/sl_rv32_core_translate_seq.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/sequences/sl_rv32_core_translate_seq.sv, 17
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/sequences/sl_draft_seq_lib.sv'.
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/sequences/sl_draft_seq_lib.sv, 14
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/sequences/sl_draft_seq_lib.sv, 58
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/sequences/sl_draft_seq_lib.sv, 84
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/sequences/sl_draft_seq_lib.sv, 106
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../uvm/sequences/sl_draft_seq_lib.sv, 112
+  Null statement is used in following verilog source.
+  
+
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing included file '/media/sf_selen/verif/core/run//../uvm/test/sl_core_base_test.sv'.
+Back to file '/media/sf_selen/verif/core/run//../uvm/uvm.inc.sv'.
+Parsing design file '/media/sf_selen/verif/core/run//../testbench/core_assembled.sv'
+Parsing design file '/media/sf_selen/verif/core/run//../testbench/core_tb_top.sv'
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../testbench/core_tb_top.sv, 33
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[NS] Null statement
+/media/sf_selen/verif/core/run//../testbench/core_tb_top.sv, 69
+  Null statement is used in following verilog source.
+  
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 12
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec_start_in
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 41
+"dec_sx_imm_out_reg"
+  Output port 'dec_sx_imm_out_reg' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 56
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_wb_sx_op
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 57
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_l1d_val
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 58
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_l1d_size
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 59
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_l1d_cop_lsb
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 60
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_mux_bus
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 61
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_alu_op
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 62
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_alu_cnd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 63
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 64
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_order_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 65
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_dec_sx_op_out
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 66
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: reg_file2dec_src1
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 67
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: reg_file2dec_src2
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 68
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: ctrl2dec_haz_cmd
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_exe_s.v, 15
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe_kill
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_exe_s.v, 78
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe_alu_result_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_exe_s.v, 81
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: brnch_takenn_loc
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_mem_s.v, 15
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: rst_n
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_mem_s.v, 25
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem_csr_nc_mask_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_mem_s.v, 26
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem_csr_nc_base_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_mem_s.v, 32
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem_addr_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_wb_s.v, 13
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: clk
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 21
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_exe_rs1_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 22
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_exe_rs2_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 23
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_exe_rd_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 24
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_mem_rs1_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 25
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_mem_rs2_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 26
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_mem_rd_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 27
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_wb_rd_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 29
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_we_reg_file_exe_s_in
+
+
+Lint-[UI] Unused input
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 40
+  Following is an unused input.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_cmd_mem_s_in
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 45
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: rs1_exe_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 46
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: rs2_exe_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 49
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: rs2_mem_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 50
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: rd_mem_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_hazard_ctrl.v, 51
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: rd_wb_loc
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 22
+"pl_l1i_req_val"
+  Output port 'pl_l1i_req_val' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 23
+"pl_l1i_req_addr"
+  Output port 'pl_l1i_req_addr' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 26
+"pl_l1d_req_val"
+  Output port 'pl_l1d_req_val' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 27
+"pl_l1d_req_addr"
+  Output port 'pl_l1d_req_addr' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 28
+"pl_l1d_req_cop"
+  Output port 'pl_l1d_req_cop' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 29
+"pl_l1d_req_wdata"
+  Output port 'pl_l1d_req_wdata' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 30
+"pl_l1d_req_size"
+  Output port 'pl_l1d_req_size' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 34
+"pl_val_inst"
+  Output port 'pl_val_inst' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 37
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_kill_bus_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 38
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz_enb_bus_loc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 39
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz2exe_s_mux_trn_out
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 40
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz2exe_bp_mux_exe
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 41
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: haz2mem_bp_mux_mem
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 42
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2haz_cmd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 43
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2haz_stall
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 44
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2haz_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 46
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2haz_rs1
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 47
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2haz_rs2
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 48
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2haz_rd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 49
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2haz_brnch_tknn
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 50
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2haz_cmd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 51
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2haz_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 52
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: wb2haz_stall
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 53
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2haz_rs1
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 54
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2haz_rs2
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 55
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2haz_rd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 56
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2haz_cmd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 58
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2if_mux_trn_s
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 59
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2if_addr
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 60
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: if2dec_pc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 61
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: if2dec_pc_4
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 64
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: wb2dec_wrt_data
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 65
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: wb2dec_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 66
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_wb_sx_op
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 67
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_mux_bus
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 68
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 69
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_alu_op
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 70
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_alu_cnd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 71
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_hazard_cmd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 73
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_l1i_req_val
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 74
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_l1i_req_cop
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 75
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_l1i_req_size
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 78
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_src1
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 79
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_src2
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 80
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_sx_imm
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 81
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_pc
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 82
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_pc_4
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 83
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_rs1
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 84
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_rs2
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 85
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_rd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 87
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2exe_bp_data
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 90
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_wb_sx_op
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 91
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_l1d_cop
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 92
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_l1d_size
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 93
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_l1d_val
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 94
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 95
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_mux_alu_mem
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 96
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_wrt_data
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 98
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_alu_result
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 99
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_sx_imm
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 100
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_pc_4
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 101
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_w_data
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 102
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_addr
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 104
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_rs1
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 105
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_rs2
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 106
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_rd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 107
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_haz_cmd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 109
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_sx_imm
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 110
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_alu_result
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 111
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_pc_4
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 112
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_mux_alu_mem
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 113
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_we_reg_file
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 114
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_wb_sx_op
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 115
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_rd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 116
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: mem2wb_haz_cmd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 118
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: dec2exe_val_instr
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 119
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: exe2mem_val_instr
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 121
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: wb2haz2dec_rd
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 122
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: wb2haz_cmd
+
+
+Lint-[CAWM-L] Width mismatch
+/media/sf_selen/verif/core/run//../../../rtl/core//core_csr.v, 28
+  Continuous assignment width mismatch
+  32 bits (lhs) versus 33 bits (rhs).
+  Source info: assign ncache_base = ncache_base_r;  
+
+
+Lint-[CAWM-L] Width mismatch
+/media/sf_selen/verif/core/run//../../../rtl/core//core_csr.v, 29
+  Continuous assignment width mismatch
+  32 bits (lhs) versus 33 bits (rhs).
+  Source info: assign ncache_mask = ncache_mask_r;  
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 18
+"i_req_val"
+  Output port 'i_req_val' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 19
+"i_req_addr"
+  Output port 'i_req_addr' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 24
+"d_req_val"
+  Output port 'd_req_val' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 25
+"d_req_addr"
+  Output port 'd_req_addr' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 26
+"d_req_cop"
+  Output port 'd_req_cop' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 27
+"d_req_wdata"
+  Output port 'd_req_wdata' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[ONGS] Output never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 28
+"d_req_size"
+  Output port 'd_req_size' has never been assigned to any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 33
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: csr_nc_base
+
+
+Lint-[VNGS] Variable never gets set
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 34
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: csr_nc_mask
+
+
+Lint-[VNGS] Variable never gets set
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 56
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: wildcard_index__
+
+
+Lint-[VNGS] Variable never gets set
+/opt/uvm-1.2/src/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh, 56
+  Following variable has never been set any value.
+  Note: This check could only consider local references. There could be 
+  hierarchical references outside the module.
+  Source info: tmp__
+
+CPU time: 3.472 seconds to compile
+/opt/vcs-mx/K-2015.09-SP1-1/bin/vcs core_tb_top -full64 -l elaborate.log -CFLAGS -DVCS /opt/uvm-1.2/src/dpi/uvm_dpi.cc -debug_acc+all -lca -CFLAGS "-std=c++11 -g -Wall -O3" -CFLAGS -I/media/sf_selen/verif/core/run//../../../sim/isa -CFLAGS -I/media/sf_selen/verif/core/run//../../../sim /media/sf_selen/verif/core/run//../../../sim/isa/src.cpp /media/sf_selen/verif/core/run//../../../sim/dpi/core_model_dpi.cpp
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.2.1511 (Core) ' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '4.4.1-1.el7.elrepo.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+
+Warning-[LCA_FEATURES_ENABLED] Usage warning
+  LCA features enabled by '-lca' argument on the command line.  For more 
+  information regarding list of LCA features please refer to Chapter "LCA 
+  features" in the VCS/VCS-MX Release Notes
+
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.2.1511 (Core) ' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '4.4.1-1.el7.elrepo.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+      Version K-2015.09-SP1-1_Full64 -- Wed Mar 23 14:52:24 2016
+               Copyright (c) 1991-2015 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Top Level Modules:
+       core_tb_top
+TimeScale is 1 ns / 1 ps
+
+Warning-[TFIPC] Too few instance port connections
+/media/sf_selen/verif/core/run//../../../rtl/core//core_dec_s.v, 81
+"core_cpu_ctrl cpu_ctrl( .ctrl_inst_in (dec_inst_in),  .ctrl_wb_sx_op_out (ctrl2dec_wb_sx_op),  .ctrl_mux_bus_out (ctrl2dec_mux_bus),  .ctrl_alu_op_out (ctrl2dec_alu_op),  .ctrl_alu_cnd_out (ctrl2dec_alu_cnd),  .ctrl_we_reg_file_out (ctrl2dec_we_reg_file),  .ctrl_l1d_size_out (ctrl2dec_l1d_size),  .ctrl_l1d_cop_lsb_out (ctrl2dec_l1d_cop_lsb),  .ctrl_l1d_val_out (ctrl2dec_l1d_val),  .ctrl_order_reg_file_out (ctrl2dec_order_reg_file),  .ctrl_dec_sx_op_out (ctrl2dec_dec_sx_op_out),  .ctrl_haz_cmd_out (ctrl2dec_haz_cmd));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 140
+"core_dec_s core_dec_s( .clk (clk),  .rst_n (rst_n),  .dec_enb (haz_enb_bus_loc[1]),  .dec_kill (haz_kill_bus_loc[1]),  .dec_inst_in (pl_l1i_ack_rdata),  .dec_data_wrt_in (wb2dec_wrt_data),  .dec_l1i_ack_in (pl_l1i_ack),  .dec_we_reg_file_in (wb2dec_we_reg_file),  .dec_pc_in (if2dec_pc),  .dec_pc_4_in (if2dec_pc_4),  .dec_wb_sx_op_out_reg (dec2exe_wb_sx_op),  .dec_mux_bus_out_reg (dec2exe_mux_bus),  .dec_we_reg_file_out_reg (dec2exe_we_reg_file),  .dec_alu_op_out_reg (dec2exe_alu_op),  .dec_alu_cnd_out_reg (dec2exe_alu_cnd),  .dec_hazard_cmd_out_reg (dec2exe_hazard_cmd),  .dec_l1d_req_val_out_reg (dec2exe_l1i_req_val),  .dec_l1d_req_cop_out_reg (dec2exe_l1i_req_cop),  .dec_l1d_req_size_out_reg (dec2exe_l1i_req_size),  .dec_src1_out_reg (dec2exe_src1),  . ... "
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 182
+"core_exe_s core_exe_s( .exe_val_inst_in (dec2exe_val_instr),  .clk (clk),  .rst_n (rst_n),  .exe_enb (haz_enb_bus_loc[2]),  .exe_s_frm_haz_mux_trn_in (haz2exe_s_mux_trn_out),  .exe_we_reg_file_in (dec2exe_we_reg_file),  .exe_wb_sx_op_in (dec2exe_wb_sx_op),  .exe_mux_bus_in (dec2exe_mux_bus),  .exe_alu_op_in (dec2exe_alu_op),  .exe_alu_cnd_in (dec2exe_alu_cnd),  .exe_l1d_val_in (dec2exe_l1i_req_val),  .exe_l1d_size_in (dec2exe_l1i_req_size),  .exe_l1d_cop_in (dec2exe_l1i_req_cop),  .exe_src1_in (dec2exe_src1),  .exe_src2_in (dec2exe_src2),  .exe_pc_in (dec2exe_pc),  .exe_pc_4_in (dec2exe_pc_4),  .exe_sx_imm_in (dec2exe_sx_imm),  .exe_rs1_in (dec2exe_rs1),  .exe_rs2_in (dec2exe_rs2),  .exe_rd_in (dec2exe_rd),  .exe_result_frm_m (mem2exe_bp_data),  .exe_re ... "
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+/media/sf_selen/verif/core/run//../../../rtl/core//core_pipeline.v, 301
+"core_wb_s core_wb_s( .clk (clk),  .wb_mux_alu_mem_in (mem2wb_mux_alu_mem),  .wb_ack_from_lid_in (pl_l1d_ack_ack),  .wb_we_reg_file_in (mem2wb_we_reg_file),  .wb_sx_op_in (mem2wb_wb_sx_op),  .wb_alu_result_in (mem2wb_alu_result),  .wb_sx_imm_in (mem2wb_sx_imm),  .wb_pc_4_in (mem2wb_pc_4),  .wb_mem_data_in (pl_l1d_ack_rdata),  .wb_cmd_in (mem2haz_cmd),  .wb_we_reg_file_out (wb2dec_we_reg_file),  .wb_data_out (wb2dec_wrt_data),  .wb_stall_out (wb2haz_stall),  .wb2haz_rd_out (wb2haz2dec_rd),  .wb_rd_in (mem2wb_rd));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+/media/sf_selen/verif/core/run//../../../rtl/core//core_top.v, 36
+"core_pipeline pipeline( .clk (clk),  .rst_n (rst_n),  .csr_nc_base (csr_nc_base),  .csr_nc_mask (csr_nc_mask),  .pl_l1i_ack_rdata (i_ack_rdata),  .pl_l1i_ack (i_req_ack),  .pl_l1i_req_val (i_req_val),  .pl_l1i_req_addr (i_req_addr),  .pl_l1d_req_val (d_req_val),  .pl_l1d_req_addr (d_req_addr),  .pl_l1d_req_cop (d_req_cop),  .pl_l1d_req_wdata (d_req_wdata),  .pl_l1d_req_size (d_req_size),  .pl_l1d_ack_ack (d_req_ack),  .pl_l1d_ack_rdata (d_ack_rdata));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+CPU time: 4.301 seconds to compile

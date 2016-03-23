@@ -94,6 +94,17 @@ core_cpu_ctrl cpu_ctrl(
 .ctrl_dec_sx_op_out(ctrl2dec_dec_sx_op_out),
 .ctrl_haz_cmd_out(ctrl2dec_haz_cmd)
 );
+//sx_imm
+reg[31:0] sx_imm_loc;
+always @* begin
+	case(ctrl2dec_dec_sx_op_out) 
+		`SX_AUIPC_LUI: sx_imm_loc = $signed(dec_inst_in[31:12]);
+		`SX_LD_I_R_JALR: sx_imm_loc = $signed(dec_inst_in[31:20]);
+		`SX_SB:sx_imm_loc = $signed({dec_inst_in[31],dec_inst_in[7],dec_inst_in[30:25],dec_inst_in[11:8]});
+		`SX_UJ_JAL:sx_imm_loc = $signed({dec_inst_in[31],dec_inst_in[19:12],dec_inst_in[20],dec_inst_in[30:21]});
+		`SX_ST:sx_imm_loc = $signed({dec_inst_in[31:25],dec_inst_in[4:0]});
+	endcase
+end
 
 always @(negedge clk,negedge rst_n) begin
 	dec_val_inst_out_reg <= 1'b0;
@@ -115,6 +126,7 @@ always @(negedge clk,negedge rst_n) begin
 		dec_src2_out_reg <= reg_file2dec_src2;
 		dec_hazard_cmd_out_reg <= ctrl2dec_haz_cmd;
 		dec_val_inst_out_reg <= dec_l1i_ack_in;
+		dec_sx_imm_out_reg <= sx_imm_loc;
 	end
 	if(dec_kill|(~rst_n)) begin
 		dec_we_reg_file_out_reg<= 1'b0;
@@ -122,7 +134,22 @@ always @(negedge clk,negedge rst_n) begin
 		dec_hazard_cmd_out_reg <= `HZRD_OTHER;
 	end
 end
+reg start;
+reg stall_loc;
+always @(posedge clk) begin
+	if(~rst_n) start <= 1'b0;
+	else begin
+		start <= 1'b1;
+	end
+end
+always @* begin
+	if(start) stall_loc = ~dec_l1i_ack_in;
+	else stall_loc  =1'b0;
+end
 assign  dec2haz_cmd_out = ctrl2dec_haz_cmd;
+assign dec_stall_out = stall_loc;
+endmodule
+/*
 reg stall_loc;
 always @(posedge clk, posedge dec_l1i_ack_in,negedge rst_n) begin
 	if(~rst_n) stall_loc <= 1'b0;
@@ -131,8 +158,6 @@ always @(posedge clk, posedge dec_l1i_ack_in,negedge rst_n) begin
 	end
 end
 assign dec_stall_out = stall_loc;
-endmodule
-/*
 if(dec_kill) begin
 		dec_wb_sx_op_out_reg <= 0;
 		dec_l1d_req_val_out_reg <= 0;
