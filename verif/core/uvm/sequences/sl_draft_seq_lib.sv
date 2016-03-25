@@ -64,6 +64,60 @@ class core_alu_seq extends core_base_seq;
 
 endclass
 
+class core_ld_st_seq extends core_base_seq;
+
+	`uvm_object_utils(core_ld_st_seq)
+
+	function new(string name = "core_ld_st_seq");
+  	super.new(name);
+	endfunction
+
+	task body();
+		`uvm_info(get_full_name(), "Start of core_ld_st_seq", UVM_MEDIUM)
+		repeat(num_pkts) begin
+			`uvm_create(req)
+			assert(req.randomize() with {
+				req.rs1 == 0;
+				req.imm inside {[0:32'hA000]};
+				req.opcode inside {
+					LW,	LH,	LHU, LB, LBU,
+					SW, SH, SB};
+    	});
+			`uvm_send(req)
+			get_response(rsp);
+		end
+		`uvm_info(get_full_name(), "End of core_ld_st_seq", UVM_MEDIUM)
+	endtask
+
+endclass
+
+class core_jmp_seq extends core_base_seq;
+
+	`uvm_object_utils(core_jmp_seq)
+
+	function new(string name = "core_jmp_seq");
+  	super.new(name);
+	endfunction
+
+	task body();
+		`uvm_info(get_full_name(), "Start of core_jmp_seq", UVM_MEDIUM)
+		repeat(num_pkts) begin
+			`uvm_create(req)
+			assert(req.randomize() with {
+				solve req.opcode before req.imm;
+				req.opcode inside {JAL, JALR};
+				req.opcode == JAL -> ((req.imm % 4) == 0);
+    	});
+    	if(req.opcode == JALR) begin
+    	end
+			`uvm_send(req)
+			get_response(rsp);
+		end
+		`uvm_info(get_full_name(), "End of core_jmp_seq", UVM_MEDIUM)
+	endtask
+
+endclass
+
 class core_run_opcodes_seq extends core_base_seq;
 
 	`uvm_object_utils(core_run_opcodes_seq)

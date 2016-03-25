@@ -16,6 +16,12 @@ build: analyze elaborate
 draft_test:
 	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=draft_test $(RUN_OPTS) $(SIM_OPTS)
 
+core_ld_st_test:
+	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=core_ld_st_test $(RUN_OPTS) $(SIM_OPTS)
+
+core_jmp_test:
+	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=core_jmp_test $(RUN_OPTS) $(SIM_OPTS)
+
 core_run_opcodes_test:
 	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=core_run_opcodes_test $(RUN_OPTS) $(SIM_OPTS)
 
