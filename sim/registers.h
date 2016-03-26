@@ -16,46 +16,16 @@ typedef std::size_t reg_id_t;
 
 enum : reg_id_t
 {
-    //zero register
     R_ZERO,
-
-    //assembler temporary
-    R_AT,
-
-    //valuxus
-    R_V0, R_V1,
-
-    //arguments
-    R_A0, R_A1, R_A2, R_A3,
-
-    //temporaries
-    R_T0, R_T1, R_T2, R_T3, R_T4,
-    R_T5, R_T6, R_T7,
-
-    //saved valuxs
-    R_S0, R_S1, R_S2, R_S3,
-    R_S4, R_S5, R_S6, R_S7,
-
-    //temporaries
-    R_T8, R_T9,
-
-    //interrupts
-    R_K0, R_K1,
-
-    //global pointer
-    R_GP,
-
-    //stack pointer
-    R_SP,
-
-    //frame pointer, saved value
-    R_FP,
-    R_S8 = R_FP,
-
-    //return addres
     R_RA,
+    R_SP, R_GP,
+    R_TP, R_T0, R_T1, R_T2,
+    R_S0, R_S1,
+    R_A0, R_A1, R_A2, R_A3, R_A4, R_A5, R_A6, R_A7,
+    R_S2, R_S3, R_S4, R_S5, R_S6, R_S7, R_S8, R_S9, R_S10, R_S11,
+    R_T3, R_T4, R_T5, R_T6,
 
-    //boundary, not real registers
+    //boundary
     R_LAST,
     R_FIRST = R_ZERO
 

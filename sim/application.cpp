@@ -256,7 +256,8 @@ void Application::run_simple()
     if(params.imagefilename.empty())
         throw runtime_error("not specified image file");
 
-    selen::memory_t image = read_file<selen::memory_t>(params.imagefilename);
+    std::vector<selen::byte_t> image =
+            read_file<std::vector<selen::byte_t>>(params.imagefilename);
     sim.load(image);
     if(!params.quiet)
         cout << "Image " << params.imagefilename << " loaded\n";

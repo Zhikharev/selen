@@ -268,7 +268,9 @@ void Interactive::load(std::string filename, size_t addr)
         parent->set_parameters(temp);
     }
 
-    selen::memory_t image = read_file<selen::memory_t>(filename);
+    std::vector<selen::byte_t> image =
+            read_file<std::vector<selen::byte_t>>(filename);
+
     parent->get_simulator().load(image, true, addr);
 
     std::cout << "image " << filename << " was loaded to simulator memory at address "

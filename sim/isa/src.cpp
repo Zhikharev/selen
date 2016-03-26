@@ -188,19 +188,14 @@ const std::vector<string>& selen::get_reg_names()
 {
     static std::vector<std::string> names =
     {
-        "ZERO",
-        "AT",
-        "V0", "V1",
-        "A0", "A1", "A2", "A3",
-        "T0", "T1", "T2", "T3", "T4",
-        "T5", "T6", "T7",
-        "S0", "S1", "S2", "S3",
-        "S4", "S5", "S6", "S7",
-        "T8", "T9",
-        "K0", "K1",
-        "GP", "SP",
-        "FP",
-        "RA",
+        "zero",
+        "ra",
+        "sp", "gp",
+        "tp", "t0", "t1", "t2",
+        "s0", "s1",
+        "a0", "a1", "a2", "a3", "a4", "a5","a6", "a7",
+        "s2", "s3", "s4", "s5", "s6", "s7","s8", "s9", "s10", "s11",
+        "t3", "t4", "t5", "t6"
     };
 
     return names;

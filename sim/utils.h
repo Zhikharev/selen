@@ -27,4 +27,30 @@ container_t read_file(const std::string& filename)
     return image;
 }
 
+class Formatter
+{
+public:
+    Formatter()
+    {}
+
+    Formatter(const Formatter&) = delete;
+    Formatter& operator= (const Formatter&) = delete;
+
+    template <typename T>
+    Formatter& operator << (const T& value)
+    {
+        stream << value;
+        return *this;
+    }
+
+    operator std::string () const
+    {
+        return stream.str();
+    }
+
+private:
+    std::ostringstream stream;
+};
+
+
 #endif // UTILS_H

@@ -7,7 +7,7 @@
 
 using namespace selen;
 
-bool Machine::load(memory_t &image, bool allow_resize, addr_t load_offset)
+bool Machine::load(const std::vector<byte_t>& image, bool allow_resize, addr_t load_offset)
 {
     const size_t required_size = image.size() + load_offset;
     const size_t available_size = memory.size();
@@ -20,7 +20,7 @@ bool Machine::load(memory_t &image, bool allow_resize, addr_t load_offset)
         memory.resize(required_size);
     }
 
-    std::copy(image.begin(), image.end(), memory.data() + load_offset);
+    memory.load(image.data(), image.size(), load_offset);
 
     status.image_loaded = true;
 

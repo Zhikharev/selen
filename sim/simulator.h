@@ -61,7 +61,7 @@ public:
      * @param load_offset - physical address position image should start with
      * @return false if allow_resize is "false" but there is no space to load, otherwise true
      */
-    bool load(memory_t &image, bool allow_resize = true, addr_t load_offset = 0);
+    bool load(const std::vector<byte_t>& image, bool allow_resize = true, addr_t load_offset = 0);
 
     //run simulator
     std::size_t step(size_t num_steps);
