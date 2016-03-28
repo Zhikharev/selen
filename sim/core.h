@@ -2,6 +2,7 @@
 #define STATE123456789SELEN
 
 #include "registers.h"
+#include "trace.h"
 
 namespace selen
 {
@@ -21,7 +22,9 @@ struct CoreState
 class Core
 {
 public:
-    Core()
+    Core() :
+        //TODO:: it is experimental tracing, rework
+        trace("CoreTrace.txt")
     {
     }
 
@@ -37,13 +40,23 @@ public:
     unit_t read_mem(const addr_t addr) const
     {
         assert(mem != nullptr);
-        return mem->read<unit_t>(addr);
+
+        unit_t value = mem->read<unit_t>(addr);
+
+        trace.write(MemRecord{MemRecord::T_READ, addr,
+                               sizeof(unit_t), static_cast<uintmax_t>(value)});
+
+        return value;
     }
 
     template<typename unit_t>
     void write_mem(const addr_t addr, unit_t value)
     {
         assert(mem != nullptr);
+
+        trace.write(MemRecord{MemRecord::T_WRITE, addr,
+                               sizeof(unit_t), static_cast<uintmax_t>(value)});
+
         mem->write<unit_t>(addr, value);
     }
 
@@ -101,6 +114,7 @@ public:
 
 private:
     CoreState state;
+    mutable Trace trace;
 
     memory_t* mem = {nullptr};
 };
