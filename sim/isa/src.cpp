@@ -179,7 +179,12 @@ std::string isa::disassemble(const word_t instr)
 void selen::Core::step()
 {
     word_t instr = fetch();
-    selen::isa::perform(*this, instr);
+    isa::fetch_t f = decode(instr);
+
+    trace.write(InsFetchRecord{f});
+
+    f(*this);
+    //selen::isa::perform(*this, instr);
 }
 
 //---------------------------------------------------

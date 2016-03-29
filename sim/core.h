@@ -19,6 +19,41 @@ struct CoreState
     }
 };
 
+
+class MemRecord : public TraceRecord
+{
+public:
+
+    enum
+    {
+        T_READ = 0,
+        T_WRITE
+    };
+
+    MemRecord(const int type,
+              const addr_t addr,
+              const size_t size,
+              uintmax_t value) :
+        type(type), addr(addr),
+        size(size), value(value)
+    {
+    }
+
+    std::string to_string() const override
+    {
+        return Formatter() << "memory " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
+                           << "; size " << std::dec << size << " bytes"
+                           << "; addr " << std::showbase << std::hex << std::setw(16) << addr
+                           << "; value " << value;
+    }
+
+private:
+    int type;
+    addr_t addr;
+    size_t size;
+    uintmax_t value;
+};
+
 class Core
 {
 public:

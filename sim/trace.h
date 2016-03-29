@@ -3,7 +3,6 @@
 
 #include <fstream>
 #include "utils.h"
-#include "memory.h"
 
 namespace selen
 {
@@ -19,40 +18,6 @@ public:
     {}
 
     virtual std::string to_string() const = 0;
-};
-
-class MemRecord : public TraceRecord
-{
-public:
-
-    enum
-    {
-        T_READ = 0,
-        T_WRITE
-    };
-
-    MemRecord(const int type,
-              const addr_t addr,
-              const size_t size,
-              uintmax_t value) :
-        type(type), addr(addr),
-        size(size), value(value)
-    {
-    }
-
-    virtual std::string to_string() const
-    {
-        return Formatter() << "memory " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
-                           << "; size " << std::dec << size << " bytes"
-                           << "; addr " << std::showbase << std::hex << std::setw(16) << addr
-                           << "; value " << value;
-    }
-
-private:
-    int type;
-    addr_t addr;
-    size_t size;
-    uintmax_t value;
 };
 
 class Trace

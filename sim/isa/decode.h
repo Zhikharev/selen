@@ -2,6 +2,7 @@
 #define INSTRUCTION_H
 
 #include "definitions.h"
+#include "../trace.h"
 
 namespace selen
 {
@@ -165,5 +166,27 @@ struct fetch_t
 };
 
 } //namespace isa
+
+
+class InsFetchRecord : public TraceRecord
+{
+public:
+    InsFetchRecord(const isa::fetch_t& f) :
+        data(f)
+    {
+    }
+
+
+    std::string to_string() const override
+    {
+        return Formatter() << "fetch " << std::showbase << std::setw(10) << std::hex << data.instruction 
+                           << " : " << std::setw(10) << data.disasemble();
+    }
+
+private:
+    const isa::fetch_t& data;
+};
+
+
 } //namespace selen
 #endif // INSTRUCTION_H

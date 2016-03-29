@@ -44,13 +44,13 @@ public:
             // else write will throw
         }
 
-        memory.write(addr, data);
+        core.write_mem(addr, data);
         return RC_SUCCESS;
     }
 
     int get_mem(unsigned int addr, unsigned int *data)
     {
-        unsigned int destination = memory.read<unsigned int>(addr);
+        unsigned int destination = core.read_mem<unsigned int>(addr);
         *data = destination;
         return RC_SUCCESS;
     }
