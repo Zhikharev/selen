@@ -43,7 +43,7 @@ class sl_core_env extends uvm_env;
     //model_params.mem_size   = 4294967295; // 32 GB
     model_params.mem_size   = 42949;
     model_params.verbose    = 1;
-    model_params.mem_resize = 0;
+    model_params.mem_resize = 1;
     model_params.endiannes  = 1;
     `uvm_info("MODEL", "Initial model configuration", UVM_LOW)
     `uvm_info("MODEL", $sformatf("pc_start %0h", model_params.pc_start), UVM_LOW)

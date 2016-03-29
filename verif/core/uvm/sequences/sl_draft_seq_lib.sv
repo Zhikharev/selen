@@ -94,6 +94,7 @@ endclass
 class core_jmp_seq extends core_base_seq;
 
 	`uvm_object_utils(core_jmp_seq)
+	rv32_transaction mem_req;
 
 	function new(string name = "core_jmp_seq");
   	super.new(name);
@@ -109,6 +110,16 @@ class core_jmp_seq extends core_base_seq;
 				req.opcode == JAL -> ((req.imm % 4) == 0);
     	});
     	if(req.opcode == JALR) begin
+    		// Загружаем случайные данные из памти в регистр
+    		// Выравниваем через логические операции по границе
+    		// 4 байт
+    		`uvm_create(mem_req)
+    		mem_req.opcode = LW;
+    		mem_req.rs1 = 0;
+    		mem_req.rd = req.rs1;
+    		mem_req.randomize(imm);
+				`uvm_send(mem_req)
+				get_response(rsp);
     	end
 			`uvm_send(req)
 			get_response(rsp);
