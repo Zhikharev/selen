@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cstring>
 #include "memory.h"
+#include "trace.h"
 
 namespace selen
 {
@@ -65,7 +66,6 @@ private:
   reg_t data[NUM_REGISTERS] = {0};
 };
 
-
 //Register names handling
 
 //throw if id > R_LAST
@@ -76,6 +76,38 @@ std::string regid2name(const reg_id_t id);
 reg_id_t name2regid(const std::string &name);
 
 const std::vector<std::string>& get_reg_names();
+
+class RegRecord : public TraceRecord
+{
+public:
+
+    enum
+    {
+        T_READ = 0,
+        T_WRITE
+    };
+
+    RegRecord(const int type,
+              const reg_id_t id,
+              const reg_t value) :
+        type(type), id(id),
+        value(value)
+    {
+    }
+
+    std::string to_string() const override
+    {
+        return Formatter() << "register " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
+                           << "; id " << std::dec << id << " -> " << regid2name(id)
+                           << "; value  " << std::showbase << std::hex << std::setw(16) << value;
+    }
+
+private:
+    int type;
+    reg_id_t id;
+    reg_t value;
+};
+
 
 } //namespace selen
 #endif //REG123456789SELEN

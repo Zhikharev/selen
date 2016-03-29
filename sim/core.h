@@ -98,12 +98,15 @@ public:
     template<typename unit_t>
     unit_t get_reg(const reg_id_t id) const
     {
-        return state.reg.read<unit_t>(id);
+        unit_t value = state.reg.read<unit_t>(id);
+        trace.write(RegRecord{RegRecord::T_READ, id, static_cast<reg_t>(value)});
+        return value;
     }
 
     template<typename unit_t>
     void set_reg(const reg_id_t id, const unit_t value)
     {
+        trace.write(RegRecord{RegRecord::T_WRITE, id, static_cast<reg_t>(value)});
         state.reg.write<unit_t>(id, value);
     }
 
