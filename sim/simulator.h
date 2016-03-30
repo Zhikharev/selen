@@ -45,7 +45,9 @@ struct Status
 class Machine
 {
 public:
-    Machine()
+    Machine() :
+        //TODO: provide initialization from config
+        trace("CoreTrace.txt")
     {
         core.init(&memory);
     }
@@ -90,6 +92,9 @@ private:
     //now it is only one core!
     memory_t memory;
     selen::Core core;
+
+    //and only one trace!
+    Trace trace;
 
     Config config;
     Status status;

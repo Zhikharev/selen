@@ -17,9 +17,17 @@ struct Config
 class Model
 {
 public:
-    Model()
+    Model() :
+        trace("CoreTrace1.txt")
     {
         core.init(&memory);
+        core.set_trace(&trace);
+    }
+
+    ~Model()
+    {
+        std::ofstream stream("MemoryDump.txt");
+        memory.dump(stream, memory.size());
     }
 
     void reset(const Config& ecfg)
@@ -92,6 +100,8 @@ public:
 
 private:
     selen::Core core;
+
+    selen::Trace trace;
     selen::memory_t memory;
     Config cfg;
 };

@@ -171,7 +171,8 @@ struct fetch_t
 class InsFetchRecord : public TraceRecord
 {
 public:
-    InsFetchRecord(const isa::fetch_t& f) :
+    InsFetchRecord(const addr_t pc, const isa::fetch_t& f) :
+        pc(pc),
         data(f)
     {
     }
@@ -179,11 +180,14 @@ public:
 
     std::string to_string() const override
     {
-        return Formatter() << "fetch " << std::showbase << std::setw(10) << std::hex << data.instruction 
-                           << " : " << std::setw(10) << data.disasemble();
+        const word_t instr = data.instruction;
+        return Formatter() << "\t\t||-- " << hex(pc)
+                           << "\t " << hex(instr)
+                           << "\t" <<  data.disasemble();
     }
 
 private:
+    addr_t pc;
     const isa::fetch_t& data;
 };
 

@@ -59,16 +59,6 @@ void Machine::cycle(const size_t steps_limit)
     status.steps_made_last = 0;
     while (status.steps_made_last < steps_limit)
     {
-        //Tracing
-        if(config.trace)
-        {
-            word_t instr = core.fetch();
-            std::cerr << std::hex
-                      << std::setw(ADR_WIDHT) << core.get_pc()
-                      << "\t" << std::setw(INST_WIDHT) << instr
-                      << "\t" << isa::disassemble(instr) << std::endl;
-        }
-
         core.step();
 
         status.steps_made_last++;
@@ -97,6 +87,7 @@ void Machine::set_config(const Config &econfig)
 {
     core.reset();
 
+    core.set_trace((econfig.trace) ? &trace : nullptr);
     config = econfig;
 
     if(memory.size() < config.mem_size)
@@ -114,6 +105,7 @@ const Config &Machine::get_config() const
 void Machine::enable_tracing(const bool enable)
 {
     config.trace = enable;
+    core.set_trace((enable) ? &trace : nullptr);
 }
 
 const Status &Machine::get_status() const

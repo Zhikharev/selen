@@ -87,25 +87,43 @@ public:
         T_WRITE
     };
 
-    RegRecord(const int type,
-              const reg_id_t id,
+    //read record
+    RegRecord(const reg_id_t id,
               const reg_t value) :
-        type(type), id(id),
+        type(T_READ), id(id),
         value(value)
+    {
+    }
+
+    //write record
+    RegRecord(const reg_id_t id,
+              const reg_t new_value,
+              const reg_t old_value) :
+        type(T_WRITE), id(id),
+        value(new_value),
+        diff(new_value - old_value)
     {
     }
 
     std::string to_string() const override
     {
-        return Formatter() << "register " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
-                           << "; id " << std::dec << id << " -> " << regid2name(id)
-                           << "; value  " << std::showbase << std::hex << std::setw(16) << value;
+        std::ostringstream out;
+        out << "register " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
+            << "; id " << std::dec << id << " -> " << regid2name(id)
+            << "; value  " << hex(value);
+
+        if(type == T_WRITE)
+            out << "; diff " << std::dec << diff
+                << " (" << std::showbase << std::hex << diff << ")";
+
+        return out.str();
     }
 
 private:
     int type;
     reg_id_t id;
     reg_t value;
+    sword_t diff;
 };
 
 

@@ -19,7 +19,6 @@ struct CoreState
     }
 };
 
-
 class MemRecord : public TraceRecord
 {
 public:
@@ -43,8 +42,8 @@ public:
     {
         return Formatter() << "memory " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
                            << "; size " << std::dec << size << " bytes"
-                           << "; addr " << std::showbase << std::hex << std::setw(16) << addr
-                           << "; value " << value;
+                           << "; addr " << hex(addr)
+                           << "; value " << hex(value, size * 2);
     }
 
 private:
@@ -57,9 +56,7 @@ private:
 class Core
 {
 public:
-    Core() :
-        //TODO:: it is experimental tracing, rework
-        trace("CoreTrace.txt")
+    Core()
     {
     }
 
@@ -71,6 +68,12 @@ public:
         state.clear();
     }
 
+    //nullptr will disable tracing
+    void set_trace(Trace* etrace)
+    {
+        trace = etrace;
+    }
+
     template<typename unit_t>
     unit_t read_mem(const addr_t addr) const
     {
@@ -78,8 +81,9 @@ public:
 
         unit_t value = mem->read<unit_t>(addr);
 
-        trace.write(MemRecord{MemRecord::T_READ, addr,
-                               sizeof(unit_t), static_cast<uintmax_t>(value)});
+        if(trace != nullptr)
+            trace->write(MemRecord{MemRecord::T_READ, addr,
+                                  sizeof(unit_t), static_cast<uintmax_t>(value)});
 
         return value;
     }
@@ -89,8 +93,9 @@ public:
     {
         assert(mem != nullptr);
 
-        trace.write(MemRecord{MemRecord::T_WRITE, addr,
-                               sizeof(unit_t), static_cast<uintmax_t>(value)});
+        if(trace != nullptr)
+            trace->write(MemRecord{MemRecord::T_WRITE, addr,
+                                  sizeof(unit_t), static_cast<uintmax_t>(value)});
 
         mem->write<unit_t>(addr, value);
     }
@@ -99,14 +104,18 @@ public:
     unit_t get_reg(const reg_id_t id) const
     {
         unit_t value = state.reg.read<unit_t>(id);
-        trace.write(RegRecord{RegRecord::T_READ, id, static_cast<reg_t>(value)});
+        if(trace != nullptr)
+            trace->write(RegRecord{id, static_cast<reg_t>(value)});
         return value;
     }
 
     template<typename unit_t>
     void set_reg(const reg_id_t id, const unit_t value)
     {
-        trace.write(RegRecord{RegRecord::T_WRITE, id, static_cast<reg_t>(value)});
+        if(trace != nullptr)
+            trace->write(RegRecord{id, static_cast<reg_t>(value),
+                                   state.reg.read<reg_t>(id)});
+
         state.reg.write<unit_t>(id, value);
     }
 
@@ -152,9 +161,9 @@ public:
 
 private:
     CoreState state;
-    mutable Trace trace;
 
     memory_t* mem = {nullptr};
+    Trace* trace = {nullptr};
 };
 
 } // namespace selen

@@ -181,7 +181,8 @@ void selen::Core::step()
     word_t instr = fetch();
     isa::fetch_t f = decode(instr);
 
-    trace.write(InsFetchRecord{f});
+    if(trace != nullptr)
+        trace->write(InsFetchRecord{get_pc(), f});
 
     f(*this);
     //selen::isa::perform(*this, instr);

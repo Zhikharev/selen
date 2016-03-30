@@ -18,6 +18,10 @@ add_executable(sim ${SIM_SRC})
 target_link_libraries(sim isa linenoise)
 
 #sv-dpi library prototype
-aux_source_directory(dpi/ DPI_LIB)
-
+set(DPI_LIB dpi/core_model_dpi.cpp )
 add_library(selenisasimdpi SHARED ${DPI_LIB} ${ISA_SRC})
+
+#dpi iface test
+set(DPI_TEST dpi/test.c)
+add_executable(dpitest ${DPI_TEST})
+target_link_libraries(dpitest selenisasimdpi)

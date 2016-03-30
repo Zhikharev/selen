@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <iostream>
 #include <functional>
+#include <cstring>
 
 #include "utils.h"
 
@@ -63,6 +64,7 @@ public:
 
         data = new byte_t[BYTE_SIZE];
         assert(data != nullptr);
+        ::memset(data, 0, BYTE_SIZE);
         allocated = true;
     }
 
@@ -116,8 +118,7 @@ public:
     }
 
     inline
-    void write(const byte_t value,
-                  const addr_t address)
+    void write(const addr_t address, const byte_t value)
     {
         assert(address <= max_address);
 
@@ -246,7 +247,6 @@ public:
     inline
     void resize(const size_t size)
     {
-        std::cerr << "resize " << std::dec << size << std::endl;
         address_space.resize(size);
     }
 
