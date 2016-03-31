@@ -79,6 +79,8 @@ module l1_mau
 
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_r;
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_next;
+	reg                           tr_we_r;
+	reg                           tr_we_next;
 	reg [$clog2(TR_CNT_MAX)-1:0] 	tr_cnt_r;
 	reg [$clog2(TR_CNT_MAX)-1:0]  tr_cnt_next;
 	reg [0:0]											tr_state_r;
@@ -115,6 +117,8 @@ module l1_mau
 	wire d_val;
 	reg  d_req_was_send_r;
 
+	reg  d_we_ack_r;
+
 	assign rst_n = ~wb_rst_i;
 	assign ack_waiting = ~ack_waiting_n;
 
@@ -128,7 +132,7 @@ module l1_mau
 	// TODO: add reset
 	always @(posedge wb_clk_i) begin
 		if(d_req_was_send_r) d_req_was_send_r <= ~((ack_received & (ack_type == ACK_D)) & (ack_we == 1'b0));
-		else d_req_was_send_r <= l1d_req_val & ~l1d_req_we & (tr_state_r == IDLE) & ~buf_full;
+		else d_req_was_send_r <= l1d_req_val & (tr_state_r == IDLE) & ~buf_full;
 	end
 
 	always @(posedge wb_clk_i) begin
@@ -168,7 +172,7 @@ module l1_mau
 	assign wb_adr = tr_addr_r;
 	assign wb_stb = (tr_state_r == TR_REQ);
 	assign wb_adr = tr_addr_r;
-	assign wb_we  = l1d_req_we;
+	assign wb_we  = tr_we_r;
 	assign wb_sel = l1d_req_be;
 	assign wb_dat = l1d_req_wdata;
 
@@ -185,10 +189,12 @@ module l1_mau
 		if(~rst_n) begin
 			tr_addr_r <= 0;
 			tr_cnt_r 	<= 0;
+			tr_we_r   <= 0;
 		end
 		else begin
 			tr_addr_r <= tr_addr_next;
 			tr_cnt_r  <= tr_cnt_next;
+			tr_we_r   <= tr_we_next;
 		end
 	end
 
@@ -199,13 +205,23 @@ module l1_mau
 	assign wait_ack_nc   = (d_val & l1d_req_nc) ? 1'b1 : 1'b0;
 
 	always @* begin
+		if(tr_state_r == IDLE) begin
+			if(d_val) tr_we_next = l1d_req_we;
+			else tr_we_next = 1'b0;
+		end
+		else begin
+			tr_we_next = tr_we_r;
+		end
+	end
+
+	always @* begin
 		case(tr_state_r)
 			IDLE: begin
 				if(d_val) begin
 					tr_state_next = TR_REQ;
 					tr_addr_next = l1d_req_addr;
-					if(l1d_req_nc) tr_cnt_next = 0;
-					else           tr_cnt_next = TR_CNT_MAX - 1;
+					if(l1d_req_nc | l1d_req_we) tr_cnt_next = 0;
+					else tr_cnt_next = TR_CNT_MAX - 1;
 				end
 				else if(i_val) begin
 					tr_state_next = TR_REQ;
@@ -244,12 +260,17 @@ module l1_mau
 	// -------------------------------------------------------------
 
 	assign l1i_req_ack = ack_received & (ack_type == ACK_I);
-	assign l1d_req_ack = (l1d_req_we) ? d_val : (ack_received & (ack_type == ACK_D) & (ack_we == 1'b0));
+	assign l1d_req_ack = (l1d_req_we) ? d_we_ack_r : (ack_received & (ack_type == ACK_D) & (ack_we == 1'b0));
 
 	assign l1i_ack_data = ack_data_r;
 	assign l1d_ack_data = ack_data_r;
 
 	assign l1d_ack_nc 	= ack_nc;
+
+	always @(posedge wb_clk_i or negedge rst_n) begin
+		if(~rst_n) d_we_ack_r <= 1'b0;
+		else d_we_ack_r <= d_val;
+	end
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin

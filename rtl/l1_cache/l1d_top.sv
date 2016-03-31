@@ -9,6 +9,8 @@
 // DESCRIPTION    : write-through, no-write-allocate
 //
 // 1.0 		23.01.16  	Начальная версия со статической памятью
+// 1.1    30.03.16    Исправлена отработка записей. Получается
+//                    большая задержка, 3 такта
 // ----------------------------------------------------------------------------
 `ifndef INC_L1D_TOP
 `define INC_L1D_TOP
@@ -80,6 +82,7 @@ module l1d_top
 	reg  [`CORE_TAG_WIDTH-1:0] 			req_tag_r;
 	reg  [`CORE_IDX_WIDTH-1:0] 			req_idx_r;
 	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
+	reg                             req_we_r;
 	reg                           	req_val_r;
 
 	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
@@ -89,6 +92,7 @@ module l1d_top
 	reg 														mau_req_was_send_r;
 	reg 														mau_req_ack_r;
 	reg  [`L1_LINE_SIZE-1:0]        mau_ack_data_r;
+	reg      												mau_ack_nc_r;
 
 	wire [`L1_WAY_NUM-1:0]					ld_ready_vect;
 	wire [`L1_WAY_NUM-1:0]          ld_en_vect;
@@ -152,10 +156,11 @@ module l1d_top
 		else req_val_r <= req_val;
 	end
 
+	always @(posedge clk) if(req_val) req_we_r <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
 	always @(posedge clk) if(req_val) req_addr_r <= core_req_addr;
 	assign {req_tag_r, req_idx_r, req_offset_r} = req_addr_r;
 
-	assign req_ack = lru_hit | del_buf_hit_r | (mau_req_ack & mau_ack_nc) | mau_req_ack_r;
+	assign req_ack = lru_hit | del_buf_hit_r | mau_req_ack_r;
 
   // -----------------------------------------------------
 	// DELAYED BUFFER
@@ -264,9 +269,10 @@ module l1d_top
 		end
 
 		// TODO: ускорить некэшируемые обращения - добавить мультиплексоры и изменить req_val?
+		// Если записи не ждать один такт?
 		assign mau_req_val   = (req_val_r & (core_req_nc | core_req_wr | ~lru_hit)) | mau_req_was_send_r;
 		assign mau_req_nc    = core_req_nc;
-    assign mau_req_we    = (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
+    assign mau_req_we    = req_we_r;
 	  assign mau_req_addr  = {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
 	 	assign mau_req_wdata = core_req_wdata;
 
@@ -276,8 +282,9 @@ module l1d_top
 			else                        mau_req_be = 4'b1111;
 		end
 
-	always @(posedge clk) mau_req_ack_r  <= mau_req_ack & ~mau_ack_nc;
+	always @(posedge clk) mau_req_ack_r  <= mau_req_ack;
 	always @(posedge clk) mau_ack_data_r <= mau_ack_data;
+	always @(posedge clk) mau_ack_nc_r   <= mau_ack_nc;
 
 	// -----------------------------------------------------
 	// CORE
@@ -286,8 +293,8 @@ module l1d_top
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
 
 	always @* begin
-		if(mau_ack_nc) core_ack_data = mau_ack_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
-		else if(del_buf_hit_r) core_ack_data = del_buf_data_r;
+		if(del_buf_hit_r) core_ack_data = del_buf_data_r;
+		else if(mau_ack_nc_r) core_ack_data = core_line_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
 		else core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
 	end
 
