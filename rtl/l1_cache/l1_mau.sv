@@ -30,6 +30,7 @@ module l1_mau
 	output 												l1d_req_ack,
 	output [`L1_LINE_SIZE-1:0] 		l1d_ack_data,
 	output                        l1d_ack_nc,
+	output                        l1d_ack_we,
 
 	// Wishbone B4 interface
 	input 											 	wb_clk_i,
@@ -266,6 +267,7 @@ module l1_mau
 	assign l1d_ack_data = ack_data_r;
 
 	assign l1d_ack_nc 	= ack_nc;
+	assign l1d_ack_we   = ack_we;
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) d_we_ack_r <= 1'b0;

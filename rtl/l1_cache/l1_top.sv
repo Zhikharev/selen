@@ -67,6 +67,7 @@ module l1_top
 	wire 													l1d_mau_req_ack;
 	wire 	[`L1_LINE_SIZE-1:0] 		l1d_mau_ack_data;
 	wire                          l1d_mau_ack_nc;
+	wire                          l1d_mau_ack_we;
 
 	l1i_top l1i
 	(
@@ -101,7 +102,8 @@ module l1_top
 		.mau_req_be 		(l1d_mau_req_be),
 		.mau_req_ack 		(l1d_mau_req_ack),
 		.mau_ack_data 	(l1d_mau_ack_data),
-		.mau_ack_nc    	(l1d_mau_ack_nc)
+		.mau_ack_nc    	(l1d_mau_ack_nc),
+		.mau_ack_we     (l1d_mau_ack_we)
 	);
 
 	l1_mau mau
@@ -121,6 +123,7 @@ module l1_top
 		.l1d_req_ack 	 	 (l1d_mau_req_ack),
 		.l1d_ack_data 	 (l1d_mau_ack_data),
 		.l1d_ack_nc      (l1d_mau_ack_nc),
+		.l1d_ack_we   	 (l1d_mau_ack_we),
 		// Wishbone B4 interface
 		.wb_clk_i 			 (wb_clk_i),
 		.wb_rst_i 			 (wb_rst_i),

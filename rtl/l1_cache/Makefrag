@@ -6,7 +6,7 @@ RTL_SRC :=\
 	$(MAKEHOME)/l1_ld_mem.sv \
 	$(MAKEHOME)/l1_dm_mem.sv \
 	$(MAKEHOME)/l1_mau.sv \
-	$(MAKEHOME)/l1d_top.sv \
+	$(MAKEHOME)/l1d_top.svp \
 	$(MAKEHOME)/l1i_top.sv \
 	$(MAKEHOME)/l1_top.sv \
 	$(MAKEHOME)/../lib/fifo.v \
