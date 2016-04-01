@@ -70,6 +70,21 @@ module core_tb_top ();
     run_test();
   end
 
+  `ifdef WAVES_FSDB
+  initial begin
+    $fsdbDumpfile("core_tb_top");
+    $fsdbDumpvars;
+  end
+  `elsif WAVES_VCD
+  initial begin
+     $dumpvars;
+  end
+  `elsif WAVES
+  initial begin
+    $vcdpluson;
+  end
+  `endif
+
 endmodule
 
 `endif

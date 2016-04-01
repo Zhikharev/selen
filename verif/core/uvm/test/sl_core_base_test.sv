@@ -48,6 +48,10 @@ class sl_core_base_test extends uvm_test;
     if(!$value$plusargs("num_pkts=%d", num_pkts)) num_pkts = 1;
     uvm_config_db #(int)::set(null, "*", "num_pkts", num_pkts);
 
+    // We need to wait drain time after reset
+    uvm_config_db#(uvm_object_wrapper)::set(this,
+    "*core_data_agent.sequencer.reset_phase", "default_sequence", core_base_seq::type_id::get());
+
     uvm_config_db#(uvm_object_wrapper)::set(this,
     "*core_data_agent.sequencer.main_phase", "default_sequence", sl_core_slave_random_seq::type_id::get());
 
@@ -61,6 +65,7 @@ class sl_core_base_test extends uvm_test;
 
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
+    phase.phase_done.set_drain_time(this, 1000);
   endtask
 
   function void extract_phase(uvm_phase phase);

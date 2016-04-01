@@ -77,8 +77,11 @@ class core_ld_st_seq extends core_base_seq;
 		repeat(num_pkts) begin
 			`uvm_create(req)
 			assert(req.randomize() with {
+				solve req.opcode before req.imm;
 				req.rs1 == 0;
 				req.imm inside {[0:32'hA000]};
+				req.opcode inside {LW, SW} -> (req.imm % 4) == 0;
+				req.opcode inside {LH, LHU, SH} -> (req.imm % 2) == 0;
 				req.opcode inside {
 					LW,	LH,	LHU, LB, LBU,
 					SW, SH, SB};
@@ -110,7 +113,7 @@ class core_jmp_seq extends core_base_seq;
 				req.opcode == JAL -> ((req.imm % 4) == 0);
     	});
     	if(req.opcode == JALR) begin
-    		// Загружаем случайные данные из памти в регистр
+    		// Загружаем случайные данные из памяти в регистр
     		// Выравниваем через логические операции по границе
     		// 4 байт
     		`uvm_create(mem_req)

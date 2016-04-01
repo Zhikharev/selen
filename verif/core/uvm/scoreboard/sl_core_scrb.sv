@@ -74,6 +74,7 @@ class sl_core_scrb extends uvm_scoreboard;
     `uvm_info("SCRB", $sformatf("Memmory acess cop=%0s addr=%0h data=%0h",
     item.cop.name(), item.addr, item.data), UVM_LOW)
     if(!item.is_wr()) begin
+      `uvm_info("SCRB", $sformatf("set_mem addr=%0h data=%0h",item.addr, item.data), UVM_LOW)
       assert(core_model::set_mem(item.addr, item.data))
       else `uvm_error("MODEL", "set_mem failed!")
     end
@@ -87,13 +88,17 @@ class sl_core_scrb extends uvm_scoreboard;
   // FUNCTION: write_commit
   // --------------------------------------------
   function void write_commit(sl_core_bus_item item);
-    while(!sem.try_get());
-    if(do_compare) begin
-      if(!compare_state()) `uvm_error("SCRB", "State compare failed!")
-      assert(core_model::step())
-      else `uvm_error("MODEL", "step failed!")
-    end
-    sem.put();
+    fork
+      #0;
+      while(!sem.try_get());
+      if(do_compare) begin
+        if(!compare_state()) `uvm_error("SCRB", "State compare failed!")
+        `uvm_info("SCRB", "model step", UVM_LOW)
+        assert(core_model::step())
+        else `uvm_error("MODEL", "step failed!")
+      end
+      sem.put();
+    join_none
   endfunction
 
   function bit compare_state();
