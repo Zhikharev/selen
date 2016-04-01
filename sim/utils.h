@@ -33,7 +33,9 @@ class Formatter
 {
 public:
     Formatter()
-    {}
+    {
+    }
+    Formatter(Formatter&&) = default;
 
     Formatter(const Formatter&) = delete;
     Formatter& operator= (const Formatter&) = delete;

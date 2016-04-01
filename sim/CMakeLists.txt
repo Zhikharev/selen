@@ -3,25 +3,24 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -O3")
 
-
-#isa library
-aux_source_directory(isa/ ISA_SRC)
-add_library(isa SHARED ${ISA_SRC})
+#model library
+aux_source_directory(model/ MODEL_LIB_SRC)
+add_library(model SHARED ${MODEL_LIB_SRC})
 
 #command line library: https://github.com/antirez/linenoise
 set(LINENOISE_SRC linenoise/linenoise.c)
 add_library(linenoise ${LINENOISE_SRC})
 
 #simulator
-set(SIM_SRC sim_main.cpp simulator.cpp application.cpp interactive.cpp)
+set(SIM_SRC main.cpp application.cpp interactive.cpp)
 add_executable(sim ${SIM_SRC})
-target_link_libraries(sim isa linenoise)
+target_link_libraries(sim model linenoise)
 
-#sv-dpi library prototype
-set(DPI_LIB dpi/core_model_dpi.cpp )
-add_library(selenisasimdpi SHARED ${DPI_LIB} ${ISA_SRC})
+#sv-dpi library
+set(DPI_LIB_SRC dpi/core_model_dpi.cpp )
+add_library(modeldpi SHARED ${DPI_LIB_SRC} ${MODEL_LIB_SRC})
 
 #dpi iface test
 set(DPI_TEST dpi/test.c)
 add_executable(dpitest ${DPI_TEST})
-target_link_libraries(dpitest selenisasimdpi)
+target_link_libraries(dpitest modeldpi)

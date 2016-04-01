@@ -1,14 +1,9 @@
 #ifndef ISA_UI_H
 #define ISA_UI_H
 
-#include <map>
-#include <functional>
+// UJ-type instruction : JAL and JALR
 
 #include "decode.h"
-
-/*
- * UJ-type instruction implementation: JAL and JALR
- */
 
 namespace selen
 {
@@ -18,9 +13,9 @@ namespace isa
 
 struct JAL
 {
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 0, 0,
@@ -39,9 +34,9 @@ struct JAL
 
 struct JALR
 {
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 0, 0,

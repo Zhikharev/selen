@@ -1,14 +1,9 @@
 #ifndef ISA_LOAD_H
 #define ISA_LOAD_H
 
-#include <map>
-#include <functional>
+//LOAD-type instruction
 
 #include "decode.h"
-
-/*
- * LOAD-type instruction
- */
 
 namespace selen
 {
@@ -23,9 +18,9 @@ struct LOAD
 
 #define func3(x) ((x) << 12)
 
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 mask, 0,

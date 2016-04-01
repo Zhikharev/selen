@@ -1,12 +1,10 @@
-#Как компилировать программы с помощью gcc а потом запускать их на голом симуляторе или железе без OC?
+#Как компилировать программы с помощью gcc а потом запускать их в симуляторе?
 
 
 есть [riscv-gcc](https://github.com/riscv/riscv-gnu-toolchain) собранный с опцией --enable-multilib.
 
 Задача следующая:
  - Скомпилировать файл prog.cpp и запустить его в симуляторе.
-
-
 
 
 В папке предлагается Makefile где это происходит.
@@ -181,21 +179,23 @@ dd if=prog.bin of=flash.bin bs=65536 conv=notrunc
 flash.bin  можно было запустить в Spike или QEMU если прописать в скрипте правильный адрес начала.
 В нашем симуляторе:
 ```
-./sim -img  ../src/sim/bare_metal/flash.bin -i -e BE
+./sim -img ./flash.bin
 ```
 
-BE - big endian, это издержки недопонимания порядка байт от транслятора gipnocow в нашем случае. Этот вопрос надо решать. 
+Интерактивный режим:
 ```
+~/projects/selen/build
+jettatura@Jettatura-ubunty: pts/9: 17 files 8,9Mb -> ./sim -img ../src/sim/bare_metal/flash.bin  -i -as 65536
 Selen isa simulator 2015.
 Parameters:
                   image file: ../src/sim/bare_metal/flash.bin
                state dump to: id.txt
                state dump to: fd.txt
                       regime: interactive
-           Simulator config: 
+           Simulator config:
                      tracing: on
-                  endianness: BE
-          address space size: 1024 bytes
+                  endianness: LE
+          address space size: 65536 bytes
                     start pc: 0
                        steps: 0
 Simulator at interactive regime
@@ -203,76 +203,94 @@ Simulator at interactive regime
 image ../src/sim/bare_metal/flash.bin was loaded to simulator memory at address 0
 (isa-sim): d 0
 dissasemble 10 words from address 0
-         0	    0x1117	 AUIPC V0, 0x1000
-       0x4	 0x9810113	  ADDI	 V0,  V0, 0x98
-       0x8	  0x40006f	   JAL	ZERO, 0x4
-       0xc	0xfe010113	  ADDI	 V0,  V0, 0xffffffe0
-      0x10	  0x812e23	    SW	 V0, [ T0 + 0x1c]
-      0x14	 0x2010413	  ADDI	 T0,  V0, 0x20
-      0x18	  0x100793	  ADDI	 T7, ZERO, 0x1
-      0x1c	0xfef42423	    SW	 T0, [ T7 + 0xffffffe8]
-      0x20	  0x300793	  ADDI	 T7, ZERO, 0x3
-      0x24	0xfef42223	    SW	 T0, [ T7 + 0xffffffe4]
-(isa-sim): s
-start 1 step from 0
-Trace: 
-           0	      0x1117	 AUIPC V0, 0x1000
-steps performed 1, current pc 0x4
-(isa-sim): s
-start 1 step from 0x4
-Trace: 
-         0x4	   0x9810113	  ADDI	 V0,  V0, 0x98
-steps performed 1, current pc 0x8
-(isa-sim): s
-start 1 step from 0x8
-Trace: 
-         0x8	    0x40006f	   JAL	ZERO, 0x4
-steps performed 1, current pc 0xc
-(isa-sim): s
-start 1 step from 0xc
-Trace: 
-         0xc	  0xfe010113	  ADDI	 V0,  V0, 0xffffffe0
-steps performed 1, current pc 0x10
-(isa-sim): s
-start 1 step from 0x10
-Trace: 
-        0x10	    0x812e23	    SW	 V0, [ T0 + 0x1c]
-steps performed 1, current pc 0x14
-(isa-sim): s
-start 1 step from 0x14
-Trace: 
-        0x14	   0x2010413	  ADDI	 T0,  V0, 0x20
-steps performed 1, current pc 0x18
-(isa-sim): s
-start 1 step from 0x18
-Trace: 
-        0x18	    0x100793	  ADDI	 T7, ZERO, 0x1
-steps performed 1, current pc 0x1c
-(isa-sim): s
-start 1 step from 0x1c
-Trace: 
-        0x1c	      0x1078	invalid, opcode: 0x78
+         0	    0x1117	 AUIPC	 sp, 0x1000
+       0x4	 0x9810113	  ADDI	 sp,  sp, 152
+       0x8	  0x40006f	   JAL	zero, 0x4
+       0xc	0xfe010113	  ADDI	 sp,  sp, -32
+      0x10	  0x812e23	    SW	 sp, [ s0 + 0x1c]
+      0x14	 0x2010413	  ADDI	 s0,  sp, 32
+      0x18	  0x100793	  ADDI	 a5, zero, 1
+      0x1c	0xfef42423	    SW	 s0, [ a5 + 0xffffffe8]
+      0x20	  0x300793	  ADDI	 a5, zero, 3
+      0x24	0xfef42223	    SW	 s0, [ a5 + 0xffffffe4]
+(isa-sim): s 10
+start 10 step from 0
+         0:	[memory]       READ ; size 4 bytes; addr 0x00000000; value 0x11170000
+         1:	[fetch]        	-|-->	0x00000000	 0x11170000	 AUIPC	 sp, 0x1000
+         2:	[register]     WRITE; id 2 -> sp; value  0x10000000; diff 4096 (0x1000)
+         3:	[memory]       READ ; size 4 bytes; addr 0x40000000; value 0x98101130
+         4:	[fetch]        	-|-->	0x40000000	 0x98101130	  ADDI	 sp,  sp, 152
+         5:	[register]     READ ; id 2 -> sp; value  0x10000000
+         6:	[register]     WRITE; id 2 -> sp; value  0x10980000; diff 152 (0x98)
+         7:	[memory]       READ ; size 4 bytes; addr 0x80000000; value 0x40006f00
+         8:	[fetch]        	-|-->	0x80000000	 0x40006f00	   JAL	zero, 0x4
+         9:	[register]     WRITE; id 0 -> zero; value  0x80000000; diff 8 (0x8)
+        10:	[memory]       READ ; size 4 bytes; addr 0xc0000000; value 0xfe010113
+        11:	[fetch]        	-|-->	0xc0000000	 0xfe010113	  ADDI	 sp,  sp, -32
+        12:	[register]     READ ; id 2 -> sp; value  0x10980000
+        13:	[register]     WRITE; id 2 -> sp; value  0x10780000; diff -32 (0xffffffe0)
+        14:	[memory]       READ ; size 4 bytes; addr 0x10000000; value 0x812e2300
+        15:	[fetch]        	-|-->	0x10000000	 0x812e2300	    SW	 sp, [ s0 + 0x1c]
+        16:	[register]     READ ; id 8 -> s0; value  0x00000000
+        17:	[register]     READ ; id 2 -> sp; value  0x10780000
+        18:	[memory]       WRITE; size 4 bytes; addr 0x10940000; value 0x00000000
+        19:	[memory]       READ ; size 4 bytes; addr 0x14000000; value 0x20104130
+        20:	[fetch]        	-|-->	0x14000000	 0x20104130	  ADDI	 s0,  sp, 32
+        21:	[register]     READ ; id 2 -> sp; value  0x10780000
+        22:	[register]     WRITE; id 8 -> s0; value  0x10980000; diff 4248 (0x1098)
+        23:	[memory]       READ ; size 4 bytes; addr 0x18000000; value 0x10079300
+        24:	[fetch]        	-|-->	0x18000000	 0x10079300	  ADDI	 a5, zero, 1
+        25:	[register]     READ ; id 0 -> zero; value  0x00000000
+        26:	[register]     WRITE; id 15 -> a5; value  0x10000000; diff 1 (0x1)
+        27:	[memory]       READ ; size 4 bytes; addr 0x1c000000; value 0xfef42423
+        28:	[fetch]        	-|-->	0x1c000000	 0xfef42423	    SW	 s0, [ a5 + 0xffffffe8]
+        29:	[register]     READ ; id 15 -> a5; value  0x10000000
+        30:	[register]     READ ; id 8 -> s0; value  0x10980000
+        31:	[memory]       WRITE; size 4 bytes; addr 0x10800000; value 0x10000000
+        32:	[memory]       READ ; size 4 bytes; addr 0x20000000; value 0x30079300
+        33:	[fetch]        	-|-->	0x20000000	 0x30079300	  ADDI	 a5, zero, 3
+        34:	[register]     READ ; id 0 -> zero; value  0x00000000
+        35:	[register]     WRITE; id 15 -> a5; value  0x30000000; diff 2 (0x2)
+        36:	[memory]       READ ; size 4 bytes; addr 0x24000000; value 0xfef42223
+        37:	[fetch]        	-|-->	0x24000000	 0xfef42223	    SW	 s0, [ a5 + 0xffffffe4]
+        38:	[register]     READ ; id 15 -> a5; value  0x30000000
+        39:	[register]     READ ; id 8 -> s0; value  0x10980000
+        40:	[memory]       WRITE; size 4 bytes; addr 0x107c0000; value 0x30000000
+steps performed 10, current pc 0x28
+(isa-sim): p reg
+PC:	0x28
+zero:	0
+ra:	0
+sp:	0x1078
+gp:	0
+tp:	0
+t0:	0
+t1:	0
+t2:	0
+s0:	0x1098
+s1:	0
+a0:	0
+a1:	0
+a2:	0
+a3:	0
+a4:	0
+a5:	0x3
+a6:	0
+a7:	0
+s2:	0
+s3:	0
+s4:	0
+s5:	0
+s6:	0
+s7:	0
+s8:	0
+s9:	0
+s10:	0
+s11:	0
+t3:	0
+t4:	0
+t5:	0
+t6:	0
 
-***************
-SIMULATOR ERROR: illegal opcode 0x78, unable decode instruction: 0x1078 at address 0x1c
-valid opcodes:
-0x3	0x13	0x17	0x23	0x33	0x37	0x63	0x67	0x6f	
-***************
-
-steps performed 0, current pc 0x1c
-(isa-sim): d 0
-dissasemble 10 words from address 0
-         0	    0x1117	 AUIPC V0, 0x1000
-       0x4	 0x9810113	  ADDI	 V0,  V0, 0x98
-       0x8	  0x40006f	   JAL	ZERO, 0x4
-       0xc	0xfe010113	  ADDI	 V0,  V0, 0xffffffe0
-      0x10	  0x812e23	    SW	 V0, [ T0 + 0x1c]
-      0x14	 0x2010413	  ADDI	 T0,  V0, 0x20
-      0x18	  0x100793	  ADDI	 T7, ZERO, 0x1
-      0x1c	    0x1078	invalid, opcode: 0x78
-      0x20	  0x300793	  ADDI	 T7, ZERO, 0x3
-      0x24	0xfef42223	    SW	 T0, [ T7 + 0xffffffe4]
-(isa-sim): 
 
 ```
- Кое что зашагало, однако программа поменяла сама себя во время выполнения. Это потому что я у меня инструкция SW в симуляторе сделана неправильно.

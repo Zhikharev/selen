@@ -203,7 +203,7 @@ void Interactive::print_help(const std::string command) const
 
         if(cmd_found)
         {
-            std::cout << "\t" << std::setw(fmtwidht) << cmd.print_names()
+            std::cout << "\t" << std::setw(FMT_WIDHT) << cmd.print_names()
                       << " - " << cmd.description << std::endl;
             return;
         }
@@ -215,7 +215,7 @@ void Interactive::print_help(const std::string command) const
 
     for(const Command& token : commands)
     {
-        std::cout << "\t" << std::setw(fmtwidht) << token.print_names()
+        std::cout << "\t" << std::setw(FMT_WIDHT) << token.print_names()
             << " - " << token.brief << std::endl;
     }
 
@@ -229,23 +229,27 @@ void Interactive::print_status() const
 
 void Interactive::print_register(const std::string &name) const
 {
+    const selen::CoreState &state = parent->get_simulator().get_core_state();
+
     if(name.empty())
     {
-        parent->get_simulator().dump_registers(std::cout);
+        state.dump(std::cout);
         return;
     }
 
-    const selen::CoreState &state = parent->get_simulator().get_core_state();
     selen::reg_id_t id = selen::name2regid(name);
 
     if(id == selen::R_LAST)
+    {
         std::cout << "there is no register \"" << name << "\"."
                      "\nAvaible registers:\n"
                   << compose_reg_names_string() << std::endl;
-    else
-        std::cout << selen::regid2name(id) << ": "
-                  << std::hex << state.reg.read<selen::word_t>(id)
-                  << std::endl;
+        return;
+    }
+
+    std::cout << selen::regid2name(id) << ": "
+        << std::hex << state.reg.read<selen::word_t>(id)
+        << std::endl;
 }
 
 void Interactive::exit(int exit_code)

@@ -3,8 +3,8 @@
 
 #include <cassert>
 #include <string>
-#include "core.h"
-#include "isa/definitions.h"
+
+#include "riscv.h"
 
 namespace selen
 {
@@ -13,17 +13,23 @@ struct Config
 {
     //memory size (bytes)
     std::size_t mem_size = {1024};
+    bool allow_resize = {true};
     
     //entry program counter value
     addr_t pc = {0};
-    //enable tracing
+
     bool trace = {true};
+    trace::Config trace_config;
 
     //num steps
     size_t steps = {0};
 
+    //model run as dpi library
+    bool isDPI = false;
+
+    size_t verbosity = 1;
     //endian
-    memory_t::ENDIAN endianness = {memory_t::LE};
+    size_t endianness = {memory_t::LE};
 };
 
 //Simulator dynamic data
@@ -42,12 +48,10 @@ struct Status
     size_t steps_made_from_begin = {0};
 };
 
-class Machine
+class Model
 {
 public:
-    Machine() :
-        //TODO: provide initialization from config
-        trace("CoreTrace.txt")
+    Model()
     {
         core.init(&memory);
     }
@@ -66,11 +70,10 @@ public:
     bool load(const std::vector<byte_t>& image, bool allow_resize = true, addr_t load_offset = 0);
 
     //run simulator
-    std::size_t step(size_t num_steps);
+    std::size_t step(const size_t num_steps);
     
     //dump registers and memory to the stream
-    void dump_registers(std::ostream& out) const;
-    void dump_memory(std::ostream& out) const;
+    void dump_state(std::ostream& out) const;
 
     //set config (this will not reset state)
     void set_config(const Config& econfig);
@@ -85,6 +88,43 @@ public:
 
     const selen::CoreState& get_core_state() const;
     const memory_t &get_memory() const;
+
+    template<class unit_t>
+    void write_mem(const addr_t addr, const unit_t value)
+    {
+        if(addr >= memory.size() &&
+            config.allow_resize)
+        {
+            memory.resize(addr + 1);
+            //else write will try
+        }
+
+        core.write_mem(addr, value);
+    }
+
+    template<class unit_t>
+    unit_t read_mem(const addr_t addr)
+    {
+        return core.read_mem<unit_t>(addr);
+    }
+
+    template<class unit_t>
+    unit_t get_reg(const reg_id_t reg_id)
+    {
+        return core.get_reg<unit_t>(reg_id);
+    }
+
+    template<class unit_t>
+    void set_reg(const reg_id_t reg_id, const unit_t value)
+    {
+        core.set_reg(reg_id, value);
+    }
+
+    template<class Stringable>
+    void write_to_trace(const Stringable s)
+    {
+        trace.write(s);
+    }
 
 private:
     void cycle(const size_t num_steps);
@@ -101,9 +141,6 @@ private:
 };
 
 //Printing functions
-
-//base field widht for entries at logs
-#define fmtwidht 30
 
 std::ostream &operator<<(std::ostream& os, const Status& st);
 std::ostream &operator<<(std::ostream& os, const Config& cfg);

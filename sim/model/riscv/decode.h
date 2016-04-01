@@ -1,11 +1,19 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
-#include "definitions.h"
-#include "../trace.h"
+#include <string>
+#include <functional>
+#include <vector>
+#include <climits>
+
+#include "../defines.h"
+
+//#include "../core.h"
 
 namespace selen
 {
+
+class Core;
 
 namespace isa
 {
@@ -143,6 +151,7 @@ struct descriptor_t
 };
 
 typedef const descriptor_t* descriptor_ptr_t;
+typedef std::vector<descriptor_t> descriptor_array_t;
 
 std::string print_instruction(const std::string& mnemonic,
                               const word_t format,
@@ -166,31 +175,6 @@ struct fetch_t
 };
 
 } //namespace isa
-
-
-class InsFetchRecord : public TraceRecord
-{
-public:
-    InsFetchRecord(const addr_t pc, const isa::fetch_t& f) :
-        pc(pc),
-        data(f)
-    {
-    }
-
-
-    std::string to_string() const override
-    {
-        const word_t instr = data.instruction;
-        return Formatter() << "\t\t||-- " << hex(pc)
-                           << "\t " << hex(instr)
-                           << "\t" <<  data.disasemble();
-    }
-
-private:
-    addr_t pc;
-    const isa::fetch_t& data;
-};
-
 
 } //namespace selen
 #endif // INSTRUCTION_H

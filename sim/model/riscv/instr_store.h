@@ -1,13 +1,9 @@
 #ifndef ISA_STORE_H
 #define ISA_STORE_H
 
-#include <map>
-#include <functional>
+// STORE-type instruction
 
 #include "decode.h"
-/*
- * STORE-type instruction implementation
- */
 
 namespace selen
 {
@@ -22,9 +18,9 @@ struct STORE
 
 #define func3(x) ((x) << 12)
 
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 mask, 0,

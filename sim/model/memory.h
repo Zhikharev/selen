@@ -1,11 +1,8 @@
 #ifndef MEM123456789SELEN
 #define MEM123456789SELEN
-/*
- * memory definitions
- */
+
 #include <type_traits>
 #include <stdexcept>
-#include <cstdint>
 #include <climits>
 #include <vector>
 #include <cassert>
@@ -16,24 +13,13 @@
 #include <functional>
 #include <cstring>
 
-#include "utils.h"
+#include "defines.h"
+#include "../utils.h"
+
+#include <memory>
 
 namespace selen
 {
-
-typedef uint8_t   byte_t;
-typedef uint16_t  hword_t;
-typedef uint32_t  word_t;
-
-//signed
-typedef int8_t   sbyte_t;
-typedef int16_t  shword_t;
-typedef int32_t  sword_t;
-
-constexpr size_t WORD_SIZE = sizeof(word_t);
-
-//address
-typedef uint32_t  addr_t;
 
 //physical memory page
 class page_t
@@ -50,29 +36,11 @@ public:
     {
     }
 
-    ~page_t()
-    {
-        if(allocated)
-            delete[] data;
-    }
-
-    inline
-    void allocate()
-    {
-        if(allocated)
-            return;
-
-        data = new byte_t[BYTE_SIZE];
-        assert(data != nullptr);
-        ::memset(data, 0, BYTE_SIZE);
-        allocated = true;
-    }
-
     inline
     byte_t read(const addr_t offset) const
     {
         assert(offset < BYTE_SIZE);
-        return (allocated) ? data[offset] : 0x00;
+        return (data) ? data.get()[offset] : 0x00;
     }
 
     inline
@@ -81,20 +49,23 @@ public:
     {
         assert(offset < BYTE_SIZE);
 
-        if(!allocated)
+        if(!data)
         {
             if(value == 0x00)
                 return;
 
-            allocate();
+            data.reset(new byte_t[BYTE_SIZE],
+                std::default_delete<byte_t[]>());
+
+            ::memset(data.get(), 0, BYTE_SIZE);
         }
 
-        data[offset] = value;
+        data.get()[offset] = value;
     }
 
 private:
-    bool allocated = {false};
-    byte_t* data = {nullptr};
+    //std::vector resize, copy and delete Pages, need hold pointer
+    std::shared_ptr<byte_t> data;
 };
 
 //physical memory region
@@ -278,18 +249,18 @@ public:
             const byte_t token = *(data + counter);
             const addr_t target = dest + counter;
 
-            address_space.write(token, target);
+            address_space.write(target, token);
             counter++;
         }
     }
 
-    enum ENDIAN
+    enum ENDIAN : size_t
     {
         LE,
         BE
     };
 
-    void set_endian(ENDIAN value = LE)
+    void set_endian(const size_t value = LE)
     {
         endianness = value;
     }
@@ -341,7 +312,7 @@ public:
         }
     }
 private:
-    ENDIAN endianness = {LE};
+    size_t endianness = {LE};
     region_t address_space;
 }; //memory
 

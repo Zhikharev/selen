@@ -161,7 +161,7 @@ string Application::print_help()
 
     const cloption_map_t& options = get_cloptions();
     for (const CLOption& token : options)
-        out << setw(fmtwidht) << (string("--") + token.name) << ","
+        out << setw(FMT_WIDHT) << (string("--") + token.name) << ","
             << setw(5) << (string("-") + token.alias)
             << " - " << token.description << endl;
 
@@ -210,8 +210,7 @@ int Application::run()
 void Application::dump_state_to_file(const string &filename)
 {
     ofstream out(filename);
-    sim.dump_registers(out);
-    sim.dump_memory(out);
+    sim.dump_state(out);
     out.close();
 
     if(!params.quiet)
@@ -285,11 +284,11 @@ void Application::run_interactive()
 
 ostream &operator<<(ostream &os, const Parameters &params)
 {
-    os << setw(fmtwidht) << "image file: " << ((params.imagefilename.empty()) ?"<not specified>" : params.imagefilename) << std::endl
-       << setw(fmtwidht) << "state dump to: " << params.init_dump << std::endl
-       << setw(fmtwidht) << "state dump to: " << params.final_dump << std::endl
-       << setw(fmtwidht) << "regime: " << ((params.regime == Parameters::R_INTERACTIVE) ? "interactive" : "simple") << std::endl
-       << setw(fmtwidht) << "Simulator config: \n" << params.sim_config;
+    os << setw(FMT_WIDHT) << "image file: " << ((params.imagefilename.empty()) ?"<not specified>" : params.imagefilename) << std::endl
+       << setw(FMT_WIDHT) << "state dump to: " << params.init_dump << std::endl
+       << setw(FMT_WIDHT) << "state dump to: " << params.final_dump << std::endl
+       << setw(FMT_WIDHT) << "regime: " << ((params.regime == Parameters::R_INTERACTIVE) ? "interactive" : "simple") << std::endl
+       << setw(FMT_WIDHT) << "Simulator config: \n" << params.sim_config;
 
     return os;
 }

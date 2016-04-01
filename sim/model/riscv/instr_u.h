@@ -1,15 +1,9 @@
 #ifndef ISA_U_H
 #define ISA_U_H
 
-
-#include <map>
-#include <functional>
+// U-type instruction: LUI and AUIPC
 
 #include "decode.h"
-
-/*
- * U-type instruction implementation: LUI and AUIPC
- */
 
 namespace selen
 {
@@ -19,9 +13,9 @@ namespace isa
 
 struct LUI
 {
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 0, 0,
@@ -41,9 +35,9 @@ struct LUI
 
 struct AUIPC
 {
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 0, 0,

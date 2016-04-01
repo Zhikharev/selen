@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "simulator.h"
+#include "model/model.h"
 
 class Application;
 
@@ -52,7 +52,7 @@ public:
 
     void exit(int status);
 
-    selen::Machine& get_simulator()
+    selen::Model& get_simulator()
     {
         return sim;
     }
@@ -85,7 +85,7 @@ protected:
 
 private:
     Parameters params;
-    selen::Machine sim;
+    selen::Model sim;
 };
 
 #endif // APPLICATION_H

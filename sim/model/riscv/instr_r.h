@@ -1,14 +1,9 @@
 #ifndef ISA_R_H
 #define ISA_R_H
 
-#include <map>
-#include <functional>
+//R-type instructions, Integer Register-Register Operations
 
 #include "decode.h"
-
-/*
- * R-type instructions, Integer Register-Register Operations
- */
 
 namespace selen
 {
@@ -24,9 +19,9 @@ struct R
 #define func3(x) ((x) << 12)
 #define func7(x) ((x) << 25)
 
-    static const std::vector<isa::descriptor_t>& getDescriptors()
+    static const descriptor_array_t& getDescriptors()
     {
-        static const std::vector<isa::descriptor_t> product =
+        static const descriptor_array_t product =
         {
             {
                 mask, 0,

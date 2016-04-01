@@ -1,19 +1,18 @@
 #ifndef REG123456789SELEN
 #define REG123456789SELEN
-/*
- * registers definitions
- */
 
 #include <cassert>
 #include <cstring>
-#include "memory.h"
-#include "trace.h"
+#include <vector>
+#include <string>
+
+#include "defines.h"
 
 namespace selen
 {
 
 typedef word_t reg_t;
-typedef std::size_t reg_id_t;
+typedef size_t reg_id_t;
 
 enum : reg_id_t
 {
@@ -29,7 +28,6 @@ enum : reg_id_t
     //boundary
     R_LAST,
     R_FIRST = R_ZERO
-
 };
 
 constexpr reg_id_t NUM_REGISTERS = R_LAST;
@@ -76,56 +74,6 @@ std::string regid2name(const reg_id_t id);
 reg_id_t name2regid(const std::string &name);
 
 const std::vector<std::string>& get_reg_names();
-
-class RegRecord : public TraceRecord
-{
-public:
-
-    enum
-    {
-        T_READ = 0,
-        T_WRITE
-    };
-
-    //read record
-    RegRecord(const reg_id_t id,
-              const reg_t value) :
-        type(T_READ), id(id),
-        value(value)
-    {
-    }
-
-    //write record
-    RegRecord(const reg_id_t id,
-              const reg_t new_value,
-              const reg_t old_value) :
-        type(T_WRITE), id(id),
-        value(new_value),
-        diff(new_value - old_value)
-    {
-    }
-
-    std::string to_string() const override
-    {
-        std::ostringstream out;
-        out << "register " << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
-            << "; id " << std::dec << id << " -> " << regid2name(id)
-            << "; value  " << hex(value);
-
-        if(type == T_WRITE)
-            out << "; diff " << std::dec << diff
-                << " (" << std::showbase << std::hex << diff << ")";
-
-        return out.str();
-    }
-
-private:
-    int type;
-    reg_id_t id;
-    reg_t value;
-    sword_t diff;
-};
-
 
 } //namespace selen
 #endif //REG123456789SELEN
