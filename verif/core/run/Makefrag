@@ -13,5 +13,5 @@ ELAB_OPTS+=\
 	-CFLAGS "-std=c++11 -g -Wall -O3" \
 	-CFLAGS -I$(SIM_HOME)/isa \
 	-CFLAGS -I$(SIM_HOME) \
-	$(SIM_HOME)/isa/src.cpp \
+	$(SIM_HOME)/model/src.cpp \
 	$(SIM_HOME)/dpi/core_model_dpi.cpp

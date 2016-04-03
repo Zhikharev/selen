@@ -82,6 +82,10 @@ module l1_mau
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_next;
 	reg                           tr_we_r;
 	reg                           tr_we_next;
+	reg [`CORE_DATA_WIDTH-1:0]    tr_wdata_r;
+	reg [`CORE_DATA_WIDTH-1:0]    tr_wdata_next;
+	reg [`CORE_BE_WIDTH-1:0]   		tr_be_r;
+	reg [`CORE_BE_WIDTH-1:0]   		tr_be_next;
 	reg [$clog2(TR_CNT_MAX)-1:0] 	tr_cnt_r;
 	reg [$clog2(TR_CNT_MAX)-1:0]  tr_cnt_next;
 	reg [0:0]											tr_state_r;
@@ -130,15 +134,20 @@ module l1_mau
 	assign d_val = l1d_req_val & ~d_req_was_send_r & ~buf_full;
 	assign i_val = l1i_req_val & ~i_req_was_send_r & ~buf_full;
 
-	// TODO: add reset
-	always @(posedge wb_clk_i) begin
-		if(d_req_was_send_r) d_req_was_send_r <= ~((ack_received & (ack_type == ACK_D)) & (ack_we == 1'b0));
-		else d_req_was_send_r <= l1d_req_val & (tr_state_r == IDLE) & ~buf_full;
+	always @(posedge wb_clk_i or posedge wb_rst_i) begin
+		if(wb_rst_i) d_req_was_send_r <= 1'b0;
+		else begin
+			if(d_req_was_send_r) d_req_was_send_r <= ~(ack_received & (ack_type == ACK_D));
+			else d_req_was_send_r <= l1d_req_val & (tr_state_r == IDLE) & ~buf_full;
+		end
 	end
 
-	always @(posedge wb_clk_i) begin
-		if(i_req_was_send_r) i_req_was_send_r <= ~(ack_received & (ack_type == ACK_I));
-		else i_req_was_send_r <= l1i_req_val & ~l1d_req_val & (tr_state_r == IDLE) & ~buf_full;
+	always @(posedge wb_clk_i or posedge wb_rst_i) begin
+		if(wb_rst_i) i_req_was_send_r <= 1'b0;
+		else begin
+			if(i_req_was_send_r) i_req_was_send_r <= ~(ack_received & (ack_type == ACK_I));
+			else i_req_was_send_r <= l1i_req_val & ~l1d_req_val & (tr_state_r == IDLE) & ~buf_full;
+		end
 	end
 
 	// -----------------------------------------------------
@@ -174,8 +183,8 @@ module l1_mau
 	assign wb_stb = (tr_state_r == TR_REQ);
 	assign wb_adr = tr_addr_r;
 	assign wb_we  = tr_we_r;
-	assign wb_sel = l1d_req_be;
-	assign wb_dat = l1d_req_wdata;
+	assign wb_sel = tr_be_r;
+	assign wb_dat = tr_wdata_r;
 
 	always @(posedge wb_clk_i or negedge rst_n) begin
 		if(~rst_n) begin
@@ -191,27 +200,41 @@ module l1_mau
 			tr_addr_r <= 0;
 			tr_cnt_r 	<= 0;
 			tr_we_r   <= 0;
+			tr_wdata_r<= 0;
+			tr_be_r   <= 0;
 		end
 		else begin
 			tr_addr_r <= tr_addr_next;
 			tr_cnt_r  <= tr_cnt_next;
 			tr_we_r   <= tr_we_next;
+			tr_wdata_r<= tr_wdata_next;
+			tr_be_r   <= tr_be_next;
 		end
 	end
 
 	assign ack_wait = i_val | d_val;;
 	assign wait_ack_type = (d_val) ? ACK_D : ACK_I;
-	assign wait_ack_cnt  = (d_val & l1d_req_nc) ? 0 : TR_CNT_MAX - 1;
+	assign wait_ack_cnt  = (d_val & (l1d_req_nc | l1d_req_we)) ? 0 : TR_CNT_MAX - 1;
 	assign wait_ack_we   = (d_val & l1d_req_we) ? 1'b1 : 1'b0;
 	assign wait_ack_nc   = (d_val & l1d_req_nc) ? 1'b1 : 1'b0;
 
 	always @* begin
 		if(tr_state_r == IDLE) begin
-			if(d_val) tr_we_next = l1d_req_we;
-			else tr_we_next = 1'b0;
+			if(d_val) begin
+				tr_we_next = l1d_req_we;
+				tr_wdata_next = l1d_req_wdata;
+				tr_be_next = l1d_req_be;
+			end
+			else begin
+				tr_we_next = 1'b0;
+				tr_wdata_next = tr_wdata_r;
+				tr_be_next = tr_be_r;
+			end
 		end
 		else begin
 			tr_we_next = tr_we_r;
+			tr_wdata_next = tr_wdata_r;
+			tr_be_next = tr_be_r;
 		end
 	end
 
@@ -261,7 +284,7 @@ module l1_mau
 	// -------------------------------------------------------------
 
 	assign l1i_req_ack = ack_received & (ack_type == ACK_I);
-	assign l1d_req_ack = (l1d_req_we) ? d_we_ack_r : (ack_received & (ack_type == ACK_D) & (ack_we == 1'b0));
+	assign l1d_req_ack = (tr_we_r) ? d_we_ack_r : (ack_received & (ack_type == ACK_D) & (ack_we == 1'b0));
 
 	assign l1i_ack_data = ack_data_r;
 	assign l1d_ack_data = ack_data_r;

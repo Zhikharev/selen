@@ -11,6 +11,10 @@
 // 1.0 		23.01.16  	Начальная версия со статической памятью
 // 1.1    30.03.16    Исправлена отработка записей. Получается
 //                    большая задержка, 3 такта
+// 1.2    31.03.16    Улучшена обработка записей, задержка 1 такт
+// 1.3    03.04.16    Исправлены ошибки связанные с отработкой записей и
+//                    некэшруемых зпросов. Исправлена логи для отработки
+//                    конвейерных запросов
 // ----------------------------------------------------------------------------
 `ifndef INC_L1D_TOP
 `define INC_L1D_TOP
@@ -34,6 +38,7 @@ module l1d_top
 	output reg [`CORE_BE_WIDTH-1:0]     mau_req_be,
 	input 															mau_req_ack,
 	input                               mau_ack_nc,
+	input                               mau_ack_we,
 	input 		 [`L1_LINE_SIZE-1:0] 			mau_ack_data
 );
 
@@ -83,6 +88,7 @@ module l1d_top
 	reg  [`CORE_IDX_WIDTH-1:0] 			req_idx_r;
 	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
 	reg                             req_we_r;
+	reg                             req_nc_r;
 	reg                           	req_val_r;
 
 	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
@@ -133,7 +139,7 @@ module l1d_top
 	// REQ
 	// -----------------------------------------------------
 
-	assign req_val = core_req_val & ~req_was_send_r;
+	assign req_val = core_req_val & (~req_was_send_r | req_ack);
 
 	always_ff @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
@@ -157,10 +163,11 @@ module l1d_top
 	end
 
 	always @(posedge clk) if(req_val) req_we_r <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
+	always @(posedge clk) if(req_val) req_nc_r <= core_req_nc;
 	always @(posedge clk) if(req_val) req_addr_r <= core_req_addr;
 	assign {req_tag_r, req_idx_r, req_offset_r} = req_addr_r;
 
-	assign req_ack = lru_hit | del_buf_hit_r | mau_req_ack_r;
+	assign req_ack = lru_hit | del_buf_hit_r | (req_val_r & req_we_r) | mau_req_ack_r;
 
   // -----------------------------------------------------
 	// DELAYED BUFFER
@@ -264,7 +271,7 @@ module l1d_top
 
 		always @(posedge clk, posedge rst_n) begin
 			if(~rst_n) mau_req_was_send_r <= 1'b0;
-			else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack;
+			else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack | req_val_r;
 	 		else mau_req_was_send_r <= mau_req_val;
 		end
 
@@ -273,7 +280,7 @@ module l1d_top
 		assign mau_req_val   = (req_val_r & (core_req_nc | core_req_wr | ~lru_hit)) | mau_req_was_send_r;
 		assign mau_req_nc    = core_req_nc;
     assign mau_req_we    = req_we_r;
-	  assign mau_req_addr  = {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
+	  assign mau_req_addr  = (req_we_r | req_nc_r) ? req_addr_r : {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
 	 	assign mau_req_wdata = core_req_wdata;
 
 		always @* begin
@@ -282,7 +289,7 @@ module l1d_top
 			else                        mau_req_be = 4'b1111;
 		end
 
-	always @(posedge clk) mau_req_ack_r  <= mau_req_ack;
+	always @(posedge clk) mau_req_ack_r  <= mau_req_ack & ~mau_ack_we;
 	always @(posedge clk) mau_ack_data_r <= mau_ack_data;
 	always @(posedge clk) mau_ack_nc_r   <= mau_ack_nc;
 
