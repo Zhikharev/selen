@@ -18,6 +18,11 @@ class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
   sl_core_bus_item tr_item;
   sl_core_agent_cfg cfg;
 
+  // Для порта инструкций, если адрес не меняется
+  // значит конвейер стоит. Нужно отвечать одинаковой
+  // транзакцией, чтобы не терять стимулы
+  protected bit [31:0] prev_addr;
+
   `uvm_component_utils(sl_core_slave_driver)
 
   function new (string name, uvm_component parent);
@@ -50,22 +55,32 @@ class sl_core_slave_driver extends uvm_driver #(sl_core_bus_item);
       @(vif.mon);
       if(!vif.rst) begin
         if(vif.mon.req_val) begin
-          seq_item_port.try_next_item(tr_item);
-          if(tr_item != null) begin
-            sl_core_bus_item ret_item;
-            assert($cast(ret_item, tr_item.clone()));
-            ret_item.set_id_info(tr_item);
-            ret_item.accept_tr();
+          if(vif.mon.req_addr == prev_addr && cfg.port == INSTR) begin
             repeat(rand_delay()) begin
               clear_interface();
               @(vif.drv_s);
             end
-            drive_item(ret_item);
-            seq_item_port.item_done();
-            seq_item_port.put_response(ret_item);
+            drive_item(tr_item);
           end
-          else
-            clear_interface();
+          else begin
+            seq_item_port.try_next_item(tr_item);
+            if(tr_item != null) begin
+              sl_core_bus_item ret_item;
+              assert($cast(ret_item, tr_item.clone()));
+              ret_item.set_id_info(tr_item);
+              ret_item.accept_tr();
+              repeat(rand_delay()) begin
+                clear_interface();
+                @(vif.drv_s);
+              end
+              drive_item(ret_item);
+              prev_addr = vif.mon.req_addr;
+              seq_item_port.item_done();
+              seq_item_port.put_response(ret_item);
+            end
+            else
+              clear_interface();
+          end
         end
         else
           clear_interface();
