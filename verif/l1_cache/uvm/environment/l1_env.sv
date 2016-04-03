@@ -35,7 +35,7 @@ class l1_env extends uvm_env;
       l1i_agent = sl_core_master_agent::type_id::create("l1i_agent", this);
       l1i_agent.is_active = UVM_ACTIVE;
       l1d_agent = sl_core_master_agent::type_id::create("l1d_agent", this);
-      l1d_agent.is_active = UVM_PASSIVE;
+      l1d_agent.is_active = UVM_ACTIVE;
       wb_agent = wb_slave_agent::type_id::create("wb_agent", this);
       wb_agent.is_active = UVM_ACTIVE;
       scrb = sl_cache_scrb::type_id::create("scrb", this);

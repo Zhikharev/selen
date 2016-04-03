@@ -53,7 +53,7 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   task run_phase(uvm_phase phase);
     forever begin
       @(vif.drv_s);
-      if(!vif.rst) begin
+      if(!vif.rst_i) begin
         sl_wb_bus_item ret_item;
         if(vif.drv_s.cyc_o) begin
           seq_item_port.try_next_item(req);
@@ -110,6 +110,7 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   // TASK: drive_item
   // --------------------------------------------
   task drive_item(sl_wb_bus_item item);
+    `uvm_info(get_full_name(), "Start WB driver", UVM_LOW)
     vif.drv_s.ack_i   <= 1;
     if(vif.drv_s.we_o)
       vif.drv_s.dat_i <= item.data.pop_front();

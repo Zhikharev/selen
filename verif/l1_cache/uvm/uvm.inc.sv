@@ -24,6 +24,7 @@ import uvm_pkg::*;
 `include "uvm/environment/l1_env.sv"
 
 `include "uvm/sequences/draft_sequence.sv"
+`include "uvm/sequences/wb_slave_response_sequence.sv"
 
 `include "uvm/tests/l1_base_test.sv"
 

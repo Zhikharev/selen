@@ -146,7 +146,7 @@ class draft_test extends l1_base_test;
     // инструкций. По сбросу кэш не сразу готов работать. В $I есть автоматическая блокировка для такого
     // случая, в $D блокировки нет
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
-    //uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", draft_sequence::type_id::get());
+    uvm_config_db#(uvm_object_wrapper)::set(this,"*wb_agent.sequencer.run_phase", "default_sequence", wb_slave_response_sequence::type_id::get());
   endfunction
 
 endclass

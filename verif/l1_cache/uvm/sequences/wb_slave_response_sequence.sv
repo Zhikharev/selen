@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : draft_sequence.sv
+// FILE NAME      : wb_slave_response_sequence.sv
 // PROJECT        : Selen
 // AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL :
@@ -9,14 +9,14 @@
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
-`ifndef INC_DRAFT_SEQUENCE
-`define INC_DRAFT_SEQUENCE
+`ifndef INC_WB_SLAVE_RESPONSE_SEQUENCE
+`define INC_WB_SLAVE_RESPONSE_SEQUENCE
 
-class draft_sequence extends uvm_sequence #(sl_core_bus_item);
+class wb_slave_response_sequence extends uvm_sequence #(sl_wb_bus_item);
 
-	`uvm_object_utils(draft_sequence)
+	`uvm_object_utils(wb_slave_response_sequence)
 
-	function new(string name = "draft_sequence");
+	function new(string name = "wb_slave_response_sequence");
   	super.new(name);
   	set_automatic_phase_objection(1);
 	endfunction
@@ -24,16 +24,10 @@ class draft_sequence extends uvm_sequence #(sl_core_bus_item);
 	task body();
 		`uvm_info(get_full_name(), "is started",UVM_LOW)
 
-		repeat(100) begin
+		forever begin
 			`uvm_create(req)
-			assert(req.randomize() with {
-				req.size == 4;
-				req.addr[1:0] == 2'b0;
-				req.addr < 20;
-				req.cop == RD;
-			}); // for $I size must be only 4 bytes, cop only RD
+			assert(req.randomize()); // for $I size must be only 4 bytes, cop only RD
 			`uvm_send(req)
-			get_response(rsp);
 		end
 
 		`uvm_info(get_full_name(), "is completed",UVM_LOW)

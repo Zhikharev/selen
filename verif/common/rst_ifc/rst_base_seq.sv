@@ -4,9 +4,9 @@
 // FILE NAME        : rst_base_seq.sv
 // PROJECT          : Selen
 // AUTHOR           : Grigoriy Zhiharev
-// AUTHOR'S EMAIL   : 
+// AUTHOR'S EMAIL   :
 // ----------------------------------------------------------------------------
-// DESCRIPTION      : 
+// DESCRIPTION      :
 // ----------------------------------------------------------------------------
 
 `ifndef INC_RST_BASE_SEQ
@@ -15,7 +15,7 @@
 class rst_base_seq extends uvm_sequence #(rst_transfer);
 
     `uvm_object_utils(rst_base_seq)
-    
+
    function new(string name ="rst_base_seq");
         super.new(name);
     endfunction

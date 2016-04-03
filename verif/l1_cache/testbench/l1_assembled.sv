@@ -9,7 +9,7 @@ module l1_assembled
   core_if l1d_intf,
 	wb_if 	wb_intf
 );
-//assign l1i_intf. = 
+//assign l1i_intf. =
 l1_top l1
 (
 	.clk                    (clk),
