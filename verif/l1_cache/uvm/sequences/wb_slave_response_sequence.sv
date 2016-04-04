@@ -28,6 +28,7 @@ class wb_slave_response_sequence extends uvm_sequence #(sl_wb_bus_item);
 			`uvm_create(req)
 			assert(req.randomize()); // for $I size must be only 4 bytes, cop only RD
 			`uvm_send(req)
+			get_response(rsp);
 		end
 
 		`uvm_info(get_full_name(), "is completed",UVM_LOW)

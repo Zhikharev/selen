@@ -111,12 +111,13 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   // --------------------------------------------
   task drive_item(sl_wb_bus_item item);
     `uvm_info(get_full_name(), "Start WB driver", UVM_LOW)
-    vif.drv_s.ack_i   <= 1;
+    vif.drv_s.ack_i   <= 1'b1;
     if(vif.drv_s.we_o)
       vif.drv_s.dat_i <= item.data.pop_front();
     vif.drv_s.stall_i <= item.stall;
     vif.drv_s.err_i   <= item.err;
     vif.drv_s.rty_i   <= item.rty;
+    @(vif.drv_s);
   endtask
 
 endclass
