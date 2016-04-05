@@ -66,6 +66,9 @@ endclass
 
 class core_ld_st_seq extends core_base_seq;
 
+// Нужно следить, чтобы диапазоны адресов инструкций и данных
+// не пересекались
+
 	`uvm_object_utils(core_ld_st_seq)
 
 	function new(string name = "core_ld_st_seq");
@@ -74,11 +77,14 @@ class core_ld_st_seq extends core_base_seq;
 
 	task body();
 		`uvm_info(get_full_name(), "Start of core_ld_st_seq", UVM_MEDIUM)
+
+		li(32'hfff0_0000, 1);
+
 		repeat(num_pkts) begin
 			`uvm_create(req)
 			assert(req.randomize() with {
 				solve req.opcode before req.imm;
-				req.rs1 == 0;
+				req.rs1 == 1;
 				req.imm inside {[0:32'hA000]};
 				req.opcode inside {LW, SW} -> (req.imm % 4) == 0;
 				req.opcode inside {LH, LHU, SH} -> (req.imm % 2) == 0;
@@ -88,8 +94,22 @@ class core_ld_st_seq extends core_base_seq;
     	});
 			`uvm_send(req)
 			get_response(rsp);
+
+			if(req.rd == 1) begin
+				li(32'hfff0_0000, 1);
+			end
+
 		end
 		`uvm_info(get_full_name(), "End of core_ld_st_seq", UVM_MEDIUM)
+	endtask
+
+	task li(bit [31:0] imm, int rd);
+		`uvm_create(req)
+		req.opcode = LUI;
+		req.rd = rd;
+		req.imm = imm;
+		`uvm_send(req)
+		get_response(rsp);
 	endtask
 
 endclass

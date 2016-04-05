@@ -1,6 +1,6 @@
 BENCH_HOME := $(dir $(lastword $(MAKEFILE_LIST)))/..
 TOP=core_tb_top
-CPU=SELEN
+CPU=VSCALE
 
 ifeq ($(CPU), SELEN)
 	include $(BENCH_HOME)/../../rtl/core/Makefrag

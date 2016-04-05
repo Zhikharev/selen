@@ -61,7 +61,8 @@ class sl_core_scrb extends uvm_scoreboard;
     `uvm_info("SCRB", rv32_item.sprint(), UVM_LOW)
     assert(core_model::set_mem(item.addr, item.data))
     else `uvm_error("MODEL", "set_mem failed!")
-    if(pc_q.get(pc_q.size()-1) != item.addr) pc_q.push_back(item.addr);
+    if(pc_q.size() == 0) pc_q.push_back(item.addr);
+    else if(pc_q.get(pc_q.size()-1) != item.addr) pc_q.push_back(item.addr);
     do_compare = 1;
     sem.put();
   endfunction
@@ -74,7 +75,7 @@ class sl_core_scrb extends uvm_scoreboard;
     `uvm_info("SCRB", $sformatf("Memmory acess cop=%0s addr=%0h data=%0h",
     item.cop.name(), item.addr, item.data), UVM_LOW)
     if(!item.is_wr()) begin
-      assert(core_model::set_mem(item.addr, item.data))
+      assert(core_model::set_mem({item.addr[31:2], 2'b00}, item.data))
       else `uvm_error("MODEL", "set_mem failed!")
     end
     else begin
