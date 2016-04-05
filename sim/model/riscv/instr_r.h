@@ -104,7 +104,7 @@ struct R
                 }
             },
             {
-                mask, func7(0100000) | func3(0b101),
+                mask, func7(0b0100000) | func3(0b101),
                 "SRA", OP_R,
                 [] ISA_OPERATION
                 {

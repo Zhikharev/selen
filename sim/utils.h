@@ -80,7 +80,7 @@ struct Hex
                 stream.setf(std::ios_base::hex, std::ios_base::basefield);
         char fill = stream.fill('0');
 
-        stream << std::noshowbase
+        stream << std::noshowbase << std::right
                << "0x" << std::setw(width) << value;
 
         stream.fill(fill);
