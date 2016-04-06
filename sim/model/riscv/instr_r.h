@@ -88,7 +88,7 @@ struct R
                 "SLL", OP_R,
                 [] ISA_OPERATION
                 {
-                    word_t value = core.get_reg<word_t>(i.rs1()) >> (core.get_reg<word_t>(i.rs2()) & 0x1f); // lower five bits
+                    word_t value = core.get_reg<word_t>(i.rs1()) << (core.get_reg<word_t>(i.rs2()) & 0x1f); // lower five bits
                     core.set_reg(i.rd(), value);
                     core.increment_pc();
                 }
@@ -98,7 +98,7 @@ struct R
                 "SRL", OP_R,
                 [] ISA_OPERATION
                 {
-                    word_t value = core.get_reg<word_t>(i.rs1()) << (core.get_reg<word_t>(i.rs2()) & 0x1f);
+                    word_t value = core.get_reg<word_t>(i.rs1()) >> (core.get_reg<word_t>(i.rs2()) & 0x1f);
                     core.set_reg(i.rd(), value);
                     core.increment_pc();
                 }
