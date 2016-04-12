@@ -87,6 +87,7 @@ module l1d_top
 	reg  [`CORE_TAG_WIDTH-1:0] 			req_tag_r;
 	reg  [`CORE_IDX_WIDTH-1:0] 			req_idx_r;
 	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
+	reg  [`CORE_DATA_WIDTH-1:0] 		req_wdata_r;
 	reg                             req_we_r;
 	reg                             req_nc_r;
 	reg                           	req_val_r;
@@ -165,6 +166,7 @@ module l1d_top
 	always @(posedge clk) if(req_val) req_we_r <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
 	always @(posedge clk) if(req_val) req_nc_r <= core_req_nc;
 	always @(posedge clk) if(req_val) req_addr_r <= core_req_addr;
+	always @(posedge clk) if(req_val) req_wdata_r <= core_req_wdata;
 	assign {req_tag_r, req_idx_r, req_offset_r} = req_addr_r;
 
 	assign req_ack = lru_hit | del_buf_hit_r | (req_val_r & req_we_r) | mau_req_ack_r;
@@ -241,7 +243,7 @@ module l1d_top
 			dm_addr    = req_idx;
 		end
 		else begin
-			if(mau_req_ack & ~mau_req_nc) begin
+			if(mau_req_ack & ~mau_req_nc & ~mau_req_we) begin
 				dm_en_vect = lru_way_vect_r;
 				dm_we_vect = lru_way_vect_r;
 				dm_addr    = req_idx_r;
@@ -272,16 +274,14 @@ module l1d_top
 		always @(posedge clk, posedge rst_n) begin
 			if(~rst_n) mau_req_was_send_r <= 1'b0;
 			else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack | req_val_r;
-	 		else mau_req_was_send_r <= mau_req_val;
+	 		else mau_req_was_send_r <= mau_req_val & ~mau_req_ack;
 		end
 
-		// TODO: ускорить некэшируемые обращения - добавить мультиплексоры и изменить req_val?
-		// Если записи не ждать один такт?
 		assign mau_req_val   = (req_val_r & (core_req_nc | core_req_wr | ~lru_hit)) | mau_req_was_send_r;
-		assign mau_req_nc    = core_req_nc;
+		assign mau_req_nc    = req_nc_r;
     assign mau_req_we    = req_we_r;
 	  assign mau_req_addr  = (req_we_r | req_nc_r) ? req_addr_r : {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
-	 	assign mau_req_wdata = core_req_wdata;
+	 	assign mau_req_wdata = req_wdata_r;
 
 		always @* begin
 			if     (core_req_size == 1) mau_req_be = 4'b0001;
@@ -381,7 +381,7 @@ module l1d_top
 			else $fatal("Received L1D request whenc cache is not ready!");
 
 		no_req_val_when_mau_req_ack_p:
-			assert property(@(posedge clk) (rst_n) -> $onehot0({req_val, (mau_req_ack & ~mau_ack_nc)}))
+			assert property(@(posedge clk) (rst_n) -> $onehot0({req_val, (mau_req_ack & ~mau_ack_nc & ~mau_ack_we)}))
 			else $fatal("req_val is active when mau_req_ack is active!");
 
 
