@@ -96,8 +96,8 @@ module selen_top
 
 	defparam wb_cpu_xbar.S0_ADDR_BASE = 32'h0000_0000;
 	defparam wb_cpu_xbar.S0_ADDR_MASK = 16'h2fff;
-	defparam wb_cpu_xbar.S1_ADDR_BASE = 32'h0001_0000;
-	defparam wb_cpu_xbar.S1_ADDR_MASK = 32'h0004_ffff;
+	defparam wb_cpu_xbar.S1_ADDR_BASE = 32'h0010_0000;
+	defparam wb_cpu_xbar.S1_ADDR_MASK = 32'h000f_ffff;
 
 	wb_com_top wb_cpu_xbar
 	(
