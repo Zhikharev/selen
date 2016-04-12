@@ -13,8 +13,11 @@
 
 module selen_top
 (
-	input clk,
-	input	rst_n
+	input 	clk,
+	input		rst_n,
+	output 	gpio_pin_o,
+	output 	gpio_pin_en,
+	input 	gpio_pin_i
 );
 
 	wire  [`WB_COM_AWIDTH - 1:0]      cpu_wb_addr_o;
@@ -71,6 +74,10 @@ module selen_top
 	wire                              io_gpio_wb_stall_i;
 	wire                              io_gpio_wb_ack_i;
 	wire                              io_gpio_wb_err_i;
+
+	wire [31:0] 											gpio_pins_o;
+	wire [31:0] 											gpio_pins_en;
+	wire [31:0] 											gpio_pins_i;
 
 	selen_cpu_cluster cpu_cluster
 	(
@@ -238,6 +245,10 @@ module selen_top
 
 	assign io_rom_wb_stall_i = 1'b0;
 
+	assign gpio_pin_o  		= gpio_pins_o[0];
+	assign gpio_pin_en 		= gpio_pins_en[0];
+	assign gpio_pins_i[0] = gpio_pin_i;
+
 	gpio_top gpio
 	(
 		.wb_clk_i 		(clk),
@@ -252,9 +263,9 @@ module selen_top
 		.wb_ack_o 		(io_gpio_wb_ack_i),
 		.wb_err_o 		(io_gpio_wb_err_i),
 		.wb_inta_o 		(),
-		.ext_pad_i 		(0),
-		.ext_pad_o 		(),
-		.ext_padoe_o 	()
+		.ext_pad_i 		(gpio_pins_i),
+		.ext_pad_o 		(gpio_pins_o),
+		.ext_padoe_o 	(gpio_pins_en)
 	);
 
 assign io_gpio_wb_stall_i = 1'b0;

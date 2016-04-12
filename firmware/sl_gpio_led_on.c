@@ -12,6 +12,7 @@ sw s1, 8(s0)
 sw s1, 4(s0)
 
 # Check led0, must be 0x1
+# if right tri-state pin connection
 lw s2, 0(s0)
 
 # jump to ram
