@@ -1,70 +1,142 @@
 	.file	"blink.c"
 	.text
 	.align	2
-	.globl	set_gpio
-	.type	set_gpio, @function
-set_gpio:
-	add	a4,a0,36
-.L2:
-	add	a1,a1,1
-	lbu	a5,-1(a1)
-	add	a0,a0,1
-	sb	a5,-1(a0)
-	bne	a4,a0,.L2
+	.globl	wait
+	.type	wait, @function
+wait:
+ #APP
+# 57 "blink.c" 1
+	rdcycle a2;
+	rdcycleh a6;
+# 0 "" 2
+ #NO_APP
+	or	a5,a0,a1
+	beqz	a5,.L1
+.L8:
+ #APP
+# 57 "blink.c" 1
+	rdcycle a4;
+	rdcycleh a5;
+# 0 "" 2
+ #NO_APP
+	sub	a3,a4,a2
+	sltu	a4,a4,a3
+	sub	a5,a5,a6
+	sub	a5,a5,a4
+	bgtu	a1,a5,.L8
+	bne	a1,a5,.L1
+	bgtu	a0,a3,.L8
+.L1:
 	ret
-	.size	set_gpio, .-set_gpio
-	.align	2
-	.globl	get_gpio
-	.type	get_gpio, @function
-get_gpio:
-	add	a4,a1,36
-.L6:
-	add	a0,a0,1
-	lbu	a5,-1(a0)
-	add	a1,a1,1
-	sb	a5,-1(a1)
-	bne	a4,a1,.L6
-	ret
-	.size	get_gpio, .-get_gpio
-	.section	.text.startup,"ax",@progbits
+	.size	wait, .-wait
 	.align	2
 	.globl	main
 	.type	main, @function
 main:
 	add	sp,sp,-48
-	sw	zero,12(sp)
-	sw	zero,16(sp)
-	sw	zero,20(sp)
-	sw	zero,24(sp)
-	sw	zero,28(sp)
-	sw	zero,32(sp)
-	sw	zero,36(sp)
-	sw	zero,40(sp)
-	sw	zero,44(sp)
-	add	a5,sp,12
-	li	a4,8192
-.L9:
-	add	a5,a5,1
-	lbu	a3,-1(a5)
-	add	a4,a4,1
-	sb	a3,-1(a4)
-	add	a3,sp,48
-	bne	a5,a3,.L9
-	li	a2,8192
-	add	a2,a2,36
-.L15:
+	sw	ra,44(sp)
+	sw	s0,40(sp)
+	add	s0,sp,48
+	sw	zero,-20(s0)
+	li	a5,1
+	sw	a5,-24(s0)
 	li	a5,8192
-	add	a4,sp,12
-.L10:
-	add	a5,a5,1
-	lbu	a3,-1(a5)
-	add	a4,a4,1
-	sb	a3,-1(a4)
-	bne	a5,a2,.L10
-	lw	a5,12(sp)
+	sw	a5,-28(s0)
+	lw	a5,-28(s0)
+	sw	zero,0(a5)
+	lw	a5,-28(s0)
+	sw	zero,4(a5)
+	lw	a5,-28(s0)
+	sw	zero,8(a5)
+	lw	a5,-28(s0)
+	sw	zero,12(a5)
+	lw	a5,-28(s0)
+	sw	zero,16(a5)
+	lw	a5,-28(s0)
+	sw	zero,20(a5)
+	lw	a5,-28(s0)
+	sw	zero,24(a5)
+	lw	a5,-28(s0)
+	sw	zero,28(a5)
+	lw	a5,-28(s0)
+	sw	zero,32(a5)
+	lw	a5,-28(s0)
+	lw	a4,8(a5)
+	li	a3,1
+	lw	a5,-20(s0)
+	sll	a5,a3,a5
+	not	a5,a5
+	and	a4,a4,a5
+	lw	a5,-28(s0)
+	sw	a4,8(a5)
+	lw	a5,-28(s0)
+	lw	a5,24(a5)
+	and	a4,a5,-2
+	lw	a5,-28(s0)
+	sw	a4,24(a5)
+	lw	a5,-28(s0)
+	lw	a4,12(a5)
+	li	a3,1
+	lw	a5,-20(s0)
+	sll	a5,a3,a5
+	not	a5,a5
+	and	a4,a4,a5
+	lw	a5,-28(s0)
+	sw	a4,12(a5)
+.L14:
+	lw	a5,-28(s0)
+	lw	a4,0(a5)
+	lw	a5,-20(s0)
+	srl	a5,a4,a5
 	and	a5,a5,1
-	beqz	a5,.L15
-	li	a0,1
+	bnez	a5,.L16
+	j	.L14
+.L16:
+	nop
+	lw	a5,-28(s0)
+	lw	a4,8(a5)
+	li	a3,1
+	lw	a5,-24(s0)
+	sll	a5,a3,a5
+	or	a4,a4,a5
+	lw	a5,-28(s0)
+	sw	a4,8(a5)
+	lw	a5,-28(s0)
+	lw	a4,12(a5)
+	li	a3,1
+	lw	a5,-24(s0)
+	sll	a5,a3,a5
+	not	a5,a5
+	and	a4,a4,a5
+	lw	a5,-28(s0)
+	sw	a4,12(a5)
+	lw	a5,-28(s0)
+	lw	a4,4(a5)
+	li	a3,1
+	lw	a5,-24(s0)
+	sll	a5,a3,a5
+	or	a4,a4,a5
+	lw	a5,-28(s0)
+	sw	a4,4(a5)
+	li	a4,100
+	li	a5,0
+	sw	a4,-40(s0)
+	sw	a5,-36(s0)
+	lw	a0,-40(s0)
+	lw	a1,-36(s0)
+	call	wait
+	lw	a5,-28(s0)
+	lw	a4,4(a5)
+	li	a3,1
+	lw	a5,-24(s0)
+	sll	a5,a3,a5
+	not	a5,a5
+	and	a4,a4,a5
+	lw	a5,-28(s0)
+	sw	a4,4(a5)
+	nop
+	lw	ra,44(sp)
+	lw	s0,40(sp)
 	add	sp,sp,48
 	jr	ra
 	.size	main, .-main
