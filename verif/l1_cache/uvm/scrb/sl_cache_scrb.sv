@@ -21,7 +21,7 @@ class sl_cache_scrb extends uvm_scoreboard;
 
   uvm_analysis_imp_req #(sl_core_bus_item, sl_cache_scrb) item_collected_req;
   uvm_analysis_imp_rsp #(sl_core_bus_item, sl_cache_scrb) item_collected_rsp;
-  uvm_analysis_imp_mau #(sl_wb_bus_item,   sl_cache_scrb) item_collected_mau;
+  uvm_analysis_imp_mau #(wb_bus_item,      sl_cache_scrb) item_collected_mau;
 
   semaphore sem;
 
@@ -81,7 +81,7 @@ class sl_cache_scrb extends uvm_scoreboard;
   // --------------------------------------------
   // FUNCTION: write_mau
   // --------------------------------------------
-  function void write_mau(sl_wb_bus_item item);
+  function void write_mau(wb_bus_item item);
     while(!sem.try_get());
     sem.put();
   endfunction

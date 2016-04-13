@@ -24,7 +24,7 @@ class draft_sequence extends uvm_sequence #(sl_core_bus_item);
 	task body();
 		`uvm_info(get_full_name(), "is started",UVM_LOW)
 
-		repeat(100) begin
+		repeat(5) begin
 			`uvm_create(req)
 			assert(req.randomize() with {
 				req.size == 4;

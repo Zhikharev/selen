@@ -14,28 +14,34 @@ typedef enum bit {
 	WRITE = 1'b1
 } cop_t;
 
-class sl_wb_bus_item extends uvm_sequence_item;
+class wb_bus_item extends uvm_sequence_item;
 
-	rand bit [`CORE_ADDR_WIDTH:0] address;
-	rand bit [`CORE_DATA_WIDTH:0] data[$];
-	rand bit 											strb;
+	rand bit [`WB_ADDR_WIDTH-1:0] address;
+	rand bit [`WB_DATA_WIDTH-1:0] data[$];
+	rand bit [`WB_BE_WIDTH-1:0] 	sel;
 	rand bit 											err;
 	rand cop_t 										cop;
 	rand bit 											stall;
 	rand bit 											rty;
 
-	`uvm_object_utils_begin(sl_wb_bus_item)
-		`uvm_field_int(address,         			UVM_DEFAULT)
-		`uvm_field_int(strb,         					UVM_DEFAULT)
-		`uvm_field_int(err,         					UVM_DEFAULT)
-		`uvm_field_int(rty,         					UVM_DEFAULT)
-		`uvm_field_int(stall,         				UVM_DEFAULT)
-		`uvm_field_queue_int(data,         		UVM_DEFAULT)
+	`uvm_object_utils_begin(wb_bus_item)
+		`uvm_field_int(address,         	UVM_DEFAULT)
+		`uvm_field_int(sel,         			UVM_DEFAULT)
+		`uvm_field_int(err,         			UVM_DEFAULT)
+		`uvm_field_int(rty,         			UVM_DEFAULT)
+		`uvm_field_int(stall,         		UVM_DEFAULT)
+		`uvm_field_queue_int(data,        UVM_DEFAULT)
 		`uvm_field_enum(cop_t, cop,       UVM_DEFAULT)
 	`uvm_object_utils_end
 
-	function new(string name = "sl_wb_bus_item");
+	function new(string name = "wb_bus_item");
 		super.new(name);
+	endfunction
+
+	constraint c_stall_no_err {stall -> !err;};
+
+	function bit is_wr();
+		return(cop == WRITE);
 	endfunction
 
 endclass

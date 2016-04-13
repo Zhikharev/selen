@@ -298,8 +298,6 @@ module l1_mau
 	// ACK PROCESSING
 	// -------------------------------------------------------------
 
-
-
 	always @(posedge wb_clk_i or posedge wb_rst_i) begin
 		if(wb_rst_i) begin
 			ack_state_r <= ACK_IDLE;

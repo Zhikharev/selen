@@ -100,20 +100,20 @@ module l1i_top
   // -----------------------------------------------------
 	// CACHE
 	// -----------------------------------------------------
-	always_ff @(posedge clk) cache_ready_r <= cache_ready;
+	always @(posedge clk) cache_ready_r <= cache_ready;
 	assign req_val = cache_ready & core_req_val & (req_ack | ~cache_ready_r);
 	assign req_addr = (cache_ready & ~cache_ready_r) ? core_req_addr_r : core_req_addr;
 	assign {req_tag, req_idx, req_offset} = req_addr;
-	always_ff @(posedge clk) if(req_val) req_tag_r    <= req_tag;
-	always_ff @(posedge clk) if(req_val) req_idx_r    <= req_idx;
-	always_ff @(posedge clk) if(req_val) req_offset_r <= req_offset;
+	always @(posedge clk) if(req_val) req_tag_r    <= req_tag;
+	always @(posedge clk) if(req_val) req_idx_r    <= req_idx;
+	always @(posedge clk) if(req_val) req_offset_r <= req_offset;
 
-	always_ff @(posedge clk, negedge rst_n) begin
+	always @(posedge clk, negedge rst_n) begin
 		if(~rst_n) core_req_val_r <= 1'b0;
 		else core_req_val_r <= core_req_val;
 	end
 
-	always_ff @(posedge clk)
+	always @(posedge clk)
 		if(~core_req_val_r) core_req_addr_r <= core_req_addr;
 
 	always @(posedge clk, negedge rst_n)
@@ -127,7 +127,7 @@ module l1i_top
 	// -----------------------------------------------------
 	// LRU
 	// -----------------------------------------------------
-	always_ff @(posedge clk) if(req_val_r) lru_way_vect_r <= lru_way_vect;
+	always @(posedge clk) if(req_val_r) lru_way_vect_r <= lru_way_vect;
 	assign lru_way_pos = one_hot_num(lru_way_vect_r);
 
 	// -----------------------------------------------------

@@ -73,7 +73,7 @@ module l1_lrum
   // ------------------------------------------------------
   // HARDWARE CLEAN
   // ------------------------------------------------------
-  always_ff @(posedge clk or negedge rst_n) begin
+  always @(posedge clk or negedge rst_n) begin
     if(~rst_n) begin
       rst_state_r <= IDLE;
     end else begin
@@ -82,7 +82,7 @@ module l1_lrum
       end
     end
   end
-  always_ff @(posedge clk or negedge rst_n) begin
+  always @(posedge clk or negedge rst_n) begin
     if(~rst_n) begin
       rst_addr_r <= 0;
     end else begin

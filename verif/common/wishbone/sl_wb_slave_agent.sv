@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// FILE NAME      : wb_slave_agent.sv
+// FILE NAME      : sl_wb_slave_agent.sv
 // PROJECT        : Selen
 // AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL :
@@ -17,7 +17,7 @@ class wb_slave_agent extends uvm_agent;
 
   wb_agent_cfg     cfg;
 
-	uvm_analysis_port #(sl_wb_bus_item) item_collected_port;
+	uvm_analysis_port #(wb_bus_item) item_collected_port;
 
 	`uvm_component_utils_begin(wb_slave_agent)
     `uvm_field_object(driver,    UVM_DEFAULT)

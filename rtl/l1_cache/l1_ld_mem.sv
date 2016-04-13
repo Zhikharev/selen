@@ -38,7 +38,7 @@ module l1_ld_mem
 	wire                     we;
 	wire [WIDTH-1:0] 				 wdata;
 
-	always_ff @(posedge CLK or negedge RST_N) begin
+	always @(posedge CLK or negedge RST_N) begin
 		if(~RST_N) begin
 			rst_state_r <= IDLE;
 		end else begin
@@ -47,7 +47,7 @@ module l1_ld_mem
 			end
 		end
 	end
-	always_ff @(posedge CLK or negedge RST_N) begin
+	always @(posedge CLK or negedge RST_N) begin
 		if(~RST_N) begin
 			rst_addr_r <= 0;
 		end else begin

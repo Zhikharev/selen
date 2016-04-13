@@ -29,11 +29,9 @@ module l1_tb_top;
       reset = 0;
     end
 
-  rst_if rst_intf(sys_clk);
-  wb_if  wb_intf(sys_clk, reset);
-  assign wb_intf.clk_i = sys_clk;
-  assign wb_intf.rst_i = reset;
-
+  // TODO: сделать сброс через компоненты сброса
+  rst_if  rst_intf (sys_clk);
+  wb_if   wb_intf  (sys_clk, reset);
   core_if l1i_intf (sys_clk, reset);
   core_if l1d_intf (sys_clk, reset);
 

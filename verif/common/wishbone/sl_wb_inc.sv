@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : wb_inc.sv
+// FILE NAME      : sl_wb_inc.sv
 // PROJECT        : Selen
 // AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL : maksim.s.kobzar@gmail.com
@@ -9,15 +9,16 @@
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
 
-`ifndef INC_WB_INC
-`define INC_WB_INC
+`ifndef INC_SL_WB_INC
+`define INC_SL_WB_INC
 
-`include "wishbone/wb_if.sv"
-`include "wishbone/wb_agent_cfg.sv"
+`include "wishbone/sl_wb_defines.sv"
+`include "wishbone/sl_wb_interface.sv"
+`include "wishbone/sl_wb_agent_cfg.sv"
 `include "wishbone/sl_wb_bus_item.sv"
-`include "wishbone/wb_monitor.sv"
-`include "wishbone/wb_sequencer.sv"
-`include "wishbone/wb_slave_driver.sv"
-`include "wishbone/wb_slave_agent.sv"
+`include "wishbone/sl_wb_monitor.sv"
+`include "wishbone/sl_wb_sequencer.sv"
+`include "wishbone/sl_wb_slave_driver.sv"
+`include "wishbone/sl_wb_slave_agent.sv"
 
 `endif

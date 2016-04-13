@@ -1,15 +1,15 @@
 // ----------------------------------------------------------------------------
-// FILE NAME      : wb_slave_driver.sv
+// FILE NAME      : sl_wb_slave_driver.sv
 // PROJECT        : Selen
 // AUTHOR         : Maksim Kobzar
 // AUTHOR'S EMAIL :
 // ----------------------------------------------------------------------------
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
-`ifndef INC_WB_SLAVE_DRIVER
-`define INC_WB_SLAVE_DRIVER
+`ifndef INC_SL_WB_SLAVE_DRIVER
+`define INC_SL_WB_SLAVE_DRIVER
 
-class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
+class wb_slave_driver extends uvm_driver#(wb_bus_item);
 
 	`uvm_component_utils(wb_slave_driver)
 
@@ -53,9 +53,9 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   task run_phase(uvm_phase phase);
     forever begin
       @(vif.drv_s);
-      if(!vif.rst_i) begin
-        sl_wb_bus_item ret_item;
-        if(vif.drv_s.cyc_o) begin
+      if(!vif.rst) begin
+        wb_bus_item ret_item;
+        if(vif.mon.cyc && vif.mon.stb) begin
           seq_item_port.try_next_item(req);
           if(req != null) begin
             assert($cast(ret_item, req.clone()));
@@ -67,7 +67,6 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
             end
             void'(begin_tr(ret_item, "wb_slave_driver"));
             drive_item(ret_item);
-            clear_interface();
             seq_item_port.item_done();
             end_tr(ret_item);
             seq_item_port.put_response(ret_item);
@@ -76,7 +75,7 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
             clear_interface();
         end
         else
-          reset_interface();
+          clear_interface();
       end
       else
         reset_interface();
@@ -87,10 +86,10 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   // TASK: reset_interface
   // --------------------------------------------
   task reset_interface();
-    vif.drv_s.ack_i <= 0;
+    vif.drv_s.ack   <= 0;
     vif.drv_s.dat_i <= 0;
-    vif.drv_s.err_i <= 0;
-    vif.drv_s.rty_i <= 0;
+    vif.drv_s.err   <= 0;
+    vif.drv_s.rty   <= 0;
   endtask
 
   // --------------------------------------------
@@ -99,25 +98,25 @@ class wb_slave_driver extends uvm_driver#(sl_wb_bus_item);
   task clear_interface();
     bit [31:0] data;
     std::randomize(data);
-    vif.drv_s.ack_i <= 0;
+    vif.drv_s.ack   <= 0;
     vif.drv_s.dat_i <= data;
-    vif.drv_s.stall_i <= 0;
-    vif.drv_s.err_i <= 0;
-    vif.drv_s.rty_i <= 0;
+    vif.drv_s.stall <= 0;
+    vif.drv_s.err   <= 0;
+    vif.drv_s.rty   <= 0;
   endtask
 
   // --------------------------------------------
   // TASK: drive_item
   // --------------------------------------------
-  task drive_item(sl_wb_bus_item item);
-    `uvm_info(get_full_name(), "Start WB driver", UVM_LOW)
-    vif.drv_s.ack_i   <= 1'b1;
-    if(vif.drv_s.we_o)
-      vif.drv_s.dat_i <= item.data.pop_front();
-    vif.drv_s.stall_i <= item.stall;
-    vif.drv_s.err_i   <= item.err;
-    vif.drv_s.rty_i   <= item.rty;
-    @(vif.drv_s);
+  task drive_item(wb_bus_item item);
+    vif.drv_s.dat_i <= item.data.pop_front();
+    vif.drv_s.err   <= item.err;
+    vif.drv_s.stall <= item.stall;
+    vif.drv_s.rty   <= item.rty;
+    if(item.err || item.stall)
+      vif.drv_s.ack <= 1'b0;
+    else
+      vif.drv_s.ack <= 1'b1;
   endtask
 
 endclass
