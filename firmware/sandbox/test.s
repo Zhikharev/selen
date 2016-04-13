@@ -1,11 +1,10 @@
 	.file	"blink.c"
 	.text
 	.align	2
-	.globl	wait
 	.type	wait, @function
 wait:
  #APP
-# 57 "blink.c" 1
+# 43 "blink.c" 1
 	rdcycle a2;
 	rdcycleh a6;
 # 0 "" 2
@@ -14,7 +13,7 @@ wait:
 	beqz	a5,.L1
 .L8:
  #APP
-# 57 "blink.c" 1
+# 43 "blink.c" 1
 	rdcycle a4;
 	rdcycleh a5;
 # 0 "" 2
