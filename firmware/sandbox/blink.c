@@ -14,7 +14,7 @@ typedef __SIZE_TYPE__ uint32_t;
   pack     - aligment and no paddings
   volatile - compiler strict about memory stores and loads
 */
-typedef volatile struct
+typedef /*volatile*/ struct
 {
     uint32_t in;
     uint32_t out;
@@ -50,19 +50,20 @@ static
 void wait(const tick_t ticks_to_wait)
 {
     tick_t ticks_elapsed = 0;
-    tick_t begin = get_tick();
-    tick_t end;
+    const tick_t begin = get_tick();
 
     while(ticks_elapsed < ticks_to_wait)
     {
-        end = get_tick();
-        ticks_elapsed = end - begin;
+        ticks_elapsed = get_tick() - begin;
     }
 }
 
 #define BIT_MASK(n) ((uint32_t)1 << n)
 
-void __attribute__((optimize("O0"))) main()
+/*set name for linker*/
+void blink() asm("main");
+
+void __attribute__((optimize("O0"))) blink()
 {
     /*disable optimizations a this function*/
 
