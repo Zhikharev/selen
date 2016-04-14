@@ -2,7 +2,10 @@ BENCH_HOME := $(dir $(lastword $(MAKEFILE_LIST)))
 TOP=selen_tb_top
 
 AS 		  = riscv32-unknown-elf-as
+CCX     = riscv32-unknown-elf-gcc
+LD      = riscv32-unknown-elf-ld
 OBJCOPY = riscv32-unknown-elf-objcopy
+STRIP   = riscv32-unknown-elf-strip
 
 include $(BENCH_HOME)/../../rtl/top/Makefrag
 include $(BENCH_HOME)/../tools/Makefile.global
@@ -24,5 +27,21 @@ sl_gpio_led_on:
 	$(AS) $(GIT_HOME)/firmware/sl_gpio_led_on.c -o sl_gpio_led_on.elf
 	$(OBJCOPY) -O binary sl_gpio_led_on.elf sl_gpio_led_on.bin
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 sl_gpio_led_on.bin rom_bge.bin
+	rm -f rom_image.v
+	xxd -c 4 -p rom_bge.bin >> rom_image.v
+
+sl_gpio_led_blink:
+	$(CCX) -c $(GIT_HOME)/firmware/sandbox/blink.c  -nostdlib -m32 -O2 -o blink.o
+	$(LD) -T $(GIT_HOME)/firmware/sandbox/selen.ld blink.o -o blink.elf
+	$(STRIP) blink.elf -o blink.elf.strip
+	$(OBJCOPY) -O binary blink.elf blink.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.bin ram_bge.bin
+	rm -f ram_image.v
+	xxd -c 4 -p ram_bge.bin >> ram_image.v
+
+sl_ram_jmp:
+	$(AS) $(GIT_HOME)/firmware/sl_ram_jmp.c -o sl_ram_jmp.elf
+	$(OBJCOPY) -O binary sl_ram_jmp.elf sl_ram_jmp.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 sl_ram_jmp.bin rom_bge.bin
 	rm -f rom_image.v
 	xxd -c 4 -p rom_bge.bin >> rom_image.v

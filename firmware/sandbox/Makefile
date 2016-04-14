@@ -2,6 +2,7 @@
 REMOVE = rm -rf
 
 CCX = $(RISCV)/bin/riscv64-unknown-elf-gcc
+LD  = $(RISCV)/bin/riscv64-unknown-elf-ld
 
 all:: build
 

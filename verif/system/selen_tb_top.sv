@@ -48,7 +48,7 @@ module selen_tb_top ();
 			if(selen_top.cpu_cluster.core.i_req_ack) begin
 				rv32_transaction item = new("item");
 				item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
-				$display("data=%0h",selen_top.cpu_cluster.core.i_ack_rdata);
+				$display("%0t data=%0h",$time(), selen_top.cpu_cluster.core.i_ack_rdata);
 				$display(item.sprint());
 			end
 		end
@@ -66,7 +66,7 @@ module selen_tb_top ();
 	initial begin
 		$display("%0t TEST START", $time());
 		wait(selen_top.cpu_cluster.l1_cache.l1i.cache_ready);
-		#1000;
+		#100000;
 		$display("%0t TEST FINISHED", $time());
 		$finish();
 	end
@@ -90,7 +90,7 @@ module selen_tb_top ();
   // ROM IMAGE
   // -----------------------------------------
   initial $readmemh("rom_image.v", selen_top.wb_rom_1kB.rom_1kB.rom);
-  initial $readmemh("rom_image.v", selen_top.wb_ram_1kB.ram_1kB.ram);
+  initial $readmemh("ram_image.v", selen_top.wb_ram_1kB.ram_1kB.ram);
 
 endmodule
 
