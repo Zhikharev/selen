@@ -14,6 +14,8 @@
 
 class draft_sequence extends uvm_sequence #(sl_core_bus_item);
 
+	int num_pkts;
+
 	`uvm_object_utils(draft_sequence)
 
 	function new(string name = "draft_sequence");
@@ -21,10 +23,13 @@ class draft_sequence extends uvm_sequence #(sl_core_bus_item);
   	set_automatic_phase_objection(1);
 	endfunction
 
+	task pre_body();
+		uvm_config_db#(int)::get(null, "*", "num_pkts", num_pkts);
+	endtask
+
 	task body();
 		`uvm_info(get_full_name(), "is started",UVM_LOW)
-
-		repeat(5) begin
+		repeat(num_pkts) begin
 			`uvm_create(req)
 			assert(req.randomize() with {
 				req.size == 4;
@@ -35,7 +40,6 @@ class draft_sequence extends uvm_sequence #(sl_core_bus_item);
 			`uvm_send(req)
 			get_response(rsp);
 		end
-
 		`uvm_info(get_full_name(), "is completed",UVM_LOW)
 	endtask
 

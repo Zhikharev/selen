@@ -57,6 +57,8 @@ class wb_monitor extends uvm_monitor;
             item = wb_bus_req_q.pop_front();
             item.err = vif.mon.err;
             item.rty = vif.mon.rty;
+            if(!item.is_wr()) item.data.push_back(vif.mon.dat_i);
+            item.disable_drv_constraints();
             assert(item.randomize(null))
             else `uvm_error(get_full_name(), "Packet doesn't fit constraints!")
             if(do_print) `uvm_info("WB_MON", $sformatf("%0s (%0h) finished", item.cop.name(), item.address), UVM_MEDIUM)

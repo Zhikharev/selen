@@ -22,6 +22,7 @@ class wb_bus_item extends uvm_sequence_item;
 	rand bit 											err;
 	rand cop_t 										cop;
 	rand bit 											stall;
+	rand int                      stall_clk_num;
 	rand bit 											rty;
 
 	`uvm_object_utils_begin(wb_bus_item)
@@ -30,6 +31,7 @@ class wb_bus_item extends uvm_sequence_item;
 		`uvm_field_int(err,         			UVM_DEFAULT)
 		`uvm_field_int(rty,         			UVM_DEFAULT)
 		`uvm_field_int(stall,         		UVM_DEFAULT)
+		`uvm_field_int(stall_clk_num,     UVM_DEFAULT)
 		`uvm_field_queue_int(data,        UVM_DEFAULT)
 		`uvm_field_enum(cop_t, cop,       UVM_DEFAULT)
 	`uvm_object_utils_end
@@ -39,9 +41,15 @@ class wb_bus_item extends uvm_sequence_item;
 	endfunction
 
 	constraint c_stall_no_err {stall -> !err;};
+	constraint c_stall_clk_num {stall_clk_num >=  1; stall_clk_num < 10;};
+	constraint c_data_size {data.size() == 1;};
 
 	function bit is_wr();
 		return(cop == WRITE);
+	endfunction
+
+	function void disable_drv_constraints();
+		this.c_stall_clk_num.constraint_mode(0);
 	endfunction
 
 endclass
