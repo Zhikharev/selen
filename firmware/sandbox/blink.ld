@@ -14,7 +14,7 @@ OUTPUT_FORMAT("elf32-littleriscv")
 
 SECTIONS
 {
-  . = 0x00010000;
+  . = 0x00100000;
 
   /* code segment */
   .text : {

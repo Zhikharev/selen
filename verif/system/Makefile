@@ -31,8 +31,9 @@ sl_gpio_led_on:
 	xxd -c 4 -p rom_bge.bin >> rom_image.v
 
 sl_gpio_led_blink:
-	$(CCX) -c $(GIT_HOME)/firmware/sandbox/blink.c  -nostdlib -m32 -O2 -o blink.o
-	$(LD) -T $(GIT_HOME)/firmware/sandbox/selen.ld blink.o -o blink.elf
+	$(AS) $(GIT_HOME)/firmware/sandbox/startup.s -o startup.o
+	$(CCX) -c $(GIT_HOME)/firmware/sandbox/blink.c  -nostdlib -O2 -o blink.o
+	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.ld blink.o -o blink.elf
 	$(STRIP) blink.elf -o blink.elf.strip
 	$(OBJCOPY) -O binary blink.elf blink.bin
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.bin ram_bge.bin

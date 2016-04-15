@@ -164,42 +164,42 @@ module l1_mau
 	assign req_hdr_data = {req_wr, req_nc, req_be, req_addr};
 	assign {tr_wr, tr_nc, tr_be, tr_addr} = tr_hdr_data;
 
-	fifo
+	sync_fifo
 	#(
-		.WIDTH (REQ_HDR_BUF_WIDTH),
-		.DEPTH (4)
+		.DWIDTH (REQ_HDR_BUF_WIDTH),
+		.AWIDTH (2)
 	)
 	req_hdr_buf
 	(
-  	.clk 		(wb_clk_i),
-  	.rst 		(wb_rst_i),
-  	.rd 		(req_hdr_finished),
-  	.wr 		(req_hdr_val),
-  	.w_data (req_hdr_data),
-  	.empty 	(req_hdr_buf_empty),
-  	.full 	(req_hdr_buf_full),
-  	.r_data (tr_hdr_data)
+  	.clk 				(wb_clk_i),
+  	.rst 				(wb_rst_i),
+  	.fifo_re 		(req_hdr_finished),
+  	.fifo_we 		(req_hdr_val),
+  	.fifo_wd 		(req_hdr_data),
+  	.fifo_empty (req_hdr_buf_empty),
+  	.fifo_full 	(req_hdr_buf_full),
+  	.fifo_rd 		(tr_hdr_data)
 	);
 
 	// Data buffer
 
 	assign req_dat_val = req_d_val & req_wr;
 
-	fifo
+	sync_fifo
 	#(
-		.WIDTH (`CORE_DATA_WIDTH),
-		.DEPTH (2)
+		.DWIDTH (`CORE_DATA_WIDTH),
+		.AWIDTH (1)
 	)
 	req_data_buf
 	(
-  	.clk 		(wb_clk_i),
-  	.rst 		(wb_rst_i),
-  	.rd 		(req_dat_finished),
-  	.wr 		(req_dat_val),
-  	.w_data (req_wdata),
-  	.empty 	(req_dat_buf_empty),
-  	.full 	(req_dat_buf_full),
-  	.r_data (tr_wdata)
+  	.clk 				(wb_clk_i),
+  	.rst 				(wb_rst_i),
+  	.fifo_re 		(req_dat_finished),
+  	.fifo_we 		(req_dat_val),
+  	.fifo_wd 		(req_wdata),
+  	.fifo_empty (req_dat_buf_empty),
+  	.fifo_full 	(req_dat_buf_full),
+  	.fifo_rd 		(tr_wdata)
 	);
 
 	assign req_wdata = l1d_req_wdata;
@@ -221,21 +221,21 @@ module l1_mau
 
 	assign r_ack = (ack_state_r == ACK_REC) & (ack_cnt_r == 0);
 
-	fifo
+	sync_fifo
 	#(
-		.WIDTH (ACK_BUF_WIDTH),
-		.DEPTH (4)
+		.DWIDTH (ACK_BUF_WIDTH),
+		.AWIDTH (2)
 	)
 	ack_buff
 	(
-  	.clk 		(wb_clk_i),
-  	.rst 		(wb_rst_i),
-  	.rd 		(r_ack),
-  	.wr 		(w_ack),
-  	.w_data (w_ack_data),
-  	.empty 	(ack_buf_empty),
-  	.full 	(ack_buf_full),
-  	.r_data (ack_data)
+  	.clk 				(wb_clk_i),
+  	.rst 				(wb_rst_i),
+  	.fifo_re 		(r_ack),
+  	.fifo_we 		(w_ack),
+  	.fifo_wd 		(w_ack_data),
+  	.fifo_empty	(ack_buf_empty),
+  	.fifo_full 	(ack_buf_full),
+  	.fifo_rd 		(ack_data)
 	);
 
 	// -------------------------------------------------------------
