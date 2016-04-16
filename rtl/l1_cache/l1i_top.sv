@@ -128,7 +128,7 @@ module l1i_top
 	// LRU
 	// -----------------------------------------------------
 	always @(posedge clk) if(req_val_r) lru_way_vect_r <= lru_way_vect;
-	assign lru_way_pos = one_hot_num(lru_way_vect_r);
+	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
 	// LD

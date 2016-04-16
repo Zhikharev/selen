@@ -30,6 +30,7 @@ class sl_cache_scrb extends uvm_scoreboard;
   sl_core_bus_item req_pl[mem_addr_t];
 
   sl_cache_mem cache_mem;
+  sl_mem mem;
 
   function new(string name = "sl_cache_scrb", uvm_component parent);
     super.new(name, parent);
@@ -44,6 +45,10 @@ class sl_cache_scrb extends uvm_scoreboard;
     if(!uvm_config_db#(sl_cache_mem)::get(this, "*", "cache_mem", cache_mem)) begin
       `uvm_info("SCRB", "Creating default cache_mem...", UVM_NONE)
       cache_mem = sl_cache_mem::type_id::create("cache_mem");
+    end
+    if(!uvm_config_db#(sl_mem)::get(this, "*", "mem", mem)) begin
+      `uvm_info("SCRB", "Creating default mem...", UVM_NONE)
+      mem = sl_mem::type_id::create("mem");
     end
     req_q = new("req_q");
   endfunction
@@ -75,6 +80,9 @@ class sl_cache_scrb extends uvm_scoreboard;
   // --------------------------------------------
   function void write_rsp(sl_core_bus_item item);
     while(!sem.try_get());
+    if(item.data != mem.get_mem(item.addr))
+      `uvm_error("SCRB", $sformatf("Wrong data compared for addr=%0h! Received: %0h Expected: %0h",
+      item.addr, item.data, mem.get_mem(item.addr)))
     sem.put();
   endfunction
 
@@ -83,6 +91,8 @@ class sl_cache_scrb extends uvm_scoreboard;
   // --------------------------------------------
   function void write_mau(wb_bus_item item);
     while(!sem.try_get());
+    `uvm_info("SCRB", $sformatf("mem addr=%0h data=%0h",item.address, item.data[0]), UVM_LOW)
+    mem.set_mem(item.address, item.data[0]);
     sem.put();
   endfunction
 
