@@ -25,7 +25,11 @@ class wb_slave_response_sequence extends uvm_sequence #(wb_bus_item);
 		`uvm_info(get_full_name(), "is started",UVM_LOW)
 		forever begin
 			`uvm_create(req)
-			assert(req.randomize() with {req.err == 1'b0;});
+			assert(req.randomize() with {
+				req.err == 1'b0;
+				req.rty == 1'b0;
+				req.stall dist {1'b0:=80, 1'b1:=20};
+			});
 			`uvm_send(req)
 			get_response(rsp);
 		end

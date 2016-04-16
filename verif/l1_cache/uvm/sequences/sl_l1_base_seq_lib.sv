@@ -1,0 +1,54 @@
+// ----------------------------------------------------------------------------
+//
+// ----------------------------------------------------------------------------
+// FILE NAME      : sl_l1_base_seq_lib.sv
+// PROJECT        : Selen
+// AUTHOR         : Grigoriy Zhikharev
+// AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
+// ----------------------------------------------------------------------------
+// DESCRIPTION    :
+// ----------------------------------------------------------------------------
+
+`ifndef INC_SL_L1_BASE_SEQ_LIB
+`define INC_SL_L1_BASE_SEQ_LIB
+
+class sl_l1_base_seq extends uvm_sequence #(sl_core_bus_item);
+
+	int num_pkts;
+	sl_l1_cfg l1_cfg;
+
+	`uvm_object_utils(sl_l1_base_seq)
+	`uvm_declare_p_sequencer(sl_core_sequencer)
+
+	function new(string name = "sl_l1_base_seq");
+  	super.new(name);
+  	set_automatic_phase_objection(1);
+	endfunction
+
+	task pre_body();
+		uvm_config_db#(int)::get(null, "*", "num_pkts", num_pkts);
+		if(!uvm_config_db#(sl_l1_cfg)::get(p_sequencer, "*", "cfg", l1_cfg))
+			`uvm_fatal("CFG", "Can't get l1_cfg!")
+	endtask
+
+	task body();
+		`uvm_info(get_full_name(), "is started", UVM_MEDIUM)
+		repeat(num_pkts) begin
+			`uvm_create(req)
+			assert(req.randomize() with {
+				if(p_sequencer.cfg.port == INSTR) req.size == 4;
+				if(p_sequencer.cfg.port == INSTR) req.cop == RD;
+				solve req.size before req.addr;
+				(req.size == 4) -> (req.addr[1:0] == 2'b0);
+				(req.size == 2) -> (req.addr[0] == 1'b0);
+				req.addr inside {[l1_cfg.min_addr:l1_cfg.max_addr]};
+			});
+			`uvm_send(req)
+			get_response(rsp);
+		end
+		`uvm_info(get_full_name(), "is completed", UVM_MEDIUM)
+	endtask
+
+endclass
+
+`endif

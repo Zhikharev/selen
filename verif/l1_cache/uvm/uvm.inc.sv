@@ -13,8 +13,10 @@ import uvm_pkg::*;
 `include "rst_ifc/rst_ifc.inc.sv"
 
 `include "uvm/scrb/sl_cache_typedefs.sv"
+`include "uvm/items/sl_l1_datatypes.sv"
 
-`include "uvm/cfg/l1_cfg.sv"
+`include "uvm/cfg/sl_l1_cfg.sv"
+`include "uvm/cfg/sl_global_cfg.sv"
 
 `include "uvm/scrb/sl_cache_line.sv"
 `include "uvm/scrb/sl_mem.sv"
@@ -25,7 +27,8 @@ import uvm_pkg::*;
 
 `include "uvm/sequences/draft_sequence.sv"
 `include "uvm/sequences/wb_slave_response_sequence.sv"
+`include "uvm/sequences/sl_l1_base_seq_lib.sv"
 
-`include "uvm/tests/l1_base_test.sv"
+`include "uvm/tests/sl_l1_base_test.sv"
 
 `endif

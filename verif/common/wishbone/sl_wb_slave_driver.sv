@@ -50,39 +50,6 @@ class wb_slave_driver extends uvm_driver#(wb_bus_item);
     end
     return(delay);
   endfunction
-/*
-  task run_phase(uvm_phase phase);
-    forever begin
-      @(vif.drv_s);
-      if(!vif.rst) begin
-        wb_bus_item ret_item;
-        if(vif.mon.cyc && vif.mon.stb) begin
-          seq_item_port.try_next_item(req);
-          if(req != null) begin
-            assert($cast(ret_item, req.clone()));
-            ret_item.set_id_info(req);
-            ret_item.accept_tr();
-            repeat(rand_delay()) begin
-              clear_interface();
-              if(vif.rst) break;
-            end
-            void'(begin_tr(ret_item, "wb_slave_driver"));
-            drive_item(ret_item);
-            seq_item_port.item_done();
-            end_tr(ret_item);
-            seq_item_port.put_response(ret_item);
-          end
-          else
-            clear_interface();
-        end
-        else
-          clear_interface();
-      end
-      else
-        reset_interface();
-    end
-  endtask
-*/
 
   task run_phase(uvm_phase phase);
     fork

@@ -64,6 +64,22 @@ module l1_tb_top;
     end
 
   initial $timeformat(-9, 1, "ns", 4);
+
+  `ifdef WAVES_FSDB
+  initial begin
+    $fsdbDumpfile("l1_tb_top");
+    $fsdbDumpvars;
+  end
+  `elsif WAVES_VCD
+  initial begin
+     $dumpvars;
+  end
+  `elsif WAVES
+  initial begin
+    $vcdpluson;
+  end
+  `endif
+
 endmodule
 
 `endif
