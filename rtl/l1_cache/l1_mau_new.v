@@ -274,20 +274,21 @@ module l1_mau
 				end
 			end
 			TR_REQ: begin
-				if(tr_cnt_r == 0) begin
-					tr_state_next = TR_IDLE;
+				if(wb_stall_i) begin
+					tr_state_next = TR_REQ;
 					tr_addr_next = tr_addr_r;
 					tr_cnt_next  = tr_cnt_r;
 				end
 				else begin
-					tr_state_next = TR_REQ;
-					if(~wb_stall_i) begin
-						tr_addr_next = tr_addr_r + `CORE_DATA_WIDTH/8;
-						tr_cnt_next  = tr_cnt_r - 1'b1;
-					end
-					else begin
+					if(tr_cnt_r == 0) begin
+						tr_state_next = TR_IDLE;
 						tr_addr_next = tr_addr_r;
 						tr_cnt_next  = tr_cnt_r;
+					end
+					else begin
+						tr_state_next = TR_REQ;
+						tr_addr_next = tr_addr_r + `CORE_DATA_WIDTH/8;
+						tr_cnt_next  = tr_cnt_r - 1'b1;
 					end
 				end
 			end
