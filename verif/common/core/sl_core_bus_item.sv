@@ -31,6 +31,8 @@ class sl_core_bus_item extends uvm_sequence_item;
     super.new(name);
   endfunction
 
+  constraint c_size {size inside {1, 2, 4};}
+
   function bit is_wr();
     return(cop inside {WR, WRNC});
   endfunction
