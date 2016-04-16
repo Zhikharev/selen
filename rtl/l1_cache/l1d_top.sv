@@ -386,8 +386,10 @@ module l1d_top
 
 
 		offset_allign_p:
-			assert property(@(posedge clk) (core_req_val & rst_n) -> core_req_addr[1:0] == 0)
-			else $fatal("Wrong offset allignment!");
+			assert property(@(posedge clk) (core_req_val & (core_req_size == 4) & rst_n) -> core_req_addr[1:0] == 0)
+			else $fatal("Wrong offset allignment! (4 bytes)");
+			assert property(@(posedge clk) (core_req_val & (core_req_size == 2) & rst_n) -> core_req_addr[0] == 0)
+			else $fatal("Wrong offset allignment! (2 bytes)");
 	`endif
 
 endmodule
