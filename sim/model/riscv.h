@@ -10,6 +10,8 @@
 #include "riscv/instr_store.h"
 #include "riscv/instr_u.h"
 #include "riscv/instr_uj.h"
+#include "riscv/instr_system.h"
+
 #include "riscv/disassembler.h"
 
 

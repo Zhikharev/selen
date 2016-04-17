@@ -14,7 +14,7 @@ typedef __SIZE_TYPE__ uint32_t;
   pack     - aligment and no paddings
   volatile - compiler strict about memory stores and loads
 */
-typedef /*volatile*/ struct
+typedef volatile struct
 {
     uint32_t in;
     uint32_t out;
@@ -63,15 +63,13 @@ void wait(const tick_t ticks_to_wait)
 /*set name for linker*/
 void blink() asm("main");
 
-void __attribute__((optimize("O0"))) blink()
+void __attribute__((optimize("Os"))) blink()
 {
-    /*disable optimizations a this function*/
-
     const uint32_t input_pin = 0;
     const uint32_t output_pin = 1;
 
     /*map GPIO struct to memory*/
-    GPIO* gpio = (GPIO*)GPIO_BASE_ADDRESS;
+    GPIO* const gpio = (GPIO*)GPIO_BASE_ADDRESS;
 
     /*init default settings*/
     gpio->in = GPIO_DEF_RGPIO_IN;

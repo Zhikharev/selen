@@ -50,143 +50,77 @@
 
 	.text
 	.align	2
-	.type	wait, @function
-wait:
+	.type	wait.constprop.0, @function
+wait.constprop.0:
  #APP
 # 43 "blink.c" 1
 	rdcycle a2;	# low
-	rdcycleh a6;	# high
+	rdcycleh a1;	# high
 # 0 "" 2
  #NO_APP
-	or	a5,a0,a1	# ticks_to_wait, ticks_to_wait, ticks_to_wait
-	beqz	a5,.L1	#, ticks_to_wait,
-.L8:
+	li	a0,99	# tmp119,
+.L2:
  #APP
 # 43 "blink.c" 1
-	rdcycle a4;	# low
-	rdcycleh a5;	# high
+	rdcycle a5;	# low
+	rdcycleh a4;	# high
 # 0 "" 2
  #NO_APP
-	sub	a3,a4,a2	# ticks_elapsed, low, low
-	sltu	a4,a4,a3	# tmp100, low, ticks_elapsed
-	sub	a5,a5,a6	# ticks_elapsed, high, high
-	sub	a5,a5,a4	# tmp101, ticks_elapsed, tmp100
-	bgtu	a1,a5,.L8	#, ticks_to_wait, tmp101,
-	bne	a1,a5,.L1	#, ticks_to_wait, tmp101,
-	bgtu	a0,a3,.L8	#, ticks_to_wait, ticks_elapsed,
+	sub	a3,a5,a2	# ticks_elapsed, low, low
+	sltu	a5,a5,a3	# tmp98, low, ticks_elapsed
+	sub	a4,a4,a1	# ticks_elapsed, high, high
+	bne	a4,a5,.L1	#, ticks_elapsed, tmp98,
+	bleu	a3,a0,.L2	#, ticks_elapsed, tmp119,
 .L1:
 	ret
-	.size	wait, .-wait
+	.size	wait.constprop.0, .-wait.constprop.0
 	.align	2
 	.globl	main
 	.type	main, @function
 main:
-	add	sp,sp,-48	#,,
-	sw	ra,44(sp)	#,
-	sw	s0,40(sp)	#,
-	add	s0,sp,48	#,,
-	sw	zero,-20(s0)	#, input_pin
-	li	a5,1	# tmp99,
-	sw	a5,-24(s0)	# tmp99, output_pin
-	li	a5,8192	# tmp100,
-	sw	a5,-28(s0)	# tmp100, gpio
-	lw	a5,-28(s0)	# tmp101, gpio
-	sw	zero,0(a5)	#, gpio_3->in
-	lw	a5,-28(s0)	# tmp102, gpio
-	sw	zero,4(a5)	#, gpio_3->out
-	lw	a5,-28(s0)	# tmp103, gpio
-	sw	zero,8(a5)	#, gpio_3->oe
-	lw	a5,-28(s0)	# tmp104, gpio
-	sw	zero,12(a5)	#, gpio_3->inte
-	lw	a5,-28(s0)	# tmp105, gpio
-	sw	zero,16(a5)	#, gpio_3->ptrig
-	lw	a5,-28(s0)	# tmp106, gpio
-	sw	zero,20(a5)	#, gpio_3->aux
-	lw	a5,-28(s0)	# tmp107, gpio
-	sw	zero,24(a5)	#, gpio_3->ctrl
-	lw	a5,-28(s0)	# tmp108, gpio
-	sw	zero,28(a5)	#, gpio_3->eclk
-	lw	a5,-28(s0)	# tmp109, gpio
-	sw	zero,32(a5)	#, gpio_3->nec
-	lw	a5,-28(s0)	# tmp110, gpio
-	lw	a4,8(a5)	# D.1537, gpio_3->oe
-	li	a3,1	# tmp111,
-	lw	a5,-20(s0)	# tmp112, input_pin
-	sll	a5,a3,a5	# D.1537, tmp111, tmp112
-	not	a5,a5	# D.1537, D.1537
-	and	a4,a4,a5	# D.1537, D.1537, D.1537
-	lw	a5,-28(s0)	# tmp113, gpio
-	sw	a4,8(a5)	# D.1537, gpio_3->oe
-	lw	a5,-28(s0)	# tmp114, gpio
-	lw	a5,24(a5)	# D.1537, gpio_3->ctrl
-	and	a4,a5,-2	# D.1537, D.1537,
-	lw	a5,-28(s0)	# tmp115, gpio
-	sw	a4,24(a5)	# D.1537, gpio_3->ctrl
-	lw	a5,-28(s0)	# tmp116, gpio
-	lw	a4,12(a5)	# D.1537, gpio_3->inte
-	li	a3,1	# tmp117,
-	lw	a5,-20(s0)	# tmp118, input_pin
-	sll	a5,a3,a5	# D.1537, tmp117, tmp118
-	not	a5,a5	# D.1537, D.1537
-	and	a4,a4,a5	# D.1537, D.1537, D.1537
-	lw	a5,-28(s0)	# tmp119, gpio
-	sw	a4,12(a5)	# D.1537, gpio_3->inte
-.L14:
-	lw	a5,-28(s0)	# tmp120, gpio
-	lw	a4,0(a5)	# D.1537, gpio_3->in
-	li	a3,1	# tmp121,
-	lw	a5,-20(s0)	# tmp122, input_pin
-	sll	a5,a3,a5	# D.1537, tmp121, tmp122
-	and	a5,a4,a5	# D.1537, D.1537, D.1537
-	bnez	a5,.L16	#, D.1537,
-	j	.L14	#
-.L16:
-	nop
-	lw	a5,-28(s0)	# tmp123, gpio
-	lw	a4,8(a5)	# D.1537, gpio_3->oe
-	li	a3,1	# tmp124,
-	lw	a5,-24(s0)	# tmp125, output_pin
-	sll	a5,a3,a5	# D.1537, tmp124, tmp125
-	or	a4,a4,a5	# D.1537, D.1537, D.1537
-	lw	a5,-28(s0)	# tmp126, gpio
-	sw	a4,8(a5)	# D.1537, gpio_3->oe
-	lw	a5,-28(s0)	# tmp127, gpio
-	lw	a4,12(a5)	# D.1537, gpio_3->inte
-	li	a3,1	# tmp128,
-	lw	a5,-24(s0)	# tmp129, output_pin
-	sll	a5,a3,a5	# D.1537, tmp128, tmp129
-	not	a5,a5	# D.1537, D.1537
-	and	a4,a4,a5	# D.1537, D.1537, D.1537
-	lw	a5,-28(s0)	# tmp130, gpio
-	sw	a4,12(a5)	# D.1537, gpio_3->inte
-	lw	a5,-28(s0)	# tmp131, gpio
-	lw	a4,4(a5)	# D.1537, gpio_3->out
-	li	a3,1	# tmp132,
-	lw	a5,-24(s0)	# tmp133, output_pin
-	sll	a5,a3,a5	# D.1537, tmp132, tmp133
-	or	a4,a4,a5	# D.1537, D.1537, D.1537
-	lw	a5,-28(s0)	# tmp134, gpio
-	sw	a4,4(a5)	# D.1537, gpio_3->out
-	li	a4,100	# tmp135,
-	li	a5,0	#,
-	sw	a4,-40(s0)	# tmp135, ticks_to_wait
-	sw	a5,-36(s0)	#, ticks_to_wait
-	lw	a0,-40(s0)	#, ticks_to_wait
-	lw	a1,-36(s0)	#, ticks_to_wait
-	call	wait	#
-	lw	a5,-28(s0)	# tmp136, gpio
-	lw	a4,4(a5)	# D.1537, gpio_3->out
-	li	a3,1	# tmp137,
-	lw	a5,-24(s0)	# tmp138, output_pin
-	sll	a5,a3,a5	# D.1537, tmp137, tmp138
-	not	a5,a5	# D.1537, D.1537
-	and	a4,a4,a5	# D.1537, D.1537, D.1537
-	lw	a5,-28(s0)	# tmp139, gpio
-	sw	a4,4(a5)	# D.1537, gpio_3->out
-	nop
-	lw	ra,44(sp)	#,
-	lw	s0,40(sp)	#,
-	add	sp,sp,48	#,,
+	add	sp,sp,-16	#,,
+	li	a5,8192	# tmp88,
+	sw	ra,12(sp)	#,
+	sw	s0,8(sp)	#,
+	sw	zero,0(a5)	#, MEM[(volatile struct GPIO *)8192B].in
+	sw	zero,4(a5)	#, MEM[(volatile struct GPIO *)8192B].out
+	sw	zero,8(a5)	#, MEM[(volatile struct GPIO *)8192B].oe
+	sw	zero,12(a5)	#, MEM[(volatile struct GPIO *)8192B].inte
+	sw	zero,16(a5)	#, MEM[(volatile struct GPIO *)8192B].ptrig
+	sw	zero,20(a5)	#, MEM[(volatile struct GPIO *)8192B].aux
+	sw	zero,24(a5)	#, MEM[(volatile struct GPIO *)8192B].ctrl
+	sw	zero,28(a5)	#, MEM[(volatile struct GPIO *)8192B].eclk
+	sw	zero,32(a5)	#, MEM[(volatile struct GPIO *)8192B].nec
+	lw	a4,8(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
+	and	a4,a4,-2	# D.1538, D.1538,
+	sw	a4,8(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
+	lw	a4,24(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].ctrl
+	and	a4,a4,-2	# D.1538, D.1538,
+	sw	a4,24(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].ctrl
+	lw	a4,12(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
+	and	a4,a4,-2	# D.1538, D.1538,
+	sw	a4,12(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
+.L6:
+	lw	a4,0(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].in
+	li	s0,8192	# tmp103,
+	and	a4,a4,1	# D.1538, D.1538,
+	beqz	a4,.L6	#, D.1538,
+	lw	a5,8(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
+	or	a5,a5,2	# D.1538, D.1538,
+	sw	a5,8(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
+	lw	a5,12(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
+	and	a5,a5,-3	# D.1538, D.1538,
+	sw	a5,12(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
+	lw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
+	or	a5,a5,2	# D.1538, D.1538,
+	sw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
+	call	wait.constprop.0	#
+	lw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
+	lw	ra,12(sp)	#,
+	and	a5,a5,-3	# D.1538, D.1538,
+	sw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
+	lw	s0,8(sp)	#,
+	add	sp,sp,16	#,,
 	jr	ra	#
 	.size	main, .-main
 	.ident	"GCC: (GNU) 5.3.0"

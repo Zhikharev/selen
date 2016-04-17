@@ -13,6 +13,8 @@ namespace isa
 
 struct STORE
 {
+    static const word_t opcode = OP_STORE;
+
     //0-6 -opcode, func3 12-14
     static const word_t mask = {0x7000};
 
@@ -24,7 +26,7 @@ struct STORE
         {
             {
                 mask, 0,
-                "SB", OP_STORE,
+                "sb", STORE::print,
                 [] ISA_OPERATION
                 {
                     byte_t value = core.get_reg<byte_t>(i.rs2());
@@ -36,7 +38,7 @@ struct STORE
             },
             {
                 mask, func3(0b001),
-                "SH", OP_STORE,
+                "sh", STORE::print,
                 [] ISA_OPERATION
                 {
                     shword_t value = core.get_reg<shword_t>(i.rs2());
@@ -48,7 +50,7 @@ struct STORE
             },
             {
                 mask, func3(0b010),
-                "SW", OP_STORE,
+                "sw", STORE::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = core.get_reg<sword_t>(i.rs2());
@@ -63,8 +65,16 @@ struct STORE
 
             return product;
         }
-}; //STORE
 
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << XPR::id2name(i.rs1()) << ","
+            << std::dec << i.immS() << "("
+            << XPR::id2name(i.rs2()) << ")";
+    }
+
+}; //STORE
 
 } // namespace isa
 } // namespace selen

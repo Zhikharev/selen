@@ -12,6 +12,8 @@ namespace isa
 
 struct I_R
 {
+    static const word_t opcode = OP_I_R;
+
     //0-6 -opcode, func3 12-14, func7 25 - 31
     static const word_t mask3 = {0x7000};
     static const word_t mask7_3 = {0xfe007000};
@@ -25,7 +27,7 @@ struct I_R
         {
             {
                 mask3, 0,
-                "ADDI", OP_I_R,
+                "addi", I_R::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = core.get_reg<sword_t>(i.rs1()) + i.immI();
@@ -35,7 +37,7 @@ struct I_R
             },
             {
                 mask3, func3(0b010),
-                "SLTI", OP_I_R,
+                "slti", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = (core.get_reg<sword_t>(i.rs1()) < i.immI()) ? 1 : 0;
@@ -45,7 +47,7 @@ struct I_R
             },
             {
                 mask3, func3(0b011),
-                "SLTIU", OP_I_R,
+                "sltiu", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = (core.get_reg<word_t>(i.rs1()) < static_cast<word_t>(i.immI())) ? 1 : 0;
@@ -55,7 +57,7 @@ struct I_R
             },
             {
                 mask3, func3(0b111),
-                "ANDI", OP_I_R,
+                "andi", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) & i.immI();
@@ -65,7 +67,7 @@ struct I_R
             },
             {
                 mask3, func3(0b110),
-                "ORI", OP_I_R,
+                "ori", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) | i.immI();
@@ -75,7 +77,7 @@ struct I_R
             },
             {
                 mask3, func3(0b100),
-                "XORI", OP_I_R,
+                "xori", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) ^ i.immI();
@@ -85,7 +87,7 @@ struct I_R
             },
             {
                 mask7_3, func3(0b001),
-                "SLLI", OP_I_R,
+                "slli", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) << (i.immI() & 0x1f); // lower five bits
@@ -95,7 +97,7 @@ struct I_R
             },
             {
                 mask7_3, func3(0b101),
-                "SRLI", OP_I_R,
+                "srli", I_R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) >> (i.immI() & 0x1f);
@@ -105,7 +107,7 @@ struct I_R
             },
             {
                 mask7_3, func7(0b0100000) | func3(0b101),
-                "SRAI", OP_I_R,
+                "srai", I_R::print,
                 [] ISA_OPERATION
                 {
                     //FIXME: right ariphmetic shift is not defined by C++ standard.
@@ -118,6 +120,15 @@ struct I_R
 
             return product;
         }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << std::setw(RN_WIDHT) << XPR::id2name(i.rd()) << ","
+            << std::dec << i.immI()
+            << "(" << XPR::id2name(i.rs1()) << ")";
+    }
+
 }; //I_R
 
 } // namespace isa

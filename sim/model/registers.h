@@ -5,50 +5,44 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "defines.h"
 
+/*
+     general-purpose registers (XPRs)
+     // floating-point registers (FPRs)
+     privileged control registers (PCRs)
+*/
 namespace selen
 {
 
-typedef word_t reg_t;
 typedef size_t reg_id_t;
 
-enum : reg_id_t
-{
-    R_ZERO,
-    R_RA,
-    R_SP, R_GP,
-    R_TP, R_T0, R_T1, R_T2,
-    R_S0, R_S1,
-    R_A0, R_A1, R_A2, R_A3, R_A4, R_A5, R_A6, R_A7,
-    R_S2, R_S3, R_S4, R_S5, R_S6, R_S7, R_S8, R_S9, R_S10, R_S11,
-    R_T3, R_T4, R_T5, R_T6,
-
-    //boundary
-    R_LAST,
-    R_FIRST = R_ZERO
-};
-
-constexpr reg_id_t NUM_REGISTERS = R_LAST;
-
+template<class Traits>
 class Regfile
 {
 public:
+  typedef typename Traits::value_t value_t;
 
-  template<class T>
-  void write(const reg_id_t num, const T value)
+  enum
   {
-      assert(num >= 0 && num < selen::NUM_REGISTERS);
+      size = Traits::size
+  };
 
-      if(!zero_reg || num != 0)
+  template<class V>
+  void write(const reg_id_t num, const V value)
+  {
+      assert(num >= 0 && num < size);
+
+      if(num != Traits::zero_reg)
           data[num] = value;
   }
 
-  template<class T>
-  T read(const reg_id_t num) const
+  template<class V>
+  V read(const reg_id_t num) const
   {
-      assert(num >= 0 && num < selen::NUM_REGISTERS);
+      assert(num >= 0 && num < size);
 
       return data[num];
   }
@@ -58,22 +52,54 @@ public:
       ::memset(data, 0x0, sizeof(data));
   }
 
-private:
-  bool zero_reg = {true};
+  static
+  std::string id2name(const reg_id_t id)
+  {
+      if(id >= size)
+          throw std::invalid_argument("bad register id");
 
-  reg_t data[NUM_REGISTERS] = {0};
+      return Traits::names[id];
+  }
+
+  static
+  reg_id_t name2id(const std::string &name)
+  {
+      //upper and low case are equal
+      std::string _name;
+      std::transform(name.begin(), name.end(),
+                     std::back_inserter(_name), ::tolower);
+
+      for (reg_id_t i = 0; i < size; i++)
+      {
+          if(_name == Traits::names[i])
+              return i;
+      }
+
+      return size;
+  }
+
+  static
+  const std::vector<std::string>& get_reg_names()
+  {
+      return Traits::names;
+  }
+
+private:
+  value_t data[size] = {0};
 };
 
-//Register names handling
+//general-purpose registers (XPRs)
+struct XPRTraits
+{
+    typedef word_t value_t;
 
-//throw if id > R_LAST
-std::string regid2name(const reg_id_t id);
+    static constexpr size_t size = {32};
+    static constexpr int zero_reg = {0};
 
-//return R_LAST if there is no register with name
-//upper and low case are equal
-reg_id_t name2regid(const std::string &name);
+    static const std::vector<std::string> names;
+};
 
-const std::vector<std::string>& get_reg_names();
+typedef Regfile<XPRTraits> XPR;
 
 } //namespace selen
 #endif //REG123456789SELEN

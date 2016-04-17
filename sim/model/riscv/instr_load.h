@@ -13,6 +13,8 @@ namespace isa
 
 struct LOAD
 {
+    static const word_t opcode = OP_LOAD;
+
     //0-6 -opcode, func3 12-14
     static const word_t mask = {0x7000};
 
@@ -24,7 +26,7 @@ struct LOAD
         {
             {
                 mask, 0,
-                "LB", OP_LOAD,
+                "lb", LOAD::print,
                 [] ISA_OPERATION
                 {
                     sbyte_t value = core.read_mem<sbyte_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
@@ -36,7 +38,7 @@ struct LOAD
             },
             {
                 mask, func3(0b001),
-                "LH", OP_LOAD,
+                "lh", LOAD::print,
                 [] ISA_OPERATION
                 {
                     shword_t value = core.read_mem<shword_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
@@ -48,7 +50,7 @@ struct LOAD
             },
             {
                 mask, func3(0b010),
-                "LW", OP_LOAD,
+                "lw", LOAD::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = core.read_mem<sword_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
@@ -59,7 +61,7 @@ struct LOAD
             },
             {
                 mask, func3(0b100),
-                "LBU", OP_LOAD,
+                "lbu", LOAD::print,
                 [] ISA_OPERATION
                 {
                     byte_t value = core.read_mem<byte_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
@@ -70,7 +72,7 @@ struct LOAD
             },
             {
                 mask, func3(0b101),
-                "LHU", OP_LOAD,
+                "lhu", LOAD::print,
                 [] ISA_OPERATION
                 {
                     hword_t value = core.read_mem<hword_t>(core.get_reg<word_t>(i.rs1()) + i.immI());
@@ -83,6 +85,14 @@ struct LOAD
 
             return product;
         }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << XPR::id2name(i.rd()) << ","
+            << std::dec << i.immI()
+            << "(" << XPR::id2name(i.rs1()) << ")";
+    }
 }; //LOAD
 
 } // namespace isa

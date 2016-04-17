@@ -13,13 +13,15 @@ namespace isa
 
 struct JAL
 {
+    static const word_t opcode = OP_JAL;
+
     static const descriptor_array_t& getDescriptors()
     {
         static const descriptor_array_t product =
         {
             {
                 0, 0,
-                "JAL", OP_JAL,
+                "jal", JAL::print,
                 [] ISA_OPERATION
                 {
                     core.set_reg<word_t>(i.rd(), core.get_pc());
@@ -30,17 +32,27 @@ struct JAL
 
         return product;
     }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << std::setw(RN_WIDHT) << XPR::id2name(i.rd()) << ","
+            << std::hex << std::showbase
+            << i.immUJ();
+    }
 }; //JAL
 
 struct JALR
 {
+    static const word_t opcode = OP_JALR;
+
     static const descriptor_array_t& getDescriptors()
     {
         static const descriptor_array_t product =
         {
             {
                 0, 0,
-                "JALR", OP_JALR,
+                "jalr", JALR::print,
                 [] ISA_OPERATION
                 {
                     core.set_reg<word_t>(i.rd(), core.get_pc());
@@ -51,6 +63,14 @@ struct JALR
             };
 
         return product;
+    }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << std::setw(RN_WIDHT) << XPR::id2name(i.rd()) << ","
+            << std::dec << i.immI()
+            << "(" << XPR::id2name(i.rs1()) << ")";
     }
 }; //JALR
 

@@ -13,13 +13,15 @@ namespace isa
 
 struct LUI
 {
+    static const word_t opcode = OP_LUI;
+
     static const descriptor_array_t& getDescriptors()
     {
         static const descriptor_array_t product =
         {
             {
                 0, 0,
-                "LUI", OP_LUI,
+                "lui", LUI::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = i.immU();
@@ -31,17 +33,27 @@ struct LUI
 
         return product;
     }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << std::setw(RN_WIDHT) << XPR::id2name(i.rd()) << ","
+            << std::hex << std::showbase
+            << i.immU();
+    }
 }; //LUI
 
 struct AUIPC
 {
+    static const word_t opcode = OP_AUIPC;
+
     static const descriptor_array_t& getDescriptors()
     {
         static const descriptor_array_t product =
         {
             {
                 0, 0,
-                "AUIPC", OP_AUIPC,
+                "auipc", LUI::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = core.get_pc() + i.immU();

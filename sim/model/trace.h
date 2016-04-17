@@ -121,7 +121,7 @@ class RRegister
 public:
     //read record
     RRegister(const reg_id_t id,
-        const reg_t value) :
+        const word_t value) :
             type(T_READ), id(id),
             value(value)
     {
@@ -129,8 +129,8 @@ public:
 
     //write record
     RRegister(const reg_id_t id,
-        const reg_t new_value,
-        const reg_t old_value) :
+        const word_t new_value,
+        const word_t old_value) :
             type(T_WRITE), id(id),
             value(new_value),
             diff(new_value - old_value)
@@ -141,7 +141,7 @@ public:
     {
         std::ostringstream out;
         out << std::left << std::setw(FMT_WIDHT/2) << "[register]" << std::setw(5) << ((type == T_READ) ? "READ" : "WRITE" )
-            << "; id " << std::dec << id << " -> " << regid2name(id)
+            << "; id " << std::dec << id << " -> " << selen::XPR::id2name(id)
             << "; value  " << hex(value);
 
         if(type == T_WRITE)
@@ -154,7 +154,7 @@ public:
 private:
     int type;
     reg_id_t id;
-    reg_t value;
+    word_t value;
     sword_t diff;
 };
 
@@ -175,7 +175,8 @@ public:
         out << std::left << std::setw(FMT_WIDHT/2) << "[fetch]" << "\t-|-->\t"
             << hex(pc)
             << "\t " << hex(instr)
-            << "\t" <<  data.disasemble();
+            << "\t";
+        data.disasemble(out);
 
         return out.str();
     }

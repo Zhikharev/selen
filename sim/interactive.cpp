@@ -153,11 +153,11 @@ static const CommandMap& get_commands_map()
 
 std::string compose_reg_names_string(const std::string& separator = std::string(", "))
 {
-    const std::vector<std::string>& names = selen::get_reg_names();
+    const std::vector<std::string>& names = selen::XPR::get_reg_names();
     std::string product;
 
-    selen::reg_id_t id = selen::R_FIRST;
-    for (; id < selen::R_LAST - 1; id++)
+    selen::reg_id_t id = 0;
+    for (; id < names.size(); id++)
     {
         product.append(names.at(id));
         product.append(separator);
@@ -237,9 +237,9 @@ void Interactive::print_register(const std::string &name) const
         return;
     }
 
-    selen::reg_id_t id = selen::name2regid(name);
+    selen::reg_id_t id = selen::XPR::name2id(name);
 
-    if(id == selen::R_LAST)
+    if(id == selen::XPR::size)
     {
         std::cout << "there is no register \"" << name << "\"."
                      "\nAvaible registers:\n"
@@ -247,7 +247,7 @@ void Interactive::print_register(const std::string &name) const
         return;
     }
 
-    std::cout << selen::regid2name(id) << ": "
+    std::cout << selen::XPR::id2name(id) << ": "
         << std::hex << state.reg.read<selen::word_t>(id)
         << std::endl;
 }

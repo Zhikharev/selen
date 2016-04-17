@@ -21,15 +21,16 @@ namespace isa
 //opcodes
 enum : word_t
 {
-    OP_R     = 0b0110011,
-    OP_I_R   = 0b0010011,
-    OP_LUI   = 0b0110111,
-    OP_AUIPC = 0b0010111,
-    OP_SB    = 0b1100011,
-    OP_JAL   = 0b1101111,
-    OP_JALR  = 0b1100111,
-    OP_LOAD  = 0b0000011,
-    OP_STORE = 0b0100011,
+    OP_R      = 0b0110011,
+    OP_I_R    = 0b0010011,
+    OP_LUI    = 0b0110111,
+    OP_AUIPC  = 0b0010111,
+    OP_SB     = 0b1100011,
+    OP_JAL    = 0b1101111,
+    OP_JALR   = 0b1100111,
+    OP_LOAD   = 0b0000011,
+    OP_STORE  = 0b0100011,
+    OP_SYSTEM = 0b1110011,
 };
 
 class instruction_t
@@ -132,8 +133,9 @@ private:
 //instruction description
 struct descriptor_t
 {
-    //match/search
+    //escape bits for match pattern
     const word_t mask;
+    //match pattern
     const word_t pattern;
 
     bool inline operator == (const instruction_t instruction) const
@@ -141,21 +143,20 @@ struct descriptor_t
         return pattern == (instruction & mask);
     }
 
-    //disassembler
+    //asm mnemonic
     const std::string mnemonic;
-    const word_t format;
 
-    //perform
+    //print callback
+    void (* const print)(std::ostream& out,
+                         const instruction_t instruction);
+
+    //perform callback
 #define ISA_OPERATION (selen::Core& core, const selen::isa::instruction_t i)
     const std::function<void ISA_OPERATION> operation;
 };
 
 typedef const descriptor_t* descriptor_ptr_t;
 typedef std::vector<descriptor_t> descriptor_array_t;
-
-std::string print_instruction(const std::string& mnemonic,
-                              const word_t format,
-                              const instruction_t i);
 
 //decoded and ready to perform instruction
 struct fetch_t
@@ -165,9 +166,13 @@ struct fetch_t
         description->operation(core, instruction);
     }
 
-    std::string disasemble() const
+    void disasemble(std::ostream& out) const
     {
-        return print_instruction(description->mnemonic, description->format, instruction);
+        out << std::setw(MF_WIDHT) << std::left
+            << description->mnemonic
+            << std::right;
+
+        return description->print(out, instruction);
     }
 
     instruction_t instruction;

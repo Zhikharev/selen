@@ -13,6 +13,8 @@ namespace isa
 
 struct R
 {
+    static const word_t opcode = OP_R;
+
     //0-6 -opcode, func3 12-14, func7 25 - 31
     static const word_t mask = {0xfe007000};
 
@@ -25,7 +27,7 @@ struct R
         {
             {
                 mask, 0,
-                "ADD", OP_R,
+                "add", R::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = core.get_reg<sword_t>(i.rs1()) + core.get_reg<sword_t>(i.rs2());
@@ -35,7 +37,7 @@ struct R
             },
             {
                 mask, func3(0b010),
-                "SLT", OP_R,
+                "slt", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = (core.get_reg<sword_t>(i.rs1()) < core.get_reg<sword_t>(i.rs2())) ? 1 : 0;
@@ -45,7 +47,7 @@ struct R
             },
             {
                 mask, func3(0b011),
-                "SLTU", OP_R,
+                "sltu", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = (core.get_reg<word_t>(i.rs1()) < core.get_reg<word_t>(i.rs2())) ? 1 : 0;
@@ -55,7 +57,7 @@ struct R
             },
             {
                 mask, func3(0b111),
-                "AND", OP_R,
+                "and", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) & core.get_reg<word_t>(i.rs2());
@@ -65,7 +67,7 @@ struct R
             },
             {
                 mask, func3(0b110),
-                "OR", OP_R,
+                "or", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) | core.get_reg<word_t>(i.rs2());
@@ -75,7 +77,7 @@ struct R
             },
             {
                 mask, func3(0b100),
-                "XOR", OP_R,
+                "xor", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) ^ core.get_reg<word_t>(i.rs2());
@@ -85,7 +87,7 @@ struct R
             },
             {
                 mask, func3(0b001),
-                "SLL", OP_R,
+                "sll", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) << (core.get_reg<word_t>(i.rs2()) & 0x1f); // lower five bits
@@ -95,7 +97,7 @@ struct R
             },
             {
                 mask, func3(0b101),
-                "SRL", OP_R,
+                "srl", R::print,
                 [] ISA_OPERATION
                 {
                     word_t value = core.get_reg<word_t>(i.rs1()) >> (core.get_reg<word_t>(i.rs2()) & 0x1f);
@@ -105,7 +107,7 @@ struct R
             },
             {
                 mask, func7(0b0100000) | func3(0b101),
-                "SRA", OP_R,
+                "sra", R::print,
                 [] ISA_OPERATION
                 {
                     //FIXME: right ariphmetic shift is not defined by C++ standard.
@@ -116,28 +118,27 @@ struct R
             },
             {
                 mask, func7(0b0100000),
-                "SUB", OP_R,
+                "sub", R::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = core.get_reg<sword_t>(i.rs1()) - core.get_reg<sword_t>(i.rs2());
                     core.set_reg(i.rd(), value);
                     core.increment_pc();
                 }
-             }
-            };
+            }
+        };
 
-            return product;
-        }
+        return product;
+    }
 
-//            {(32u<<3)|0b010,
-//             {
-//                 "AM",
-//                 []OPERATION
-//                 {
-//                     st.reg[d].s = (st.reg[s1].s + st.reg[s2].s) / 2;
-//                 }
-//             }
-//            }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << std::setw(RN_WIDHT) << XPR::id2name(i.rd()) << ","
+            << std::setw(RN_WIDHT) << XPR::id2name(i.rs1()) << ","
+            << XPR::id2name(i.rs2());
+    }
 }; //R
 
 } // namespace isa

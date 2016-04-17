@@ -12,7 +12,7 @@ namespace selen
 
 struct CoreState
 {
-    Regfile reg;
+    XPR reg;
     addr_t pc = {0};
 
     void clear()
@@ -76,7 +76,7 @@ public:
     {
         unit_t value = state.reg.read<unit_t>(id);
         if(trace != nullptr)
-            trace->write(trace::RRegister{id, static_cast<reg_t>(value)});
+            trace->write(trace::RRegister{id, static_cast<word_t>(value)});
         return value;
     }
 
@@ -84,8 +84,8 @@ public:
     void set_reg(const reg_id_t id, const unit_t value)
     {
         if(trace != nullptr)
-            trace->write(trace::RRegister{id, static_cast<reg_t>(value),
-                                   state.reg.read<reg_t>(id)});
+            trace->write(trace::RRegister{id, static_cast<word_t>(value),
+                                   state.reg.read<word_t>(id)});
 
         state.reg.write<unit_t>(id, value);
     }

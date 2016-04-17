@@ -14,7 +14,7 @@ namespace isa
 {
 
 //disassemble instruction, nothrow, if error print "invalid instruction"
-std::string disassemble(const word_t instruction);
+void disassemble(std::ostream &out, const word_t instruction);
 
 //dumper for memory_t::dump()
 struct disasembler_dumper
@@ -24,8 +24,9 @@ struct disasembler_dumper
     void inline operator()(token_t token, std::ostream& out)
     {
         out << std::setw(10) << token
-            << "\t"
-            << disassemble(token);
+            << "\t";
+
+        disassemble(out, token);
     }
 };
 

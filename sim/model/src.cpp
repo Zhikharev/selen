@@ -1,9 +1,7 @@
 /**
  * Selen 2016
  *
- * model lib source file,
- *
- * try to keep it as one compilation unit
+ * model lib source file
  */
 
 #include <map>
@@ -20,38 +18,68 @@
 using namespace selen;
 using namespace std;
 
+//General purpose registers (XPRs) names
+
+const std::vector<std::string> XPRTraits::names =
+{
+    "zero",
+    "ra",
+    "sp", "gp",
+    "tp", "t0", "t1", "t2",
+    "s0", "s1",
+    "a0", "a1", "a2", "a3", "a4", "a5","a6", "a7",
+    "s2", "s3", "s4", "s5", "s6", "s7","s8", "s9", "s10", "s11",
+    "t3", "t4", "t5", "t6"
+};
+
 //======================================
 // ISA
 //======================================
 
-//opcode -> vector of specific descriptors for that opcode
 typedef std::unordered_map<word_t, const isa::descriptor_array_t&> descriptors_table_t;
 
-inline const descriptors_table_t& get_descriptors()
-{
-    using namespace isa;
+//table initialization
 
+#define RISCV_ISA_SECTIONS \
+    R, I_R, LUI, AUIPC, SB, JAL, JALR, LOAD, STORE, SYSTEM
+
+template<class S>
+static inline
+descriptors_table_t::value_type make_section()
+{
+    return {S::opcode, S::getDescriptors()};
+}
+
+template<typename... Args>
+static inline
+const descriptors_table_t& get_descriptors()
+{
     static descriptors_table_t product =
         {
-            {OP_R, R::getDescriptors()},
-            {OP_I_R, I_R::getDescriptors()},
-            {OP_LUI,  LUI::getDescriptors()},
-            {OP_AUIPC, AUIPC::getDescriptors()},
-            {OP_SB, SB::getDescriptors()},
-            {OP_JAL, JAL::getDescriptors()},
-            {OP_JALR, JALR::getDescriptors()},
-            {OP_LOAD, LOAD::getDescriptors()},
-            {OP_STORE, STORE::getDescriptors()}
+            make_section<Args>() ...
         };
 
     return product;
 }
 
+static
+void print_invalid_insr(std::ostream& out,
+                        const selen::isa::instruction_t i)
+{
+    out << hex << showbase
+        << ", op: " << i.opcode()
+        << " rd: " << dec << i.rd()
+        << " rs1:" << dec << i.rs1()
+        << " rs2:" << dec << i.rs2()
+        << " rm:" << hex << i.rm();
+}
+
+static
 isa::descriptor_t invalidDescriptor =
 {
-    0, 0, "invalid", 0,
-    []
-    ISA_OPERATION
+    0, 0,
+    "invalid",  print_invalid_insr,
+    [] ISA_OPERATION
     {
         std::ostringstream out;
 
@@ -68,88 +96,28 @@ isa::descriptor_t invalidDescriptor =
     }
 };
 
-std::string isa::print_instruction(const std::string& mnemonic,
-                                   const word_t format,
-                                   const isa::instruction_t i)
+static
+isa::descriptor_ptr_t __attribute__((optimize("O3")))
+find_descriptor(const isa::instruction_t& instruction)
 {
-    std::ostringstream s;
-    s << std::setw(MF_WIDHT) << mnemonic << "\t";
+    using namespace isa;
 
-    switch(format)
-    {
-    case OP_R:
-        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
-          << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", "
-          << regid2name(i.rs2());
-        break;
+    static const descriptors_table_t descriptors =
+            get_descriptors<RISCV_ISA_SECTIONS>();
 
-    case OP_I_R:
-        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
-          << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", "
-          << std::dec << std::showbase
-          << i.immI();
-        break;
+    descriptor_ptr_t product = nullptr;
 
-    case OP_AUIPC:
-    case OP_LUI:
-        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
-          << std::hex << std::showbase
-          << i.immU();
-        break;
-
-    case OP_SB:
-        s << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", "
-          << std::setw(RN_WIDHT) << regid2name(i.rs2()) << ", ["
-          << std::dec << std::showbase
-          << i.immSB()
-          << " (" << std::hex << i.immSB() << ")]";
-
-    case OP_JAL:
-        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
-          << std::hex << std::showbase
-          << i.immUJ();
-        break;
-
-    case OP_JALR:
-        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", "
-          << regid2name(i.rs1()) << ", "
-          << std::hex << std::showbase
-          << i.immI();
-        break;
-
-    case OP_LOAD:
-        s << std::setw(RN_WIDHT) << regid2name(i.rd()) << ", ["
-          << std::setw(RN_WIDHT) << regid2name(i.rs1()) << " + "
-          << std::hex << std::showbase
-          << i.immI() << "]";
-        break;
-
-    case OP_STORE:
-        s << std::setw(RN_WIDHT) << regid2name(i.rs1()) << ", ["
-          << std::setw(RN_WIDHT) << regid2name(i.rs2()) << " + "
-          << std::hex << std::showbase
-          << i.immS() << "]";
-        break;
-
-    }
-
-    return s.str();
-}
-
-isa::descriptor_ptr_t find_descriptor(const isa::instruction_t& instruction)
-{
-    static const descriptors_table_t descriptors = get_descriptors();
-
-    isa::descriptor_ptr_t product = nullptr;
-
-    auto iter = descriptors.find(instruction.opcode());
+    //opcode
+    descriptors_table_t::const_iterator iter =
+            descriptors.find(instruction.opcode());
 
     if(iter == descriptors.end())
         return product;
 
-    const vector<isa::descriptor_t>& section = iter->second;
+    const descriptor_array_t& section = iter->second;
 
-    for(const isa::descriptor_t& candidate : section)
+    //match pattern
+    for(const descriptor_t& candidate : section)
     {
         if(candidate == instruction)
         {
@@ -161,7 +129,8 @@ isa::descriptor_ptr_t find_descriptor(const isa::instruction_t& instruction)
     return product;
 }
 
-isa::fetch_t inline decode(const isa::instruction_t &instr)
+static inline
+isa::fetch_t decode(const isa::instruction_t &instr)
 {
     isa::descriptor_ptr_t descriptor = find_descriptor(instr);
 
@@ -171,52 +140,9 @@ isa::fetch_t inline decode(const isa::instruction_t &instr)
     return isa::fetch_t{instr, descriptor};
 }
 
-std::string isa::disassemble(const word_t instr)
+void isa::disassemble(std::ostream& out, const word_t instr)
 {
-    return decode(instr).disasemble();
-}
-
-const std::vector<string>& selen::get_reg_names()
-{
-    static std::vector<std::string> names =
-    {
-        "zero",
-        "ra",
-        "sp", "gp",
-        "tp", "t0", "t1", "t2",
-        "s0", "s1",
-        "a0", "a1", "a2", "a3", "a4", "a5","a6", "a7",
-        "s2", "s3", "s4", "s5", "s6", "s7","s8", "s9", "s10", "s11",
-        "t3", "t4", "t5", "t6"
-    };
-
-    return names;
-}
-
-std::string selen::regid2name(const reg_id_t id)
-{
-    const std::vector<std::string>& names = get_reg_names();
-
-    if(id >= R_LAST)
-        throw std::invalid_argument("bad register id");
-
-    return names.at(id);
-}
-
-reg_id_t selen::name2regid(const std::string &name)
-{
-    const std::vector<std::string>& names = get_reg_names();
-
-    std::string NAME;
-    std::transform(name.begin(), name.end(), std::back_inserter(NAME), ::toupper);
-
-    for (size_t i = 0; i < names.size(); i++)
-    {
-        if(names.at(i) == NAME)
-            return static_cast<reg_id_t>(i);
-    }
-
-    return selen::R_LAST;
+    return decode(instr).disasemble(out);
 }
 
 //======================================
@@ -250,8 +176,8 @@ void selen::CoreState::dump(std::ostream& out) const
 {
     out << "PC:\t" << std::hex << pc << std::endl;
 
-    for (selen::reg_id_t id = 0; id < selen::NUM_REGISTERS; id++)
-        out << regid2name(id) << ":\t"
+    for (selen::reg_id_t id = 0; id < selen::XPR::size; id++)
+        out << XPR::id2name(id) << ":\t"
             << reg.read<word_t>(id) << std::endl;
 }
 

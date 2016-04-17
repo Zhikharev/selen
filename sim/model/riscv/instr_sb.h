@@ -15,6 +15,8 @@ namespace isa
 
 struct SB
 {
+    static const word_t opcode = OP_SB;
+
     //0-6 -opcode, func3 12-14
     static const word_t mask = {0x7000};
 
@@ -26,7 +28,7 @@ struct SB
         {
             {
                 mask, 0,
-                "BEQ", OP_SB,
+                "beq", SB::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = (core.get_reg<word_t>(i.rs1()) == core.get_reg<word_t>(i.rs1())) ?
@@ -38,7 +40,7 @@ struct SB
             },
             {
                 mask, func3(0b001),
-                "BNE", OP_SB,
+                "bne", SB::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = (core.get_reg<word_t>(i.rs1()) != core.get_reg<word_t>(i.rs1())) ?
@@ -50,7 +52,7 @@ struct SB
             },
             {
                 mask, func3(0b100),
-                "BLT", OP_SB,
+                "blt", SB::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = (core.get_reg<sword_t>(i.rs1()) < core.get_reg<sword_t>(i.rs1())) ?
@@ -62,7 +64,7 @@ struct SB
             },
             {
                 mask, func3(0b101),
-                "BGE", OP_SB,
+                "bge", SB::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = (core.get_reg<sword_t>(i.rs1()) > core.get_reg<sword_t>(i.rs1())) ?
@@ -74,7 +76,7 @@ struct SB
             },
             {
                 mask, func3(0b110),
-                "BLTU", OP_SB,
+                "bltu", SB::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = (core.get_reg<word_t>(i.rs1()) < core.get_reg<word_t>(i.rs1())) ?
@@ -86,7 +88,7 @@ struct SB
             },
             {
                 mask, func3(0b111),
-                "BGEU", OP_SB,
+                "bgeu", SB::print,
                 [] ISA_OPERATION
                 {
                     sword_t value = (core.get_reg<word_t>(i.rs1()) > core.get_reg<word_t>(i.rs1())) ?
@@ -100,6 +102,16 @@ struct SB
 
             return product;
         }
+
+    static void print(std::ostream& out,
+                      const instruction_t i)
+    {
+        out << XPR::id2name(i.rs1()) << ", "
+            << XPR::id2name(i.rs2()) << ", "
+            << std::hex << std::showbase
+            << i.immSB();
+    }
+
 }; //SB
 
 } // namespace isa

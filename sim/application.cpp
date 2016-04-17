@@ -201,7 +201,7 @@ int Application::run()
         break;
 
     default:
-        throw invalid_argument("get invalid regime");
+        assert(!"Unreachable: invalid regime");
     }
 
     return sim.get_status().return_code;
