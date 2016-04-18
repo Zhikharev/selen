@@ -10,3 +10,5 @@ build: analyze elaborate
 draft_test:
 	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=draft_test $(RUN_OPTS) $(SIM_OPTS)
 
+l1_rd_test:
+	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=$@ $(RUN_OPTS) $(SIM_OPTS)

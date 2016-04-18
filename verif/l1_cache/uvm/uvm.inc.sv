@@ -30,5 +30,6 @@ import uvm_pkg::*;
 `include "uvm/sequences/sl_l1_base_seq_lib.sv"
 
 `include "uvm/tests/sl_l1_base_test.sv"
+`include "uvm/tests/sl_l1_test_lib.sv"
 
 `endif

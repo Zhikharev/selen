@@ -71,6 +71,8 @@ module l1_mau
 	wire                          req_dat_val;
 	wire                          req_dat_finished;
 
+	wire                          req_ack;
+
 	wire [REQ_HDR_BUF_WIDTH-1:0]  tr_hdr_data;
 	wire 													tr_wr;
 	wire 													tr_nc;
@@ -104,6 +106,10 @@ module l1_mau
 	wire                          ack_nc;
 	wire [$clog2(TR_CNT_MAX)-1:0] ack_cnt;
 	wire [ACK_BUF_WIDTH-1:0] 			ack_data;
+
+	reg 													ack_type_r;
+	reg 													ack_wr_r;
+	reg                          	ack_nc_r;
 
 	wire                          w_ack;
 	wire                          r_ack;
@@ -145,7 +151,7 @@ module l1_mau
 	always @(posedge wb_clk_i or posedge wb_rst_i) begin
 		if(wb_rst_i) d_req_rd_accepted_r <= 1'b0;
 		else begin
-			if(d_req_rd_accepted_r) d_req_rd_accepted_r <= ~(r_ack & ~ack_wr & (ack_type == ACK_D));
+			if(d_req_rd_accepted_r) d_req_rd_accepted_r <= ~(req_ack & ~ack_wr_r & (ack_type_r == ACK_D));
 			else d_req_rd_accepted_r <= req_d_val & ~l1d_req_we;
 		end
 	end
@@ -153,7 +159,7 @@ module l1_mau
 	always @(posedge wb_clk_i or posedge wb_rst_i) begin
 		if(wb_rst_i) i_req_rd_accepted_r <= 1'b0;
 		else begin
-			if(i_req_rd_accepted_r) i_req_rd_accepted_r <= ~(r_ack & (ack_type == ACK_I));
+			if(i_req_rd_accepted_r) i_req_rd_accepted_r <= ~(req_ack & (ack_type_r == ACK_I));
 			else i_req_rd_accepted_r <= req_i_val;
 		end
 	end
@@ -219,7 +225,17 @@ module l1_mau
 	assign w_ack_wr   = req_d_val & req_wr;
 	assign w_ack_nc   = req_d_val & req_nc;
 
-	assign r_ack = (ack_state_r == ACK_REC) & (ack_cnt_r == 0);
+	assign r_ack   = (ack_state_next == ACK_REC) & (ack_cnt_next == 1'b0);
+
+	assign req_ack = (ack_state_r == ACK_REC) & (ack_cnt_r == 0);
+
+	always @(posedge wb_clk_i) begin
+		if(r_ack) begin
+			ack_type_r <= ack_type;
+			ack_nc_r   <= ack_nc;
+			ack_wr_r   <= ack_wr;
+		end
+	end
 
 	sync_fifo
 	#(
@@ -315,32 +331,31 @@ module l1_mau
 			ACK_IDLE: begin
 				if(wb_ack_i) begin
 					ack_state_next = ACK_REC;
+					ack_cnt_next = ack_cnt;
 				end
 				else begin
 					ack_state_next = ACK_IDLE;
+					ack_cnt_next = ack_cnt_r;
 				end
 			end
 			ACK_REC: begin
 				if(ack_cnt_r == 0) begin
-					ack_state_next = ACK_IDLE;
+					if(wb_ack_i) begin
+						ack_state_next = ACK_REC;
+						ack_cnt_next = ack_cnt;
+					end
+					else begin
+						ack_state_next = ACK_IDLE;
+						ack_cnt_next = ack_cnt_r;
+					end
 				end
 				else begin
 					ack_state_next = ACK_REC;
+					if(wb_ack_i) ack_cnt_next = ack_cnt_r - 1;
+					else ack_cnt_next = ack_cnt_r;
 				end
 			end
 		endcase
-	end
-
-	always @* begin
-		if(wb_ack_i) begin
-			if(ack_state_r == ACK_IDLE)
-				ack_cnt_next = ack_cnt;
-			else
-				ack_cnt_next = ack_cnt_r - 1;
-		end
-		else begin
-			ack_cnt_next = ack_cnt_r;
-		end
 	end
 
 	always @(posedge wb_clk_i or posedge wb_rst_i) begin
@@ -359,12 +374,12 @@ module l1_mau
 	assign wb_sel_o = tr_be;
 	assign wb_dat_o = tr_wdata;
 
-	assign l1i_req_ack = r_ack & (ack_type == ACK_I);
+	assign l1i_req_ack = req_ack & (ack_type_r == ACK_I);
 	assign l1i_ack_data = ack_data_r;
 
-	assign l1d_req_ack = (w_ack & w_ack_wr) | (r_ack & (ack_type == ACK_D) & ~ack_wr);
+	assign l1d_req_ack = (w_ack & w_ack_wr) | (req_ack & (ack_type_r == ACK_D) & ~ack_wr_r);
 	assign l1d_ack_data = ack_data_r;
-	assign l1d_ack_nc 	= (w_ack & w_ack_wr & w_ack_nc) | ack_nc;
+	assign l1d_ack_nc 	= (w_ack & w_ack_wr & w_ack_nc) | ack_nc_r;
 	assign l1d_ack_we   = w_ack_wr;
 
 endmodule

@@ -18,6 +18,9 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
   sl_core_bus_item tr_item;
   sl_core_agent_cfg cfg;
 
+  protected int fc_cnt = 2;
+  protected semaphore sem;
+
   `uvm_component_utils(sl_core_master_driver)
 
   function new (string name, uvm_component parent);
@@ -30,6 +33,7 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
     else `uvm_fatal("NOVIF", {"Virtual interface must be set for: ", get_full_name(),".vif"});
     assert(uvm_config_db#(sl_core_agent_cfg)::get(this, "" ,"cfg", cfg))
     else `uvm_fatal("NOCFG", {"CFG must be set for: ", get_full_name(),".cfg"});
+    sem = new(1);
   endfunction
 
   function int rand_delay();
@@ -46,6 +50,13 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
   endfunction
 
   task run_phase(uvm_phase phase);
+    fork
+      process_req();
+      process_ack();
+    join
+  endtask
+
+  task process_req();
     forever begin
       @(vif.drv_m);
       if(!vif.rst) begin
@@ -55,6 +66,10 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
           assert($cast(ret_item, tr_item.clone()));
           ret_item.set_id_info(tr_item);
           ret_item.accept_tr();
+          repeat(rand_delay()) begin
+            clear_interface();
+            @(vif.drv_m);
+          end
           drive_item(ret_item);
           seq_item_port.item_done();
           seq_item_port.put_response(ret_item);
@@ -67,8 +82,21 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
     end
   endtask
 
+  task process_ack();
+    forever begin
+      @(vif.mon);
+      if(!vif.rst && vif.mon.req_ack) begin
+        while(!sem.try_get());
+        fc_cnt++;
+        sem.put();
+        `uvm_info(get_full_name(), "ack", UVM_LOW)
+      end
+    end
+  endtask
+
   // Reset interface
   task reset_interface();
+    fc_cnt = 2;
     vif.req_val   <= 1'b0;
     vif.req_cop   <= 3'h0;
     vif.req_size  <= 3'h0;
@@ -79,10 +107,6 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
   // Clear interface
   task clear_interface();
     vif.req_val   <= 1'b0;
-    vif.req_cop   <= 3'h0;
-    vif.req_size  <= 3'h0;
-    vif.req_addr  <= 32'h0;
-    vif.req_wdata <= 32'h0;
   endtask
 
   // Drive item
@@ -93,8 +117,12 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
     vif.req_addr <= ret_item.addr;
     if(ret_item.cop == 3'b001)
       vif.req_wdata <= ret_item.data;
-    while(!vif.req_ack)
-      @(vif.drv_m);
+    `uvm_info(get_full_name(), "drive_item", UVM_LOW)
+    while(!sem.try_get());
+      fc_cnt--;
+    sem.put();
+    while(fc_cnt == 0) @(vif.mon);
+    `uvm_info(get_full_name(), "exit drive_item", UVM_LOW)
   endtask
 
 endclass

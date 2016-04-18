@@ -221,7 +221,7 @@ module l1d_top
 	// -----------------------------------------------------
 	assign lru_req = req_val & (~core_req_nc);
 	always_ff @(posedge clk) if(req_val_r) lru_way_vect_r <= lru_way_vect;
-	assign lru_way_pos = one_hot_num(lru_way_vect_r);
+	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
 	// LD

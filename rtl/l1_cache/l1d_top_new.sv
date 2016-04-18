@@ -213,7 +213,7 @@ module l1d_top
 	// -----------------------------------------------------
 	assign lru_req = s0_req_val & (~s0_req_nc);
 	always_ff @(posedge clk) if(s1_req_val_r) lru_way_vect_r <= lru_way_vect;
-	assign lru_way_pos = one_hot_num(lru_way_vect_r);
+	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
 	// DM
@@ -255,6 +255,7 @@ module l1d_top
 	always @(posedge clk, negedge rst_n) begin
 		if(~rst_n) s1_req_val_r <= 1'b0;
 		else if(~stall) s1_req_val_r <= s0_req_val;
+		else s1_req_val_r <= ~mau_req_ack;
 	end
 
 	always @(posedge clk) if(~stall) s1_req_we_r    <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
@@ -265,7 +266,7 @@ module l1d_top
 
 	assign {s1_req_tag_r, s1_req_idx_r, s1_req_offset_r} = s1_req_addr_r;
 
-	assign stall = mau_req_val;
+	assign stall = s1_req_val_r & (~lru_hit | s1_req_we_r & s1_req_nc_r);
 
 	// -----------------------------------------------------
 	// MAU
@@ -381,10 +382,11 @@ module l1d_top
 			assert property(@(posedge clk) (rst_n) -> $onehot0({s0_req_val, (mau_req_ack & ~mau_ack_nc)}))
 			else $fatal("req_val is active when mau_req_ack is active!");
 
-
 		offset_allign_p:
-			assert property(@(posedge clk) (core_req_val & rst_n) -> core_req_addr[1:0] == 0)
-			else $fatal("Wrong offset allignment!");
+			assert property(@(posedge clk) (core_req_val & (core_req_size == 4) & rst_n) -> core_req_addr[1:0] == 0)
+			else $fatal("Wrong offset allignment! (4 bytes)");
+			assert property(@(posedge clk) (core_req_val & (core_req_size == 2) & rst_n) -> core_req_addr[0] == 0)
+			else $fatal("Wrong offset allignment! (2 bytes)");
 	`endif
 
 endmodule
