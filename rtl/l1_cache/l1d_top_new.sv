@@ -91,6 +91,8 @@ module l1d_top
 	reg                             s1_req_we_r;
 	reg                             s1_req_nc_r;
 
+	wire  [`CORE_OFFSET_WIDTH-1:0] 	s1_alligned_offset;
+
 	wire                           	stall;
 
 	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
@@ -281,7 +283,7 @@ module l1d_top
 	always @* begin
 		if     (s1_req_size_r == 1) mau_req_be = 4'b0001;
 		else if(s1_req_size_r == 2) mau_req_be = 4'b0011;
-		else                     mau_req_be = 4'b1111;
+		else                     		mau_req_be = 4'b1111;
 	end
 
 	always @(posedge clk) mau_req_ack_r  <= mau_req_ack & ~mau_ack_we;
@@ -296,11 +298,12 @@ module l1d_top
 	// -----------------------------------------------------
 	assign core_req_ack   = req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
+	assign s1_alligned_offset = {s1_req_offset_r[`CORE_OFFSET_WIDTH-1:2], 2'b00};
 
 	always @* begin
 		if(del_buf_hit_r) core_ack_data = del_buf_data_r;
 		else if(mau_ack_nc_r) core_ack_data = core_line_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
-		else core_ack_data = core_line_data[s1_req_offset_r*8+:`CORE_DATA_WIDTH];
+		else core_ack_data = core_line_data[s1_alligned_offset*8+:`CORE_DATA_WIDTH];
 	end
 
 	// -----------------------------------------------------

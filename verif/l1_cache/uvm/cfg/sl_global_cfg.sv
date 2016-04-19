@@ -37,8 +37,16 @@ class sl_global_cfg extends uvm_object;
 		super.new(name);
 		i_cfg = sl_core_agent_cfg::type_id::create("i_cfg");
 		i_cfg.port = INSTR;
+
+		// Запросы за инструкциями всегда активны. Если значимость
+		// запроса спадёт и установится уже после ответа, то произойдёт
+		// дедлок, который исправится только сбросом
+		i_cfg.drv_fixed_delay = 1;
+		i_cfg.drv_delay_max = 0;
+
 		d_cfg = sl_core_agent_cfg::type_id::create("d_cfg");
 		d_cfg.port = DATA;
+
 		wb_cfg = wb_agent_cfg::type_id::create("wb_cfg");
 		li_cfg = sl_l1_cfg::type_id::create("li_cfg");
 		ld_cfg = sl_l1_cfg::type_id::create("ld_cfg");

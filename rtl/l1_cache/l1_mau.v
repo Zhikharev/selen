@@ -258,8 +258,8 @@ module l1_mau
 	// TR PROCESSING
 	// -------------------------------------------------------------
 
-	assign req_hdr_finished = (tr_state_r == TR_REQ) & (tr_cnt_r == 0);
-	assign req_dat_finished = (tr_state_r == TR_REQ) & (tr_cnt_r == 0) & tr_wr;
+	assign req_hdr_finished = (tr_state_r == TR_REQ) & (tr_cnt_r == 0) & ~wb_stall_i;
+	assign req_dat_finished = (tr_state_r == TR_REQ) & (tr_cnt_r == 0) & ~wb_stall_i & tr_wr;
 
 	always @(posedge wb_clk_i or posedge wb_rst_i) begin
 		if(wb_rst_i) begin

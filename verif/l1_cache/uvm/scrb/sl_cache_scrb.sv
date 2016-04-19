@@ -58,6 +58,13 @@ class sl_cache_scrb extends uvm_scoreboard;
   endfunction
 
   // --------------------------------------------
+  // FUNCTION: get_alligned_addr
+  // --------------------------------------------
+  function bit[31:0] get_alligned_addr(bit [31:0] addr);
+    return({addr[31:2], 2'b00});
+  endfunction
+
+  // --------------------------------------------
   // FUNCTION: write_req
   // --------------------------------------------
   function void write_req(sl_core_bus_item item);
@@ -79,12 +86,13 @@ class sl_cache_scrb extends uvm_scoreboard;
   // FUNCTION: write_rsp
   // --------------------------------------------
   function void write_rsp(sl_core_bus_item item);
+    bit [31:0] addr = get_alligned_addr(item.addr);
     while(!sem.try_get());
-    if(item.is_wr()) mem.set_mem(item.addr, item.data);
+    if(item.is_wr()) mem.set_mem(addr, item.data);
     else begin
-      if(item.data != mem.get_mem(item.addr))
+      if(item.data != mem.get_mem(addr))
         `uvm_error("SCRB", $sformatf("Wrong data compared for addr=%0h! Received: %0h Expected: %0h",
-        item.addr, item.data, mem.get_mem(item.addr)))
+        item.addr, item.data, mem.get_mem(addr)))
     end
     sem.put();
   endfunction
@@ -93,15 +101,16 @@ class sl_cache_scrb extends uvm_scoreboard;
   // FUNCTION: write_mau
   // --------------------------------------------
   function void write_mau(wb_bus_item item);
+    bit [31:0] addr = get_alligned_addr(item.address);
     while(!sem.try_get());
     `uvm_info("SCRB", $sformatf("mem addr=%0h data=%0h",item.address, item.data[0]), UVM_LOW)
     if(item.is_wr()) begin
-      if(item.data[0] != mem.get_mem(item.address))
+      if(item.data[0] != mem.get_mem(addr))
         `uvm_error("SCRB", $sformatf("Wrong write data compared for addr=%0h! Received: %0h Expected: %0h",
-        item.address, item.data[0], mem.get_mem(item.address)))
+        item.address, item.data[0], mem.get_mem(addr)))
     end
     else begin
-      mem.set_mem(item.address, item.data[0]);
+      mem.set_mem(addr, item.data[0]);
     end
     sem.put();
   endfunction

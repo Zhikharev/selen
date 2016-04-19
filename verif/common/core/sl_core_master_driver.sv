@@ -89,7 +89,6 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
         while(!sem.try_get());
         fc_cnt++;
         sem.put();
-        `uvm_info(get_full_name(), "ack", UVM_LOW)
       end
     end
   endtask
@@ -117,12 +116,10 @@ class sl_core_master_driver extends uvm_driver #(sl_core_bus_item);
     vif.req_addr <= ret_item.addr;
     if(ret_item.cop == 3'b001)
       vif.req_wdata <= ret_item.data;
-    `uvm_info(get_full_name(), "drive_item", UVM_LOW)
     while(!sem.try_get());
       fc_cnt--;
     sem.put();
     while(fc_cnt == 0) @(vif.mon);
-    `uvm_info(get_full_name(), "exit drive_item", UVM_LOW)
   endtask
 
 endclass
