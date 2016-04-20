@@ -156,7 +156,10 @@ module selen_top
 		.s1_wb_ack_i 		(com_mem_wb_ack_i)
 	);
 
-	wb_ram wb_ram_1kB
+	defparam wb_ram_256kB.DW = 32;
+	defparam wb_ram_256kB.AW = 15;
+
+	wb_ram wb_ram_256kB
 	(
   	.wb_clk_i 	(clk),
   	.wb_rst_i 	(~rst_n),

@@ -66,14 +66,14 @@ module selen_tb_top ();
 	initial begin
 		$display("%0t TEST START", $time());
 		wait(selen_top.cpu_cluster.l1_cache.l1i.cache_ready);
-		#100000;
+		#1000000;
 		$display("%0t TEST FINISHED", $time());
 		$finish();
 	end
 
   `ifdef WAVES_FSDB
   initial begin
-    $fsdbDumpfile("tdm_tb_top");
+    $fsdbDumpfile("sl_tb_top");
     $fsdbDumpvars;
   end
   `elsif WAVES_VCD
@@ -90,7 +90,7 @@ module selen_tb_top ();
   // ROM IMAGE
   // -----------------------------------------
   initial $readmemh("rom_image.v", selen_top.wb_rom_1kB.rom_1kB.rom);
-  initial $readmemh("ram_image.v", selen_top.wb_ram_1kB.ram_1kB.ram);
+  initial $readmemh("ram_image.v", selen_top.wb_ram_256kB.ram.ram);
 
 endmodule
 

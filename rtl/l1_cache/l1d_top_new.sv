@@ -257,7 +257,7 @@ module l1d_top
 	always @(posedge clk, negedge rst_n) begin
 		if(~rst_n) s1_req_val_r <= 1'b0;
 		else if(~stall) s1_req_val_r <= s0_req_val;
-		else s1_req_val_r <= ~mau_req_ack;
+		else s1_req_val_r <= ~mau_req_ack ;
 	end
 
 	always @(posedge clk) if(~stall) s1_req_we_r    <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
@@ -268,7 +268,10 @@ module l1d_top
 
 	assign {s1_req_tag_r, s1_req_idx_r, s1_req_offset_r} = s1_req_addr_r;
 
-	assign stall = s1_req_val_r & (~lru_hit | s1_req_we_r & s1_req_nc_r);
+	//assign stall = s1_req_val_r & ~lru_hit & ((s1_req_we_r | s1_req_nc_r) & ~mau_req_ack);
+
+	assign stall = (s1_req_we_r) ? (s1_req_val_r & ~lru_hit & ~mau_req_ack) :
+																 (s1_req_val_r & ~lru_hit);
 
 	// -----------------------------------------------------
 	// MAU

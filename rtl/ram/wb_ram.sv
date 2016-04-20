@@ -58,10 +58,10 @@ wire    [DW-1:0]        mem_dat_i;
 // Inst of RAM
 sram_sp_be
 #(
-  .WIDTH (32),
-  .DEPTH (256)
+  .WIDTH (DW),
+  .DEPTH (1<<AW)
 )
-ram_1kB
+ram
 (
   .WE   (mem_we_i),
   .WBE  (mem_wbe_i),
