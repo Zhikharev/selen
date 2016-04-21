@@ -63,6 +63,12 @@ void wait(const tick_t ticks_to_wait)
 /*set name for linker*/
 void blink() asm("main");
 
+
+#define NUM_BLINKS 100
+/*cpu ticks to one iteration*/
+#define BLINK_PERIOD 100
+
+
 void __attribute__((optimize("Os"))) blink()
 {
     const uint32_t input_pin = 0;
@@ -103,14 +109,15 @@ void __attribute__((optimize("Os"))) blink()
     gpio->oe |= (BIT_MASK(output_pin));
     /*disable interrupts fot output pin*/
     gpio->inte &= ~(BIT_MASK(output_pin));
+        
+    for(uint32_t i = 0; i < NUM_BLINKS; i++)
+    {
+        /*set high level signal at output_pin*/
+        gpio->out |= (BIT_MASK(output_pin));
 
-    /*set high level signal at output_pin*/
-    gpio->out |= (BIT_MASK(output_pin));
+        wait(BLINK_PERIOD);
 
-    /* idle for 100 CPU ticks*/
-    const tick_t ticks_to_wait = 100;
-    wait(ticks_to_wait);
-
-    /*set low level signal at output_pin*/
-    gpio->out &= ~(BIT_MASK(output_pin));
+        /*set low level signal at output_pin*/
+        gpio->out &= ~(BIT_MASK(output_pin));
+    }
 }

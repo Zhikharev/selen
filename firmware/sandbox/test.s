@@ -78,10 +78,7 @@ wait.constprop.0:
 	.globl	main
 	.type	main, @function
 main:
-	add	sp,sp,-16	#,,
-	li	a5,8192	# tmp88,
-	sw	ra,12(sp)	#,
-	sw	s0,8(sp)	#,
+	li	a5,8192	# tmp89,
 	sw	zero,0(a5)	#, MEM[(volatile struct GPIO *)8192B].in
 	sw	zero,4(a5)	#, MEM[(volatile struct GPIO *)8192B].out
 	sw	zero,8(a5)	#, MEM[(volatile struct GPIO *)8192B].oe
@@ -91,35 +88,45 @@ main:
 	sw	zero,24(a5)	#, MEM[(volatile struct GPIO *)8192B].ctrl
 	sw	zero,28(a5)	#, MEM[(volatile struct GPIO *)8192B].eclk
 	sw	zero,32(a5)	#, MEM[(volatile struct GPIO *)8192B].nec
-	lw	a4,8(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
-	and	a4,a4,-2	# D.1538, D.1538,
-	sw	a4,8(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
-	lw	a4,24(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].ctrl
-	and	a4,a4,-2	# D.1538, D.1538,
-	sw	a4,24(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].ctrl
-	lw	a4,12(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
-	and	a4,a4,-2	# D.1538, D.1538,
-	sw	a4,12(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
+	lw	a4,8(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
+	and	a4,a4,-2	# D.1548, D.1548,
+	sw	a4,8(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
+	lw	a4,24(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].ctrl
+	and	a4,a4,-2	# D.1548, D.1548,
+	sw	a4,24(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].ctrl
+	lw	a4,12(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
+	and	a4,a4,-2	# D.1548, D.1548,
+	sw	a4,12(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
 .L6:
-	lw	a4,0(a5)	# D.1538, MEM[(volatile struct GPIO *)8192B].in
-	li	s0,8192	# tmp103,
-	and	a4,a4,1	# D.1538, D.1538,
-	beqz	a4,.L6	#, D.1538,
-	lw	a5,8(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
-	or	a5,a5,2	# D.1538, D.1538,
-	sw	a5,8(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].oe
-	lw	a5,12(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
-	and	a5,a5,-3	# D.1538, D.1538,
-	sw	a5,12(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].inte
-	lw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
-	or	a5,a5,2	# D.1538, D.1538,
-	sw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
+	lw	a3,0(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].in
+	li	a4,8192	# tmp104,
+	and	a3,a3,1	# D.1548, D.1548,
+	beqz	a3,.L6	#, D.1548,
+	lw	a5,8(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
+	add	sp,sp,-16	#,,
+	sw	s0,8(sp)	#,
+	sw	s1,4(sp)	#,
+	sw	ra,12(sp)	#,
+	or	a5,a5,2	# D.1548, D.1548,
+	sw	a5,8(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
+	lw	a5,12(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
+	li	s1,100	# D.1547,
+	mv	s0,a4	# tmp114, tmp104
+	and	a5,a5,-3	# D.1548, D.1548,
+	sw	a5,12(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
+.L7:
+	lw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
+	add	s1,s1,-1	# D.1547, D.1547,
+	or	a5,a5,2	# D.1548, D.1548,
+	sw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
 	call	wait.constprop.0	#
-	lw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
+	lw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
+	and	a5,a5,-3	# D.1548, D.1548,
+	sw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
+	bnez	s1,.L7	#, D.1547,
 	lw	ra,12(sp)	#,
-	and	a5,a5,-3	# D.1538, D.1538,
-	sw	a5,4(s0)	# D.1538, MEM[(volatile struct GPIO *)8192B].out
 	lw	s0,8(sp)	#,
+	lw	s1,4(sp)	#,
 	add	sp,sp,16	#,,
 	jr	ra	#
 	.size	main, .-main
