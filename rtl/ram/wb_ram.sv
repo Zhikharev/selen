@@ -50,7 +50,7 @@ wire                    mem_clk_i;
 wire                    mem_en_i ;
 wire                    mem_we_i;
 wire    [DW/8-1:0]      mem_wbe_i;
-wire    [10:0]          mem_adr_i;
+wire    [AW:0]          mem_adr_i;
 wire    [DW-1:0]        mem_dat_o;
 wire    [DW-1:0]        mem_dat_i;
 
@@ -76,7 +76,7 @@ assign mem_en_i  = wb_stb_i;
 assign mem_we_i  = wb_we_i;
 assign mem_wbe_i = wb_sel_i;
 assign mem_clk_i = wb_clk_i;
-assign mem_adr_i = wb_adr_i[9:2];
+assign mem_adr_i = wb_adr_i[AW-1:2];
 assign mem_dat_i = wb_dat_i;
 
 assign wb_dat_o  = mem_dat_o;
