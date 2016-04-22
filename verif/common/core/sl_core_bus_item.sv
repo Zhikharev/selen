@@ -40,6 +40,16 @@ class sl_core_bus_item extends uvm_sequence_item;
   function bit is_nc();
     return(cop inside {RDNC, WRNC});
   endfunction
+
+  function core_be_t get_be();
+    case(this.size)
+      1: get_be = 4'b0001 << this.addr[1:0];
+      2: get_be = 4'b0011 << this.addr[1:0];
+      4: get_be = 4'b1111;
+      default: `uvm_fatal(get_full_name(), "Unxpected size!")
+    endcase
+  endfunction
+
 endclass
 
 `endif

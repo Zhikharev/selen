@@ -4,11 +4,13 @@ RTL_SRC :=\
 	$(MAKEHOME)/l1_defines.sv \
 	$(MAKEHOME)/l1_lrum.sv \
 	$(MAKEHOME)/l1_ld_mem.sv \
+	$(MAKEHOME)/l1_ld_dp_mem.sv \
 	$(MAKEHOME)/l1_dm_mem.sv \
 	$(MAKEHOME)/l1_mau.v \
-	$(MAKEHOME)/l1d_top_new.sv \
+	$(MAKEHOME)/l1d_top.sv \
 	$(MAKEHOME)/l1i_top.sv \
 	$(MAKEHOME)/l1_top.sv \
 	$(MAKEHOME)/../lib/sync_fifo.v \
 	$(MAKEHOME)/../lib/sram_sp.v \
+	$(MAKEHOME)/../lib/sram_sp_be.v \
 	$(MAKEHOME)/../lib/sram_dp.v

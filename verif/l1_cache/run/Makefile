@@ -12,3 +12,6 @@ draft_test:
 
 l1_rd_test:
 	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=$@ $(RUN_OPTS) $(SIM_OPTS)
+
+l1_rd_after_wr_test:
+	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=$@ $(RUN_OPTS) $(SIM_OPTS)

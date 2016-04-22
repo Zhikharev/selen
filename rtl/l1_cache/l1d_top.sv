@@ -15,6 +15,7 @@
 // 1.3    03.04.16    Исправлены ошибки связанные с отработкой записей и
 //                    некэшруемых зпросов. Исправлена логи для отработки
 //                    конвейерных запросов
+// 1.4    22.04.16    Переработана структура конвейера
 // ----------------------------------------------------------------------------
 `ifndef INC_L1D_TOP
 `define INC_L1D_TOP
@@ -59,16 +60,14 @@ module l1d_top
 
   wire 														cache_ready;
 
-	wire [`CORE_TAG_WIDTH-1:0] 			req_tag;
-	wire [`CORE_IDX_WIDTH-1:0] 			req_idx;
-	wire [`CORE_OFFSET_WIDTH-1:0] 	req_offset;
-  reg  [`L1_LINE_SIZE/8-1:0]      req_be;
-	wire                          	req_val;
-	reg                             req_was_send_r;
-
-	wire 														core_req_nc;
-	wire 														core_req_wr;
-	wire 														core_req_rd;
+	wire                          	s0_req_val;
+	wire [`CORE_TAG_WIDTH-1:0] 			s0_req_tag;
+	wire [`CORE_IDX_WIDTH-1:0] 			s0_req_idx;
+	wire [`CORE_OFFSET_WIDTH-1:0] 	s0_req_offset;
+  reg  [`L1_LINE_SIZE/8-1:0]      s0_req_be;
+	wire 														s0_req_nc;
+	wire 														s0_req_wr;
+	wire 														s0_req_rd;
 
   reg 											 			del_buf_val_r;
   reg [`CORE_ADDR_WIDTH-1:0] 			del_buf_addr_r;
@@ -83,31 +82,37 @@ module l1d_top
 	wire                            del_buf_clean;
 	wire                            del_buf_dm_access;
 
-  reg  [`CORE_ADDR_WIDTH-1:0]     req_addr_r;
-	reg  [`CORE_TAG_WIDTH-1:0] 			req_tag_r;
-	reg  [`CORE_IDX_WIDTH-1:0] 			req_idx_r;
-	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
-	reg  [`CORE_DATA_WIDTH-1:0] 		req_wdata_r;
-	reg                             req_we_r;
-	reg                             req_nc_r;
-	reg                           	req_val_r;
+	reg                           	s1_req_val_r;
+  reg  [`CORE_ADDR_WIDTH-1:0]     s1_req_addr_r;
+	reg  [`CORE_TAG_WIDTH-1:0] 			s1_req_tag_r;
+	reg  [`CORE_IDX_WIDTH-1:0] 			s1_req_idx_r;
+	reg  [`CORE_OFFSET_WIDTH-1:0] 	s1_req_offset_r;
+	reg  [`CORE_DATA_WIDTH-1:0] 		s1_req_wdata_r;
+	reg  [`CORE_SIZE_WIDTH-1:0]  		s1_req_size_r;
+	reg                             s1_req_we_r;
+	reg                             s1_req_nc_r;
+
+	wire  [`CORE_OFFSET_WIDTH-1:0] 	s1_alligned_offset;
+
+	wire                           	stall;
 
 	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 	wire                            req_ack;
+	wire                            req_we_ack;
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
 
-	reg 														mau_req_was_send_r;
 	reg 														mau_req_ack_r;
 	reg  [`L1_LINE_SIZE-1:0]        mau_ack_data_r;
 	reg      												mau_ack_nc_r;
 
 	wire [`L1_WAY_NUM-1:0]					ld_ready_vect;
-	wire [`L1_WAY_NUM-1:0]          ld_en_vect;
-	wire [`CORE_IDX_WIDTH-1:0]      ld_addr;
-	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[`L1_WAY_NUM];
+	wire [`L1_WAY_NUM-1:0]          ld_ren_vect;
+	wire [`CORE_IDX_WIDTH-1:0]      ld_raddr;
+	wire [`CORE_IDX_WIDTH-1:0]      ld_waddr;
+	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[0:`L1_WAY_NUM-1];
 	wire [`L1_WAY_NUM-1:0] 					ld_rd_val_vect;
-	wire [`CORE_TAG_WIDTH-1:0] 			ld_rd_tag   [`L1_WAY_NUM];
-	wire [`L1_WAY_NUM-1:0]          ld_we_vect;
+	wire [`CORE_TAG_WIDTH-1:0] 			ld_rd_tag   [0:`L1_WAY_NUM-1];
+	wire [`L1_WAY_NUM-1:0]          ld_wen_vect;
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_wdata;
 	wire  													ld_wr_val;
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_wr_tag;
@@ -123,63 +128,41 @@ module l1d_top
 	reg  [`L1_WAY_NUM-1:0]          dm_en_vect;
 	reg  [`L1_WAY_NUM-1:0]          dm_we_vect;
 	reg  [`CORE_IDX_WIDTH-1:0]      dm_addr;
-	reg  [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
+	reg  [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM-1];
 	reg  [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
-  // -----------------------------------------------------
-	// CACHE
+	wire s1_en;
+
 	// -----------------------------------------------------
-	assign core_req_nc = (core_req_cop == `CORE_REQ_RDNC) | (core_req_cop == `CORE_REQ_WRNC);
-	assign core_req_wr = (core_req_cop == `CORE_REQ_WR);
-	assign core_req_rd = (core_req_cop == `CORE_REQ_RD);
+	// S0
+	// -----------------------------------------------------
 
 	assign cache_ready = &ld_ready_vect & lru_ready;
 
-  // -----------------------------------------------------
-	// REQ
-	// -----------------------------------------------------
+	assign s0_req_val = core_req_val & ~stall;
+	assign s0_req_nc = (core_req_cop == `CORE_REQ_RDNC) | (core_req_cop == `CORE_REQ_WRNC);
+	assign s0_req_wr = (core_req_cop == `CORE_REQ_WR);
+	assign s0_req_rd = (core_req_cop == `CORE_REQ_RD);
 
-	assign req_val = core_req_val & (~req_was_send_r | req_ack);
-
-	always_ff @(posedge clk or negedge rst_n) begin
-		if(~rst_n) begin
-			req_was_send_r <= 1'b0;
-		end else begin
-			req_was_send_r <= core_req_val &  ~req_ack;
-		end
-	end
-
-	assign {req_tag, req_idx, req_offset} = core_req_addr;
+	assign {s0_req_tag, s0_req_idx, s0_req_offset} = core_req_addr;
 
 	always @* begin
-		if     (core_req_size == 1) req_be = 4'b0001 << req_offset;
-		else if(core_req_size == 2) req_be = 4'b0011 << req_offset;
-		else                        req_be = 4'b1111 << req_offset;
+		if     (core_req_size == 1) s0_req_be = 4'b0001 << s0_req_offset;
+		else if(core_req_size == 2) s0_req_be = 4'b0011 << s0_req_offset;
+		else                        s0_req_be = 4'b1111 << s0_req_offset;
 	end
-
-	always @(posedge clk, negedge rst_n) begin
-		if(~rst_n) req_val_r <= 1'b0;
-		else req_val_r <= req_val;
-	end
-
-	always @(posedge clk) if(req_val) req_we_r <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
-	always @(posedge clk) if(req_val) req_nc_r <= core_req_nc;
-	always @(posedge clk) if(req_val) req_addr_r <= core_req_addr;
-	always @(posedge clk) if(req_val) req_wdata_r <= core_req_wdata;
-	assign {req_tag_r, req_idx_r, req_offset_r} = req_addr_r;
-
-	assign req_ack = lru_hit | del_buf_hit_r | (req_val_r & req_we_r) | mau_req_ack_r;
 
   // -----------------------------------------------------
 	// DELAYED BUFFER
+	// DEBUG
 	// -----------------------------------------------------
 
 	assign del_buf_clean = (~mau_req_ack | mau_ack_nc) &
-	                       (~core_req_val | (core_req_val & core_req_nc));
+	                       (~core_req_val | (core_req_val & s0_req_nc));
 
-	assign del_buf_dm_access = (core_req_val & core_req_wr) |
-														 (core_req_val & core_req_nc) |
+	assign del_buf_dm_access = (core_req_val & s0_req_wr) |
+														 (core_req_val & s0_req_nc) |
 														 ~core_req_val;
 
 	always_ff @(posedge clk or negedge rst_n) begin
@@ -187,16 +170,16 @@ module l1d_top
 			del_buf_val_r <= 1'b0;
 			del_buf_hit_r <= 1'b0;
 		end else begin
-			del_buf_val_r <= (core_req_val & core_req_wr) | (~del_buf_clean & del_buf_val_r);
-			del_buf_hit_r <= del_buf_val_r & req_val & core_req_rd & (del_buf_addr_r == core_req_addr);
+			del_buf_val_r <= (core_req_val & s0_req_wr) | (~del_buf_clean & del_buf_val_r);
+			del_buf_hit_r <= del_buf_val_r & s0_req_val & s0_req_rd & (del_buf_addr_r == core_req_addr);
 		end
 	end
 
 	always_ff @(posedge clk) begin
-		if(core_req_val & core_req_wr) begin
+		if(s0_req_val & s0_req_wr) begin
 				del_buf_addr_r <= core_req_addr;
 				del_buf_data_r <= core_req_wdata;
-				del_buf_be_r   <= req_be;
+				del_buf_be_r   <= s0_req_be;
 		end
 	end
 
@@ -209,44 +192,47 @@ module l1d_top
 	end
 
 	always_ff @(posedge clk) begin
-		if(req_val_r & ~del_buf_dm_access) begin
+		if(s1_req_val_r & ~del_buf_dm_access) begin
 			del_buf_way_vect_r <= lru_way_vect;
 		end
 	end
 
 	assign {del_buf_tag, del_buf_idx, del_buf_offset} = del_buf_addr_r;
 
-	// -----------------------------------------------------
-	// LRU
-	// -----------------------------------------------------
-	assign lru_req = req_val & (~core_req_nc);
-	always_ff @(posedge clk) if(req_val_r) lru_way_vect_r <= lru_way_vect;
-	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
 	// LD
 	// -----------------------------------------------------
-	assign ld_en_vect = {`L1_WAY_NUM{(req_val & ~core_req_nc)}} | (lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack & ~mau_ack_nc)}}));
-	assign ld_we_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
-	assign ld_addr   = (req_val) ? req_idx : req_idx_r;
-	assign ld_wdata  = {ld_wr_val, ld_wr_tag};
-	assign ld_wr_val = 1'b1;
-	assign ld_wr_tag = req_tag_r;
+	assign ld_ren_vect = {`L1_WAY_NUM{(s0_req_val & ~s0_req_nc)}};
+	assign ld_raddr    = s0_req_idx;
+	assign ld_wen_vect = mau_req_ack & ~mau_ack_nc;
+	assign ld_waddr    = s1_req_idx_r;
+	assign ld_wdata    = {ld_wr_val, ld_wr_tag};
+	assign ld_wr_val   = 1'b1;
+	assign ld_wr_tag   = s1_req_tag_r;
+
+
+	// -----------------------------------------------------
+	// LRU
+	// -----------------------------------------------------
+	assign lru_req = s0_req_val & (~s0_req_nc);
+	always_ff @(posedge clk) if(s1_req_val_r) lru_way_vect_r <= lru_way_vect;
+	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
 	// DM
 	// -----------------------------------------------------
 	always @* begin
-		if(req_val & core_req_rd) begin
+		if(s0_req_val & s0_req_rd) begin
 			dm_en_vect = {`L1_WAY_NUM{1'b1}};
 			dm_we_vect = {`L1_WAY_NUM{1'b0}};
-			dm_addr    = req_idx;
+			dm_addr    = s0_req_idx;
 		end
 		else begin
-			if(mau_req_ack & ~mau_req_nc & ~mau_req_we) begin
+			if(mau_req_ack & ~mau_ack_nc & ~mau_ack_we) begin
 				dm_en_vect = lru_way_vect_r;
 				dm_we_vect = lru_way_vect_r;
-				dm_addr    = req_idx_r;
+				dm_addr    = s1_req_idx_r;
 			end
 			else begin
 				if(del_buf_val_r && del_buf_way_val_r) begin
@@ -263,46 +249,66 @@ module l1d_top
 		end
 	end
 
-	assign dm_wdata = (mau_req_ack & ~mau_ack_nc) ? mau_ack_data : del_buf_data_r;
-	assign dm_wr_be = (mau_req_ack & ~mau_ack_nc) ? '1 : del_buf_be_r;
+	assign dm_wdata = (mau_req_ack & ~mau_ack_nc & ~mau_ack_we) ? mau_ack_data : {`L1_LINE_SIZE/32{del_buf_data_r}};
+	assign dm_wr_be = (mau_req_ack & ~mau_ack_nc & ~mau_ack_we) ? '1 : del_buf_be_r;
 
+	// -----------------------------------------------------
+	// S1
+	// -----------------------------------------------------
+
+	always @(posedge clk, negedge rst_n) begin
+		if(~rst_n) s1_req_val_r <= 1'b0;
+		else if(~stall) s1_req_val_r <= s0_req_val;
+		else s1_req_val_r <= ~mau_req_ack ;
+	end
+
+	always @(posedge clk) if(~stall) s1_req_we_r    <= (core_req_cop == `CORE_REQ_WRNC) | (core_req_cop == `CORE_REQ_WR);
+	always @(posedge clk) if(~stall) s1_req_nc_r    <= s0_req_nc;
+	always @(posedge clk) if(~stall) s1_req_addr_r  <= core_req_addr;
+	always @(posedge clk) if(~stall) s1_req_wdata_r <= core_req_wdata;
+	always @(posedge clk) if(~stall) s1_req_size_r  <= core_req_size;
+
+	assign {s1_req_tag_r, s1_req_idx_r, s1_req_offset_r} = s1_req_addr_r;
+
+	//assign stall = s1_req_val_r & ~lru_hit & ((s1_req_we_r | s1_req_nc_r) & ~mau_req_ack);
+
+	assign stall = (s1_req_we_r) ? (s1_req_val_r & ~lru_hit & ~mau_req_ack) :
+																 (s1_req_val_r & ~(lru_hit | del_buf_hit_r));
 
 	// -----------------------------------------------------
 	// MAU
 	// -----------------------------------------------------
 
-		always @(posedge clk, posedge rst_n) begin
-			if(~rst_n) mau_req_was_send_r <= 1'b0;
-			else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack | req_val_r;
-	 		else mau_req_was_send_r <= mau_req_val & ~mau_req_ack;
-		end
+	assign mau_req_val 	 = s1_req_val_r & (s1_req_nc_r | s1_req_we_r | ~(lru_hit | del_buf_hit_r));
+	assign mau_req_nc    = s1_req_nc_r;
+  assign mau_req_we    = s1_req_we_r;
+	assign mau_req_addr  = (s1_req_we_r | s1_req_nc_r) ? s1_req_addr_r : {s1_req_tag_r, s1_req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
+	assign mau_req_wdata = s1_req_wdata_r;
 
-		assign mau_req_val   = (req_val_r & (core_req_nc | core_req_wr | ~lru_hit)) | mau_req_was_send_r;
-		assign mau_req_nc    = req_nc_r;
-    assign mau_req_we    = req_we_r;
-	  assign mau_req_addr  = (req_we_r | req_nc_r) ? req_addr_r : {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
-	 	assign mau_req_wdata = req_wdata_r;
-
-		always @* begin
-			if     (core_req_size == 1) mau_req_be = 4'b0001;
-			else if(core_req_size == 2) mau_req_be = 4'b0011;
-			else                        mau_req_be = 4'b1111;
-		end
+	always @* begin
+		if     (s1_req_size_r == 1) mau_req_be = 4'b0001;
+		else if(s1_req_size_r == 2) mau_req_be = 4'b0011;
+		else                     		mau_req_be = 4'b1111;
+	end
 
 	always @(posedge clk) mau_req_ack_r  <= mau_req_ack & ~mau_ack_we;
 	always @(posedge clk) mau_ack_data_r <= mau_ack_data;
 	always @(posedge clk) mau_ack_nc_r   <= mau_ack_nc;
+
+	assign req_ack = lru_hit | del_buf_hit_r | req_we_ack | mau_req_ack_r;
+	assign req_we_ack = s1_req_val_r & s1_req_we_r;
 
 	// -----------------------------------------------------
 	// CORE
 	// -----------------------------------------------------
 	assign core_req_ack   = req_ack;
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
+	assign s1_alligned_offset = {s1_req_offset_r[`CORE_OFFSET_WIDTH-1:2], 2'b00};
 
 	always @* begin
 		if(del_buf_hit_r) core_ack_data = del_buf_data_r;
-		else if(mau_ack_nc_r) core_ack_data = core_line_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
-		else core_ack_data = core_line_data[req_offset_r*8+:`CORE_DATA_WIDTH];
+		else if(mau_req_ack_r & mau_ack_nc_r) core_ack_data = core_line_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
+		else core_ack_data = core_line_data[s1_alligned_offset*8+:`CORE_DATA_WIDTH];
 	end
 
 	// -----------------------------------------------------
@@ -314,12 +320,12 @@ module l1d_top
 		for(way = 0; way < `L1_WAY_NUM; way = way + 1) begin
 
 			assign {ld_rd_val_vect[way], ld_rd_tag[way]} = ld_rdata[way];
-			assign tag_cmp_vect[way] = (ld_rd_tag[way] == req_tag_r);
+			assign tag_cmp_vect[way] = (ld_rd_tag[way] == s1_req_tag_r);
 
 			// -----------------------------------------------------
 			// LD tag memories
 			// -----------------------------------------------------
-			l1_ld_mem
+			l1_ld_dp_mem
 			#(
 				.WIDTH (`L1_LD_MEM_WIDTH),
 				.DEPTH (`L1_SET_NUM)
@@ -328,10 +334,11 @@ module l1d_top
 			(
 				.CLK 		(clk),
 				.RST_N 	(rst_n),
-				.EN     (ld_en_vect[way]),
-				.WE     (ld_we_vect[way]),
-				.ADDR 	(ld_addr),
+				.REN    (ld_ren_vect[way]),
+				.RADDR  (ld_raddr),
 				.RDATA 	(ld_rdata[way]),
+				.WEN    (ld_wen_vect[way]),
+				.WADDR 	(ld_waddr),
 				.WDATA 	(ld_wdata),
 				.ready  (ld_ready_vect[way])
 			);
@@ -350,6 +357,7 @@ module l1d_top
 				.EN 		(dm_en_vect[way]),
 				.ADDR 	(dm_addr),
 				.WE 		(dm_we_vect[way]),
+				.WBE    (dm_wr_be),
 				.WDATA 	(dm_wdata),
 				.RDATA 	(dm_rdata[way])
 			);
@@ -362,7 +370,7 @@ module l1d_top
 		.clk 					(clk),
 		.rst_n 				(rst_n),
 		.req 					(lru_req),
- 		.idx 					(req_idx),
+ 		.idx 					(s0_req_idx),
  		.ready        (lru_ready),
   	.tag_cmp_vect (tag_cmp_vect),
   	.ld_val_vect  (ld_rd_val_vect),
@@ -379,11 +387,6 @@ module l1d_top
 		no_req_when_not_ready_p:
 			assert property(@(posedge clk) (core_req_val & rst_n) -> cache_ready == 1'b1)
 			else $fatal("Received L1D request whenc cache is not ready!");
-
-		no_req_val_when_mau_req_ack_p:
-			assert property(@(posedge clk) (rst_n) -> $onehot0({req_val, (mau_req_ack & ~mau_ack_nc & ~mau_ack_we)}))
-			else $fatal("req_val is active when mau_req_ack is active!");
-
 
 		offset_allign_p:
 			assert property(@(posedge clk) (core_req_val & (core_req_size == 4) & rst_n) -> core_req_addr[1:0] == 0)

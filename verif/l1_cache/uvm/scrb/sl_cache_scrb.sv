@@ -27,6 +27,7 @@ class sl_cache_scrb extends uvm_scoreboard;
 
   uvm_queue #(sl_core_bus_item) req_q;
   sl_core_bus_item req_nc_pl[mem_addr_t];
+  sl_core_bus_item req_mau_pl[mem_addr_t];
   sl_core_bus_item req_pl[mem_addr_t];
 
   sl_cache_mem cache_mem;
@@ -69,6 +70,9 @@ class sl_cache_scrb extends uvm_scoreboard;
   // --------------------------------------------
   function void write_req(sl_core_bus_item item);
     while(!sem.try_get());
+    if(item.is_nc() || item.is_wr()) begin
+      req_mau_pl[item.addr] = item;
+    end
     if(item.is_nc()) begin
       `uvm_info("SCRB", $sformatf("Adding to req_nc_pl with key=%0h", item.addr), UVM_MEDIUM)
       req_nc_pl[item.addr] = item;
@@ -88,11 +92,17 @@ class sl_cache_scrb extends uvm_scoreboard;
   function void write_rsp(sl_core_bus_item item);
     bit [31:0] addr = get_alligned_addr(item.addr);
     while(!sem.try_get());
-    if(item.is_wr()) mem.set_mem(addr, item.data);
+    if(item.is_wr()) begin
+      bit [31:0] wdata;
+      bit [3:0]  be = item.get_be();
+      wdata = mem.get_mem(addr);
+      for(int i = 0; i < 8; i++) begin
+        wdata[8*i+:8] = (be[i]) ? item.data[8*i+:8] : wdata[8*i+:8];
+      end
+      mem.set_mem(addr, wdata);
+    end
     else begin
-      if(item.data != mem.get_mem(addr))
-        `uvm_error("SCRB", $sformatf("Wrong data compared for addr=%0h! Received: %0h Expected: %0h",
-        item.addr, item.data, mem.get_mem(addr)))
+      if(compare(item)) ;
     end
     sem.put();
   endfunction
@@ -105,14 +115,40 @@ class sl_cache_scrb extends uvm_scoreboard;
     while(!sem.try_get());
     `uvm_info("SCRB", $sformatf("mem addr=%0h data=%0h",item.address, item.data[0]), UVM_LOW)
     if(item.is_wr()) begin
-      if(item.data[0] != mem.get_mem(addr))
+      sl_core_bus_item core_bus_item;
+      bit [3:0] be;
+      core_bus_item = req_mau_pl[item.address];
+      req_mau_pl.delete(item.address);
+      be = core_bus_item.get_be();
+      if(item.data[0] != core_bus_item.data)
         `uvm_error("SCRB", $sformatf("Wrong write data compared for addr=%0h! Received: %0h Expected: %0h",
-        item.address, item.data[0], mem.get_mem(addr)))
+        item.address, item.data[0], core_bus_item.data))
+      //if(item.sel != be)
+      // `uvm_error("SCRB", $sformatf("Wrong write be compared for addr=%0h! Received: %4b Expected: %4b",
+      //  item.address, item.sel, be))
     end
     else begin
       mem.set_mem(addr, item.data[0]);
     end
     sem.put();
+  endfunction
+
+  // --------------------------------------------
+  // FUNCTION: compare
+  // Byte data compare
+  // --------------------------------------------
+  function bit compare(sl_core_bus_item item);
+    bit [3:0]  be = item.get_be();
+    bit [31:0] addr = get_alligned_addr(item.addr);
+    bit [31:0] data = mem.get_mem(addr);
+    for(int i = 0; i < 8; i++) begin
+      if(be[i]) begin
+        if(item.data[8*i+:8] != data[8*i+:8]) begin
+          `uvm_error("SCRB", $sformatf("Wrong data compared for addr=%0h be=%4b! Received: %0h Expected: %0h",
+          item.addr, be, item.data, data))
+        end
+      end
+    end
   endfunction
 
 endclass

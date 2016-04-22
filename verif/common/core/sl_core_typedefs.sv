@@ -11,5 +11,7 @@ typedef bit [31:0] core_addr_t;
 
 typedef bit [31:0] core_data_t;
 
+typedef bit [3:0] core_be_t;
+
 typedef enum int {INSTR, DATA} core_port_t;
 

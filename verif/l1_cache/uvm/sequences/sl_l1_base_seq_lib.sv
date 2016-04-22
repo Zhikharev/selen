@@ -80,4 +80,44 @@ class sl_l1_rd_seq extends sl_l1_base_seq;
 
 endclass
 
+class sl_l1_rd_after_wr_seq extends sl_l1_base_seq;
+
+	`uvm_object_utils(sl_l1_rd_after_wr_seq)
+
+	function new(string name = "sl_l1_rd_after_wr_seq");
+  	super.new(name);
+	endfunction
+
+	task body();
+		`uvm_info(get_full_name(), "is started", UVM_MEDIUM)
+		repeat(num_pkts) begin
+			`uvm_create(req)
+			assert(req.randomize() with {
+				solve req.size before req.addr;
+				(req.size == 4) -> (req.addr[1:0] == 2'b0);
+				(req.size == 2) -> (req.addr[0] == 1'b0);
+				req.addr inside {[l1_cfg.min_addr:l1_cfg.max_addr]};
+				req.cop inside {WR};
+			});
+			`uvm_send(req)
+			get_response(rsp);
+			`uvm_create(req)
+			assert(req.randomize() with {
+				req.addr == rsp.addr;
+				req.size == rsp.size;
+				req.cop inside {RD};
+			});
+			`uvm_send(req)
+			get_response(rsp);
+
+			#100;
+			`uvm_send(req)
+			get_response(rsp);
+
+		end
+		`uvm_info(get_full_name(), "is completed", UVM_MEDIUM)
+	endtask
+
+endclass
+
 `endif

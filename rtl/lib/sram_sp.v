@@ -26,7 +26,7 @@ module sram_sp
 	output [WIDTH-1:0] 				 DO
 );
 
-	reg [WIDTH-1:0] ram [DEPTH];
+	reg [WIDTH-1:0] ram [0:DEPTH-1];
 	reg [$clog2(DEPTH)-1:0] addr_r;
 
 	// Port A

@@ -60,9 +60,9 @@ module l1i_top
 	wire [`L1_WAY_NUM-1:0]					ld_ready_vect;
 	wire [`L1_WAY_NUM-1:0]          ld_en_vect;
 	wire [`CORE_IDX_WIDTH-1:0]      ld_addr;
-	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[`L1_WAY_NUM];
+	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_rdata 		[0:`L1_WAY_NUM];
 	wire [`L1_WAY_NUM-1:0] 					ld_rd_val_vect;
-	wire [`CORE_TAG_WIDTH-1:0] 			ld_rd_tag   [`L1_WAY_NUM];
+	wire [`CORE_TAG_WIDTH-1:0] 			ld_rd_tag   [0:`L1_WAY_NUM];
 	wire [`L1_WAY_NUM-1:0]          ld_we_vect;
 	wire [`L1_LD_MEM_WIDTH-1:0] 		ld_wdata;
 	wire  													ld_wr_val;
@@ -78,7 +78,7 @@ module l1i_top
 	wire [`L1_WAY_NUM-1:0]          dm_en_vect;
 	wire [`L1_WAY_NUM-1:0]          dm_we_vect;
 	wire [`CORE_IDX_WIDTH-1:0]      dm_addr;
-	wire [`L1_LINE_SIZE-1:0]        dm_rdata [`L1_WAY_NUM];
+	wire [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
@@ -211,6 +211,7 @@ module l1i_top
 				.EN 		(dm_en_vect[way]),
 				.ADDR 	(dm_addr),
 				.WE 		(dm_we_vect[way]),
+				.WBE    ({`L1_LINE_SIZE/8{1'b1}}),
 				.WDATA 	(dm_wdata),
 				.RDATA  (dm_rdata[way])
 			);

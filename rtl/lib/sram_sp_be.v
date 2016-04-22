@@ -28,7 +28,7 @@ module sram_sp_be
 	output [WIDTH-1:0] 				 DO
 );
 
-	reg [WIDTH-1:0] ram [DEPTH];
+	reg [WIDTH-1:0] ram [0:DEPTH-1];
 	reg [$clog2(DEPTH)-1:0] addr_r;
 
 	wire [WIDTH-1:0] mask_data;
@@ -36,7 +36,7 @@ module sram_sp_be
 	genvar i;
 	generate
 		for(i = 0; i < WIDTH/8; i = i + 1) begin
-			assign mask_data[i*8+:8] = (WBE[i]) ? DI[i*8+:8] : ram[ADDR][i*8+:8]; 
+			assign mask_data[i*8+:8] = (WBE[i]) ? DI[i*8+:8] : ram[ADDR][i*8+:8];
 		end
 	endgenerate
 

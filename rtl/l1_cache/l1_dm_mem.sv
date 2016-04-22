@@ -21,11 +21,12 @@ module l1_dm_mem
 	input                       EN,
 	input 	[$clog2(DEPTH)-1:0] ADDR,
 	input                       WE,
+	input   [WIDTH/8-1:0]       WBE,
 	input 	[WIDTH-1:0] 				WDATA,
 	output 	[WIDTH-1:0] 				RDATA
 );
 
-	sram_sp
+	sram_sp_be
 	#(
 		.WIDTH  (WIDTH),
 		.DEPTH 	(DEPTH)
@@ -33,6 +34,7 @@ module l1_dm_mem
 	mem
 	(
 		.WE 		(WE),
+		.WBE    (WBE),
 		.EN 		(EN),
 		.CLK 		(CLK),
 		.ADDR 	(ADDR),
