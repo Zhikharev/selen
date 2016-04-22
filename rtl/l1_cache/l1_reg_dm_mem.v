@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_reg_ld_mem.sv
+// FILE NAME      : l1_reg_dm_mem.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
-`ifndef INC_L1_REG_LD_MEM
-`define INC_L1_REG_LD_MEM
+`ifndef INC_L1_REG_DM_MEM
+`define INC_L1_REG_DM_MEM
 
-module l1_reg_ld_mem
+module l1_reg_dm_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
@@ -23,12 +23,22 @@ module l1_reg_ld_mem
 	output 	[WIDTH-1:0] 				rdata,
 	input                       wen,
 	input 	[$clog2(DEPTH)-1:0] waddr,
-	input 	[WIDTH-1:0] 				wdata
+	input 	[WIDTH-1:0] 				wdata,
+	input 	[(WIDTH/8)-1:0] 		wbe
 );
 
+
 	reg  [WIDTH-1:0] mem [DEPTH];
+	wire [WIDTH-1:0] mask_data;
 
 	assign rdata = mem[raddr];
+
+	genvar i;
+	generate
+		for(i = 0; i < WIDTH/8; i = i + 1) begin
+			assign mask_data[i*8+:8] = (wbe[i]) ? wdata[i*8+:8] : mem[waddr][i*8+:8];
+		end
+	endgenerate
 
 	always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
@@ -37,7 +47,7 @@ module l1_reg_ld_mem
 			end
 		end
 		else begin
-			if(wen) mem[waddr] <= wdata;
+			if(wen) mem[waddr] <= mask_data;
 		end
 	end
 

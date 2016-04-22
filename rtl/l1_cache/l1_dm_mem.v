@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_dm_mem.sv
+// FILE NAME      : l1_dm_mem.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com

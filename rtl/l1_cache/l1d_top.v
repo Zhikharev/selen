@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1d_top.sv
+// FILE NAME      : l1d_top.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -50,8 +50,8 @@ module l1d_top
     input [`L1_WAY_NUM-1:0] one_hot_vector;
     integer i,j;
     reg [`L1_WAY_NUM-1:0] tmp;
-    for(i = 0; i < $clog2(`L1_WAY_NUM); i++) begin
-      for(j = 0; j < `L1_WAY_NUM; j++) begin
+    for(i = 0; i < $clog2(`L1_WAY_NUM); i=i+1) begin
+      for(j = 0; j < `L1_WAY_NUM; j=j+1) begin
         tmp[j] = one_hot_vector[j] & j[i];
       end
       one_hot_num[i] = |tmp;
@@ -165,7 +165,7 @@ module l1d_top
 														 (core_req_val & s0_req_nc) |
 														 ~core_req_val;
 
-	always_ff @(posedge clk or negedge rst_n) begin
+	always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
 			del_buf_val_r <= 1'b0;
 			del_buf_hit_r <= 1'b0;
@@ -175,7 +175,7 @@ module l1d_top
 		end
 	end
 
-	always_ff @(posedge clk) begin
+	always @(posedge clk) begin
 		if(s0_req_val & s0_req_wr) begin
 				del_buf_addr_r <= core_req_addr;
 				del_buf_data_r <= core_req_wdata;
@@ -183,7 +183,7 @@ module l1d_top
 		end
 	end
 
-	always_ff @(posedge clk or negedge rst_n) begin
+	always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
 			del_buf_way_val_r <= 1'b0;
 		end else begin
@@ -191,7 +191,7 @@ module l1d_top
 		end
 	end
 
-	always_ff @(posedge clk) begin
+	always @(posedge clk) begin
 		if(s1_req_val_r & ~del_buf_dm_access) begin
 			del_buf_way_vect_r <= lru_way_vect;
 		end
@@ -216,7 +216,7 @@ module l1d_top
 	// LRU
 	// -----------------------------------------------------
 	assign lru_req = s0_req_val & (~s0_req_nc);
-	always_ff @(posedge clk) if(s1_req_val_r) lru_way_vect_r <= lru_way_vect;
+	always @(posedge clk) if(s1_req_val_r) lru_way_vect_r <= lru_way_vect;
 	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
@@ -269,8 +269,6 @@ module l1d_top
 	always @(posedge clk) if(~stall) s1_req_size_r  <= core_req_size;
 
 	assign {s1_req_tag_r, s1_req_idx_r, s1_req_offset_r} = s1_req_addr_r;
-
-	//assign stall = s1_req_val_r & ~lru_hit & ((s1_req_we_r | s1_req_nc_r) & ~mau_req_ack);
 
 	assign stall = (s1_req_we_r) ? (s1_req_val_r & ~lru_hit & ~mau_req_ack) :
 																 (s1_req_val_r & ~(lru_hit | del_buf_hit_r));
@@ -382,6 +380,9 @@ module l1d_top
 	// -----------------------------------------------------------
 	// ASSERTIONS
 	// -----------------------------------------------------------
+
+	`ifndef SYNTHESYS
+
 	`ifndef NO_L1_ASSERTIONS
 
 		no_req_when_not_ready_p:
@@ -395,6 +396,7 @@ module l1d_top
 			else $fatal("Wrong offset allignment! (2 bytes)");
 	`endif
 
+	`endif
 endmodule
 
 `endif

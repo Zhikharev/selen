@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_top.sv
+// FILE NAME      : l1_top.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com

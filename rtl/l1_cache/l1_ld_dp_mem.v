@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_ld_mem.sv
+// FILE NAME      : l1_ld_dp_mem.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
 // ----------------------------------------------------------------------------
 // DESCRIPTION    :
 // ----------------------------------------------------------------------------
-`ifndef INC_L1_LD_MEM
-`define INC_L1_LD_MEM
+`ifndef INC_L1_LD_DP_MEM
+`define INC_L1_LD_DP_MEM
 
-module l1_ld_mem
+module l1_ld_dp_mem
 #(
 	parameter WIDTH = 32,
 	parameter DEPTH = 1024
@@ -19,11 +19,12 @@ module l1_ld_mem
 (
 	input 											CLK,
 	input 											RST_N,
-	input                       EN,
-	input 	[$clog2(DEPTH)-1:0] ADDR,
-	input                       WE,
-	input 	[WIDTH-1:0] 				WDATA,
+	input                       REN,
+	input 	[$clog2(DEPTH)-1:0] RADDR,
 	output 	[WIDTH-1:0] 				RDATA,
+	input                       WEN,
+	input 	[$clog2(DEPTH)-1:0] WADDR,
+	input 	[WIDTH-1:0] 				WDATA,
 	output                      ready
 );
 
@@ -33,9 +34,8 @@ module l1_ld_mem
 	reg 										rst_state_r;
 	reg [$clog2(DEPTH)-1:0] rst_addr_r;
 
-	wire 										 en;
-	wire [$clog2(DEPTH)-1:0] addr;
-	wire                     we;
+	wire                     wen;
+	wire [$clog2(DEPTH)-1:0] waddr;
 	wire [WIDTH-1:0] 				 wdata;
 
 	always @(posedge CLK or negedge RST_N) begin
@@ -57,27 +57,32 @@ module l1_ld_mem
 	end
 
 	assign ready = ~(rst_state_r == IDLE);
-
-	assign en    = (rst_state_r == IDLE) ? 1'b1 : EN;
-	assign we    = (rst_state_r == IDLE) ? 1'b1 : WE;
-	assign addr  = (rst_state_r == IDLE) ? rst_addr_r : ADDR;
+	assign wen   = (rst_state_r == IDLE) ? 1'b1 : WEN;
+	assign waddr = (rst_state_r == IDLE) ? rst_addr_r : WADDR;
 	assign wdata = (rst_state_r == IDLE) ? '0 : WDATA;
 
-	sram_sp
-	#(
-		.WIDTH  (WIDTH),
-		.DEPTH 	(DEPTH)
-	)
-	mem
-	(
-		.WE 		(we),
-		.EN 		(en),
-		.CLK 		(CLK),
-		.ADDR 	(addr),
-		.DI 		(wdata),
-		.DO 		(RDATA)
-	);
-
+  sram_dp
+  #(
+    .WIDTH (WIDTH),
+    .DEPTH (DEPTH)
+  )
+  mem
+  (
+    // PORT A
+    .WEA    (1'b0),
+    .ENA    (REN),
+    .CLKA   (CLK),
+    .ADDRA  (RADDR),
+    .DIA    (),
+    .DOA    (RDATA),
+    // PORT B
+    .WEB    (1'b1),
+    .ENB    (wen),
+    .CLKB   (CLK),
+    .ADDRB  (waddr),
+    .DIB    (wdata),
+    .DOB    ()
+  );
 
 endmodule
 `endif

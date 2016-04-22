@@ -2,8 +2,8 @@ MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
 RTL_HOME := $(MAKEHOME)../../rtl
 
 TOP_RTL_SRC :=\
-	$(MAKEHOME)/selen_cpu_cluster.sv \
-	$(MAKEHOME)/selen_top.sv
+	$(MAKEHOME)/selen_cpu_cluster.v \
+	$(MAKEHOME)/selen_top.v
 
 # ----------------------------------
 # X-bar

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1i_top.sv
+// FILE NAME      : l1i_top.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -89,8 +89,8 @@ module l1i_top
     input [`L1_WAY_NUM-1:0] one_hot_vector;
     integer i,j;
     reg [`L1_WAY_NUM-1:0] tmp;
-    for(i = 0; i < $clog2(`L1_WAY_NUM); i++) begin
-      for(j = 0; j < `L1_WAY_NUM; j++) begin
+    for(i = 0; i < $clog2(`L1_WAY_NUM); i=i+1) begin
+      for(j = 0; j < `L1_WAY_NUM; j=j+1) begin
         tmp[j] = one_hot_vector[j] & j[i];
       end
       one_hot_num[i] = |tmp;
@@ -232,6 +232,8 @@ module l1i_top
 		.way_vect 		(lru_way_vect)
 	);
 
+	`ifndef SYNTHESYS
+
 	// -----------------------------------------------------------
 	// ASSERTIONS
 	// -----------------------------------------------------------
@@ -289,6 +291,8 @@ module l1i_top
 				end
 			end
 		end
+	`endif
+
 	`endif
 endmodule
 `endif
