@@ -19,13 +19,12 @@ module sram_sp_be
 	parameter DEPTH = 10234
 )
 (
-	input 										 WE,
-	input [WIDTH/8-1:0]        WBE,
-	input 										 EN,
-	input 										 CLK,
-	input  [$clog2(DEPTH)-1:0] ADDR,
-	input  [WIDTH-1:0] 				 DI,
-	output [WIDTH-1:0] 				 DO
+	input 											clka,
+	input 											ena,
+	input  [WIDTH/8-1:0]				wea,
+	input  [$clog2(DEPTH)-1:0] 	addra,
+	input  [WIDTH-1:0] 					dina,
+	output [WIDTH-1:0]          douta
 );
 
 	reg [WIDTH-1:0] ram [0:DEPTH-1];
@@ -36,19 +35,19 @@ module sram_sp_be
 	genvar i;
 	generate
 		for(i = 0; i < WIDTH/8; i = i + 1) begin
-			assign mask_data[i*8+:8] = (WBE[i]) ? DI[i*8+:8] : ram[ADDR][i*8+:8];
+			assign mask_data[i*8+:8] = (wea[i]) ? dina[i*8+:8] : ram[addra][i*8+:8];
 		end
 	endgenerate
 
 	// Port A
-	always @(posedge CLK) begin
-		if(EN) begin
-			if(WE) ram[ADDR] <= mask_data;
-			addr_r <= ADDR;
+	always @(posedge clka) begin
+		if(ena) begin
+			ram[addra] <= mask_data;
+			addr_r <= addra;
 		end
 	end
 
-	assign DO = ram[addr_r];
+	assign douta = ram[addr_r];
 
 endmodule
 

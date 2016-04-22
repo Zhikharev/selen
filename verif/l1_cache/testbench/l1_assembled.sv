@@ -29,7 +29,6 @@ l1_top l1
   .l1d_req_wdata          (l1d_intf.req_wdata),
   .l1d_req_ack            (l1d_intf.req_ack),
   .l1d_ack_data           (l1d_intf.req_ack_data),
-  .l1d_req_be             ( 4'hF ),
 
   // Wishbone B4 interface
   .wb_clk_i               (wb_intf.clk),

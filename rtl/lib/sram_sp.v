@@ -18,26 +18,27 @@ module sram_sp
 	parameter DEPTH = 10234
 )
 (
-	input 										 WE,
-	input 										 EN,
-	input 										 CLK,
-	input  [$clog2(DEPTH)-1:0] ADDR,
-	input  [WIDTH-1:0] 				 DI,
-	output [WIDTH-1:0] 				 DO
+
+	input 											clka,
+	input 											ena,
+	input 											wea,
+	input  [$clog2(DEPTH)-1:0] 	addra,
+	input  [WIDTH-1:0] 					dina,
+	output [WIDTH-1:0]          douta
 );
 
 	reg [WIDTH-1:0] ram [0:DEPTH-1];
 	reg [$clog2(DEPTH)-1:0] addr_r;
 
 	// Port A
-	always @(posedge CLK) begin
-		if(EN) begin
-			if(WE) ram[ADDR] <= DI;
-			addr_r <= ADDR;
+	always @(posedge clka) begin
+		if(ena) begin
+			if(wea) ram[addra] <= dina;
+			addr_r <= addra;
 		end
 	end
 
-	assign DO = ram[addr_r];
+	assign douta = ram[addr_r];
 
 endmodule
 

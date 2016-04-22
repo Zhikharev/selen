@@ -19,20 +19,20 @@ module sram_dp
 )
 (
 	// PORT A
-	input 										 WEA,
-	input 										 ENA,
-	input 										 CLKA,
-	input  [$clog2(DEPTH)-1:0] ADDRA,
-	input  [WIDTH-1:0] 				 DIA,
-	output [WIDTH-1:0] 				 DOA,
+	input 											clka,
+	input 											ena,
+	input 											wea,
+	input  [$clog2(DEPTH)-1:0] 	addra,
+	input  [WIDTH-1:0] 					dina,
+	output [WIDTH-1:0]          douta,
 
 	// PORT B
-	input 										 WEB,
-	input 										 ENB,
-	input 										 CLKB,
-	input  [$clog2(DEPTH)-1:0] ADDRB,
-	input  [WIDTH-1:0] 				 DIB,
-	output [WIDTH-1:0] 				 DOB
+	input 											clkb,
+	input 											enb,
+	input 											web,
+	input  [$clog2(DEPTH)-1:0] 	addrb,
+	input  [WIDTH-1:0] 					dinb,
+	output [WIDTH-1:0]          doutb
 );
 
 	reg [WIDTH-1:0] ram [0:DEPTH-1];
@@ -40,24 +40,24 @@ module sram_dp
 	reg [$clog2(DEPTH)-1:0] addrb_r;
 
 	// Port A
-	always @(posedge CLKA) begin
-		if(ENA) begin
-			if(WEA) ram[ADDRA] <= DIA;
-			else addra_r <= ADDRA;
+	always @(posedge clka) begin
+		if(ena) begin
+			if(wea) ram[addra] <= dina;
+			else addra_r <= addra;
 		end
 	end
 
-	assign DOA = ram[addra_r];
+	assign douta = ram[addra_r];
 
 	// Port B
-	always @(posedge CLKB) begin
-		if(ENB) begin
-			if(WEB) ram[ADDRB] <= DIB;
-			else addrb_r <= ADDRB;
+	always @(posedge clkb) begin
+		if(enb) begin
+			if(web) ram[addrb] <= dinb;
+			else addrb_r <= addrb;
 		end
 	end
 
-	assign DOB = ram[addrb_r];
+	assign doutb = ram[addrb_r];
 
 endmodule
 

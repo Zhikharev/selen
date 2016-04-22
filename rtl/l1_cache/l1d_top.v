@@ -128,7 +128,7 @@ module l1d_top
 	reg  [`L1_WAY_NUM-1:0]          dm_en_vect;
 	reg  [`L1_WAY_NUM-1:0]          dm_we_vect;
 	reg  [`CORE_IDX_WIDTH-1:0]      dm_addr;
-	reg  [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM-1];
+	wire [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM-1];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 

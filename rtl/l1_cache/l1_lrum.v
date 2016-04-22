@@ -34,9 +34,9 @@ module l1_lrum
 
   reg                        rst_state_r;
   reg [`CORE_IDX_WIDTH-1:0]  rst_addr_r;
-  wire                       wr_en;
-  wire [`CORE_IDX_WIDTH-1:0] wr_addr;
-  wire [`L1_WAY_NUM-1:0]     wr_wdata;
+  wire                       wen;
+  wire [`CORE_IDX_WIDTH-1:0] waddr;
+  wire [`L1_WAY_NUM-1:0]     wdata;
 
   reg                        req_r;
   reg  [`CORE_IDX_WIDTH-1:0] idx_r;
@@ -92,10 +92,10 @@ module l1_lrum
     end
   end
 
-  assign ready    = ~(rst_state_r == IDLE);
-  assign wr_en    = (rst_state_r == IDLE) ? 1'b1 : req_r;
-  assign wr_addr  = (rst_state_r == IDLE) ? rst_addr_r : idx_r;
-  assign wr_wdata = (rst_state_r == IDLE) ? {`L1_WAY_NUM{1'b0}} : lru_used_next;
+  assign ready  = ~(rst_state_r == IDLE);
+  assign wen    = (rst_state_r == IDLE) ? 1'b1 : req_r;
+  assign waddr  = (rst_state_r == IDLE) ? rst_addr_r : idx_r;
+  assign wdata = (rst_state_r == IDLE) ? {`L1_WAY_NUM{1'b0}} : lru_used_next;
 
   // ------------------------------------------------------
   // READ STAGE
@@ -130,27 +130,32 @@ module l1_lrum
   assign lru_used_upd  = lru_used | way_vect;
   assign lru_used_next = (&lru_used_upd) ? way_vect : lru_used_upd;
 
+`ifdef PROTO
+  // Xilinx ISE sram IP-core
+  sram_dp_4x256
+`else
   sram_dp
   #(
     .WIDTH (`L1_WAY_NUM),
     .DEPTH (`L1_SET_NUM)
   )
+`endif
   mem
   (
     // PORT A
-    .WEA    (1'b0),
-    .ENA    (req),
-    .CLKA   (clk),
-    .ADDRA  (idx),
-    .DIA    (),
-    .DOA    (lru_used_sram),
+    .clka   (clk),
+    .ena    (wen),
+    .wea    (1'b1),
+    .addra  (waddr),
+    .dina   (wdata),
+    .douta  (),
     // PORT B
-    .WEB    (1'b1),
-    .ENB    (wr_en),
-    .CLKB   (clk),
-    .ADDRB  (wr_addr),
-    .DIB    (wr_wdata),
-    .DOB    ()
+    .clkb   (clk),
+    .enb    (req),
+    .web    (1'b0),
+    .addrb  (idx),
+    .dinb   (),
+    .doutb  (lru_used_sram)
   );
 
 endmodule

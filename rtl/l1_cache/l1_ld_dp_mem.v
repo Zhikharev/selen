@@ -61,27 +61,32 @@ module l1_ld_dp_mem
 	assign waddr = (rst_state_r == IDLE) ? rst_addr_r : WADDR;
 	assign wdata = (rst_state_r == IDLE) ? {WIDTH{1'b0}} : WDATA;
 
+`ifdef PROTO
+	// Xilinx ISE sram IP-core
+	sram_dp_20x256
+`else
   sram_dp
   #(
     .WIDTH (WIDTH),
     .DEPTH (DEPTH)
   )
+`endif
   mem
   (
-    // PORT A
-    .WEA    (1'b0),
-    .ENA    (REN),
-    .CLKA   (CLK),
-    .ADDRA  (RADDR),
-    .DIA    (),
-    .DOA    (RDATA),
-    // PORT B
-    .WEB    (1'b1),
-    .ENB    (wen),
-    .CLKB   (CLK),
-    .ADDRB  (waddr),
-    .DIB    (wdata),
-    .DOB    ()
+  	// PORT A
+		.clka 	(CLK),
+		.ena 		(wen),
+		.wea 		(1'b1),
+		.addra 	(waddr),
+		.dina 	(wdata),
+		.douta 	(),
+		// PORT B
+		.clkb 	(CLK),
+		.enb 		(REN),
+		.web 		(1'b0),
+		.addrb 	(RADDR),
+		.dinb 	(),
+		.doutb 	(RDATA)
   );
 
 endmodule

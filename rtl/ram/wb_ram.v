@@ -49,13 +49,16 @@ reg                     wb_err_r;
 wire                    mem_clk_i;
 wire                    mem_en_i ;
 wire                    mem_we_i;
-wire    [DW/8-1:0]      mem_wbe_i;
 wire    [AW:0]          mem_adr_i;
 wire    [DW-1:0]        mem_dat_o;
 wire    [DW-1:0]        mem_dat_i;
 
 // ----------------------------------------------------------------------------
 // Inst of RAM
+`ifdef PROTO
+  // Xilinx ISE sram IP-core
+  sram_sp_be_32x256K
+`else
 sram_sp_be
 #(
   .WIDTH (DW),
@@ -63,18 +66,17 @@ sram_sp_be
 )
 ram
 (
-  .WE   (mem_we_i),
-  .WBE  (mem_wbe_i),
-  .EN   (mem_en_i),
-  .CLK  (mem_clk_i),
-  .ADDR (mem_adr_i),
-  .DI   (mem_dat_i),
-  .DO   (mem_dat_o)
+  .clka   (mem_clk_i),
+  .ena    (mem_en_i),
+  .wea    (mem_we_i),
+  .addra  (mem_adr_i),
+  .dina   (mem_dat_i),
+  .douta  (mem_dat_o)
 );
+`endif
 
 assign mem_en_i  = wb_stb_i;
-assign mem_we_i  = wb_we_i;
-assign mem_wbe_i = wb_sel_i;
+assign mem_we_i  = wb_sel_i & {DW/8{wb_we_i}};
 assign mem_clk_i = wb_clk_i;
 assign mem_adr_i = wb_adr_i[AW-1:2];
 assign mem_dat_i = wb_dat_i;

@@ -18,32 +18,23 @@ module sram_rom
 	parameter DEPTH = 1024
 )
 (
-	input 										 EN,
-	input 										 CLK,
-	input  [$clog2(DEPTH)-1:0] ADDR,
-	output [WIDTH-1:0] 				 DO
+	input 											clka,
+	input 											ena,
+	input  [$clog2(DEPTH)-1:0] 	addra,
+	output [WIDTH-1:0]          douta
 );
 
 	reg [WIDTH-1:0] rom [DEPTH];
 	reg [$clog2(DEPTH)-1:0] addr_r;
 
-/*
-	no_addr_x_p:
-		assert property(@(posedge CLK) ~$isunknown(ADDR))
-		else $fatal("Found X on ADDR!");
-	no_clk_x_p:
-		assert property(@(posedge CLK) ~$isunknown(CLK))
-		else $fatal("Found X on ADDR!");
-*/
-
 	// Port A
-	always @(posedge CLK) begin
-		if(EN) begin
-			addr_r <= ADDR;
+	always @(posedge clka) begin
+		if(ena) begin
+			addr_r <= addra;
 		end
 	end
 
-	assign DO = rom[addr_r];
+	assign douta = rom[addr_r];
 
 endmodule
 

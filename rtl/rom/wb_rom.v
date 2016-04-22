@@ -63,10 +63,10 @@ sram_rom
 )
 rom_1kB
 (
-  .EN   (rom_en_i),
-  .CLK  (rom_clk_i),
-  .ADDR (rom_adr_i),
-  .DO   (rom_dat_o)
+  .ena   (rom_en_i),
+  .clka  (rom_clk_i),
+  .addra (rom_adr_i),
+  .douta  (rom_dat_o)
 );
 
 assign rom_en_i  = wb_stb_i;

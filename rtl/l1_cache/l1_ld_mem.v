@@ -63,21 +63,25 @@ module l1_ld_mem
 	assign addr  = (rst_state_r == IDLE) ? rst_addr_r : ADDR;
 	assign wdata = (rst_state_r == IDLE) ? {WIDTH{1'b0}} : WDATA;
 
+`ifdef PROTO
+	// Xilinx ISE sram IP-core
+	sram_sp_20x256
+`else
 	sram_sp
 	#(
 		.WIDTH  (WIDTH),
 		.DEPTH 	(DEPTH)
 	)
+`endif
 	mem
 	(
-		.WE 		(we),
-		.EN 		(en),
-		.CLK 		(CLK),
-		.ADDR 	(addr),
-		.DI 		(wdata),
-		.DO 		(RDATA)
+		.clka 	(CLK),
+		.ena 		(en),
+		.wea 		(we),
+		.addra 	(addr),
+		.dina 	(wdata),
+		.douta 	(RDATA)
 	);
-
 
 endmodule
 `endif
