@@ -43,7 +43,7 @@ module l1_ld_dp_mem
 			rst_state_r <= IDLE;
 		end else begin
 			if(rst_state_r == IDLE) begin
-				if(rst_addr_r == '1) rst_state_r <= READY;
+				if(rst_addr_r == {`CORE_IDX_WIDTH{1'b1}}) rst_state_r <= READY;
 			end
 		end
 	end
