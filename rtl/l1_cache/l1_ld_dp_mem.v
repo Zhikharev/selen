@@ -59,7 +59,7 @@ module l1_ld_dp_mem
 	assign ready = ~(rst_state_r == IDLE);
 	assign wen   = (rst_state_r == IDLE) ? 1'b1 : WEN;
 	assign waddr = (rst_state_r == IDLE) ? rst_addr_r : WADDR;
-	assign wdata = (rst_state_r == IDLE) ? '0 : WDATA;
+	assign wdata = (rst_state_r == IDLE) ? {WIDTH{1'b0}} : WDATA;
 
   sram_dp
   #(

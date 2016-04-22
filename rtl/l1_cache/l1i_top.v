@@ -80,7 +80,6 @@ module l1i_top
 	wire [`CORE_IDX_WIDTH-1:0]      dm_addr;
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
-	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num
@@ -167,7 +166,6 @@ module l1i_top
 	assign dm_we_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
 	assign dm_addr  = (req_val) ? req_idx : req_idx_r;
 	assign dm_wdata = mau_ack_data;
-	assign dm_wr_be = '1;
 
 	genvar way;
 	generate

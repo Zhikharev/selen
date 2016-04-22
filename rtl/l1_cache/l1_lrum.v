@@ -95,7 +95,7 @@ module l1_lrum
   assign ready    = ~(rst_state_r == IDLE);
   assign wr_en    = (rst_state_r == IDLE) ? 1'b1 : req_r;
   assign wr_addr  = (rst_state_r == IDLE) ? rst_addr_r : idx_r;
-  assign wr_wdata = (rst_state_r == IDLE) ? '0 : lru_used_next;
+  assign wr_wdata = (rst_state_r == IDLE) ? {`L1_WAY_NUM{1'b0}} : lru_used_next;
 
   // ------------------------------------------------------
   // READ STAGE

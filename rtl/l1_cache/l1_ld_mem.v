@@ -61,7 +61,7 @@ module l1_ld_mem
 	assign en    = (rst_state_r == IDLE) ? 1'b1 : EN;
 	assign we    = (rst_state_r == IDLE) ? 1'b1 : WE;
 	assign addr  = (rst_state_r == IDLE) ? rst_addr_r : ADDR;
-	assign wdata = (rst_state_r == IDLE) ? '0 : WDATA;
+	assign wdata = (rst_state_r == IDLE) ? {WIDTH{1'b0}} : WDATA;
 
 	sram_sp
 	#(

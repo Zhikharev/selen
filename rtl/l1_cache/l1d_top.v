@@ -250,7 +250,7 @@ module l1d_top
 	end
 
 	assign dm_wdata = (mau_req_ack & ~mau_ack_nc & ~mau_ack_we) ? mau_ack_data : {`L1_LINE_SIZE/32{del_buf_data_r}};
-	assign dm_wr_be = (mau_req_ack & ~mau_ack_nc & ~mau_ack_we) ? '1 : del_buf_be_r;
+	assign dm_wr_be = (mau_req_ack & ~mau_ack_nc & ~mau_ack_we) ? {`L1_LINE_SIZE/8{1'b1}} : del_buf_be_r;
 
 	// -----------------------------------------------------
 	// S1

@@ -91,7 +91,8 @@ module l1_mau
 	reg                           d_req_rd_accepted_r;
 	reg                           i_req_rd_accepted_r;
 
-	localparam ACK_BUF_WIDTH = $clog2(TR_CNT_MAX) + 1 + 1 + 1;
+	parameter  ACK_BUF_WIDTH = $clog2(TR_CNT_MAX) + 1 + 1 + 1;
+
 	localparam ACK_I  = 1'b0;
 	localparam ACK_D  = 1'b1;
 
