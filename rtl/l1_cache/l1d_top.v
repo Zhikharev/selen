@@ -84,9 +84,9 @@ module l1d_top
 
 	reg                           	s1_req_val_r;
   reg  [`CORE_ADDR_WIDTH-1:0]     s1_req_addr_r;
-	reg  [`CORE_TAG_WIDTH-1:0] 			s1_req_tag_r;
-	reg  [`CORE_IDX_WIDTH-1:0] 			s1_req_idx_r;
-	reg  [`CORE_OFFSET_WIDTH-1:0] 	s1_req_offset_r;
+	wire [`CORE_TAG_WIDTH-1:0] 			s1_req_tag_r;
+	wire [`CORE_IDX_WIDTH-1:0] 			s1_req_idx_r;
+	wire [`CORE_OFFSET_WIDTH-1:0] 	s1_req_offset_r;
 	reg  [`CORE_DATA_WIDTH-1:0] 		s1_req_wdata_r;
 	reg  [`CORE_SIZE_WIDTH-1:0]  		s1_req_size_r;
 	reg                             s1_req_we_r;
@@ -96,7 +96,7 @@ module l1d_top
 
 	wire                           	stall;
 
-	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
+	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 	wire                            req_ack;
 	wire                            req_we_ack;
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
@@ -129,7 +129,7 @@ module l1d_top
 	reg  [`L1_WAY_NUM-1:0]          dm_we_vect;
 	reg  [`CORE_IDX_WIDTH-1:0]      dm_addr;
 	reg  [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM-1];
-	reg  [`L1_LINE_SIZE-1:0] 				dm_wdata;
+	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
 	wire s1_en;

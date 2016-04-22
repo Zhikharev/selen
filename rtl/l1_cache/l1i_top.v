@@ -49,7 +49,7 @@ module l1i_top
 	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
 	reg                           	req_val_r;
 
-	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
+	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 	wire                            req_ack;
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
 

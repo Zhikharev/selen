@@ -30,7 +30,6 @@ module l1_top
 	input 	[`CORE_COP_WIDTH-1:0]   l1d_req_cop,
 	input 	[`CORE_DATA_WIDTH-1:0] 	l1d_req_wdata,
 	input 	[`CORE_SIZE_WIDTH-1:0]  l1d_req_size,
-	input 	[`CORE_BE_WIDTH-1:0]    l1d_req_be,
 	output                        	l1d_req_ack,
 	output	[`CORE_DATA_WIDTH-1:0] 	l1d_ack_data,
 
