@@ -131,9 +131,6 @@ module l1_mau
 	localparam ACK_IDLE 	= 1'b0;
 	localparam ACK_REC 		= 1'b1;
 
-	reg [0:0]											ack_state_r;
-	reg [0:0]											ack_state_next;
-
 	reg 													ack_state_r;
 	reg 													ack_state_next;
 	reg  [`L1_LINE_SIZE-1:0] 			ack_data_r;
