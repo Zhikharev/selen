@@ -64,6 +64,7 @@ sram_sp_be
   .WIDTH (DW),
   .DEPTH (1<<AW)
 )
+`endif
 ram
 (
   .clka   (mem_clk_i),
@@ -73,7 +74,6 @@ ram
   .dina   (mem_dat_i),
   .douta  (mem_dat_o)
 );
-`endif
 
 assign mem_en_i  = wb_stb_i;
 assign mem_we_i  = wb_sel_i & {DW/8{wb_we_i}};

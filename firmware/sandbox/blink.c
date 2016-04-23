@@ -109,7 +109,7 @@ void __attribute__((optimize("Os"))) blink()
     gpio->oe |= (BIT_MASK(output_pin));
     /*disable interrupts fot output pin*/
     gpio->inte &= ~(BIT_MASK(output_pin));
-        
+
     for(uint32_t i = 0; i < NUM_BLINKS; i++)
     {
         /*set high level signal at output_pin*/
@@ -119,5 +119,7 @@ void __attribute__((optimize("Os"))) blink()
 
         /*set low level signal at output_pin*/
         gpio->out &= ~(BIT_MASK(output_pin));
+
+        wait(BLINK_PERIOD);
     }
 }

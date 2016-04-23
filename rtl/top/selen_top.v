@@ -157,7 +157,7 @@ module selen_top
 	);
 
 	defparam wb_ram_256kB.DW = 32;
-	defparam wb_ram_256kB.AW = 15;
+	defparam wb_ram_256kB.AW = 16;
 
 	wb_ram wb_ram_256kB
 	(
