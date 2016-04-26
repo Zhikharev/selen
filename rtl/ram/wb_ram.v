@@ -57,7 +57,7 @@ wire    [DW-1:0]        mem_dat_i;
 // Inst of RAM
 `ifdef PROTO
   // Xilinx ISE sram IP-core
-  sram_sp_be_32x256K
+  sram_sp_be_32x256
 `else
 sram_sp_be
 #(

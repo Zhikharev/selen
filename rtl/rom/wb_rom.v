@@ -56,11 +56,16 @@ wire    [DW-1:0]        rom_dat_o;
 
 // ----------------------------------------------------------------------------
 // Inst of ROM
+`ifdef PROTO
+// Xilinx ISE sram IP-core
+sram_rom_32x1280
+`else
 sram_rom
 #(
-  .WIDTH (32),
-  .DEPTH (256)
+  .WIDTH (DW),
+  .DEPTH (1<<AW)
 )
+`endif
 rom_1kB
 (
   .ena   (rom_en_i),
@@ -71,7 +76,7 @@ rom_1kB
 
 assign rom_en_i  = wb_stb_i;
 assign rom_clk_i = wb_clk_i;
-assign rom_adr_i = wb_adr_i[9:2];
+assign rom_adr_i = wb_adr_i[AW-1:2];
 
 assign wb_dat_o  = rom_dat_o;
 // ----------------------------------------------------------------------------

@@ -231,7 +231,10 @@ module selen_top
 		.s1_wb_ack_i 		(io_gpio_wb_ack_i)
 	);
 
-	wb_rom wb_rom_1kB
+	defparam wb_rom_5kB.DW = 32;
+	defparam wb_rom_5kB.AW = 11;
+
+	wb_rom wb_rom_5kB
 	(
   	.wb_clk_i 	(clk),
   	.wb_rst_i 	(~rst_n),
