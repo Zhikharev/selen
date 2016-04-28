@@ -28,8 +28,13 @@ class sl_l1_cfg extends uvm_object;
 	`uvm_object_utils_end
 
 	constraint c_solve_order {
+		solve idx_num  before tags_num;
 		solve tags_num before min_addr;
 		solve min_addr before max_addr;
+	}
+
+	constraint c_idx_num {
+		idx_num dist {LOW := 50, MEDIUM := 30, HIGH := 20};
 	}
 
 	constraint c_tag_addr {
