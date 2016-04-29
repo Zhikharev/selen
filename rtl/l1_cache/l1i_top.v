@@ -142,10 +142,11 @@ module l1i_top
 	// -----------------------------------------------------
 	// MAU
 	// -----------------------------------------------------
-	always @(posedge clk, posedge rst_n) begin
+	always @(posedge clk, negedge rst_n) begin
 		if(~rst_n) mau_req_was_send_r <= 1'b0;
 		else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack;
 	 	else mau_req_was_send_r <= mau_req_val;
+	 	//else mau_req_was_send_r <= (req_val_r & ~lru_hit);
 	end
 	assign mau_req_val = (req_val_r & ~lru_hit) | mau_req_was_send_r;
 	assign mau_req_addr = {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};

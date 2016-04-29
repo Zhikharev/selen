@@ -89,7 +89,7 @@ module selen_tb_top ();
   // -----------------------------------------
   // ROM IMAGE
   // -----------------------------------------
-  initial $readmemh("rom_image.v", selen_top.wb_rom_1kB.rom_1kB.rom);
+  initial $readmemh("rom_image.v", selen_top.wb_rom_5kB.rom.rom);
   initial $readmemh("ram_image.v", selen_top.wb_ram_256kB.ram.ram);
 
 endmodule

@@ -66,7 +66,7 @@ sram_rom
   .DEPTH (1<<AW)
 )
 `endif
-rom_1kB
+rom
 (
   .ena   (rom_en_i),
   .clka  (rom_clk_i),

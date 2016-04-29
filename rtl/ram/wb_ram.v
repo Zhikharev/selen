@@ -48,8 +48,8 @@ reg                     wb_err_r;
 
 wire                    mem_clk_i;
 wire                    mem_en_i ;
-wire                    mem_we_i;
-wire    [AW:0]          mem_adr_i;
+wire    [DW/8-1:0]      mem_we_i;
+wire    [AW-1:0]        mem_adr_i;
 wire    [DW-1:0]        mem_dat_o;
 wire    [DW-1:0]        mem_dat_i;
 

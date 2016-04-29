@@ -17,7 +17,26 @@ module selen_top
 	input		rst_n,
 	output 	gpio_pin_o,
 	output 	gpio_pin_en,
-	input 	gpio_pin_i
+	input 	gpio_pin_i,
+	output                              dbg_io_gpio_wb_cyc_o,
+	output                              dbg_io_gpio_wb_stb_o,
+	output                              dbg_io_gpio_wb_we_o,
+	output                              dbg_io_gpio_wb_stall_i,
+	output                              dbg_io_gpio_wb_ack_i,
+	output                              dbg_io_gpio_wb_err_i,
+	output  [`WB_COM_AWIDTH - 1:0]      dbg_io_gpio_wb_addr_o,
+
+	output  [`WB_COM_AWIDTH - 1:0]      dbg_cpu_wb_addr_o,
+	output  [`WB_COM_DWIDTH - 1:0]      dbg_cpu_wb_dat_o,
+	output  [`WB_COM_DWIDTH/8 - 1:0]    dbg_cpu_wb_sel_o,
+	output                              dbg_cpu_wb_cyc_o,
+	output                              dbg_cpu_wb_stb_o,
+	output                              dbg_cpu_wb_we_o,
+	output	[`WB_COM_DWIDTH - 1:0]      dbg_cpu_wb_dat_i,
+	output                              dbg_cpu_wb_stall_i,
+	output                              dbg_cpu_wb_ack_i,
+	output                              dbg_cpu_wb_err_i
+
 );
 
 	wire  [`WB_COM_AWIDTH - 1:0]      cpu_wb_addr_o;
@@ -75,9 +94,29 @@ module selen_top
 	wire                              io_gpio_wb_ack_i;
 	wire                              io_gpio_wb_err_i;
 
-	wire [31:0] 											gpio_pins_o;
-	wire [31:0] 											gpio_pins_en;
-	wire [31:0] 											gpio_pins_i;
+	wire [30:0] 											gpio_pins_o;
+	wire [30:0] 											gpio_pins_en;
+	wire [30:0] 											gpio_pins_i;
+
+	assign             dbg_io_gpio_wb_cyc_o = io_gpio_wb_cyc_o;
+	assign             dbg_io_gpio_wb_stb_o = io_gpio_wb_stb_o;
+	assign             dbg_io_gpio_wb_we_o  = io_gpio_wb_we_o;
+	assign             dbg_io_gpio_wb_stall_i = io_gpio_wb_stall_i;
+	assign             dbg_io_gpio_wb_ack_i = io_gpio_wb_ack_i;
+	assign             dbg_io_gpio_wb_err_i = io_gpio_wb_err_i;
+	assign             dbg_io_gpio_wb_addr_o = io_gpio_wb_addr_o;
+
+	assign dbg_cpu_wb_addr_o = cpu_wb_addr_o;
+	assign dbg_cpu_wb_dat_o = cpu_wb_dat_o;
+	assign dbg_cpu_wb_sel_o = cpu_wb_sel_o;
+	assign dbg_cpu_wb_cyc_o = cpu_wb_cyc_o;
+	assign dbg_cpu_wb_stb_o = cpu_wb_stb_o;
+	assign dbg_cpu_wb_we_o = cpu_wb_we_o;
+	assign dbg_cpu_wb_dat_i = cpu_wb_dat_i;
+	assign dbg_cpu_wb_stall_i = cpu_wb_stall_i;
+	assign dbg_cpu_wb_ack_i = cpu_wb_ack_i;
+	assign dbg_cpu_wb_err_i = cpu_wb_err_i;
+
 
 	selen_cpu_cluster cpu_cluster
 	(
@@ -157,7 +196,7 @@ module selen_top
 	);
 
 	defparam wb_ram_256kB.DW = 32;
-	defparam wb_ram_256kB.AW = 16;
+	defparam wb_ram_256kB.AW = 8; // TODO change name
 
 	wb_ram wb_ram_256kB
 	(
@@ -251,9 +290,9 @@ module selen_top
 
 	assign io_rom_wb_stall_i = 1'b0;
 
-	assign gpio_pin_o  		= gpio_pins_o[0];
-	assign gpio_pin_en 		= gpio_pins_en[0];
-	assign gpio_pins_i[0] = gpio_pin_i;
+	assign gpio_pin_o  		= gpio_pins_o[1];
+	assign gpio_pin_en 		= gpio_pins_en[1];
+	assign gpio_pins_i[1] = gpio_pin_i;
 
 	gpio_top gpio
 	(
