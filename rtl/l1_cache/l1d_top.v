@@ -101,6 +101,7 @@ module l1d_top
 	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 	wire                            req_ack;
 	wire                            req_we_ack;
+	wire                            req_rd_ack;
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
 
 	reg 														mau_req_ack_r;
@@ -120,6 +121,7 @@ module l1d_top
 	wire [`CORE_TAG_WIDTH-1:0] 			ld_wr_tag;
 
 	wire                            lru_req;
+	reg                             lru_req_r;
 	wire                            lru_ready;
 	wire [`L1_WAY_NUM-1:0] 					lru_way_vect;
 	reg  [`L1_WAY_NUM-1:0] 					lru_way_vect_r;
@@ -158,10 +160,10 @@ module l1d_top
   // -----------------------------------------------------
 	// DELAYED BUFFER
 	// DEBUG
+	// IF MISS, DON'T WRITE
 	// -----------------------------------------------------
 
-	assign del_buf_clean = (~mau_req_ack | mau_ack_nc) &
-	                       (~core_req_val | (core_req_val & s0_req_nc));
+	assign del_buf_clean = (core_req_val & s0_req_nc) | ~core_req_val | (mau_req_ack & mau_ack_nc);
 
 	assign del_buf_dm_access = (core_req_val & s0_req_wr) |
 														 (core_req_val & s0_req_nc) |
@@ -207,7 +209,7 @@ module l1d_top
 	// -----------------------------------------------------
 	assign ld_ren_vect = {`L1_WAY_NUM{(s0_req_val & ~s0_req_nc)}};
 	assign ld_raddr    = s0_req_idx;
-	assign ld_wen_vect = mau_req_ack & ~mau_ack_nc;
+	assign ld_wen_vect = {`L1_WAY_NUM{mau_req_ack & ~mau_ack_nc & ~mau_ack_we}} & (lru_way_vect_r);
 	assign ld_waddr    = s1_req_idx_r;
 	assign ld_wdata    = {ld_wr_val, ld_wr_tag};
 	assign ld_wr_val   = 1'b1;
@@ -218,7 +220,17 @@ module l1d_top
 	// LRU
 	// -----------------------------------------------------
 	assign lru_req = s0_req_val & (~s0_req_nc);
-	always @(posedge clk) if(s1_req_val_r) lru_way_vect_r <= lru_way_vect;
+
+	always @(posedge clk or negedge rst_n) begin
+		if(~rst_n) begin
+			lru_req_r <= 1'b0;
+		end else begin
+			lru_req_r <= lru_req;
+		end
+	end
+
+	always @(posedge clk) if(lru_req_r) lru_way_vect_r <= lru_way_vect;
+
 	assign lru_way_pos = one_hot_num(lru_way_vect);
 
 	// -----------------------------------------------------
@@ -272,7 +284,7 @@ module l1d_top
 
 	assign {s1_req_tag_r, s1_req_idx_r, s1_req_offset_r} = s1_req_addr_r;
 
-	assign stall = (s1_req_we_r) ? (s1_req_val_r & ~lru_hit & ~mau_req_ack) :
+	assign stall = (s1_req_we_r) ? (s1_req_val_r & ~mau_req_ack) :
 																 (s1_req_val_r & ~(lru_hit | del_buf_hit_r));
 
 	// -----------------------------------------------------
@@ -295,7 +307,8 @@ module l1d_top
 	always @(posedge clk) mau_ack_data_r <= mau_ack_data;
 	always @(posedge clk) mau_ack_nc_r   <= mau_ack_nc;
 
-	assign req_ack = lru_hit | del_buf_hit_r | req_we_ack | mau_req_ack_r;
+	assign req_ack    = req_rd_ack  | req_we_ack | mau_req_ack_r;
+	assign req_rd_ack = ~s1_req_we_r & (lru_hit | del_buf_hit_r);
 	assign req_we_ack = s1_req_val_r & s1_req_we_r & ~stall;
 
 	// -----------------------------------------------------

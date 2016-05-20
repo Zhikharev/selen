@@ -18,6 +18,8 @@ import uvm_pkg::*;
 `include "uvm/cfg/sl_l1_cfg.sv"
 `include "uvm/cfg/sl_global_cfg.sv"
 
+`include "uvm/items/sl_l1_core_bus_item.sv"
+
 `include "uvm/scrb/sl_cache_line.sv"
 `include "uvm/scrb/sl_mem.sv"
 `include "uvm/scrb/sl_cache_mem.sv"

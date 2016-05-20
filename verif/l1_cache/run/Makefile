@@ -18,3 +18,6 @@ l1_rd_after_wr_test:
 
 l1_random_test:
 	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=$@ $(RUN_OPTS) $(SIM_OPTS)
+
+l1_lru_test:
+	./simv +UVM_NO_RELNOTES +UVM_TESTNAME=$@ $(RUN_OPTS) $(SIM_OPTS)

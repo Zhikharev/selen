@@ -46,6 +46,7 @@ module l1_lrum
 
   wire [`L1_WAY_NUM-1:0]     lru_used_sram;
   wire [`L1_WAY_NUM-1:0]     lru_used;
+  wire [`L1_WAY_NUM-1:0]     lru_used_inv;
   wire [`L1_WAY_NUM-1:0]     lru_used_upd;
  	wire [`L1_WAY_NUM-1:0] 		 lru_used_next;
 
@@ -58,7 +59,8 @@ module l1_lrum
   // ------------------------------------------------------
   //function [`L1_WAY_NUM-1:0] ms1_vec;
   function [0:`L1_WAY_NUM-1] ms1_vec;
-    input [`L1_WAY_NUM-1:0] vec; //when vec==0,ms1_vec=0!
+    //input [`L1_WAY_NUM-1:0] vec; //when vec==0,ms1_vec=0!
+    input [0:`L1_WAY_NUM-1] vec; //when vec==0,ms1_vec=0!
     integer i,j;
     reg     res0;
     for (i=0; i<`L1_WAY_NUM; i=i+1)
@@ -108,8 +110,8 @@ module l1_lrum
   always @(posedge clk) idx_r <= idx;
 
   always @(posedge clk,negedge rst_n)
-    if(~rst_n)     bypass_r <= 0;
-    else if(req_r) bypass_r <= (idx == idx_r);
+    if(~rst_n)   bypass_r <= 0;
+    else if(req) bypass_r <= (idx == idx_r);
 
   // ------------------------------------------------------
   // ANALYSE STAGE
@@ -126,7 +128,8 @@ module l1_lrum
   assign way_vect = (hit) ? hit_vect : lru_ev_aloc_way_vect;
   assign lru_is_evict  = &ld_val_vect;
   assign evict_val = ~hit & lru_is_evict;
-  assign lru_ev_aloc_way_vect = (lru_used == 0) ? (`L1_WAY_NUM'b1) : ms1_vec(~lru_used);
+  assign lru_used_inv = ~lru_used;
+  assign lru_ev_aloc_way_vect = (lru_used == 0) ? (`L1_WAY_NUM'b1) : ms1_vec(lru_used_inv);
   assign lru_used_upd  = lru_used | way_vect;
   assign lru_used_next = (&lru_used_upd) ? way_vect : lru_used_upd;
 
