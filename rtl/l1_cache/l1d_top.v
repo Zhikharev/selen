@@ -74,11 +74,11 @@ module l1d_top
   reg  [`CORE_DATA_WIDTH/8-1:0]   s0_word_be;
 
   reg 											 			del_buf_val_r;
-  reg [`CORE_ADDR_WIDTH-1:0] 			del_buf_addr_r;
-  reg [`CORE_DATA_WIDTH-1:0] 			del_buf_data_r;
+  reg  [`CORE_ADDR_WIDTH-1:0] 		del_buf_addr_r;
+  reg  [`CORE_DATA_WIDTH-1:0] 		del_buf_data_r;
   reg                             del_buf_hit_r;
-  reg [`L1_LINE_SIZE/8-1:0]       del_buf_be_r;
-  reg [`L1_WAY_NUM-1:0]           del_buf_way_vect_r;
+  reg  [`L1_LINE_SIZE/8-1:0]      del_buf_be_r;
+  reg  [`L1_WAY_NUM-1:0]          del_buf_way_vect_r;
 	wire [`CORE_TAG_WIDTH-1:0] 			del_buf_tag;
 	wire [`CORE_IDX_WIDTH-1:0] 			del_buf_idx;
 	wire [`CORE_OFFSET_WIDTH-1:0] 	del_buf_offset;
@@ -179,7 +179,7 @@ module l1d_top
 
   assign dm_blocked = (s0_req_val & s0_req_rd) | (mau_req_ack & ~mau_ack_nc & ~mau_ack_we);
 
-  assign del_buf_clean = del_buf_dm_wr_r & ~dm_blocked;
+  assign del_buf_clean = (del_buf_dm_wr_r & ~dm_blocked) | (~del_buf_dm_wr_r & ~del_buf_need_dm_wr);
 
 	assign {del_buf_tag, del_buf_idx, del_buf_offset} = del_buf_addr_r;
 
@@ -427,9 +427,44 @@ module l1d_top
 
 	// -----------------------------------------------------------
 	// ASSERTIONS
+	// COVERGROUPS
 	// -----------------------------------------------------------
 
 	`ifndef SYNTHESYS
+
+	// COVERGROUP: l1d_cg
+	covergroup l1d_cg @(posedge clk);
+		lru_hit: coverpoint lru_hit iff(s1_req_val_r) {
+			bins HIT  = {1'b1};
+			bins MISS = {1'b0};
+		}
+		lru_way: coverpoint lru_way_vect iff(s1_req_val_r) {
+			bins WAY0 = {4'b0001};
+			bins WAY1 = {4'b0010};
+			bins WAY2 = {4'b0100};
+			bins WAY3 = {4'b1000};
+		}
+		cop: coverpoint s1_req_we_r iff(s1_req_val_r) {
+			bins RD = {1'b0};
+			bins WR = {1'b1};
+		}
+		lru_cross: cross lru_hit, lru_way, cop;
+
+		del_buf_hit: coverpoint del_buf_hit_r iff(rst_n) {
+			bins HIT  = {1'b1};
+			bins MISS = {1'b0};
+		}
+
+		del_buf_hit_combine: coverpoint (del_buf_addr_hit_r & lru_hit) iff(rst_n) {
+			bins COMBINE = {1'b1};
+			bins MISS = {1'b0};
+		}
+
+		del_buf_lru_cross: cross lru_hit, del_buf_hit;
+
+	endgroup
+
+	l1d_cg cg = new();
 
 	`ifndef NO_L1_ASSERTIONS
 
