@@ -44,13 +44,26 @@ module selen_tb_top ();
 
 	initial begin
 		forever begin
-			@(posedge clk);
-			if(selen_top.cpu_cluster.core.i_req_ack) begin
-				rv32_transaction item = new("item");
-				item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
-				$display("%0t data=%0h",$time(), selen_top.cpu_cluster.core.i_ack_rdata);
-				$display(item.sprint());
+			if(~rst) begin
+				@(negedge clk);
+				if(selen_top.cpu_cluster.core.i_req_val) begin
+					string str;
+					rv32_transaction item = new("item");
+					str = {$sformatf("[INSTR] ADDR=%32h ", selen_top.cpu_cluster.core.i_req_addr)};
+					while(!selen_top.cpu_cluster.core.i_req_ack) @(negedge clk);
+					forever begin
+						item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
+						str = {str, $sformatf("DATA=%32h ",selen_top.cpu_cluster.core.i_ack_rdata)};
+						str = {str, item.sprint()};
+						$display("%0s (%0t)", str, $time());
+						str = {$sformatf("[INSTR] ADDR=%32h ", selen_top.cpu_cluster.core.i_req_addr)};
+						do begin @(negedge clk);
+						end
+						while(!selen_top.cpu_cluster.core.i_req_ack);
+					end
+				end
 			end
+			else @(negedge clk);
 		end
 	end
 
