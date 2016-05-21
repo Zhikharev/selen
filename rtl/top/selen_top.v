@@ -196,7 +196,7 @@ module selen_top
 	);
 
 	defparam wb_ram_256kB.DW = 32;
-	defparam wb_ram_256kB.AW = 9; // TODO 512 byte, change name
+	defparam wb_ram_256kB.AW = 10; // TODO 1024 byte, change name
 
 	wb_ram wb_ram_256kB
 	(
