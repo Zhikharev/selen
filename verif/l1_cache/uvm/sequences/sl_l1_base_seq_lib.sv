@@ -106,6 +106,7 @@ class sl_l1_rd_after_wr_seq extends sl_l1_base_seq;
 			`uvm_send(req)
 			get_response(rsp);
 			`uvm_create(req)
+			req.cfg = l1_cfg;
 			assert(req.randomize() with {
 				req.addr == rsp.addr;
 				req.size == rsp.size;
@@ -113,11 +114,6 @@ class sl_l1_rd_after_wr_seq extends sl_l1_base_seq;
 			});
 			`uvm_send(req)
 			get_response(rsp);
-
-			#100;
-			`uvm_send(req)
-			get_response(rsp);
-
 		end
 		`uvm_info(get_full_name(), "is completed", UVM_MEDIUM)
 	endtask
