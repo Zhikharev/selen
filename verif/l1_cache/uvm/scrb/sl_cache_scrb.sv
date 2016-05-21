@@ -100,9 +100,11 @@ class sl_cache_scrb extends uvm_scoreboard;
       bit [31:0] wdata;
       bit [3:0]  be = item.get_be();
       wdata = mem.get_mem(addr);
+      `uvm_info("SCRB", $sformatf("got addr=%0h data=%0h",addr , wdata), UVM_LOW)
       for(int i = 0; i < 8; i++) begin
         wdata[8*i+:8] = (be[i]) ? item.data[8*i+:8] : wdata[8*i+:8];
       end
+      `uvm_info("SCRB", $sformatf("mem addr=%0h data=%0h",addr , wdata), UVM_LOW)
       mem.set_mem(addr, wdata);
     end
     else begin

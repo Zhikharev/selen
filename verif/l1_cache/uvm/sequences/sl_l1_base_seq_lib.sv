@@ -14,6 +14,7 @@
 
 class sl_l1_base_seq extends uvm_sequence #(sl_l1_core_bus_item);
 
+	bit user;
 	int num_pkts;
 	sl_l1_cfg l1_cfg;
 
@@ -26,7 +27,7 @@ class sl_l1_base_seq extends uvm_sequence #(sl_l1_core_bus_item);
 	endfunction
 
 	task pre_body();
-		uvm_config_db#(int)::get(null, "*", "num_pkts", num_pkts);
+		if(!user) uvm_config_db#(int)::get(null, "*", "num_pkts", num_pkts);
 		if(!uvm_config_db#(sl_l1_cfg)::get(p_sequencer, "*", "cfg", l1_cfg))
 			`uvm_fatal("CFG", "Can't get l1_cfg!")
 	endtask

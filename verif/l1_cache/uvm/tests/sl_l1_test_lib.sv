@@ -24,8 +24,7 @@ class l1_rd_test extends l1_base_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.post_main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.post_main_phase", "default_sequence", sl_l1_rd_seq::type_id::get());
+    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", sl_l1_rd_seq::type_id::get());
   endfunction
 
 endclass
@@ -44,8 +43,7 @@ class l1_rd_after_wr_test extends l1_base_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.post_main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.post_main_phase", "default_sequence", sl_l1_rd_after_wr_seq::type_id::get());
+    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", sl_l1_rd_after_wr_seq::type_id::get());
   endfunction
 
 endclass
@@ -63,8 +61,7 @@ class l1_random_test extends l1_base_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.post_main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.post_main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
+    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
   endfunction
 
 endclass
@@ -88,7 +85,6 @@ class l1_lru_test extends l1_base_test;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.main_phase", "default_sequence", sl_l1_base_seq::type_id::get());
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1i_agent.sequencer.post_main_phase", "default_sequence", sl_l1_cache_seq::type_id::get());
     uvm_config_db#(uvm_object_wrapper)::set(this,"*l1d_agent.sequencer.post_main_phase", "default_sequence", sl_l1_cache_seq::type_id::get());
   endfunction
