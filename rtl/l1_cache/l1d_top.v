@@ -13,11 +13,12 @@
 //                    большая задержка, 3 такта
 // 1.2    31.03.16    Улучшена обработка записей, задержка 1 такт
 // 1.3    03.04.16    Исправлены ошибки связанные с отработкой записей и
-//                    некэшруемых зпросов. Исправлена логи для отработки
+//                    некэшруемых зпросов. Исправлена логика для отработки
 //                    конвейерных запросов
 // 1.4    22.04.16    Переработана структура конвейера
 // 1.5    28.04.16    Исправлена ошибка, связанная с возвращение ответа на запись
 // 										при блокировке конвейера
+// 1.6    21.05.16    Переработана структура delayed buffer и принципы работы с ним
 // ----------------------------------------------------------------------------
 `ifndef INC_L1D_TOP
 `define INC_L1D_TOP
@@ -70,6 +71,7 @@ module l1d_top
 	wire 														s0_req_nc;
 	wire 														s0_req_wr;
 	wire 														s0_req_rd;
+  reg  [`CORE_DATA_WIDTH/8-1:0]   s0_word_be;
 
   reg 											 			del_buf_val_r;
   reg [`CORE_ADDR_WIDTH-1:0] 			del_buf_addr_r;
@@ -77,12 +79,18 @@ module l1d_top
   reg                             del_buf_hit_r;
   reg [`L1_LINE_SIZE/8-1:0]       del_buf_be_r;
   reg [`L1_WAY_NUM-1:0]           del_buf_way_vect_r;
-  reg                             del_buf_way_val_r;
 	wire [`CORE_TAG_WIDTH-1:0] 			del_buf_tag;
 	wire [`CORE_IDX_WIDTH-1:0] 			del_buf_idx;
 	wire [`CORE_OFFSET_WIDTH-1:0] 	del_buf_offset;
 	wire                            del_buf_clean;
-	wire                            del_buf_dm_access;
+	reg                             del_buf_dm_wr_r;
+  wire 														del_buf_need_dm_wr;
+  wire                            del_buf_addr_hit;
+  wire                            del_buf_be_hit;
+  reg                             del_buf_addr_hit_r;
+  reg                             del_buf_be_hit_r;
+  reg  [`CORE_DATA_WIDTH/8-1:0]   del_buf_word_be_r;
+	wire [`CORE_DATA_WIDTH-1:0] 	  del_buf_dm_combined_data;
 
 	reg                           	s1_req_val_r;
   reg  [`CORE_ADDR_WIDTH-1:0]     s1_req_addr_r;
@@ -103,6 +111,7 @@ module l1d_top
 	wire                            req_we_ack;
 	wire                            req_rd_ack;
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
+	wire [`CORE_DATA_WIDTH-1:0] 	  core_line_dm_word;
 
 	reg 														mau_req_ack_r;
 	reg  [`L1_LINE_SIZE-1:0]        mau_ack_data_r;
@@ -135,8 +144,7 @@ module l1d_top
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM-1];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
 	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
-
-	wire s1_en;
+	wire                            dm_blocked;
 
 	// -----------------------------------------------------
 	// S0
@@ -157,52 +165,66 @@ module l1d_top
 		else                        s0_req_be = 4'b1111 << s0_req_offset;
 	end
 
+	always @* begin
+		if     (core_req_size == 1) s0_word_be = 4'b0001 << core_req_addr[1:0];
+		else if(core_req_size == 2) s0_word_be = 4'b0011 << core_req_addr[1:0];
+		else                        s0_word_be = 4'b1111;
+	end
+
   // -----------------------------------------------------
 	// DELAYED BUFFER
-	// DEBUG
-	// IF MISS, DON'T WRITE
-	// -----------------------------------------------------
+  // -----------------------------------------------------
 
-	assign del_buf_clean = (core_req_val & s0_req_nc) | ~core_req_val | (mau_req_ack & mau_ack_nc);
+  assign del_buf_need_dm_wr = s1_req_val_r & s1_req_we_r & lru_hit;
 
-	assign del_buf_dm_access = (core_req_val & s0_req_wr) |
-														 (core_req_val & s0_req_nc) |
-														 ~core_req_val;
+  assign dm_blocked = (s0_req_val & s0_req_rd) | (mau_req_ack & ~mau_ack_nc & ~mau_ack_we);
+
+  assign del_buf_clean = del_buf_dm_wr_r & ~dm_blocked;
+
+	assign {del_buf_tag, del_buf_idx, del_buf_offset} = del_buf_addr_r;
+
+	assign del_buf_addr_hit = (del_buf_addr_r[31:2] == core_req_addr[31:2]);
+
+	assign del_buf_be_hit = (s0_word_be == (del_buf_word_be_r & s0_word_be));
 
 	always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
 			del_buf_val_r <= 1'b0;
 			del_buf_hit_r <= 1'b0;
 		end else begin
-			del_buf_val_r <= (core_req_val & s0_req_wr) | (~del_buf_clean & del_buf_val_r);
-			del_buf_hit_r <= del_buf_val_r & s0_req_val & s0_req_rd & (del_buf_addr_r == core_req_addr);
+			del_buf_val_r      <= (s0_req_val & s0_req_wr) | (del_buf_val_r & ~del_buf_clean);
+			del_buf_addr_hit_r <= del_buf_val_r & s0_req_val & s0_req_rd & del_buf_addr_hit;
+			del_buf_be_hit_r   <= del_buf_val_r & s0_req_val & s0_req_rd & del_buf_be_hit;
+			del_buf_hit_r      <= del_buf_val_r & s0_req_val & s0_req_rd & del_buf_addr_hit & del_buf_be_hit;
 		end
 	end
 
 	always @(posedge clk) begin
 		if(s0_req_val & s0_req_wr) begin
-				del_buf_addr_r <= core_req_addr;
-				del_buf_data_r <= core_req_wdata;
-				del_buf_be_r   <= s0_req_be;
+			del_buf_addr_r 		<= core_req_addr;
+			del_buf_data_r 		<= core_req_wdata;
+			del_buf_be_r     	<= s0_req_be;
+			del_buf_word_be_r <= s0_word_be;
 		end
 	end
 
 	always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
-			del_buf_way_val_r <= 1'b0;
+			del_buf_way_vect_r <= 0;
 		end else begin
-			del_buf_way_val_r <= ~del_buf_dm_access & del_buf_val_r;
+			if(del_buf_need_dm_wr) del_buf_way_vect_r <= lru_way_vect;
 		end
 	end
 
-	always @(posedge clk) begin
-		if(s1_req_val_r & ~del_buf_dm_access) begin
-			del_buf_way_vect_r <= lru_way_vect;
+	// Если DM не заблокирован то в этом же такте запишем данные,
+	// если заблокирован, то откладываем, до следующей возможности
+	always @(posedge clk or negedge rst_n) begin
+		if(~rst_n) begin
+			del_buf_dm_wr_r <= 1'b0;
+		end else begin
+			del_buf_dm_wr_r <= (del_buf_need_dm_wr & dm_blocked) | (del_buf_dm_wr_r & ~del_buf_clean);
 		end
 	end
-
-	assign {del_buf_tag, del_buf_idx, del_buf_offset} = del_buf_addr_r;
-
 
 	// -----------------------------------------------------
 	// LD
@@ -249,14 +271,14 @@ module l1d_top
 				dm_addr    = s1_req_idx_r;
 			end
 			else begin
-				if(del_buf_val_r && del_buf_way_val_r) begin
-					dm_en_vect = del_buf_way_vect_r;
-					dm_we_vect = del_buf_way_vect_r;
+				if(del_buf_val_r & del_buf_need_dm_wr) begin
+					dm_en_vect = lru_way_vect;
+					dm_we_vect = lru_way_vect;
 					dm_addr    = del_buf_idx;
 				end
 				else begin
-					dm_en_vect = lru_way_vect & {`L1_WAY_NUM{del_buf_val_r}};
-					dm_we_vect = lru_way_vect;
+					dm_en_vect = del_buf_way_vect_r & {`L1_WAY_NUM{del_buf_dm_wr_r}};
+					dm_we_vect = del_buf_way_vect_r;
 					dm_addr    = del_buf_idx;
 				end
 			end
@@ -318,8 +340,19 @@ module l1d_top
 	assign core_line_data = (lru_hit) ? dm_rdata[lru_way_pos] : mau_ack_data_r;
 	assign s1_alligned_offset = {s1_req_offset_r[`CORE_OFFSET_WIDTH-1:2], 2'b00};
 
+	assign core_line_dm_word = core_line_data[s1_alligned_offset*8+:`CORE_DATA_WIDTH];
+
+	genvar b;
+	generate
+		for(b = 0; b < 4; b = b + 1) begin
+			assign del_buf_dm_combined_data[b*8+:8] =
+			(del_buf_word_be_r[b]) ? del_buf_data_r[b*8+:8] : core_line_dm_word[b*8+:8];
+		end
+	endgenerate
+
 	always @* begin
 		if(del_buf_hit_r) core_ack_data = del_buf_data_r;
+		else if(del_buf_addr_hit_r) core_ack_data = del_buf_dm_combined_data;
 		else if(mau_req_ack_r & mau_ack_nc_r) core_ack_data = core_line_data[`L1_LINE_SIZE-1:`L1_LINE_SIZE-`CORE_DATA_WIDTH];
 		else core_ack_data = core_line_data[s1_alligned_offset*8+:`CORE_DATA_WIDTH];
 	end

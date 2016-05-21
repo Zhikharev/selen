@@ -52,7 +52,7 @@ module l1_ld_mem
 			rst_addr_r <= 0;
 		end else begin
 			if(rst_state_r == IDLE)
-				rst_addr_r <= rst_addr_r + 1;;
+				rst_addr_r <= rst_addr_r + 1;
 		end
 	end
 
