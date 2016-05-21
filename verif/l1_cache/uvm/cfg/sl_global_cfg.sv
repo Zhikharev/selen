@@ -21,16 +21,27 @@ class sl_global_cfg extends uvm_object;
 	rand sl_l1_cfg li_cfg;
 	rand sl_l1_cfg ld_cfg;
 
+	rand l1_addr_t min_nc_addr;
+	rand l1_addr_t max_nc_addr;
+
 	`uvm_object_utils_begin(sl_global_cfg)
-		`uvm_field_object(li_cfg, UVM_DEFAULT)
-		`uvm_field_object(ld_cfg, UVM_DEFAULT)
+		`uvm_field_int   (max_nc_addr, 	UVM_DEFAULT)
+		`uvm_field_int 	 (min_nc_addr,  UVM_DEFAULT)
+		`uvm_field_object(li_cfg, 			UVM_DEFAULT)
+		`uvm_field_object(ld_cfg, 			UVM_DEFAULT)
 	`uvm_object_utils_end
 
 	constraint c_independent_addr_space {
-		li_cfg.min_addr >= 32'h0000_0000;
-		li_cfg.max_addr <= 32'h7fff_ffff;
+		min_nc_addr 		>= 32'h0000_0000;
+		max_nc_addr 		<= 32'h0000_fffC;
+		li_cfg.min_addr >= 32'h0000_1000;
+		li_cfg.max_addr <= 32'h7fff_fffC;
 		ld_cfg.min_addr >= 32'h8000_0000;
 		ld_cfg.max_addr <= 32'hffff_ffff;
+	}
+
+	constraint c_nc_addr_space {
+		max_nc_addr > min_nc_addr;
 	}
 
 	function new(string name = "sl_global_cfg");
@@ -50,6 +61,8 @@ class sl_global_cfg extends uvm_object;
 		wb_cfg = wb_agent_cfg::type_id::create("wb_cfg");
 		li_cfg = sl_l1_cfg::type_id::create("li_cfg");
 		ld_cfg = sl_l1_cfg::type_id::create("ld_cfg");
+		ld_cfg.min_nc_addr = this.min_nc_addr;
+		ld_cfg.max_nc_addr = this.max_nc_addr;
 	endfunction
 
 endclass

@@ -40,10 +40,6 @@ class sl_l1_base_seq extends uvm_sequence #(sl_l1_core_bus_item);
 			assert(req.randomize() with {
 				if(p_sequencer.cfg.port == INSTR) req.size == 4;
 				if(p_sequencer.cfg.port == INSTR) req.cop == RD;
-				solve req.size before req.addr;
-				(req.size == 4) -> (req.addr[1:0] == 2'b0);
-				(req.size == 2) -> (req.addr[0] == 1'b0);
-				req.addr inside {[l1_cfg.min_addr:l1_cfg.max_addr]};
 			});
 			`uvm_send(req)
 			get_response(rsp);
@@ -69,10 +65,6 @@ class sl_l1_rd_seq extends sl_l1_base_seq;
 			assert(req.randomize() with {
 				if(p_sequencer.cfg.port == INSTR) req.size == 4;
 				if(p_sequencer.cfg.port == INSTR) req.cop == RD;
-				solve req.size before req.addr;
-				(req.size == 4) -> (req.addr[1:0] == 2'b0);
-				(req.size == 2) -> (req.addr[0] == 1'b0);
-				req.addr inside {[l1_cfg.min_addr:l1_cfg.max_addr]};
 				req.cop inside {RD, RDNC};
 			});
 			`uvm_send(req)
@@ -97,10 +89,6 @@ class sl_l1_rd_after_wr_seq extends sl_l1_base_seq;
 			`uvm_create(req)
 			req.cfg = l1_cfg;
 			assert(req.randomize() with {
-				solve req.size before req.addr;
-				(req.size == 4) -> (req.addr[1:0] == 2'b0);
-				(req.size == 2) -> (req.addr[0] == 1'b0);
-				req.addr inside {[l1_cfg.min_addr:l1_cfg.max_addr]};
 				req.cop inside {WR};
 			});
 			`uvm_send(req)
@@ -136,10 +124,6 @@ class sl_l1_cache_seq extends sl_l1_base_seq;
 			assert(req.randomize() with {
 				if(p_sequencer.cfg.port == INSTR) req.size == 4;
 				if(p_sequencer.cfg.port == INSTR) req.cop == RD;
-				solve req.size before req.addr;
-				(req.size == 4) -> (req.addr[1:0] == 2'b0);
-				(req.size == 2) -> (req.addr[0] == 1'b0);
-				req.addr inside {[l1_cfg.min_addr:l1_cfg.max_addr]};
 				req.cop inside {RD, WR};
 			});
 

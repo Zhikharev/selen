@@ -24,9 +24,20 @@ class sl_l1_core_bus_item extends sl_core_bus_item;
     super.new(name);
   endfunction
 
-  constraint c_addr {
-  	addr[31:13] inside {[cfg.min_addr.tag:cfg.max_addr.tag]};
-		addr[12:5] inside  {[cfg.min_addr.idx:cfg.max_addr.idx]};
+  constraint c_cfg_addr {
+     (this.cop inside {RDNC, WRNC}) -> this.addr        inside {[cfg.min_nc_addr:cfg.max_nc_addr]};
+    !(this.cop inside {RDNC, WRNC}) -> this.addr[31:13] inside {[cfg.min_addr.tag:cfg.max_addr.tag]};
+		!(this.cop inside {RDNC, WRNC}) -> this.addr[12:5]  inside {[cfg.min_addr.idx:cfg.max_addr.idx]};
+    !(this.cop inside {RDNC, WRNC}) -> this.addr        inside {[cfg.min_addr:cfg.max_addr]};
+  }
+
+  constraint c_size_addr {
+    (this.size == 4) -> (this.addr[1:0] == 2'b0);
+    (this.size == 2) -> (this.addr[0] == 1'b0);
+  }
+
+  constraint c_solve_order {
+    solve this.size before this.addr;
   }
 
   function void pre_randomize();

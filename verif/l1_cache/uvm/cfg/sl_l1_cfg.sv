@@ -20,6 +20,9 @@ class sl_l1_cfg extends uvm_object;
 	rand l1_addr_t min_addr;
 	rand l1_addr_t max_addr;
 
+	l1_addr_t min_nc_addr;
+	l1_addr_t max_nc_addr;
+
 	`uvm_object_utils_begin(sl_l1_cfg)
 		`uvm_field_enum(l1_num_t, tags_num, UVM_DEFAULT)
 		`uvm_field_enum(l1_num_t, idx_num, 	UVM_DEFAULT)
