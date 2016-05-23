@@ -293,6 +293,7 @@ module selen_top
 	assign gpio_pin_o  		= gpio_pins_o[1];
 	assign gpio_pin_en 		= gpio_pins_en[1];
 	assign gpio_pins_i[1] = gpio_pin_i;
+	assign gpio_pins_i[0] = 1'b1;
 
 	gpio_top gpio
 	(
