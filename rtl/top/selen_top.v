@@ -15,9 +15,15 @@ module selen_top
 (
 	input 	clk,
 	input		rst_n,
-	output 	gpio_pin_o,
-	output 	gpio_pin_en,
-	input 	gpio_pin_i,
+
+	output 	gpio_pin0_o,
+	output 	gpio_pin0_en,
+	input 	gpio_pin0_i,
+
+	output 	gpio_pin1_o,
+	output 	gpio_pin1_en,
+	input 	gpio_pin1_i,
+
 	output                              dbg_io_gpio_wb_cyc_o,
 	output                              dbg_io_gpio_wb_stb_o,
 	output                              dbg_io_gpio_wb_we_o,
@@ -290,9 +296,13 @@ module selen_top
 
 	assign io_rom_wb_stall_i = 1'b0;
 
-	assign gpio_pin_o  		= gpio_pins_o[1];
-	assign gpio_pin_en 		= gpio_pins_en[1];
-	assign gpio_pins_i[1] = gpio_pin_i;
+	assign gpio_pin0_o  	= gpio_pins_o[0];
+	assign gpio_pin0_en 	= gpio_pins_en[0];
+	assign gpio_pins_i[0] = gpio_pin0_i;
+
+	assign gpio_pin1_o  	= gpio_pins_o[1];
+	assign gpio_pin1_en 	= gpio_pins_en[1];
+	assign gpio_pins_i[1] = gpio_pin1_i;
 
 	gpio_top gpio
 	(
