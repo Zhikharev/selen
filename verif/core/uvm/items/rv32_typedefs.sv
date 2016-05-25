@@ -9,6 +9,7 @@
 `define JALR    7'b1100111
 `define LOAD    7'b0000011
 `define STORE   7'b0100011
+`define SYSTEM  7'b1110011
 
 
 typedef enum int{
@@ -49,6 +50,12 @@ typedef enum int{
     SW,
     SH,
     SB,
-    JAL
+    JAL,
+    RDCYCLE,
+    RDCYCLEH,
+    RDTIME,
+    RDTIMEH,
+    RDINSTRET,
+    RDINSTRETH
 } opcode_t;
 

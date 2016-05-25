@@ -44,7 +44,7 @@ class rv32_transaction extends uvm_sequence_item;
 
   function string sprint();
     string str;
-    str = {str, opcode.name()};
+    str = $sformatf("%5s", opcode.name());
     str = {str, $sformatf(" rs1=%d rs2=%d rd=%d imm=%h", rs1, rs2, rd, imm)};
     return(str);
   endfunction
@@ -154,6 +154,18 @@ class rv32_transaction extends uvm_sequence_item;
           3'b001: opcode = SH;
           3'b000: opcode = SB;
           default: $error("Unexpected [14:12] for STORE");
+        endcase
+      end
+      `SYSTEM: begin
+        imm[11:0] = data[31:20];
+        case(data[31:20])
+          12'b110000000000: opcode = RDCYCLE;
+          12'b110010000000: opcode = RDCYCLEH;
+          12'b110000000001: opcode = RDTIME;
+          12'b110010000001: opcode = RDTIMEH;
+          12'b110000000010: opcode = RDINSTRET;
+          12'b110010000010: opcode = RDINSTRETH;
+          default: $error("Unexpected [31:20] for SYSTEM");
         endcase
       end
       default: $error("Unexpected opcode");

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : selen_cpu_cluster.sv
+// FILE NAME      : selen_cpu_cluster.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -47,7 +47,6 @@ module selen_cpu_cluster
 	wire 	[`CORE_COP_WIDTH-1:0]   l1d_req_cop;
 	wire 	[`CORE_DATA_WIDTH-1:0] 	l1d_req_wdata;
 	wire 	[`CORE_SIZE_WIDTH-1:0]  l1d_req_size;
-	wire 	[`CORE_BE_WIDTH-1:0]    l1d_req_be;
 	wire                        	l1d_req_ack;
 	wire	[`CORE_DATA_WIDTH-1:0] 	l1d_ack_data;
 
@@ -81,7 +80,6 @@ module selen_cpu_cluster
 	.l1d_req_cop 		(l1d_req_cop),
 	.l1d_req_wdata 	(l1d_req_wdata),
 	.l1d_req_size 	(l1d_req_size),
-	.l1d_req_be 		(),
 	.l1d_req_ack 		(l1d_req_ack),
 	.l1d_ack_data 	(l1d_ack_data),
 	.wb_clk_i 			(wb_clk_i),

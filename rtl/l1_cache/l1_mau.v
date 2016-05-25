@@ -58,6 +58,18 @@ module l1_mau
 
 	localparam REQ_HDR_BUF_WIDTH = (1 + 1 + `CORE_ADDR_WIDTH + `CORE_BE_WIDTH);
 
+	localparam TR_IDLE 		= 1'b0;
+	localparam TR_REQ 		= 1'b1;
+	localparam TR_CNT_MAX = `L1_LINE_SIZE/`CORE_DATA_WIDTH;
+
+	parameter  ACK_BUF_WIDTH = $clog2(TR_CNT_MAX) + 1 + 1 + 1;
+
+	localparam ACK_I  = 1'b0;
+	localparam ACK_D  = 1'b1;
+
+	localparam ACK_IDLE 	= 1'b0;
+	localparam ACK_REC 		= 1'b1;
+
 	wire 													req_wr;
 	wire 													req_nc;
 	wire [`CORE_ADDR_WIDTH-1:0] 	req_addr;
@@ -91,10 +103,6 @@ module l1_mau
 	reg                           d_req_rd_accepted_r;
 	reg                           i_req_rd_accepted_r;
 
-	localparam ACK_BUF_WIDTH = $clog2(TR_CNT_MAX) + 1 + 1 + 1;
-	localparam ACK_I  = 1'b0;
-	localparam ACK_D  = 1'b1;
-
 	wire 													w_ack_type;
 	wire 													w_ack_wr;
 	wire                          w_ack_nc;
@@ -117,19 +125,12 @@ module l1_mau
 	wire                          ack_buf_full;
 	wire                          ack_buf_empty;
 
-	localparam TR_IDLE 		= 1'b0;
-	localparam TR_REQ 		= 1'b1;
-	localparam TR_CNT_MAX = `L1_LINE_SIZE/`CORE_DATA_WIDTH;
-
 	reg [0:0]											tr_state_r;
 	reg [0:0]											tr_state_next;
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_r;
 	reg [`CORE_ADDR_WIDTH-1:0] 		tr_addr_next;
 	reg [$clog2(TR_CNT_MAX)-1:0] 	tr_cnt_r;
 	reg [$clog2(TR_CNT_MAX)-1:0]  tr_cnt_next;
-
-	localparam ACK_IDLE 	= 1'b0;
-	localparam ACK_REC 		= 1'b1;
 
 	reg 													ack_state_r;
 	reg 													ack_state_next;

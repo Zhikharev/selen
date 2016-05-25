@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_ld_dp_mem.sv
+// FILE NAME      : l1_ld_dp_mem.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -43,7 +43,7 @@ module l1_ld_dp_mem
 			rst_state_r <= IDLE;
 		end else begin
 			if(rst_state_r == IDLE) begin
-				if(rst_addr_r == '1) rst_state_r <= READY;
+				if(rst_addr_r == {`CORE_IDX_WIDTH{1'b1}}) rst_state_r <= READY;
 			end
 		end
 	end
@@ -52,36 +52,41 @@ module l1_ld_dp_mem
 			rst_addr_r <= 0;
 		end else begin
 			if(rst_state_r == IDLE)
-				rst_addr_r <= rst_addr_r + 1;;
+				rst_addr_r <= rst_addr_r + 1;
 		end
 	end
 
 	assign ready = ~(rst_state_r == IDLE);
 	assign wen   = (rst_state_r == IDLE) ? 1'b1 : WEN;
 	assign waddr = (rst_state_r == IDLE) ? rst_addr_r : WADDR;
-	assign wdata = (rst_state_r == IDLE) ? '0 : WDATA;
+	assign wdata = (rst_state_r == IDLE) ? {WIDTH{1'b0}} : WDATA;
 
+`ifdef PROTO
+	// Xilinx ISE sram IP-core
+	sram_dp_20x256
+`else
   sram_dp
   #(
     .WIDTH (WIDTH),
     .DEPTH (DEPTH)
   )
+`endif
   mem
   (
-    // PORT A
-    .WEA    (1'b0),
-    .ENA    (REN),
-    .CLKA   (CLK),
-    .ADDRA  (RADDR),
-    .DIA    (),
-    .DOA    (RDATA),
-    // PORT B
-    .WEB    (1'b1),
-    .ENB    (wen),
-    .CLKB   (CLK),
-    .ADDRB  (waddr),
-    .DIB    (wdata),
-    .DOB    ()
+  	// PORT A
+		.clka 	(CLK),
+		.ena 		(wen),
+		.wea 		(1'b1),
+		.addra 	(waddr),
+		.dina 	(wdata),
+		.douta 	(),
+		// PORT B
+		.clkb 	(CLK),
+		.enb 		(REN),
+		.web 		(1'b0),
+		.addrb 	(RADDR),
+		.dinb 	(),
+		.doutb 	(RDATA)
   );
 
 endmodule

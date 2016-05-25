@@ -26,6 +26,8 @@ class sl_cache_scrb extends uvm_scoreboard;
   semaphore sem;
 
   uvm_queue #(sl_core_bus_item) req_q;
+  uvm_queue #(sl_core_bus_item) req_mau_q;
+
   sl_core_bus_item req_nc_pl[mem_addr_t];
   sl_core_bus_item req_mau_pl[mem_addr_t];
   sl_core_bus_item req_pl[mem_addr_t];
@@ -51,7 +53,8 @@ class sl_cache_scrb extends uvm_scoreboard;
       `uvm_info("SCRB", "Creating default mem...", UVM_NONE)
       mem = sl_mem::type_id::create("mem");
     end
-    req_q = new("req_q");
+    req_q     = new("req_q");
+    req_mau_q = new("req_mau_q");
   endfunction
 
   function cache_addr_t get_mask_addr(cache_addr_t addr);
@@ -70,8 +73,9 @@ class sl_cache_scrb extends uvm_scoreboard;
   // --------------------------------------------
   function void write_req(sl_core_bus_item item);
     while(!sem.try_get());
-    if(item.is_nc() || item.is_wr()) begin
-      req_mau_pl[item.addr] = item;
+    if(/*item.is_nc() ||*/ item.is_wr()) begin
+      //req_mau_pl[item.addr] = item;
+      req_mau_q.push_back(item);
     end
     if(item.is_nc()) begin
       `uvm_info("SCRB", $sformatf("Adding to req_nc_pl with key=%0h", item.addr), UVM_MEDIUM)
@@ -96,9 +100,11 @@ class sl_cache_scrb extends uvm_scoreboard;
       bit [31:0] wdata;
       bit [3:0]  be = item.get_be();
       wdata = mem.get_mem(addr);
+      `uvm_info("SCRB", $sformatf("got addr=%0h data=%0h",addr , wdata), UVM_LOW)
       for(int i = 0; i < 8; i++) begin
         wdata[8*i+:8] = (be[i]) ? item.data[8*i+:8] : wdata[8*i+:8];
       end
+      `uvm_info("SCRB", $sformatf("mem addr=%0h data=%0h",addr , wdata), UVM_LOW)
       mem.set_mem(addr, wdata);
     end
     else begin
@@ -117,8 +123,14 @@ class sl_cache_scrb extends uvm_scoreboard;
     if(item.is_wr()) begin
       sl_core_bus_item core_bus_item;
       bit [3:0] be;
-      core_bus_item = req_mau_pl[item.address];
-      req_mau_pl.delete(item.address);
+
+      //if(!req_mau_pl.exists(item.address)) `uvm_fatal("SCRB", $sformatf("Can't find item with addr=%0h in req_mau_pl",item.address))
+      //core_bus_item = req_mau_pl[item.address];
+      //req_mau_pl.delete(item.address);
+
+      if(req_mau_q.size() == 0) `uvm_fatal("SCRB", "Received MAU request, but req_mau_q is empty!")
+      core_bus_item = req_mau_q.pop_front();
+
       be = core_bus_item.get_be();
       if(item.data[0] != core_bus_item.data)
         `uvm_error("SCRB", $sformatf("Wrong write data compared for addr=%0h! Received: %0h Expected: %0h",

@@ -20,6 +20,9 @@ class l1_base_test extends uvm_test;
   int               num_pkts = 10;
   sl_global_cfg     global_cfg;
 
+  sl_l1_base_seq    l1i_init_seq;
+
+
   function new(string name = "l1_base_test", uvm_component parent=null);
     super.new(name,parent);
   endfunction
@@ -33,6 +36,7 @@ class l1_base_test extends uvm_test;
     uvm_default_line_printer.knobs.footer = 0;
     global_cfg = sl_global_cfg::type_id::create("global_cfg");
     assert(global_cfg.randomize());
+    custom_cfg();
     `uvm_info("CFG", global_cfg.sprint(), UVM_LOW)
     uvm_config_db #(sl_core_agent_cfg)::set(this, "*l1i*", "cfg", global_cfg.i_cfg);
     uvm_config_db #(sl_core_agent_cfg)::set(this, "*l1d*", "cfg", global_cfg.d_cfg);
@@ -42,6 +46,19 @@ class l1_base_test extends uvm_test;
     tb_env = l1_env::type_id::create("tb_env", this);
     uvm_config_db#(uvm_object_wrapper)::set(this, "*.rst_agent.sequencer.reset_phase","default_sequence", rst_base_seq::type_id::get());
     uvm_config_db#(uvm_object_wrapper)::set(this,"*wb_agent.sequencer.run_phase", "default_sequence", wb_slave_response_sequence::type_id::get());
+
+    // Factory ovverides
+    set_type_override_by_type(sl_core_bus_item::get_type(), sl_l1_core_bus_item::get_type());
+
+    // Default sequences
+    l1i_init_seq = sl_l1_base_seq::type_id::create("l1i_init_seq");
+    l1i_init_seq.user = 1;
+    l1i_init_seq.num_pkts = 10;
+    uvm_config_db#(uvm_sequence_base)::set(this,"*l1i_agent.sequencer.pre_main_phase", "default_sequence", l1i_init_seq);
+
+  endfunction
+
+  virtual function void custom_cfg();
   endfunction
 
   function void end_of_elaboration_phase(uvm_phase phase);

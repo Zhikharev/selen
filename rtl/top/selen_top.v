@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : selen_top.sv
+// FILE NAME      : selen_top.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -15,9 +15,14 @@ module selen_top
 (
 	input 	clk,
 	input		rst_n,
-	output 	gpio_pin_o,
-	output 	gpio_pin_en,
-	input 	gpio_pin_i
+
+	output 	gpio_pin0_o,
+	output 	gpio_pin0_en,
+	input 	gpio_pin0_i,
+
+	output 	gpio_pin1_o,
+	output 	gpio_pin1_en,
+	input 	gpio_pin1_i
 );
 
 	wire  [`WB_COM_AWIDTH - 1:0]      cpu_wb_addr_o;
@@ -75,9 +80,9 @@ module selen_top
 	wire                              io_gpio_wb_ack_i;
 	wire                              io_gpio_wb_err_i;
 
-	wire [31:0] 											gpio_pins_o;
-	wire [31:0] 											gpio_pins_en;
-	wire [31:0] 											gpio_pins_i;
+	wire [30:0] 											gpio_pins_o;
+	wire [30:0] 											gpio_pins_en;
+	wire [30:0] 											gpio_pins_i;
 
 	selen_cpu_cluster cpu_cluster
 	(
@@ -157,7 +162,7 @@ module selen_top
 	);
 
 	defparam wb_ram_256kB.DW = 32;
-	defparam wb_ram_256kB.AW = 15;
+	defparam wb_ram_256kB.AW = 10; // TODO 1024 byte, change name
 
 	wb_ram wb_ram_256kB
 	(
@@ -231,7 +236,10 @@ module selen_top
 		.s1_wb_ack_i 		(io_gpio_wb_ack_i)
 	);
 
-	wb_rom wb_rom_1kB
+	defparam wb_rom_5kB.DW = 32;
+	defparam wb_rom_5kB.AW = 11;
+
+	wb_rom wb_rom_5kB
 	(
   	.wb_clk_i 	(clk),
   	.wb_rst_i 	(~rst_n),
@@ -248,9 +256,13 @@ module selen_top
 
 	assign io_rom_wb_stall_i = 1'b0;
 
-	assign gpio_pin_o  		= gpio_pins_o[0];
-	assign gpio_pin_en 		= gpio_pins_en[0];
-	assign gpio_pins_i[0] = gpio_pin_i;
+	assign gpio_pin0_o  	= gpio_pins_o[0];
+	assign gpio_pin0_en 	= gpio_pins_en[0];
+	assign gpio_pins_i[0] = gpio_pin0_i;
+
+	assign gpio_pin1_o  	= gpio_pins_o[1];
+	assign gpio_pin1_en 	= gpio_pins_en[1];
+	assign gpio_pins_i[1] = gpio_pin1_i;
 
 	gpio_top gpio
 	(

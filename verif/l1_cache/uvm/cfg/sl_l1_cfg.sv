@@ -20,6 +20,9 @@ class sl_l1_cfg extends uvm_object;
 	rand l1_addr_t min_addr;
 	rand l1_addr_t max_addr;
 
+	l1_addr_t min_nc_addr;
+	l1_addr_t max_nc_addr;
+
 	`uvm_object_utils_begin(sl_l1_cfg)
 		`uvm_field_enum(l1_num_t, tags_num, UVM_DEFAULT)
 		`uvm_field_enum(l1_num_t, idx_num, 	UVM_DEFAULT)
@@ -28,8 +31,13 @@ class sl_l1_cfg extends uvm_object;
 	`uvm_object_utils_end
 
 	constraint c_solve_order {
+		solve idx_num  before tags_num;
 		solve tags_num before min_addr;
 		solve min_addr before max_addr;
+	}
+
+	constraint c_idx_num {
+		idx_num dist {LOW := 50, MEDIUM := 30, HIGH := 20};
 	}
 
 	constraint c_tag_addr {

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_dm_mem.sv
+// FILE NAME      : l1_dm_mem.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -26,20 +26,28 @@ module l1_dm_mem
 	output 	[WIDTH-1:0] 				RDATA
 );
 
+	wire [WIDTH/8-1:0] we;
+
+	assign we = WBE & {WIDTH/8{WE}};
+
+`ifdef PROTO
+	// Xilinx ISE sram IP-core
+	sram_sp_be_256x256
+`else
 	sram_sp_be
 	#(
 		.WIDTH  (WIDTH),
 		.DEPTH 	(DEPTH)
 	)
+`endif
 	mem
 	(
-		.WE 		(WE),
-		.WBE    (WBE),
-		.EN 		(EN),
-		.CLK 		(CLK),
-		.ADDR 	(ADDR),
-		.DI 		(WDATA),
-		.DO 		(RDATA)
+		.clka 	(CLK),
+		.ena 		(EN),
+		.wea 		(we),
+		.addra 	(ADDR),
+		.dina 	(WDATA),
+		.douta 	(RDATA)
 	);
 
 endmodule

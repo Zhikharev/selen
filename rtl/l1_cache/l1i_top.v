@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1i_top.sv
+// FILE NAME      : l1i_top.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -49,7 +49,7 @@ module l1i_top
 	reg  [`CORE_OFFSET_WIDTH-1:0] 	req_offset_r;
 	reg                           	req_val_r;
 
-	reg  [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
+	wire [`L1_WAY_NUM-1:0] 					tag_cmp_vect;
 	wire                            req_ack;
 	wire [`L1_LINE_SIZE-1:0]        core_line_data;
 
@@ -80,7 +80,6 @@ module l1i_top
 	wire [`CORE_IDX_WIDTH-1:0]      dm_addr;
 	wire [`L1_LINE_SIZE-1:0]        dm_rdata [0:`L1_WAY_NUM];
 	wire [`L1_LINE_SIZE-1:0] 				dm_wdata;
-	wire [`L1_LINE_SIZE/8-1:0]      dm_wr_be;
 
   // ------------------------------------------------------
   // FUNCTION: one_hot_num
@@ -89,8 +88,8 @@ module l1i_top
     input [`L1_WAY_NUM-1:0] one_hot_vector;
     integer i,j;
     reg [`L1_WAY_NUM-1:0] tmp;
-    for(i = 0; i < $clog2(`L1_WAY_NUM); i++) begin
-      for(j = 0; j < `L1_WAY_NUM; j++) begin
+    for(i = 0; i < $clog2(`L1_WAY_NUM); i=i+1) begin
+      for(j = 0; j < `L1_WAY_NUM; j=j+1) begin
         tmp[j] = one_hot_vector[j] & j[i];
       end
       one_hot_num[i] = |tmp;
@@ -143,10 +142,11 @@ module l1i_top
 	// -----------------------------------------------------
 	// MAU
 	// -----------------------------------------------------
-	always @(posedge clk, posedge rst_n) begin
+	always @(posedge clk, negedge rst_n) begin
 		if(~rst_n) mau_req_was_send_r <= 1'b0;
 		else if(mau_req_was_send_r) mau_req_was_send_r <= ~mau_req_ack;
 	 	else mau_req_was_send_r <= mau_req_val;
+	 	//else mau_req_was_send_r <= (req_val_r & ~lru_hit);
 	end
 	assign mau_req_val = (req_val_r & ~lru_hit) | mau_req_was_send_r;
 	assign mau_req_addr = {req_tag_r, req_idx_r, {`CORE_OFFSET_WIDTH{1'b0}}};
@@ -167,7 +167,6 @@ module l1i_top
 	assign dm_we_vect = lru_way_vect_r & ({`L1_WAY_NUM{(mau_req_ack)}});
 	assign dm_addr  = (req_val) ? req_idx : req_idx_r;
 	assign dm_wdata = mau_ack_data;
-	assign dm_wr_be = '1;
 
 	genvar way;
 	generate
@@ -232,6 +231,8 @@ module l1i_top
 		.way_vect 		(lru_way_vect)
 	);
 
+	`ifndef SYNTHESYS
+
 	// -----------------------------------------------------------
 	// ASSERTIONS
 	// -----------------------------------------------------------
@@ -289,6 +290,8 @@ module l1i_top
 				end
 			end
 		end
+	`endif
+
 	`endif
 endmodule
 `endif

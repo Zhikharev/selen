@@ -13,7 +13,7 @@
 `define INC_SELEN_TB_TOP
 
 `ifndef CLK_HALF_TIME
-`define CLK_HALF_TIME 5ns
+`define CLK_HALF_TIME 16ns
 `endif
 
 module selen_tb_top ();
@@ -44,13 +44,26 @@ module selen_tb_top ();
 
 	initial begin
 		forever begin
-			@(posedge clk);
-			if(selen_top.cpu_cluster.core.i_req_ack) begin
-				rv32_transaction item = new("item");
-				item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
-				$display("%0t data=%0h",$time(), selen_top.cpu_cluster.core.i_ack_rdata);
-				$display(item.sprint());
+			if(~rst) begin
+				@(negedge clk);
+				if(selen_top.cpu_cluster.core.i_req_val) begin
+					string str;
+					rv32_transaction item = new("item");
+					str = {$sformatf("[INSTR] ADDR=%32h ", selen_top.cpu_cluster.core.i_req_addr)};
+					while(!selen_top.cpu_cluster.core.i_req_ack) @(negedge clk);
+					forever begin
+						item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
+						str = {str, $sformatf("DATA=%32h ",selen_top.cpu_cluster.core.i_ack_rdata)};
+						str = {str, item.sprint()};
+						$display("%0s (%0t)", str, $time());
+						str = {$sformatf("[INSTR] ADDR=%32h ", selen_top.cpu_cluster.core.i_req_addr)};
+						do begin @(negedge clk);
+						end
+						while(!selen_top.cpu_cluster.core.i_req_ack);
+					end
+				end
 			end
+			else @(negedge clk);
 		end
 	end
 
@@ -58,17 +71,20 @@ module selen_tb_top ();
 	(
 		.clk 					(clk),
 		.rst_n 				(!rst),
-		.gpio_pin_o 	(gpio_pin_o),
-		.gpio_pin_en 	(gpio_pin_en),
-		.gpio_pin_i 	(gpio_pin_i)
+		.gpio_pin0_o 	(),
+		.gpio_pin0_en (),
+		.gpio_pin0_i 	(1'b1),
+		.gpio_pin1_o 	(gpio_pin_o),
+		.gpio_pin1_en (gpio_pin_en),
+		.gpio_pin1_i 	(gpio_pin_i)
 	);
 
 	initial begin
 		$display("%0t TEST START", $time());
 		wait(selen_top.cpu_cluster.l1_cache.l1i.cache_ready);
-		#1000000;
-		$display("%0t TEST FINISHED", $time());
-		$finish();
+		//#1000000;
+		//$display("%0t TEST FINISHED", $time());
+		//$finish();
 	end
 
   `ifdef WAVES_FSDB
@@ -89,7 +105,7 @@ module selen_tb_top ();
   // -----------------------------------------
   // ROM IMAGE
   // -----------------------------------------
-  initial $readmemh("rom_image.v", selen_top.wb_rom_1kB.rom_1kB.rom);
+  initial $readmemh("rom_image.v", selen_top.wb_rom_5kB.rom.rom);
   initial $readmemh("ram_image.v", selen_top.wb_ram_256kB.ram.ram);
 
 endmodule

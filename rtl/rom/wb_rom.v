@@ -2,17 +2,20 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME       : wb_ram.sv
+// FILE NAME       : wb_rom.v
 // PROJECT         : Selen
 // AUTHOR          :
 // AUTHOR'S EMAIL  :
 // ----------------------------------------------------------------------------
 // DESCRIPTION     :
+// 1.1    02.03.16    Добавлена конвейерная выдача из памяти
+// 1.2    11.03.16    Добавлено формирование сигнала ошибки при записях, изменно
+//                    формирование сигнала подтверждения
 // ----------------------------------------------------------------------------
-`ifndef INC_WB_RAM
-`define INC_WB_RAM
+`ifndef INC_WB_ROM
+`define INC_WB_ROM
 
-module wb_ram (
+module wb_rom (
   wb_clk_i,
   wb_rst_i,
   wb_dat_i,
@@ -36,7 +39,7 @@ input                   wb_rst_i;
 input   [DW-1:0]        wb_dat_i;
 output  [DW-1:0]        wb_dat_o;
 input   [AW-1:0]        wb_adr_i;
-input   [DW/8-1:0]      wb_sel_i;
+input   [3:0]           wb_sel_i;
 input                   wb_we_i ;
 input                   wb_cyc_i;
 input                   wb_stb_i;
@@ -46,40 +49,36 @@ output                  wb_err_o;
 reg                     wb_ack_r;
 reg                     wb_err_r;
 
-wire                    mem_clk_i;
-wire                    mem_en_i ;
-wire                    mem_we_i;
-wire    [DW/8-1:0]      mem_wbe_i;
-wire    [AW:0]          mem_adr_i;
-wire    [DW-1:0]        mem_dat_o;
-wire    [DW-1:0]        mem_dat_i;
+wire                    rom_clk_i;
+wire                    rom_en_i ;
+wire    [10:0]          rom_adr_i;
+wire    [DW-1:0]        rom_dat_o;
 
 // ----------------------------------------------------------------------------
-// Inst of RAM
-sram_sp_be
+// Inst of ROM
+`ifdef PROTO
+// Xilinx ISE sram IP-core
+sram_rom_32x1280
+`else
+sram_rom
 #(
   .WIDTH (DW),
   .DEPTH (1<<AW)
 )
-ram
+`endif
+rom
 (
-  .WE   (mem_we_i),
-  .WBE  (mem_wbe_i),
-  .EN   (mem_en_i),
-  .CLK  (mem_clk_i),
-  .ADDR (mem_adr_i),
-  .DI   (mem_dat_i),
-  .DO   (mem_dat_o)
+  .ena   (rom_en_i),
+  .clka  (rom_clk_i),
+  .addra (rom_adr_i),
+  .douta  (rom_dat_o)
 );
 
-assign mem_en_i  = wb_stb_i;
-assign mem_we_i  = wb_we_i;
-assign mem_wbe_i = wb_sel_i;
-assign mem_clk_i = wb_clk_i;
-assign mem_adr_i = wb_adr_i[AW-1:2];
-assign mem_dat_i = wb_dat_i;
+assign rom_en_i  = wb_stb_i;
+assign rom_clk_i = wb_clk_i;
+assign rom_adr_i = wb_adr_i[AW-1:2];
 
-assign wb_dat_o  = mem_dat_o;
+assign wb_dat_o  = rom_dat_o;
 // ----------------------------------------------------------------------------
 
 always @(posedge wb_clk_i or posedge wb_rst_i) begin
@@ -89,8 +88,15 @@ always @(posedge wb_clk_i or posedge wb_rst_i) begin
     wb_ack_r <= wb_cyc_i & wb_stb_i;
 end
 
+always @(posedge wb_clk_i or posedge wb_rst_i) begin
+  if (wb_rst_i)
+      wb_err_r <= 1'b0;
+  else
+      wb_err_r <= wb_we_i;
+end
+
 assign wb_ack_o = wb_ack_r;
-assign wb_err_o = 1'b0;
+assign wb_err_o = wb_err_r;
 
 endmodule
 

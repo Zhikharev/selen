@@ -39,6 +39,19 @@ sl_gpio_led_blink:
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.bin ram_bge.bin
 	rm -f ram_image.v
 	xxd -c 4 -p ram_bge.bin >> ram_image.v
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.elf blink_bge.elf
+	rm -f blink_rom.v
+	xxd -c 4 -p blink_bge.elf >> blink_rom.v
+
+sl_gpio_led_blink_rom:
+	$(AS) $(GIT_HOME)/firmware/sandbox/startup.s -o startup.o
+	$(CCX) -c $(GIT_HOME)/firmware/sandbox/blink.c  -nostdlib -O2 -o blink.o
+	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.proto.ld blink.o -o blink.elf
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.elf blink_bge.elf
+	rm -f blink_rom.v
+	xxd -c 4 -p blink_bge.elf >> blink_rom.v
+	rm -f rom_image.v
+	cp blink_rom.v rom_image.v
 
 sl_ram_jmp:
 	$(AS) $(GIT_HOME)/firmware/sl_ram_jmp.c -o sl_ram_jmp.elf

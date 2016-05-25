@@ -1,5 +1,5 @@
 MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
 
 RTL_SRC :=\
-	$(MAKEHOME)/../lib/sram_rom.sv \
-	$(MAKEHOME)/wb_rom.sv
+	$(MAKEHOME)/../lib/sram_rom.v \
+	$(MAKEHOME)/wb_rom.v

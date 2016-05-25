@@ -1,15 +1,15 @@
 MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
 
 RTL_SRC :=\
-	$(MAKEHOME)/l1_defines.sv \
-	$(MAKEHOME)/l1_lrum.sv \
-	$(MAKEHOME)/l1_ld_mem.sv \
-	$(MAKEHOME)/l1_ld_dp_mem.sv \
-	$(MAKEHOME)/l1_dm_mem.sv \
+	$(MAKEHOME)/l1_defines.v \
+	$(MAKEHOME)/l1_lrum.v \
+	$(MAKEHOME)/l1_ld_mem.v \
+	$(MAKEHOME)/l1_ld_dp_mem.v \
+	$(MAKEHOME)/l1_dm_mem.v \
 	$(MAKEHOME)/l1_mau.v \
-	$(MAKEHOME)/l1d_top.sv \
-	$(MAKEHOME)/l1i_top.sv \
-	$(MAKEHOME)/l1_top.sv \
+	$(MAKEHOME)/l1d_top.v \
+	$(MAKEHOME)/l1i_top.v \
+	$(MAKEHOME)/l1_top.v \
 	$(MAKEHOME)/../lib/sync_fifo.v \
 	$(MAKEHOME)/../lib/sram_sp.v \
 	$(MAKEHOME)/../lib/sram_sp_be.v \

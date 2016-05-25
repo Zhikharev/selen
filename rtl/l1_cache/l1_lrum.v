@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // ----------------------------------------------------------------------------
-// FILE NAME      : l1_lrum.sv
+// FILE NAME      : l1_lrum.v
 // PROJECT        : Selen
 // AUTHOR         : Grigoriy Zhiharev
 // AUTHOR'S EMAIL : gregory.zhiharev@gmail.com
@@ -34,9 +34,9 @@ module l1_lrum
 
   reg                        rst_state_r;
   reg [`CORE_IDX_WIDTH-1:0]  rst_addr_r;
-  wire                       wr_en;
-  wire [`CORE_IDX_WIDTH-1:0] wr_addr;
-  wire [`L1_WAY_NUM-1:0]     wr_wdata;
+  wire                       wen;
+  wire [`CORE_IDX_WIDTH-1:0] waddr;
+  wire [`L1_WAY_NUM-1:0]     wdata;
 
   reg                        req_r;
   reg  [`CORE_IDX_WIDTH-1:0] idx_r;
@@ -46,6 +46,7 @@ module l1_lrum
 
   wire [`L1_WAY_NUM-1:0]     lru_used_sram;
   wire [`L1_WAY_NUM-1:0]     lru_used;
+  wire [`L1_WAY_NUM-1:0]     lru_used_inv;
   wire [`L1_WAY_NUM-1:0]     lru_used_upd;
  	wire [`L1_WAY_NUM-1:0] 		 lru_used_next;
 
@@ -58,7 +59,8 @@ module l1_lrum
   // ------------------------------------------------------
   //function [`L1_WAY_NUM-1:0] ms1_vec;
   function [0:`L1_WAY_NUM-1] ms1_vec;
-    input [`L1_WAY_NUM-1:0] vec; //when vec==0,ms1_vec=0!
+    //input [`L1_WAY_NUM-1:0] vec; //when vec==0,ms1_vec=0!
+    input [0:`L1_WAY_NUM-1] vec; //when vec==0,ms1_vec=0!
     integer i,j;
     reg     res0;
     for (i=0; i<`L1_WAY_NUM; i=i+1)
@@ -79,7 +81,7 @@ module l1_lrum
       rst_state_r <= IDLE;
     end else begin
       if(rst_state_r == IDLE) begin
-        if(rst_addr_r == '1) rst_state_r <= READY;
+        if(rst_addr_r == {`CORE_IDX_WIDTH{1'b1}}) rst_state_r <= READY;
       end
     end
   end
@@ -88,14 +90,14 @@ module l1_lrum
       rst_addr_r <= 0;
     end else begin
       if(rst_state_r == IDLE)
-        rst_addr_r <= rst_addr_r + 1;;
+        rst_addr_r <= rst_addr_r + 1;
     end
   end
 
-  assign ready    = ~(rst_state_r == IDLE);
-  assign wr_en    = (rst_state_r == IDLE) ? 1'b1 : req_r;
-  assign wr_addr  = (rst_state_r == IDLE) ? rst_addr_r : idx_r;
-  assign wr_wdata = (rst_state_r == IDLE) ? '0 : lru_used_next;
+  assign ready  = ~(rst_state_r == IDLE);
+  assign wen    = (rst_state_r == IDLE) ? 1'b1 : req_r;
+  assign waddr  = (rst_state_r == IDLE) ? rst_addr_r : idx_r;
+  assign wdata = (rst_state_r == IDLE) ? {`L1_WAY_NUM{1'b0}} : lru_used_next;
 
   // ------------------------------------------------------
   // READ STAGE
@@ -108,8 +110,8 @@ module l1_lrum
   always @(posedge clk) idx_r <= idx;
 
   always @(posedge clk,negedge rst_n)
-    if(~rst_n)     bypass_r <= 0;
-    else if(req_r) bypass_r <= (idx == idx_r);
+    if(~rst_n)   bypass_r <= 0;
+    else if(req) bypass_r <= (idx == idx_r);
 
   // ------------------------------------------------------
   // ANALYSE STAGE
@@ -126,31 +128,37 @@ module l1_lrum
   assign way_vect = (hit) ? hit_vect : lru_ev_aloc_way_vect;
   assign lru_is_evict  = &ld_val_vect;
   assign evict_val = ~hit & lru_is_evict;
-  assign lru_ev_aloc_way_vect = (lru_used == 0) ? (`L1_WAY_NUM'b1) : ms1_vec(~lru_used);
+  assign lru_used_inv = ~lru_used;
+  assign lru_ev_aloc_way_vect = (lru_used == 0) ? (`L1_WAY_NUM'b1) : ms1_vec(lru_used_inv);
   assign lru_used_upd  = lru_used | way_vect;
   assign lru_used_next = (&lru_used_upd) ? way_vect : lru_used_upd;
 
+`ifdef PROTO
+  // Xilinx ISE sram IP-core
+  sram_dp_4x256
+`else
   sram_dp
   #(
     .WIDTH (`L1_WAY_NUM),
     .DEPTH (`L1_SET_NUM)
   )
+`endif
   mem
   (
     // PORT A
-    .WEA    (1'b0),
-    .ENA    (req),
-    .CLKA   (clk),
-    .ADDRA  (idx),
-    .DIA    (),
-    .DOA    (lru_used_sram),
+    .clka   (clk),
+    .ena    (wen),
+    .wea    (1'b1),
+    .addra  (waddr),
+    .dina   (wdata),
+    .douta  (),
     // PORT B
-    .WEB    (1'b1),
-    .ENB    (wr_en),
-    .CLKB   (clk),
-    .ADDRB  (wr_addr),
-    .DIB    (wr_wdata),
-    .DOB    ()
+    .clkb   (clk),
+    .enb    (req),
+    .web    (1'b0),
+    .addrb  (idx),
+    .dinb   (),
+    .doutb  (lru_used_sram)
   );
 
 endmodule
