@@ -22,27 +22,7 @@ module selen_top
 
 	output 	gpio_pin1_o,
 	output 	gpio_pin1_en,
-	input 	gpio_pin1_i,
-
-	output                              dbg_io_gpio_wb_cyc_o,
-	output                              dbg_io_gpio_wb_stb_o,
-	output                              dbg_io_gpio_wb_we_o,
-	output                              dbg_io_gpio_wb_stall_i,
-	output                              dbg_io_gpio_wb_ack_i,
-	output                              dbg_io_gpio_wb_err_i,
-	output  [`WB_COM_AWIDTH - 1:0]      dbg_io_gpio_wb_addr_o,
-
-	output  [`WB_COM_AWIDTH - 1:0]      dbg_cpu_wb_addr_o,
-	output  [`WB_COM_DWIDTH - 1:0]      dbg_cpu_wb_dat_o,
-	output  [`WB_COM_DWIDTH/8 - 1:0]    dbg_cpu_wb_sel_o,
-	output                              dbg_cpu_wb_cyc_o,
-	output                              dbg_cpu_wb_stb_o,
-	output                              dbg_cpu_wb_we_o,
-	output	[`WB_COM_DWIDTH - 1:0]      dbg_cpu_wb_dat_i,
-	output                              dbg_cpu_wb_stall_i,
-	output                              dbg_cpu_wb_ack_i,
-	output                              dbg_cpu_wb_err_i
-
+	input 	gpio_pin1_i
 );
 
 	wire  [`WB_COM_AWIDTH - 1:0]      cpu_wb_addr_o;
@@ -103,26 +83,6 @@ module selen_top
 	wire [30:0] 											gpio_pins_o;
 	wire [30:0] 											gpio_pins_en;
 	wire [30:0] 											gpio_pins_i;
-
-	assign             dbg_io_gpio_wb_cyc_o = io_gpio_wb_cyc_o;
-	assign             dbg_io_gpio_wb_stb_o = io_gpio_wb_stb_o;
-	assign             dbg_io_gpio_wb_we_o  = io_gpio_wb_we_o;
-	assign             dbg_io_gpio_wb_stall_i = io_gpio_wb_stall_i;
-	assign             dbg_io_gpio_wb_ack_i = io_gpio_wb_ack_i;
-	assign             dbg_io_gpio_wb_err_i = io_gpio_wb_err_i;
-	assign             dbg_io_gpio_wb_addr_o = io_gpio_wb_addr_o;
-
-	assign dbg_cpu_wb_addr_o = cpu_wb_addr_o;
-	assign dbg_cpu_wb_dat_o = cpu_wb_dat_o;
-	assign dbg_cpu_wb_sel_o = cpu_wb_sel_o;
-	assign dbg_cpu_wb_cyc_o = cpu_wb_cyc_o;
-	assign dbg_cpu_wb_stb_o = cpu_wb_stb_o;
-	assign dbg_cpu_wb_we_o = cpu_wb_we_o;
-	assign dbg_cpu_wb_dat_i = cpu_wb_dat_i;
-	assign dbg_cpu_wb_stall_i = cpu_wb_stall_i;
-	assign dbg_cpu_wb_ack_i = cpu_wb_ack_i;
-	assign dbg_cpu_wb_err_i = cpu_wb_err_i;
-
 
 	selen_cpu_cluster cpu_cluster
 	(

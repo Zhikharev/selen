@@ -1,0 +1,10 @@
+#Created by Constraints Editor (xc6slx45-csg324-3) - 2016/05/24
+NET "clk" TNM_NET = clk;
+TIMESPEC TS_clk = PERIOD "clk" 20 ns HIGH 50%;
+
+NET "led"			LOC = "U18";
+NET "button"  LOC = "P3";
+NET "clk"  		LOC = "L15";
+NET "rst"  		LOC = "A10";
+NET "lock"    LOC = "N12";
+NET "dbg_led" LOC = "P16";

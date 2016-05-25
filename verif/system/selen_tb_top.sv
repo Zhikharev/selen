@@ -13,7 +13,7 @@
 `define INC_SELEN_TB_TOP
 
 `ifndef CLK_HALF_TIME
-`define CLK_HALF_TIME 5ns
+`define CLK_HALF_TIME 16ns
 `endif
 
 module selen_tb_top ();
@@ -71,17 +71,20 @@ module selen_tb_top ();
 	(
 		.clk 					(clk),
 		.rst_n 				(!rst),
-		.gpio_pin_o 	(gpio_pin_o),
-		.gpio_pin_en 	(gpio_pin_en),
-		.gpio_pin_i 	(gpio_pin_i)
+		.gpio_pin0_o 	(),
+		.gpio_pin0_en (),
+		.gpio_pin0_i 	(1'b1),
+		.gpio_pin1_o 	(gpio_pin_o),
+		.gpio_pin1_en (gpio_pin_en),
+		.gpio_pin1_i 	(gpio_pin_i)
 	);
 
 	initial begin
 		$display("%0t TEST START", $time());
 		wait(selen_top.cpu_cluster.l1_cache.l1i.cache_ready);
-		#1000000;
-		$display("%0t TEST FINISHED", $time());
-		$finish();
+		//#1000000;
+		//$display("%0t TEST FINISHED", $time());
+		//$finish();
 	end
 
   `ifdef WAVES_FSDB

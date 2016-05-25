@@ -1,0 +1,34 @@
+set_host_options -max_cores 4
+set_app_var alib_library_analysis_path .
+
+set LOG_DIR "log"
+
+file mkdir ${LOG_DIR}
+
+set_app_var search_path ". $search_path"
+set_app_var target_library ""
+set_app_var synthetic_library dw_foundation.sldb
+set_app_var link_library "* $target_library $synthetic_library"
+
+set RTL_SOURCE_FILES  "/media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/wb_com//wb_com_defines.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/wb_com//wb_com_fifo.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/wb_com//wb_com_master.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/wb_com//wb_com_slave.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/wb_com//wb_com_top.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_alu.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_csr_file.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_ctrl.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_hasti_bridge.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_imm_gen.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_mul_div.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_PC_mux.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_regfile.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_src_a_mux.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_src_b_mux.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_pipeline.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_core.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/vscale//src/main/verilog/vscale_selen.v  /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_defines.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_lrum.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_ld_mem.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_ld_dp_mem.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_dm_mem.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_mau.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1d_top.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1i_top.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//l1_top.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//../lib/sync_fifo.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//../lib/sram_sp.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//../lib/sram_sp_be.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/l1_cache//../lib/sram_dp.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/rom//../lib/sram_rom.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/rom//wb_rom.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/ram//../lib/sram_sp_be.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/ram//wb_ram.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/gpio//gpio_defines.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top/../../rtl/gpio//gpio_top.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top//selen_cpu_cluster.v /media/sf_D_DRIVE/projects/selen/verif/system//../../rtl/top//selen_top.v"
+
+set SVERILOG "TRUE"
+
+define_design_lib WORK -path ./WORK
+
+set DESIGN_NAME                   "selen_top"
+
+if {${SVERILOG}} {
+	analyze -format sverilog ${RTL_SOURCE_FILES} -define "SYNTHESYS" > ./log/link.rpt
+} else {
+	analyze -format verilog  ${RTL_SOURCE_FILES} -define "SYNTHESYS" > ./log/link.rpt
+}
+
+elaborate ${DESIGN_NAME} >> ./log/link.rpt
+
+current_design ${DESIGN_NAME}
+link >> ./log/link.rpt
+
+report_timing -loop -max_paths 1000 > ./report_timing_loops.rpt
+
+exit
