@@ -33,8 +33,8 @@
 `define WB_COM_AWIDTH            32
 `define WB_COM_DWIDTH            32
 `define WB_COM_F_ASIZE           2
-`define WB_COM_S0_HI          16'h0000_2fff
-`define WB_COM_S0_LO          32'h0000_0000 
-`define WB_COM_S1_HI          32'h0004_ffff
-`define WB_COM_S1_LO          32'h0001_0000
+`define WB_COM_S0_AHI           32'h0000_2fff
+`define WB_COM_S0_ALO           32'h0000_0000 
+`define WB_COM_S1_AHI           32'h0004_ffff
+`define WB_COM_S1_ALO           32'h0001_0000
 `endif
