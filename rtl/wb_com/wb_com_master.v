@@ -57,10 +57,10 @@ s1_to_m_dempty
 parameter   WB_ADDR_WIDTH       = 32;
 parameter   WB_DATA_WIDTH       = 32;
 parameter   WB_TIME_TAG         = 4;
-parameter   S0_ADDR_BASE        = 32'h00000000;
-parameter   S0_ADDR_MASK        = 2'b11;
-parameter   S1_ADDR_BASE        = 32'h00000004;
-parameter   S1_ADDR_MASK        = 2'b11;
+parameter   S0_ADDR_HI        = 32'h00000003;
+parameter   S0_ADDR_LO        = 32'h00000000;
+parameter   S1_ADDR_HI        = 32'h00000007;
+parameter   S1_ADDR_LO        = 32'h00000004;
 
 parameter   WB_FIFO_ASIZE       = WB_TIME_TAG - 2;
 parameter   WB_SEL_WIDTH        = WB_DATA_WIDTH/8;
@@ -112,8 +112,14 @@ wire    [WB_DATA_WIDTH - 1:0]       m_to_s0_data_i, m_to_s1_data_i;
 wire                                m_to_s0_hfull, m_to_s1_hfull;
 
 //common master0 signals
-assign m_addr_s1_hit = (m_wb_addr_o & ~({WB_ADDR_WIDTH{1'b0}} | S1_ADDR_MASK)) == S1_ADDR_BASE;
-assign m_addr_s0_hit = (m_wb_addr_o & ~({WB_ADDR_WIDTH{1'b0}} | S0_ADDR_MASK)) == S0_ADDR_BASE;
+wire s0_addr_lo_hit     = (m_wb_addr_o >= S0_ADDR_LO);
+wire s0_addr_hi_hit     = (m_wb_addr_o <= S0_ADDR_HI);
+
+wire s1_addr_lo_hit     = (m_wb_addr_o >= S1_ADDR_LO);
+wire s1_addr_hi_hit     = (m_wb_addr_o <= S1_ADDR_HI);
+
+assign m_addr_s1_hit = s1_addr_lo_hit & s1_addr_hi_hit;
+assign m_addr_s0_hit = s0_addr_lo_hit & s0_addr_hi_hit;
 
 always @(posedge clk)
 if (rst)                                            m_dir_sel <= {WB_M_BSCALE{1'b0}};

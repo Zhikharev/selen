@@ -74,10 +74,10 @@ s1_wb_err_i
 parameter   WB_ADDR_WIDTH       =   `WB_COM_AWIDTH;
 parameter   WB_DATA_WIDTH       =   `WB_COM_DWIDTH;
 parameter   WB_FIFO_ASIZE       =   `WB_COM_F_ASIZE;
-parameter   S0_ADDR_BASE        =   `WB_COM_S0_ABASE;
-parameter   S0_ADDR_MASK        =   `WB_COM_S0_AMASK;
-parameter   S1_ADDR_BASE        =   `WB_COM_S1_ABASE;
-parameter   S1_ADDR_MASK        =   `WB_COM_S1_AMASK;
+parameter   S0_ADDR_HI          =   `WB_COM_S0_AHI;
+parameter   S0_ADDR_LO          =   `WB_COM_S0_ALO;
+parameter   S1_ADDR_HI          =   `WB_COM_S1_AHI;
+parameter   S1_ADDR_LO          =   `WB_COM_S1_ALO;
 
 
 parameter   WB_TIME_TAG         =   WB_FIFO_ASIZE + 2;
@@ -151,7 +151,7 @@ if (rst_i)        time_tag <= {WB_TIME_TAG{1'd0}};
 else if (m0_wb_cyc_o & m0_wb_stb_o & !m0_wb_stall_i | m1_wb_cyc_o & m1_wb_stb_o & !m1_wb_stall_i) time_tag <= time_tag + 1'b1;
 
 wb_com_master       
-#(WB_ADDR_WIDTH, WB_DATA_WIDTH, WB_TIME_TAG, S0_ADDR_BASE, S0_ADDR_MASK, S1_ADDR_BASE, S1_ADDR_MASK)
+#(WB_ADDR_WIDTH, WB_DATA_WIDTH, WB_TIME_TAG, S0_ADDR_HI, S0_ADDR_LO, S1_ADDR_HI, S1_ADDR_LO)
 m0_part
 (
 .clk                (clk_i              ),
@@ -197,7 +197,7 @@ m0_part
 );
 
 wb_com_master       
-#(WB_ADDR_WIDTH, WB_DATA_WIDTH, WB_TIME_TAG, S0_ADDR_BASE, S0_ADDR_MASK, S1_ADDR_BASE, S1_ADDR_MASK)
+#(WB_ADDR_WIDTH, WB_DATA_WIDTH, WB_TIME_TAG, S0_ADDR_HI, S0_ADDR_LO, S1_ADDR_HI, S1_ADDR_LO)
 m1_part
 (
 .clk                (clk_i              ),
