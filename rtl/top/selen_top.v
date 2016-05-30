@@ -69,20 +69,29 @@ module selen_top
 	wire                              io_rom_wb_ack_i;
 	wire                              io_rom_wb_err_i;
 
-	wire  [`WB_COM_AWIDTH - 1:0]      io_gpio_wb_addr_o;
-	wire  [`WB_COM_DWIDTH - 1:0]      io_gpio_wb_dat_o;
-	wire  [`WB_COM_DWIDTH/8 - 1:0]    io_gpio_wb_sel_o;
-	wire                              io_gpio_wb_cyc_o;
-	wire                              io_gpio_wb_stb_o;
-	wire                              io_gpio_wb_we_o;
-	wire	[`WB_COM_DWIDTH - 1:0]      io_gpio_wb_dat_i;
-	wire                              io_gpio_wb_stall_i;
-	wire                              io_gpio_wb_ack_i;
-	wire                              io_gpio_wb_err_i;
+	wire  [`WB_COM_AWIDTH - 1:0]      io_perif_wb_addr_o;
+	wire  [`WB_COM_DWIDTH - 1:0]      io_perif_wb_dat_o;
+	wire  [`WB_COM_DWIDTH/8 - 1:0]    io_perif_wb_sel_o;
+	wire                              io_perif_wb_cyc_o;
+	wire                              io_perif_wb_stb_o;
+	wire                              io_perif_wb_we_o;
+	wire	[`WB_COM_DWIDTH - 1:0]      io_perif_wb_dat_i;
+	wire                              io_perif_wb_rty_i;
+	wire                              io_perif_wb_ack_i;
+	wire                              io_perif_wb_err_i;
+	wire                              io_perif_wb_stall_i;
 
 	wire [30:0] 											gpio_pins_o;
 	wire [30:0] 											gpio_pins_en;
 	wire [30:0] 											gpio_pins_i;
+
+	assign gpio_pin0_o  	= gpio_pins_o[0];
+	assign gpio_pin0_en 	= gpio_pins_en[0];
+	assign gpio_pins_i[0] = gpio_pin0_i;
+
+	assign gpio_pin1_o  	= gpio_pins_o[1];
+	assign gpio_pin1_en 	= gpio_pins_en[1];
+	assign gpio_pins_i[1] = gpio_pin1_i;
 
 	selen_cpu_cluster cpu_cluster
 	(
@@ -106,10 +115,10 @@ module selen_top
 		.wb_we_o 		(cpu_wb_we_o)
 	);
 
-	defparam wb_cpu_xbar.S0_ADDR_BASE = 32'h0000_0000;
-	defparam wb_cpu_xbar.S0_ADDR_MASK = 16'h2fff;
-	defparam wb_cpu_xbar.S1_ADDR_BASE = 32'h0010_0000;
-	defparam wb_cpu_xbar.S1_ADDR_MASK = 32'h000f_ffff;
+	defparam wb_cpu_xbar.S0_ADDR_LO = 32'h0000_0000;
+	defparam wb_cpu_xbar.S0_ADDR_HI = 32'h0000_2fff;
+	defparam wb_cpu_xbar.S1_ADDR_LO = 32'h0010_0000;
+	defparam wb_cpu_xbar.S1_ADDR_HI = 32'h001f_ffff;
 
 	wb_com_top wb_cpu_xbar
 	(
@@ -181,10 +190,10 @@ module selen_top
 
 	assign com_mem_wb_stall_i = 1'b0;
 
-	defparam wb_perif_xbar.S0_ADDR_BASE = 32'h0000_0000;
-	defparam wb_perif_xbar.S0_ADDR_MASK = 16'h0fff;
-	defparam wb_perif_xbar.S1_ADDR_BASE = 32'h0000_2000;
-	defparam wb_perif_xbar.S1_ADDR_MASK = 16'h0fff;
+	defparam wb_perif_xbar.S0_ADDR_LO = 32'h0000_0000;
+	defparam wb_perif_xbar.S0_ADDR_HI = 32'h0000_0fff;
+	defparam wb_perif_xbar.S1_ADDR_LO = 32'h0000_1000;
+	defparam wb_perif_xbar.S1_ADDR_HI = 32'h0000_2fff;
 
 	wb_com_top wb_perif_xbar
 	(
@@ -224,20 +233,22 @@ module selen_top
 		.s0_wb_err_i 		(io_rom_wb_err_i),
 		.s0_wb_ack_i 		(io_rom_wb_ack_i),
 		// Slave 1 wb interface
-		.s1_wb_addr_o 	(io_gpio_wb_addr_o),
-		.s1_wb_dat_o 		(io_gpio_wb_dat_o),
-		.s1_wb_sel_o 		(io_gpio_wb_sel_o),
-		.s1_wb_cyc_o 		(io_gpio_wb_cyc_o),
-		.s1_wb_stb_o 		(io_gpio_wb_stb_o),
-		.s1_wb_we_o 		(io_gpio_wb_we_o),
-		.s1_wb_dat_i 		(io_gpio_wb_dat_i),
-		.s1_wb_stall_i 	(io_gpio_wb_stall_i),
-		.s1_wb_err_i 		(io_gpio_wb_err_i),
-		.s1_wb_ack_i 		(io_gpio_wb_ack_i)
+		.s1_wb_addr_o 	(io_perif_wb_addr_o),
+		.s1_wb_dat_o 		(io_perif_wb_dat_o),
+		.s1_wb_sel_o 		(io_perif_wb_sel_o),
+		.s1_wb_cyc_o 		(io_perif_wb_cyc_o),
+		.s1_wb_stb_o 		(io_perif_wb_stb_o),
+		.s1_wb_we_o 		(io_perif_wb_we_o),
+		.s1_wb_dat_i 		(io_perif_wb_dat_i),
+		.s1_wb_stall_i 	(io_perif_wb_stall_i),
+		.s1_wb_err_i 		(io_perif_wb_err_i),
+		.s1_wb_ack_i 		(io_perif_wb_ack_i)
 	);
 
 	defparam wb_rom_5kB.DW = 32;
 	defparam wb_rom_5kB.AW = 11;
+
+	assign io_rom_wb_stall_i = 1'b0;
 
 	wb_rom wb_rom_5kB
 	(
@@ -254,36 +265,29 @@ module selen_top
   	.wb_err_o 	(io_rom_wb_err_i)
 	);
 
-	assign io_rom_wb_stall_i = 1'b0;
+	assign io_perif_wb_stall_i = 1'b0;
 
-	assign gpio_pin0_o  	= gpio_pins_o[0];
-	assign gpio_pin0_en 	= gpio_pins_en[0];
-	assign gpio_pins_i[0] = gpio_pin0_i;
-
-	assign gpio_pin1_o  	= gpio_pins_o[1];
-	assign gpio_pin1_en 	= gpio_pins_en[1];
-	assign gpio_pins_i[1] = gpio_pin1_i;
-
-	gpio_top gpio
+	selen_perif_cluster perif_cluster
 	(
-		.wb_clk_i 		(clk),
-		.wb_rst_i 		(~rst_n),
-		.wb_cyc_i 		(io_gpio_wb_cyc_o),
-		.wb_adr_i 		(io_gpio_wb_addr_o),
-		.wb_dat_i 		(io_gpio_wb_dat_o),
-		.wb_sel_i 		(io_gpio_wb_sel_o),
-		.wb_we_i 			(io_gpio_wb_we_o),
-		.wb_stb_i 		(io_gpio_wb_stb_o),
-		.wb_dat_o 		(io_gpio_wb_dat_i),
-		.wb_ack_o 		(io_gpio_wb_ack_i),
-		.wb_err_o 		(io_gpio_wb_err_i),
-		.wb_inta_o 		(),
-		.ext_pad_i 		(gpio_pins_i),
-		.ext_pad_o 		(gpio_pins_o),
-		.ext_padoe_o 	(gpio_pins_en)
-	);
+		.clk 					(clk),
+		.rst_n 				(rst_n),
+  	.wb_adr_i 		(io_perif_wb_addr_o),
+  	.wb_dat_i 		(io_perif_wb_dat_o),
+  	.wb_dat_o 		(io_perif_wb_dat_i),
+ 		.wb_we_i 			(io_perif_wb_we_o),
+ 		.wb_sel_i 		(io_perif_wb_sel_o),
+  	.wb_stb_i 		(io_perif_wb_stb_o),
+  	.wb_ack_o 		(io_perif_wb_ack_i),
+  	.wb_err_o 		(io_perif_wb_err_i),
+  	.wb_rty_o 		(io_perif_wb_rty_i),
+  	.wb_cyc_i 		(io_perif_wb_cyc_o),
+		.gpio_pins_o	(gpio_pins_o),
+		.gpio_pins_en (gpio_pins_en),
+		.gpio_pins_i 	(gpio_pins_i)
+);
 
-assign io_gpio_wb_stall_i = 1'b0;
+
+
 
 endmodule
 

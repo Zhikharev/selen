@@ -66,7 +66,7 @@ void blink() asm("main");
 
 #define NUM_BLINKS 100
 /*cpu ticks to one iteration*/
-#define BLINK_PERIOD 3000000
+#define BLINK_PERIOD 300
 
 
 void __attribute__((optimize("Os"))) blink()

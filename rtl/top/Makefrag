@@ -2,6 +2,8 @@ MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
 RTL_HOME := $(MAKEHOME)../../rtl
 
 TOP_RTL_SRC :=\
+	$(RTL_HOME)/wb_mux/wb_mux_p3.v \
+	$(MAKEHOME)/selen_perif_cluster.v \
 	$(MAKEHOME)/selen_cpu_cluster.v \
 	$(MAKEHOME)/selen_top.v
 

@@ -87,6 +87,8 @@ module selen_tb_top ();
 		//$finish();
 	end
 
+  initial $timeformat(-9, 1, "ns", 4);
+
   `ifdef WAVES_FSDB
   initial begin
     $fsdbDumpfile("sl_tb_top");

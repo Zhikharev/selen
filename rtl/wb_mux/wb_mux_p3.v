@@ -114,9 +114,25 @@ module wb_mux_p3 #
     input  wire [ADDR_WIDTH-1:0]   wbs2_addr_msk  // Slave address prefix mask
 );
 
-wire wbs0_match = ~|((wbm_adr_i ^ wbs0_addr) & wbs0_addr_msk);
-wire wbs1_match = ~|((wbm_adr_i ^ wbs1_addr) & wbs1_addr_msk);
-wire wbs2_match = ~|((wbm_adr_i ^ wbs2_addr) & wbs2_addr_msk);
+// cyc получается зависит от адреса, нужно хранить адрес
+// или добавлять регистры на выход
+
+reg  [ADDR_WIDTH-1:0]   wbm_adr_r;
+wire [ADDR_WIDTH-1:0]   wbm_adr;
+
+always @(posedge clk or posedge rst) begin
+  if(rst) begin
+    wbm_adr_r <= {ADDR_WIDTH{1'b0}};
+  end else begin
+    if(wbm_stb_i) wbm_adr_r <= wbm_adr_i;
+  end
+end
+
+assign wbm_adr = (wbm_stb_i) ? wbm_adr_i : wbm_adr_r;
+
+wire wbs0_match = ~|((wbm_adr ^ wbs0_addr) & wbs0_addr_msk);
+wire wbs1_match = ~|((wbm_adr ^ wbs1_addr) & wbs1_addr_msk);
+wire wbs2_match = ~|((wbm_adr ^ wbs2_addr) & wbs2_addr_msk);
 
 wire wbs0_sel = wbs0_match;
 wire wbs1_sel = wbs1_match & ~(wbs0_match);
