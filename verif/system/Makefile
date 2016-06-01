@@ -56,3 +56,13 @@ sl_ram_jmp:
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 sl_ram_jmp.bin rom_bge.bin
 	rm -f rom_image.v
 	xxd -c 4 -p rom_bge.bin >> rom_image.v
+
+debug_api:
+	$(AS) $(GIT_HOME)/firmware/sandbox/startup.s -o startup.o
+	$(CCX) -c $(GIT_HOME)/verif/system/tests/test_api.c -nostdlib -O2 -o test_api.o
+	$(CCX) -c $(GIT_HOME)/verif/system/tests/debug_api.c -nostdlib -O2 -o debug_api.o
+	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.ld test_api.o debug_api.o -o debug_api.elf
+	$(OBJCOPY) -O binary debug_api.elf debug_api.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 debug_api.bin ram_bge.bin
+	rm -f ram_image.v
+	xxd -c 4 -p ram_bge.bin >> ram_image.v

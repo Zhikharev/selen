@@ -81,10 +81,9 @@ module selen_tb_top ();
 
 	initial begin
 		$display("%0t TEST START", $time());
-		wait(selen_top.cpu_cluster.l1_cache.l1i.cache_ready);
-		//#1000000;
-		//$display("%0t TEST FINISHED", $time());
-		//$finish();
+		wait(selen_top.cpu_cluster.core.d_req_val && selen_top.cpu_cluster.core.d_req_addr == 32'hffff_fff0);
+		$display("%0t TEST FINISHED", $time());
+		$finish();
 	end
 
   initial $timeformat(-9, 1, "ns", 4);

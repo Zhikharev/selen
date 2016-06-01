@@ -1,3 +1,5 @@
+#define TEST_STOP_ADDR 0xfffffff0
+
 void test_done(int reval, const uint32_t test_id);
 
 int  read_byte(uint32_t base, uint32_t offset, uint8_t* data);
