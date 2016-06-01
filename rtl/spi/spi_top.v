@@ -39,8 +39,8 @@
 //////////////////////////////////////////////////////////////////////
 
 
-`include "spi_defines.v"
-`include "timescale.v"
+//`include "spi_defines.v"
+//`include "timescale.v"
 
 module spi_top
 (

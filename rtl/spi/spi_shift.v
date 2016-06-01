@@ -38,8 +38,8 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 
-`include "spi_defines.v"
-`include "timescale.v"
+//`include "spi_defines.v"
+//`include "timescale.v"
 
 module spi_shift (clk, rst, latch, byte_sel, len, lsb, go,
                   pos_edge, neg_edge, rx_negedge, tx_negedge,

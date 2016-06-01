@@ -31,7 +31,11 @@ module selen_perif_cluster
   // IO
 	output [30:0] 									gpio_pins_o,
 	output [30:0] 									gpio_pins_en,
-	input [30:0] 										gpio_pins_i
+	input  [30:0] 									gpio_pins_i,
+  output                          spi_ss_o,
+  output                          spi_sclk_o,
+  output                          spi_mosi_o,
+  input                           spi_miso_i
 );
 
 	wire  [`WB_COM_AWIDTH - 1:0]      io_gpio_wb_addr_o;
@@ -44,6 +48,17 @@ module selen_perif_cluster
 	wire                              io_gpio_wb_rty_i;
 	wire                              io_gpio_wb_ack_i;
 	wire                              io_gpio_wb_err_i;
+
+  wire  [`WB_COM_AWIDTH - 1:0]      io_spi_wb_addr_o;
+  wire  [`WB_COM_DWIDTH - 1:0]      io_spi_wb_dat_o;
+  wire  [`WB_COM_DWIDTH/8 - 1:0]    io_spi_wb_sel_o;
+  wire                              io_spi_wb_cyc_o;
+  wire                              io_spi_wb_stb_o;
+  wire                              io_spi_wb_we_o;
+  wire  [`WB_COM_DWIDTH - 1:0]      io_spi_wb_dat_i;
+  wire                              io_spi_wb_rty_i;
+  wire                              io_spi_wb_ack_i;
+  wire                              io_spi_wb_err_i;
 
 	wb_mux_p3 wb_mux
 	(
@@ -67,16 +82,16 @@ module selen_perif_cluster
     /*
      * Wishbone slave 0 output
      */
-    .wbs0_adr_o (),
-    .wbs0_dat_i (),
-    .wbs0_dat_o (),
-    .wbs0_we_o  (),
-   	.wbs0_sel_o (),
-    .wbs0_stb_o (),
-    .wbs0_ack_i (1'b0),
-    .wbs0_err_i (1'b0),
-    .wbs0_rty_i (1'b0),
-    .wbs0_cyc_o (),
+    .wbs0_adr_o (io_spi_wb_addr_o),
+    .wbs0_dat_i (io_spi_wb_dat_i),
+    .wbs0_dat_o (io_spi_wb_dat_o),
+    .wbs0_we_o  (io_spi_wb_we_o),
+   	.wbs0_sel_o (io_spi_wb_sel_o),
+    .wbs0_stb_o (io_spi_wb_stb_o),
+    .wbs0_ack_i (io_spi_wb_ack_i),
+    .wbs0_err_i (io_spi_wb_err_i),
+    .wbs0_rty_i (io_spi_wb_rty_i),
+    .wbs0_cyc_o (io_spi_wb_cyc_o),
 
     /*
      * Wishbone slave 0 address configuration
@@ -145,6 +160,28 @@ module selen_perif_cluster
 		.ext_pad_o 		(gpio_pins_o),
 		.ext_padoe_o 	(gpio_pins_en)
 	);
+
+  assign io_spi_wb_rty_i = 1'b0;
+
+  spi_top spi
+  (
+    .wb_clk_i   (clk),
+    .wb_rst_i   (~rst_n),
+    .wb_adr_i   (io_spi_wb_addr_o),
+    .wb_dat_i   (io_spi_wb_dat_o),
+    .wb_dat_o   (io_spi_wb_dat_i),
+    .wb_sel_i   (io_spi_wb_sel_o),
+    .wb_we_i    (io_spi_wb_we_o),
+    .wb_stb_i   (io_spi_wb_stb_o),
+    .wb_cyc_i   (io_spi_wb_cyc_o),
+    .wb_ack_o   (io_spi_wb_ack_i),
+    .wb_err_o   (io_spi_wb_err_i),
+    .wb_int_o   (),
+    .ss_pad_o   (spi_ss_o),
+    .sclk_pad_o (spi_sclk_o),
+    .mosi_pad_o (spi_mosi_o),
+    .miso_pad_i (spi_miso_i)
+  );
 
 endmodule
 
