@@ -1,9 +1,9 @@
-	.file	"blink.c"
+	.file	"spi.c"
 # GNU C11 (GCC) version 5.3.0 (riscv64-unknown-elf)
 #	compiled by GNU C version 5.2.0, GMP version 5.1.3, MPFR version 3.1.3, MPC version 1.0.1
 # GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-# options passed:  -imultilib 32 blink.c -m32 -auxbase-strip test.s -O2
-# -Wall -fomit-frame-pointer -fverbose-asm
+# options passed:  -imultilib 32 spi.c -m32 -auxbase-strip spi.s -O2 -Wall
+# -fomit-frame-pointer -fverbose-asm
 # options enabled:  -faggressive-loop-optimizations -falign-functions
 # -falign-jumps -falign-labels -falign-loops -fauto-inc-dec
 # -fbranch-count-reg -fcaller-saves -fchkp-check-incomplete-type
@@ -50,85 +50,61 @@
 
 	.text
 	.align	2
-	.type	wait.constprop.0, @function
-wait.constprop.0:
- #APP
-# 43 "blink.c" 1
-	rdcycle a2;	# low
-	rdcycleh a1;	# high
-# 0 "" 2
- #NO_APP
-	li	a5,2998272	# tmp120,
-	add	a0,a5,1727	# tmp121, tmp120,
+	.type	spi_init, @function
+spi_init:
+	li	a3,8192	# tmp79,
+	sw	zero,32(a3)	#, MEM[(volatile struct SPI *)8192B].CTRL
 .L2:
- #APP
-# 43 "blink.c" 1
-	rdcycle a5;	# low
-	rdcycleh a4;	# high
-# 0 "" 2
- #NO_APP
-	sub	a3,a5,a2	# ticks_elapsed, low, low
-	sltu	a5,a5,a3	# tmp98, low, ticks_elapsed
-	sub	a4,a4,a1	# ticks_elapsed, high, high
-	bne	a4,a5,.L1	#, ticks_elapsed, tmp98,
-	bleu	a3,a0,.L2	#, ticks_elapsed, tmp121,
-.L1:
+	lw	a5,32(a3)	# D.1525, MEM[(volatile struct SPI *)8192B].CTRL
+	li	a4,8192	# tmp80,
+	and	a5,a5,1	# D.1525, D.1525,
+	bnez	a5,.L2	#, D.1525,
+	li	a5,1	# tmp83,
+	sw	a5,36(a4)	# tmp83, MEM[(volatile struct SPI *)8192B].DIVIDER
+	lw	a5,36(a4)	# D.1525, MEM[(volatile struct SPI *)8192B].DIVIDER
+	mv	a0,a4	#, tmp80
+	and	a5,a5,-64	# D.1525, D.1525,
+	or	a5,a5,32	# D.1526, D.1525,
+	sw	a5,32(a4)	# D.1526, MEM[(volatile struct SPI *)8192B].CTRL
 	ret
-	.size	wait.constprop.0, .-wait.constprop.0
+	.size	spi_init, .-spi_init
+	.align	2
+	.globl	spi_transaction
+	.type	spi_transaction, @function
+spi_transaction:
+	lw	a5,40(a0)	# D.1529, spi_2(D)->SS
+	or	a5,a5,1	# D.1529, D.1529,
+	sw	a5,40(a0)	# D.1529, spi_2(D)->SS
+	lw	a5,32(a0)	# D.1529, spi_2(D)->CTRL
+	or	a5,a5,1	# D.1529, D.1529,
+	sw	a5,32(a0)	# D.1529, spi_2(D)->CTRL
+.L6:
+	lw	a5,32(a0)	# D.1529, spi_2(D)->CTRL
+	and	a5,a5,1	# D.1529, D.1529,
+	bnez	a5,.L6	#, D.1529,
+	lw	a5,40(a0)	# D.1529, spi_2(D)->SS
+	and	a5,a5,-2	# D.1529, D.1529,
+	sw	a5,40(a0)	# D.1529, spi_2(D)->SS
+	ret
+	.size	spi_transaction, .-spi_transaction
+	.section	.text.startup,"ax",@progbits
 	.align	2
 	.globl	main
 	.type	main, @function
 main:
-	li	a5,8192	# tmp89,
-	sw	zero,0(a5)	#, MEM[(volatile struct GPIO *)8192B].in
-	sw	zero,4(a5)	#, MEM[(volatile struct GPIO *)8192B].out
-	sw	zero,8(a5)	#, MEM[(volatile struct GPIO *)8192B].oe
-	sw	zero,12(a5)	#, MEM[(volatile struct GPIO *)8192B].inte
-	sw	zero,16(a5)	#, MEM[(volatile struct GPIO *)8192B].ptrig
-	sw	zero,20(a5)	#, MEM[(volatile struct GPIO *)8192B].aux
-	sw	zero,24(a5)	#, MEM[(volatile struct GPIO *)8192B].ctrl
-	sw	zero,28(a5)	#, MEM[(volatile struct GPIO *)8192B].eclk
-	sw	zero,32(a5)	#, MEM[(volatile struct GPIO *)8192B].nec
-	lw	a4,8(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
-	and	a4,a4,-2	# D.1548, D.1548,
-	sw	a4,8(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
-	lw	a4,24(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].ctrl
-	and	a4,a4,-2	# D.1548, D.1548,
-	sw	a4,24(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].ctrl
-	lw	a4,12(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
-	and	a4,a4,-2	# D.1548, D.1548,
-	sw	a4,12(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
-.L6:
-	lw	a3,0(a5)	# D.1548, MEM[(volatile struct GPIO *)8192B].in
-	li	a4,8192	# tmp104,
-	and	a3,a3,1	# D.1548, D.1548,
-	beqz	a3,.L6	#, D.1548,
-	lw	a5,8(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
 	add	sp,sp,-16	#,,
-	sw	s0,8(sp)	#,
-	sw	s1,4(sp)	#,
 	sw	ra,12(sp)	#,
-	or	a5,a5,2	# D.1548, D.1548,
-	sw	a5,8(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].oe
-	lw	a5,12(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
-	li	s1,100	# D.1547,
-	mv	s0,a4	# tmp114, tmp104
-	and	a5,a5,-3	# D.1548, D.1548,
-	sw	a5,12(a4)	# D.1548, MEM[(volatile struct GPIO *)8192B].inte
-.L7:
-	lw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
-	add	s1,s1,-1	# D.1547, D.1547,
-	or	a5,a5,2	# D.1548, D.1548,
-	sw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
-	call	wait.constprop.0	#
-	lw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
-	and	a5,a5,-3	# D.1548, D.1548,
-	sw	a5,4(s0)	# D.1548, MEM[(volatile struct GPIO *)8192B].out
-	call	wait.constprop.0	#
-	bnez	s1,.L7	#, D.1547,
+	sw	s0,8(sp)	#,
+	call	spi_init	#
+	li	a5,-559038464	# tmp76,
+	add	a5,a5,-337	# tmp75, tmp76,
+	sw	a5,16(a0)	# tmp75, spi_3->T
+	mv	s0,a0	# spi,
+	call	spi_transaction	#
 	lw	ra,12(sp)	#,
+	lw	a5,0(s0)	# received, spi_3->R
+	li	a0,1	#,
 	lw	s0,8(sp)	#,
-	lw	s1,4(sp)	#,
 	add	sp,sp,16	#,,
 	jr	ra	#
 	.size	main, .-main
