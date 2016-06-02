@@ -46,7 +46,6 @@ typedef volatile struct
 #define CTR_TX_NEG (1 < 10)
 #define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6) 
 
-
 /*Memory maped SPI layout base address*/
 #define SPI_BASE_ADDRESS 0x2000
 /*default clock frequency divider */
@@ -76,7 +75,7 @@ volatile SPI* spi_init()
     spi->DIVIDER = CLOCK_DIVIDER;
 
     /*Configure transaction size*/
-    spi->CTRL = deposit(spi->DIVIDER, 0, 6, TRANSACTION_SIZE);
+    spi->CTRL = deposit(spi->CTRL, 0, 6, TRANSACTION_SIZE);
     
     return spi;
 }
@@ -98,14 +97,14 @@ int __attribute__((optimize("Os"))) main()
 {
     /*memory base address, from linker script*/
     /*const uint32_t* mem_base = __boot_offset__;*/
-
+    
     volatile SPI* spi = spi_init();
 
     spi->T[0] = 0xdeadbeaf;
     spi_transaction(spi);
     uint32_t received = spi->R[0];
 
-    /*TODO: NX25Q Specific Protocol implementation: send commands & addresses -> receive data*/
+    /*TODO: NX25Q specific protocol implementation: send commands & addresses -> receive data*/
     /*test_done();*/
     return 1;
 }
