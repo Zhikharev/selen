@@ -14,15 +14,23 @@ startup.o : startup.s
 blink.o : blink.c
 	$(CCX) -c blink.c -Wall -fomit-frame-pointer -m32 -O2 -o tmp.o
 
-test.s : blink.c
+spi.o : spi.c
+	$(CCX) -c spi.c -Wall -fomit-frame-pointer -m32 -O2 -o tmp.o
+
+spi.s : spi.c
+	$(CCX) -S spi.c -Wall -fomit-frame-pointer -fverbose-asm -nostdlib -m32 -O2 -o spi.s
+
+blink.s : blink.c
 	$(CCX) -S blink.c -Wall -fomit-frame-pointer -fverbose-asm -nostdlib -m32 -O2 -o test.s
 
-build: blink.c startup.o
+build: blink.c startup.o spi.c
 	$(CCX) -c blink.c -Wall -fomit-frame-pointer  -m32 -O2 -o tmp.o
 	$(LD) -T blink.ld tmp.o -o prog.elf 
+	$(CCX) -c spi.c -Wall -fomit-frame-pointer  -m32 -O2 -o tmpspi.o
+	$(LD) -T blink.ld tmpspi.o -o spi.elf 
 
 clean:
-	$(REMOVE) test.s prog.elf *.o
+	$(REMOVE) test.s prog.elf spi.elf *.o
 
 
 
