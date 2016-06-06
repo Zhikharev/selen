@@ -22,7 +22,12 @@ module selen_top
 
 	output 	gpio_pin1_o,
 	output 	gpio_pin1_en,
-	input 	gpio_pin1_i
+	input 	gpio_pin1_i,
+
+  output  spi_ss_o,
+  output  spi_sclk_o,
+  output  spi_mosi_o,
+  input   spi_miso_i
 );
 
 	wire  [`WB_COM_AWIDTH - 1:0]      cpu_wb_addr_o;
@@ -283,7 +288,11 @@ module selen_top
   	.wb_cyc_i 		(io_perif_wb_cyc_o),
 		.gpio_pins_o	(gpio_pins_o),
 		.gpio_pins_en (gpio_pins_en),
-		.gpio_pins_i 	(gpio_pins_i)
+		.gpio_pins_i 	(gpio_pins_i),
+  	.spi_ss_o    	(spi_ss_o),
+  	.spi_sclk_o 	(spi_sclk_o),
+  	.spi_mosi_o 	(spi_mosi_o),
+  	.spi_miso_i 	(spi_miso_i)
 );
 
 

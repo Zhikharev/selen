@@ -66,3 +66,12 @@ debug_api:
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 debug_api.bin ram_bge.bin
 	rm -f ram_image.v
 	xxd -c 4 -p ram_bge.bin >> ram_image.v
+
+sl_spi:
+	$(AS) $(GIT_HOME)/firmware/sandbox/startup.s -o startup.o
+	$(CCX) -c $(GIT_HOME)/firmware/sandbox/spi.c  -nostdlib -O2 -o spi.o
+	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.ld spi.o -o spi.elf
+	$(OBJCOPY) -O binary spi.elf spi.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 spi.bin ram_bge.bin
+	rm -f ram_image.v
+	xxd -c 4 -p ram_bge.bin >> ram_image.v

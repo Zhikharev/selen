@@ -12,7 +12,7 @@ uint32_t extract(const uint32_t value, const size_t begin,
 }
 
 /*put bit field to integer*/
-static inline 
+static inline
 uint32_t deposit(uint32_t value, int begin, int len,
                  uint32_t fieldval)
 {
@@ -28,8 +28,8 @@ typedef __UINT64_TYPE__ tick_t;
 /*SPI Master core registers*/
 typedef volatile struct
 {
-    uint32_t R[4]; //Data receive registers
-    uint32_t T[4]; //Data transmit registers
+    uint32_t DATA[4]; //Data receive registers
+    //uint32_t T[4]; //Data transmit registers
     uint32_t CTRL; //Control and status register
     uint32_t DIVIDER; //Clock divider register
     uint32_t SS; //Slave select register
@@ -47,7 +47,7 @@ typedef volatile struct
 #define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6) 
 
 /*Memory maped SPI layout base address*/
-#define SPI_BASE_ADDRESS 0x2000
+#define SPI_BASE_ADDRESS 0x1000
 /*default clock frequency divider */
 #define CLOCK_DIVIDER 1
 /*default slave select bit number*/
@@ -100,9 +100,9 @@ int __attribute__((optimize("Os"))) main()
     
     volatile SPI* spi = spi_init();
 
-    spi->T[0] = 0xdeadbeaf;
+    spi->DATA[0] = 0xdeadbeaf;
     spi_transaction(spi);
-    uint32_t received = spi->R[0];
+    uint32_t received = spi->DATA[0];
 
     /*TODO: NX25Q specific protocol implementation: send commands & addresses -> receive data*/
     /*test_done();*/

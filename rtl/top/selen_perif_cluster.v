@@ -21,7 +21,7 @@ module selen_perif_cluster
   input  [`CORE_DATA_WIDTH-1:0]   wb_dat_i,     // DAT_I() data in
   output [`CORE_DATA_WIDTH-1:0]   wb_dat_o,     // DAT_O() data out
   input                     			wb_we_i,      // WE_I write enable input
-  input  [`CORE_BE_WIDTH-1-1:0] 	wb_sel_i,     // SEL_I() select input
+  input  [`CORE_BE_WIDTH-1:0] 	  wb_sel_i,     // SEL_I() select input
   input                     			wb_stb_i,     // STB_I strobe input
   output                    			wb_ack_o,     // ACK_O acknowledge output
   output                    			wb_err_o,     // ERR_O error output

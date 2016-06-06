@@ -30,6 +30,11 @@ module selen_tb_top ();
 	assign gpio_pin_i = gpio_bus;
 	assign gpio_bus = (gpio_pin_en) ? gpio_pin_o : 1'bZ;
 
+  wire   spi_ss;
+  wire   spi_sclk;
+  wire   spi_mosi;
+  wire   spi_miso;
+
 	initial begin
 		$display("CLK_HALF_TIME=%0d", `CLK_HALF_TIME);
 		clk = 0;
@@ -76,7 +81,11 @@ module selen_tb_top ();
 		.gpio_pin0_i 	(1'b1),
 		.gpio_pin1_o 	(gpio_pin_o),
 		.gpio_pin1_en (gpio_pin_en),
-		.gpio_pin1_i 	(gpio_pin_i)
+		.gpio_pin1_i 	(gpio_pin_i),
+  	.spi_ss_o 		(spi_ss),
+  	.spi_sclk_o 	(spi_sclk_o),
+  	.spi_mosi_o 	(spi_mosi),
+  	.spi_miso_i 	(spi_miso)
 	);
 
 	initial begin
