@@ -85,7 +85,8 @@ void spi_transaction(volatile SPI* spi)
     /*Select Slave active*/
     spi->SS |= BIT_MASK(SLAVE_ID);
     /*Go*/
-    spi->CTRL |= CTR_GO_BSY;
+    //spi->CTRL |= CTR_GO_BSY; // write 0x021 ???
+    spi->CTRL = deposit(spi->CTRL, 8, 1, CTR_GO_BSY); // write 0x120
     /*wait till transaction ends*/
     while(spi->CTRL & CTR_GO_BSY);
     
