@@ -44,7 +44,7 @@ typedef volatile struct
 #define CTR_RX_NEG (1 < 9)
 #define CTR_GO_BSY (1 < 8)
 #define CTR_TX_NEG (1 < 10)
-#define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6) 
+#define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6)
 
 /*Memory maped SPI layout base address*/
 #define SPI_BASE_ADDRESS 0x1000
@@ -62,21 +62,21 @@ volatile SPI* spi_init()
     volatile SPI* spi = (SPI*)SPI_BASE_ADDRESS;
     /*clear all settings*/
     spi->CTRL = 0;
-    
+
     /*wait till last transaction ends (if exist)*/
     while(spi->CTRL & CTR_GO_BSY);
-    
+
     /*Auto SS assertion when toggled GO_BSY*/
     /*spi->CTRL |= CTR_ASS;*/
- 
+
     /*spi->CTRL |= CTR_IE; Interrupts disabled*/
-    
+
     /*configure clock*/
     spi->DIVIDER = CLOCK_DIVIDER;
 
     /*Configure transaction size*/
     spi->CTRL = deposit(spi->CTRL, 0, 6, TRANSACTION_SIZE);
-    
+
     return spi;
 }
 
@@ -87,9 +87,11 @@ void spi_transaction(volatile SPI* spi)
     /*Go*/
     //spi->CTRL |= CTR_GO_BSY; // write 0x021 ???
     spi->CTRL = deposit(spi->CTRL, 8, 1, CTR_GO_BSY); // write 0x120
+
     /*wait till transaction ends*/
-    while(spi->CTRL & CTR_GO_BSY);
-    
+    //while(spi->CTRL & CTR_GO_BSY) // сравниает с 1
+    while(spi->CTRL & BIT_MASK(8)); // сравнивает с 1 << 8 (256)
+
     /*Select Slave inactive*/
     spi->SS &= ~(BIT_MASK(SLAVE_ID));
 }
@@ -98,7 +100,7 @@ int __attribute__((optimize("Os"))) main()
 {
     /*memory base address, from linker script*/
     /*const uint32_t* mem_base = __boot_offset__;*/
-    
+
     volatile SPI* spi = spi_init();
 
     spi->DATA[0] = 0xdeadbeaf;
