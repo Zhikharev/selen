@@ -106,7 +106,7 @@ int __attribute__((optimize("Os"))) main()
     spi->DATA[0] = (operation << 24) | address;
 
     /*MSB /LSB -? менять тут порядок байт нет я хз,
-     * на картинке на 81 странице MSB идет последним
+     * на картинке на 81 странице MSB идет первым
     */
     //spi->CTRL |= CTR_LSB;
 
