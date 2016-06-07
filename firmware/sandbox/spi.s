@@ -52,39 +52,36 @@
 	.align	2
 	.type	spi_init, @function
 spi_init:
-	li	a3,8192	# tmp79,
-	sw	zero,32(a3)	#, MEM[(volatile struct SPI *)8192B].CTRL
+	li	a4,4096	# tmp75,
+	sw	zero,16(a4)	#, MEM[(volatile struct SPI *)4096B].CTRL
 .L2:
-	lw	a5,32(a3)	# D.1525, MEM[(volatile struct SPI *)8192B].CTRL
-	li	a4,8192	# tmp80,
-	and	a5,a5,1	# D.1525, D.1525,
-	bnez	a5,.L2	#, D.1525,
-	li	a5,1	# tmp83,
-	sw	a5,36(a4)	# tmp83, MEM[(volatile struct SPI *)8192B].DIVIDER
-	lw	a5,36(a4)	# D.1525, MEM[(volatile struct SPI *)8192B].DIVIDER
-	mv	a0,a4	#, tmp80
-	and	a5,a5,-64	# D.1525, D.1525,
-	or	a5,a5,32	# D.1526, D.1525,
-	sw	a5,32(a4)	# D.1526, MEM[(volatile struct SPI *)8192B].CTRL
+	lw	a5,16(a4)	# D.1529, MEM[(volatile struct SPI *)4096B].CTRL
+	li	a0,4096	# tmp76,
+	and	a5,a5,256	# D.1529, D.1529,
+	bnez	a5,.L2	#, D.1529,
+	li	a5,1	# tmp79,
+	sw	a5,20(a0)	# tmp79, MEM[(volatile struct SPI *)4096B].DIVIDER
 	ret
 	.size	spi_init, .-spi_init
 	.align	2
 	.globl	spi_transaction
 	.type	spi_transaction, @function
 spi_transaction:
-	lw	a5,40(a0)	# D.1529, spi_2(D)->SS
-	or	a5,a5,1	# D.1529, D.1529,
-	sw	a5,40(a0)	# D.1529, spi_2(D)->SS
-	lw	a5,32(a0)	# D.1529, spi_2(D)->CTRL
-	or	a5,a5,1	# D.1529, D.1529,
-	sw	a5,32(a0)	# D.1529, spi_2(D)->CTRL
-.L6:
-	lw	a5,32(a0)	# D.1529, spi_2(D)->CTRL
-	and	a5,a5,1	# D.1529, D.1529,
-	bnez	a5,.L6	#, D.1529,
-	lw	a5,40(a0)	# D.1529, spi_2(D)->SS
-	and	a5,a5,-2	# D.1529, D.1529,
-	sw	a5,40(a0)	# D.1529, spi_2(D)->SS
+	lw	a5,24(a0)	# D.1532, spi_3(D)->SS
+	or	a5,a5,1	# D.1532, D.1532,
+	sw	a5,24(a0)	# D.1532, spi_3(D)->SS
+	lw	a5,16(a0)	# D.1532, spi_3(D)->CTRL
+	or	a5,a5,256	# D.1532, D.1532,
+	sw	a5,16(a0)	# D.1532, spi_3(D)->CTRL
+	j	.L10	#
+.L11:
+	lw	a5,24(a0)	# D.1532, spi_3(D)->SS
+	and	a5,a5,-2	# D.1532, D.1532,
+	sw	a5,24(a0)	# D.1532, spi_3(D)->SS
+.L10:
+	lw	a5,16(a0)	# D.1532,
+	and	a5,a5,256	# D.1532, D.1532,
+	bnez	a5,.L11	#, D.1532,
 	ret
 	.size	spi_transaction, .-spi_transaction
 	.section	.text.startup,"ax",@progbits
@@ -92,20 +89,24 @@ spi_transaction:
 	.globl	main
 	.type	main, @function
 main:
-	add	sp,sp,-16	#,,
-	sw	ra,12(sp)	#,
-	sw	s0,8(sp)	#,
+	add	sp,sp,-32	#,,
+	sw	ra,28(sp)	#,
+	sw	s0,24(sp)	#,
 	call	spi_init	#
-	li	a5,-559038464	# tmp76,
-	add	a5,a5,-337	# tmp75, tmp76,
-	sw	a5,16(a0)	# tmp75, spi_3->T
+	li	a5,61530112	# tmp80,
+	add	a5,a5,-513	# tmp79, tmp80,
+	sw	a5,0(a0)	# tmp79, spi_3->DATA
+	lw	a5,16(a0)	# D.1535, spi_3->CTRL
 	mv	s0,a0	# spi,
+	and	a5,a5,-64	# D.1536, D.1535,
+	sw	a5,16(a0)	# D.1536, spi_3->CTRL
 	call	spi_transaction	#
-	lw	ra,12(sp)	#,
-	lw	a5,0(s0)	# received, spi_3->R
+	lw	a5,0(s0)	# D.1535, spi_3->DATA
+	lw	ra,28(sp)	#,
 	li	a0,1	#,
-	lw	s0,8(sp)	#,
-	add	sp,sp,16	#,,
+	sw	a5,12(sp)	# D.1535, received
+	lw	s0,24(sp)	#,
+	add	sp,sp,32	#,,
 	jr	ra	#
 	.size	main, .-main
 	.ident	"GCC: (GNU) 5.3.0"

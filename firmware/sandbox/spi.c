@@ -29,7 +29,6 @@ typedef __UINT64_TYPE__ tick_t;
 typedef volatile struct
 {
     uint32_t DATA[4]; //Data receive registers
-    //uint32_t T[4]; //Data transmit registers
     uint32_t CTRL; //Control and status register
     uint32_t DIVIDER; //Clock divider register
     uint32_t SS; //Slave select register
@@ -37,13 +36,13 @@ typedef volatile struct
 #pragma pack(pop)
 
 /*CTRL bits*/
-#define CTR_ASS (1 < 13)
-#define CTR_IE (1 < 12)
-#define CTR_LSB (1 < 11)
-#define CTR_TX_NEG (1 < 10)
-#define CTR_RX_NEG (1 < 9)
-#define CTR_GO_BSY (1 < 8)
-#define CTR_TX_NEG (1 < 10)
+#define CTR_ASS (1 << 13)
+#define CTR_IE (1 << 12)
+#define CTR_LSB (1 << 11)
+#define CTR_TX_NEG (1 << 10)
+#define CTR_RX_NEG (1 << 9)
+#define CTR_GO_BSY (1 << 8)
+#define CTR_TX_NEG (1 << 10)
 #define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6)
 
 /*Memory maped SPI layout base address*/
@@ -74,9 +73,6 @@ volatile SPI* spi_init()
     /*configure clock*/
     spi->DIVIDER = CLOCK_DIVIDER;
 
-    /*Configure transaction size*/
-    spi->CTRL = deposit(spi->CTRL, 0, 6, TRANSACTION_SIZE);
-
     return spi;
 }
 
@@ -85,12 +81,10 @@ void spi_transaction(volatile SPI* spi)
     /*Select Slave active*/
     spi->SS |= BIT_MASK(SLAVE_ID);
     /*Go*/
-    //spi->CTRL |= CTR_GO_BSY; // write 0x021 ???
-    spi->CTRL = deposit(spi->CTRL, 8, 1, CTR_GO_BSY); // write 0x120
+    spi->CTRL |= CTR_GO_BSY;
 
     /*wait till transaction ends*/
-    //while(spi->CTRL & CTR_GO_BSY) // сравниает с 1
-    while(spi->CTRL & BIT_MASK(8)); // сравнивает с 1 << 8 (256)
+    while(spi->CTRL & CTR_GO_BSY)
 
     /*Select Slave inactive*/
     spi->SS &= ~(BIT_MASK(SLAVE_ID));
@@ -103,11 +97,26 @@ int __attribute__((optimize("Os"))) main()
 
     volatile SPI* spi = spi_init();
 
-    spi->DATA[0] = 0xdeadbeaf;
-    spi_transaction(spi);
-    uint32_t received = spi->DATA[0];
+    /*инструция READ смотреть 81 страницу в spi_flash_n25q128.pdf*/
+    uint32_t operation =  0x3;
+    /*3 байтовый адрес (произвольно выбрал)*/
+    uint32_t address = 0xaaddff;
 
-    /*TODO: NX25Q specific protocol implementation: send commands & addresses -> receive data*/
+    /*на отрправку идут: 1 байт инструкция + 3 байта адрес*/
+    spi->DATA[0] = (operation << 24) | address;
+
+    /*MSB /LSB -? менять тут порядок байт нет я хз,
+     * на картинке на 81 странице MSB идет последним
+    */
+    //spi->CTRL |= CTR_LSB;
+
+    /*размер транзакции надеюсь получать по 16 байт сразу*/
+    spi->CTRL = deposit(spi->CTRL, 0, 6, 128);
+
+    spi_transaction(spi);
+
+    volatile uint32_t received = spi->DATA[0];
+
     /*test_done();*/
     return 1;
 }
