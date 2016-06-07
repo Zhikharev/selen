@@ -83,10 +83,21 @@ module selen_tb_top ();
 		.gpio_pin1_en (gpio_pin_en),
 		.gpio_pin1_i 	(gpio_pin_i),
   	.spi_ss_o 		(spi_ss),
-  	.spi_sclk_o 	(spi_sclk_o),
+  	.spi_sclk_o 	(spi_sclk),
   	.spi_mosi_o 	(spi_mosi),
   	.spi_miso_i 	(spi_miso)
 	);
+
+ 	N25Qxxx spi_flash
+ 	(
+ 		.S  				(spi_ss),
+ 		.C_  				(spi_sclk),
+ 		.HOLD_DQ3 	(1'b1),
+ 		.DQ0 				(spi_mosi),
+ 		.DQ1 				(spi_miso),
+ 		.Vcc 				(3),
+ 		.Vpp_W_DQ2 	()
+ 	);
 
 	initial begin
 		$display("%0t TEST START", $time());

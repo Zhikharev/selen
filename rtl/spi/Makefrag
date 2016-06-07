@@ -1,0 +1,7 @@
+MAKEHOME := $(dir $(lastword $(MAKEFILE_LIST)))
+
+RTL_SRC :=\
+	$(MAKEHOME)/spi_defines.v \
+	$(MAKEHOME)/spi_clgen.v \
+	$(MAKEHOME)/spi_shift.v \
+	$(MAKEHOME)/spi_top.v
