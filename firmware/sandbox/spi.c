@@ -22,8 +22,6 @@ uint32_t deposit(uint32_t value, int begin, int len,
 
 #define BIT_MASK(n) ((uint32_t)1 << n)
 
-typedef __UINT64_TYPE__ tick_t;
-
 #pragma pack(push, 4)
 /*SPI Master core registers*/
 typedef volatile struct
@@ -36,13 +34,12 @@ typedef volatile struct
 #pragma pack(pop)
 
 /*CTRL bits*/
-#define CTR_ASS (1 << 13)
-#define CTR_IE (1 << 12)
-#define CTR_LSB (1 << 11)
-#define CTR_TX_NEG (1 << 10)
-#define CTR_RX_NEG (1 << 9)
-#define CTR_GO_BSY (1 << 8)
-#define CTR_TX_NEG (1 << 10)
+#define CTR_ASS    BIT_MASK(13)
+#define CTR_IE     BIT_MASK(12)
+#define CTR_LSB    BIT_MASK(11)
+#define CTR_TX_NEG BIT_MASK(10)
+#define CTR_RX_NEG BIT_MASK(9)
+#define CTR_GO_BSY BIT_MASK(8)
 #define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6)
 
 /*Memory maped SPI layout base address*/
@@ -111,7 +108,7 @@ int __attribute__((optimize("Os"))) main()
     //spi->CTRL |= CTR_LSB;
 
     /*размер транзакции надеюсь получать по 16 байт сразу*/
-    spi->CTRL = deposit(spi->CTRL, 0, 6, 128);
+    spi->CTRL = deposit(spi->CTRL, 0, 6, 127);
 
     spi_transaction(spi);
 
