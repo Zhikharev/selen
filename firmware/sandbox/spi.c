@@ -45,7 +45,7 @@ typedef volatile struct
 /*Memory maped SPI layout base address*/
 #define SPI_BASE_ADDRESS 0x1000
 /*default clock frequency divider */
-#define CLOCK_DIVIDER 1
+#define CLOCK_DIVIDER 4
 /*default slave select bit number*/
 #define SLAVE_ID 0
 /*default transaction bit size (CTRL.CHAR_LEN)*/
@@ -97,10 +97,11 @@ int __attribute__((optimize("Os"))) main()
     /*инструция READ смотреть 81 страницу в spi_flash_n25q128.pdf*/
     uint32_t operation =  0x3;
     /*3 байтовый адрес (произвольно выбрал)*/
-    uint32_t address = 0xaaddff;
+    uint32_t address = 0x000004;
 
     /*на отрправку идут: 1 байт инструкция + 3 байта адрес*/
-    spi->DATA[0] = (operation << 24) | address;
+    /*на шину данные из регистров передаются [3] [2] [1] [0]*/
+    spi->DATA[3] = (operation << 24) | address;
 
     /*MSB /LSB -? менять тут порядок байт нет я хз,
      * на картинке на 81 странице MSB идет первым
@@ -108,11 +109,14 @@ int __attribute__((optimize("Os"))) main()
     //spi->CTRL |= CTR_LSB;
 
     /*размер транзакции надеюсь получать по 16 байт сразу*/
-    spi->CTRL = deposit(spi->CTRL, 0, 6, 127);
+    spi->CTRL = deposit(spi->CTRL, 0, 7, 128);
 
     spi_transaction(spi);
 
-    volatile uint32_t received = spi->DATA[0];
+    volatile uint32_t received = spi->DATA[3];
+    received = spi->DATA[2];
+    received = spi->DATA[1];
+    received = spi->DATA[0];
 
     /*test_done();*/
     return 1;

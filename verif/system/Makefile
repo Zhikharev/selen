@@ -75,5 +75,5 @@ sl_spi:
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 spi.bin ram_bge.bin
 	rm -f ram_image.v
 	xxd -c 4 -p ram_bge.bin >> ram_image.v
-	cp $(GIT_HOME)/verif/models/N25Q128A13E_VG12/sim/mem_Q128_bottom.vmf mem_Q128_bottom.vmf
+	cp $(GIT_HOME)/verif/system/mem_Q128_bottom.vmf mem_Q128_bottom.vmf
 	cp $(GIT_HOME)/verif/models/N25Q128A13E_VG12/sim/sfdp.vmf sfdp.vmf

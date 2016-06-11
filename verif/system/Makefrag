@@ -1,7 +1,13 @@
 SPI_FLASH =\
 	$(BENCH_HOME)/../models/N25Q128A13E_VG12/code/N25Qxxx.v \
 	+incdir+$(BENCH_HOME)/../models/N25Q128A13E_VG12 \
-	+define+HOLD_pin
+	+define+HOLD_pin \
+	+define+VCC_3V
+
+WB_VC =\
+	$(BENCH_HOME)/../common/wishbone/sl_wb_defines.sv \
+	$(BENCH_HOME)/../common/wishbone/sl_wb_interface.sv \
+	$(BENCH_HOME)/../common/wishbone/sl_wb_tracer.sv
 
 VLOG_OPTS+=\
 	+incdir+$(BENCH_HOME) \
@@ -10,6 +16,7 @@ VLOG_OPTS+=\
 	+define+NO_UVM \
 	$(BENCH_HOME)/../core/uvm/items/rv32_typedefs.sv \
 	$(BENCH_HOME)/../core/uvm/items/rv32_transaction.sv \
+	$(WB_VC) \
 	$(SPI_FLASH) \
 	$(BENCH_HOME)/selen_tb_top.sv
 
