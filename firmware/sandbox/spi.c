@@ -42,6 +42,10 @@ typedef volatile struct
 #define CTR_GO_BSY BIT_MASK(8)
 #define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6)
 
+/*RAM start address*/
+#define RAM_BASE_ADDRESS  0xffffff
+
+
 /*Memory maped SPI layout base address*/
 #define SPI_BASE_ADDRESS 0x1000
 /*default clock frequency divider */
@@ -50,6 +54,8 @@ typedef volatile struct
 #define SLAVE_ID 0
 /*default transaction bit size (CTRL.CHAR_LEN)*/
 #define TRANSACTION_SIZE 32
+/*n25q128 read instruction code*/
+#define SPI_INSTRUCTION_READ 0x3
 
 static
 volatile SPI* spi_init()
@@ -87,36 +93,81 @@ void spi_transaction(volatile SPI* spi)
     spi->SS &= ~(BIT_MASK(SLAVE_ID));
 }
 
-int __attribute__((optimize("Os"))) main()
+static inline
+void memcpy_my(volatile void *dest, volatile void *src, size_t n)
 {
-    /*memory base address, from linker script*/
-    /*const uint32_t* mem_base = __boot_offset__;*/
+   // Typecast src and dest addresses to (char *)
+   volatile char *csrc = (volatile char *)src;
+   volatile char *cdest = (volatile char *)dest;
 
+   // Copy
+   for (int i=0; i<n; i++)
+       cdest[i] = csrc[i];
+}
+
+/**
+ * load data from flash
+ *
+ * @param destination - buffer to store received data,
+ * @param start_address - start 3-byte address at flash memory
+ * @param size - size to read, must be a multiple of 3*4
+ */
+void load_from_flash(volatile void *destination,
+                     uint32_t start_address,
+                     const size_t size)
+{
     volatile SPI* spi = spi_init();
-
-    /*инструция READ смотреть 81 страницу в spi_flash_n25q128.pdf*/
-    uint32_t operation =  0x3;
-    /*3 байтовый адрес (произвольно выбрал)*/
-    uint32_t address = 0x000004;
-
-    /*на отрправку идут: 1 байт инструкция + 3 байта адрес*/
-    /*на шину данные из регистров передаются [3] [2] [1] [0]*/
-    spi->DATA[3] = (operation << 24) | address;
-
-    /*MSB /LSB -? менять тут порядок байт нет я хз,
-     * на картинке на 81 странице MSB идет первым
-    */
-    //spi->CTRL |= CTR_LSB;
-
-    /*размер транзакции надеюсь получать по 16 байт сразу*/
+    /*16 byte transaction*/
     spi->CTRL = deposit(spi->CTRL, 0, 7, 128);
 
-    spi_transaction(spi);
+    /*size that received at each transaction*/
+    const size_t TRANSACTION_RECEIVED_SIZE = 3*4;
 
-    volatile uint32_t received = spi->DATA[3];
-    received = spi->DATA[2];
-    received = spi->DATA[1];
-    received = spi->DATA[0];
+    /*all received data size*/
+    size_t received = 0;
+    while(received < size) {
+        /* escape 3 byte address
+         *
+         * NOTE : n25q128:
+         * When the highest address is reached, the address counter rolls over to
+            000000h, allowing the read sequence to be continued indefinitely.
+        */
+        uint32_t address = (start_address + received) & 0xffffff;
+
+        /*Make command*/
+        spi->DATA[3] = (SPI_INSTRUCTION_READ << 24) | address;
+
+        spi_transaction(spi);
+
+        /*copy DATA[0], [1], [2] to destination buffer*/
+        memcpy_my(destination + received, &spi->DATA[0], TRANSACTION_RECEIVED_SIZE);
+
+        /*Received size*/
+        received += TRANSACTION_RECEIVED_SIZE;
+    }
+
+}
+
+static
+void jump_to(volatile void* label)
+{
+    asm("jalr x0, %0\n"
+        "nop\n"
+        "nop\n"
+        "nop\n"
+        : : "r" (label) );
+}
+
+int __attribute__((optimize("Os"))) main()
+{
+    /*RAM*/
+    volatile uint8_t* ram = (uint8_t*)RAM_BASE_ADDRESS;
+
+    /*read 1024 bytes from address 0x4 at flash memory to RAM*/
+    load_from_flash(ram, 0x4,1024);
+
+    /*jump and start execution there*/
+    jump_to(ram);
 
     /*test_done();*/
     return 1;

@@ -50,63 +50,110 @@
 
 	.text
 	.align	2
-	.type	spi_init, @function
-spi_init:
-	li	a4,4096	# tmp75,
-	sw	zero,16(a4)	#, MEM[(volatile struct SPI *)4096B].CTRL
-.L2:
-	lw	a5,16(a4)	# D.1529, MEM[(volatile struct SPI *)4096B].CTRL
-	li	a0,4096	# tmp76,
-	and	a5,a5,256	# D.1529, D.1529,
-	bnez	a5,.L2	#, D.1529,
-	li	a5,1	# tmp79,
-	sw	a5,20(a0)	# tmp79, MEM[(volatile struct SPI *)4096B].DIVIDER
-	ret
-	.size	spi_init, .-spi_init
-	.align	2
 	.globl	spi_transaction
 	.type	spi_transaction, @function
 spi_transaction:
-	lw	a5,24(a0)	# D.1532, spi_3(D)->SS
-	or	a5,a5,1	# D.1532, D.1532,
-	sw	a5,24(a0)	# D.1532, spi_3(D)->SS
-	lw	a5,16(a0)	# D.1532, spi_3(D)->CTRL
-	or	a5,a5,256	# D.1532, D.1532,
-	sw	a5,16(a0)	# D.1532, spi_3(D)->CTRL
-	j	.L10	#
-.L11:
-	lw	a5,24(a0)	# D.1532, spi_3(D)->SS
-	and	a5,a5,-2	# D.1532, D.1532,
-	sw	a5,24(a0)	# D.1532, spi_3(D)->SS
-.L10:
-	lw	a5,16(a0)	# D.1532,
-	and	a5,a5,256	# D.1532, D.1532,
-	bnez	a5,.L11	#, D.1532,
+	lw	a5,24(a0)	# D.1573, spi_3(D)->SS
+	or	a5,a5,1	# D.1573, D.1573,
+	sw	a5,24(a0)	# D.1573, spi_3(D)->SS
+	lw	a5,16(a0)	# D.1573, spi_3(D)->CTRL
+	or	a5,a5,256	# D.1573, D.1573,
+	sw	a5,16(a0)	# D.1573, spi_3(D)->CTRL
+	j	.L6	#
+.L8:
+	lw	a5,24(a0)	# D.1573, spi_3(D)->SS
+	and	a5,a5,-2	# D.1573, D.1573,
+	sw	a5,24(a0)	# D.1573, spi_3(D)->SS
+.L6:
+	lw	a5,16(a0)	# D.1573,
+	and	a5,a5,256	# D.1573, D.1573,
+	bnez	a5,.L8	#, D.1573,
 	ret
 	.size	spi_transaction, .-spi_transaction
+	.align	2
+	.globl	load_from_flash
+	.type	load_from_flash, @function
+load_from_flash:
+	li	a4,4096	# tmp104,
+	sw	zero,16(a4)	#, MEM[(volatile struct SPI *)4096B].CTRL
+.L10:
+	lw	a5,16(a4)	# D.1589, MEM[(volatile struct SPI *)4096B].CTRL
+	li	a3,4096	# tmp105,
+	and	a5,a5,256	# D.1589, D.1589,
+	bnez	a5,.L10	#, D.1589,
+	li	a5,4	# tmp108,
+	sw	a5,20(a3)	# tmp108, MEM[(volatile struct SPI *)4096B].DIVIDER
+	lw	a5,16(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].CTRL
+	li	t3,16777216	# tmp133,
+	li	t1,0	# received,
+	and	a5,a5,-128	# D.1590, D.1589,
+	sw	a5,16(a3)	# D.1590, MEM[(volatile struct SPI *)4096B].CTRL
+	add	t3,t3,-1	# tmp134, tmp133,
+	li	t4,50331648	# tmp135,
+	beqz	a2,.L9	#, size,
+.L19:
+	add	a5,a1,t1	# D.1589, start_address, received
+	and	a5,a5,t3	# address, D.1589, tmp134
+	or	a5,a5,t4	# D.1589, address, tmp135
+	sw	a5,12(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].DATA
+	lw	a5,24(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].SS
+	or	a5,a5,1	# D.1589, D.1589,
+	sw	a5,24(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].SS
+	lw	a5,16(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].CTRL
+	or	a5,a5,256	# D.1589, D.1589,
+	sw	a5,16(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].CTRL
+	j	.L26	#
+.L27:
+	lw	a5,24(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].SS
+	and	a5,a5,-2	# D.1589, D.1589,
+	sw	a5,24(a3)	# D.1589, MEM[(volatile struct SPI *)4096B].SS
+.L26:
+	lw	a5,16(a3)	# D.1589,
+	and	a5,a5,256	# D.1589, D.1589,
+	bnez	a5,.L27	#, D.1589,
+	li	a5,4096	# ivtmp.18,
+	add	a6,a0,t1	# ivtmp.19, destination, received
+	add	a7,a5,12	# D.1594, ivtmp.18,
+.L14:
+	lbu	a4,0(a5)	#, *_24
+	add	a6,a6,1	# ivtmp.19, ivtmp.19,
+	add	a5,a5,1	# ivtmp.18, ivtmp.18,
+	and	a4,a4,0xff	# D.1592, *_24
+	sb	a4,-1(a6)	# D.1592, *_23
+	bne	a5,a7,.L14	#, ivtmp.18, D.1594,
+	add	t1,t1,12	# received, received,
+	bgtu	a2,t1,.L19	#, size, received,
+	ret
+.L9:
+	ret
+	.size	load_from_flash, .-load_from_flash
 	.section	.text.startup,"ax",@progbits
 	.align	2
 	.globl	main
 	.type	main, @function
 main:
-	add	sp,sp,-32	#,,
-	sw	ra,28(sp)	#,
-	sw	s0,24(sp)	#,
-	call	spi_init	#
-	li	a5,61530112	# tmp80,
-	add	a5,a5,-513	# tmp79, tmp80,
-	sw	a5,0(a0)	# tmp79, spi_3->DATA
-	lw	a5,16(a0)	# D.1535, spi_3->CTRL
-	mv	s0,a0	# spi,
-	and	a5,a5,-64	# D.1536, D.1535,
-	sw	a5,16(a0)	# D.1536, spi_3->CTRL
-	call	spi_transaction	#
-	lw	a5,0(s0)	# D.1535, spi_3->DATA
-	lw	ra,28(sp)	#,
+	add	sp,sp,-16	#,,
+	sw	s0,8(sp)	#,
+	li	s0,16777216	# tmp74,
+	add	s0,s0,-1	# tmp73, tmp74,
+	li	a2,1024	#,
+	li	a1,4	#,
+	mv	a0,s0	#, tmp73
+	sw	ra,12(sp)	#,
+	call	load_from_flash	#
+ #APP
+# 154 "spi.c" 1
+	jalr x0, s0	# tmp73
+nop
+nop
+nop
+
+# 0 "" 2
+ #NO_APP
+	lw	ra,12(sp)	#,
 	li	a0,1	#,
-	sw	a5,12(sp)	# D.1535, received
-	lw	s0,24(sp)	#,
-	add	sp,sp,32	#,,
+	lw	s0,8(sp)	#,
+	add	sp,sp,16	#,,
 	jr	ra	#
 	.size	main, .-main
 	.ident	"GCC: (GNU) 5.3.0"
