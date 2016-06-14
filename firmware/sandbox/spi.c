@@ -112,9 +112,9 @@ void memcpy_my(volatile void *dest, volatile void *src, size_t n)
  * @param start_address - start 3-byte address at flash memory
  * @param size - size to read, must be a multiple of 3*4
  */
-void load_from_flash(volatile void *destination,
-                     uint32_t start_address,
-                     const size_t size)
+void read_flash(volatile void *destination,
+                uint32_t start_address,
+                const size_t size)
 {
     volatile SPI* spi = spi_init();
     /*16 byte transaction*/
@@ -160,11 +160,15 @@ void jump_to(volatile void* label)
 
 int __attribute__((optimize("Os"))) main()
 {
+    uint32_t buffer[4] = {0};
+
+    read_flash(buffer, 0x0, 4);
+    uint32_t size = buffer[0];
+
     /*RAM*/
     volatile uint8_t* ram = (uint8_t*)RAM_BASE_ADDRESS;
 
-    /*read 1024 bytes from address 0x4 at flash memory to RAM*/
-    load_from_flash(ram, 0x4,1024);
+    read_flash(ram, 0x4, size);
 
     /*jump and start execution there*/
     jump_to(ram);
