@@ -43,7 +43,7 @@ typedef volatile struct
 #define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6)
 
 /*RAM start address*/
-#define RAM_BASE_ADDRESS  0xffffff
+#define RAM_BASE_ADDRESS  0x100000
 
 
 /*Memory maped SPI layout base address*/
