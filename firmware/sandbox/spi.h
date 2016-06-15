@@ -90,7 +90,7 @@ void spi_read(volatile SPI* spi, uint32_t address)
     {
         index = 0;
     } else {
-        assert(char_len > 32 && char_len % 32 == 0);
+        assert(char_len >= 32 && char_len % 32 == 0);
         index = char_len / 32 - 1 ;
     }
 
