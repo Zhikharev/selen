@@ -22,7 +22,7 @@ typedef volatile struct
 #define CTR_TX_NEG BIT_MASK(10)
 #define CTR_RX_NEG BIT_MASK(9)
 #define CTR_GO_BSY BIT_MASK(8)
-#define CTR_CHAR_LEN(ctr) extract(ctr, 0, 6)
+#define CTR_CHAR_LEN(ctr) extract(ctr, 0, 7)
 
 /*n25q128 read instruction code*/
 #define SPI_INSTRUCTION_READ 0x3
@@ -83,10 +83,15 @@ void spi_read(volatile SPI* spi, uint32_t address)
         is cleared, the MSB is transmitted/received first (which bit in TxX/RxX register that is
         depends on the CHAR_LEN field in the CTRL register)
     */
+    // TODO: LSB влияет на то какой байт первым будет отправлен на линиию и не влияет на то
+    // из какого регистра сначала отправлять данные, если в регистре будет записано
+    // 0000 0011, то при
+    // LSB = 0 -> 0, 0, 0, 0, 0, 0, 1, 1
+    // LSB = 1 -> 1, 1, 0, 0, 0, 0, 0, 0
     uint32_t char_len = CTR_CHAR_LEN(spi->CTRL);
 
     size_t index;
-    if(spi->CTRL & CTR_LSB)
+    /*if(spi->CTRL & CTR_LSB)
     {
         index = 0;
     } else {
@@ -94,6 +99,10 @@ void spi_read(volatile SPI* spi, uint32_t address)
         index = char_len / 32 - 1 ;
     }
 
+    spi->DATA[index] = (SPI_INSTRUCTION_READ << 24) | address;
+    */
+    assert(char_len >= 32 && char_len % 32 == 0);
+    index = char_len / 32 - 1 ;
     spi->DATA[index] = (SPI_INSTRUCTION_READ << 24) | address;
     spi_transaction(spi);
 }

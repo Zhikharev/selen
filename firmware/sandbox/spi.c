@@ -3,9 +3,17 @@
 uint32_t flash_read_word(uint32_t address)
 {
     volatile SPI* spi = spi_init();
-    spi->CTRL = deposit(spi->CTRL, 0, 7, 32);
 
-    spi->CTRL |= CTR_LSB;
+    // TODO: чтобы прочитать слово данных, нужно
+    // передать команду+адрес 32 бита, а следующие
+    // 32 бита, от флешки придут данные, поэтому
+    // размер транзакции 64
+
+    spi->CTRL = deposit(spi->CTRL, 0, 7, 64);
+
+    // TODO: если используем LSB, то в регистре команду
+    // нужно записывать не 0000 0011, а 1100 0000
+    // spi->CTRL |= CTR_LSB;
 
     spi_read(spi, address);
 

@@ -67,7 +67,7 @@ debug_api:
 	rm -f ram_image.v
 	xxd -c 4 -p ram_bge.bin >> ram_image.v
 
-sl_spi:
+sl_spi: spi_flash_init
 	$(AS) $(GIT_HOME)/firmware/sandbox/startup.s -o startup.o
 	$(CCX) -c $(GIT_HOME)/firmware/sandbox/spi.c  -nostdlib -O2 -o spi.o
 	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.ld spi.o -o spi.elf
@@ -75,5 +75,15 @@ sl_spi:
 	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 spi.bin ram_bge.bin
 	rm -f ram_image.v
 	xxd -c 4 -p ram_bge.bin >> ram_image.v
+
+sl_spi_rom: spi_flash_init
+	$(AS) $(GIT_HOME)/firmware/sandbox/startup.s -o startup.o
+	$(CCX) -c $(GIT_HOME)/firmware/sandbox/spi.c  -nostdlib -O2 -o spi.o
+	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.proto.ld spi.o -o spi.elf
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 spi.elf rom_bge.elf
+	rm -f rom_image.v
+	xxd -c 4 -p rom_bge.elf >> rom_image.v
+
+spi_flash_init:
 	cp $(GIT_HOME)/verif/system/mem_Q128_bottom.vmf mem_Q128_bottom.vmf
 	cp $(GIT_HOME)/verif/models/N25Q128A13E_VG12/sim/sfdp.vmf sfdp.vmf

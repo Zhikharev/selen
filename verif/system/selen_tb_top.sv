@@ -47,26 +47,6 @@ module selen_tb_top ();
 		rst = 0;
 	end
 
-	// ----------------------------------
-	// TRACERS
-	// ----------------------------------
-	 wb_if spi_wb_intf(
-	 	.clk (selen_top.perif_cluster.spi.wb_clk_i),
-	 	.rst (selen_top.perif_cluster.spi.wb_rst_i)
-	 );
-
-	 assign spi_wb_intf.adr 	= selen_top.perif_cluster.spi.wb_adr_i;
-	 assign spi_wb_intf.dat_i = selen_top.perif_cluster.spi.wb_dat_i;
-	 assign spi_wb_intf.dat_o = selen_top.perif_cluster.spi.wb_dat_o;
-	 assign spi_wb_intf.sel 	= selen_top.perif_cluster.spi.wb_sel_i;
-	 assign spi_wb_intf.we 		= selen_top.perif_cluster.spi.wb_we_i;
-	 assign spi_wb_intf.stb 	= selen_top.perif_cluster.spi.wb_stb_i;
-	 assign spi_wb_intf.cyc 	= selen_top.perif_cluster.spi.wb_cyc_i;
-	 assign spi_wb_intf.ack 	= selen_top.perif_cluster.spi.wb_ack_o;
-	 assign spi_wb_intf.err 	= selen_top.perif_cluster.spi.wb_err_o;
-
-	sl_wb_tracer spi_wb_tr(spi_wb_intf);
-
 	initial begin
 		forever begin
 			if(~rst) begin
@@ -80,7 +60,7 @@ module selen_tb_top ();
 						item.decode(selen_top.cpu_cluster.core.i_ack_rdata);
 						str = {str, $sformatf("DATA=%32h ",selen_top.cpu_cluster.core.i_ack_rdata)};
 						str = {str, item.sprint()};
-						//$display("%0s (%0t)", str, $time());
+						if($test$plusargs("INSTR_TRACE")) $display("%0s (%0t)", str, $time());
 						str = {$sformatf("[INSTR] ADDR=%32h ", selen_top.cpu_cluster.core.i_req_addr)};
 						do begin @(negedge clk);
 						end
