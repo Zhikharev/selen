@@ -37,8 +37,7 @@ int __attribute__((optimize("Os"))) main()
     }
 
     /*jump and start execution there*/
-    jump_to(ram);
+    jump_to((uint32_t*)RAM_BASE_ADDRESS);
 
-    /*test_done();*/
     return 1;
 }

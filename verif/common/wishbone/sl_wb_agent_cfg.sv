@@ -22,7 +22,7 @@ class wb_agent_cfg extends uvm_object;
 		`uvm_field_int (drv_delay_max,     UVM_DEFAULT)
 	`uvm_object_utils_end
 
-	function new(string name = "core_agent_cfg");
+	function new(string name = "wb_agent_cfg");
 		super.new(name);
 	endfunction
 endclass
