@@ -33,7 +33,7 @@ filesize_hex=`printf "%08x\n" $filesize`
 echo "file $filename size: $filesize(0x$filesize_hex) bytes"
 
 echo -n $filesize_hex | xxd -r -p > somefile
-
+riscv32-unknown-elf-objcopy -I binary -O binary --reverse-bytes=4 somefile somefile
 cat somefile $filename > $filename.output
 
 exit 0

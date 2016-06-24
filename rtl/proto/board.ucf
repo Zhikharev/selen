@@ -2,9 +2,17 @@
 NET "clk" TNM_NET = clk;
 TIMESPEC TS_clk = PERIOD "clk" 20 ns HIGH 50%;
 
-NET "led"			LOC = "U18";
-NET "button"  LOC = "P3";
-NET "clk"  		LOC = "L15";
-NET "rst"  		LOC = "A10";
-NET "lock"    LOC = "N12";
-NET "dbg_led" LOC = "P16";
+NET "led"					LOC = "U18";
+NET "button"  		LOC = "P3";
+NET "clk"  				LOC = "L15";
+NET "rst"  				LOC = "A10";
+NET "lock"    		LOC = "N12";
+NET "dbg_led" 		LOC = "P16";
+NET "dbg_spi"     LOC = "M13";
+NET "spi_ss_o" 		LOC = "V3";
+NET "spi_sclk_o"  LOC = "R15";
+NET "spi_mosi_o"  LOC = "T13";
+NET "spi_miso_i"  LOC = "R13";
+NET "spi_wp" 			LOC = "T14";
+NET "spi_hld" 		LOC = "V14";
+

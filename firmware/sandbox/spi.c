@@ -22,6 +22,9 @@ uint32_t flash_read_word(uint32_t address)
 
 int __attribute__((optimize("Os"))) main()
 {
+    volatile SPI* spi = spi_init();
+    spi_rdid(spi);
+
     const uint32_t size = flash_read_word(0);
 
     /*RAM*/

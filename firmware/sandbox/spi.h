@@ -26,9 +26,10 @@ typedef volatile struct
 
 /*n25q128 read instruction code*/
 #define SPI_INSTRUCTION_READ 0x3
+#define SPI_INSTRUCTION_RDID 0x9E
 
 /*default clock frequency divider */
-#define CLOCK_DIVIDER 4
+#define CLOCK_DIVIDER 10
 /*default slave select bit number*/
 #define SLAVE_ID 0
 
@@ -48,8 +49,12 @@ volatile SPI* spi_init()
 
     /*spi->CTRL |= CTR_IE; Interrupts disabled*/
 
+    spi->CTRL |= CTR_TX_NEG;
+    spi->CTRL |= CTR_RX_NEG;
+
     /*configure clock*/
     spi->DIVIDER = CLOCK_DIVIDER;
+
 
     return spi;
 }
@@ -104,6 +109,20 @@ void spi_read(volatile SPI* spi, uint32_t address)
     assert(char_len >= 32 && char_len % 32 == 0);
     index = char_len / 32 - 1 ;
     spi->DATA[index] = (SPI_INSTRUCTION_READ << 24) | address;
+    spi_transaction(spi);
+}
+
+void spi_rdid(volatile SPI* spi)
+{
+
+    /*uint32_t char_len = CTR_CHAR_LEN(spi->CTRL);
+
+    size_t index;
+
+    assert(char_len >= 32 && char_len % 32 == 0);
+    index = char_len / 32 - 1 ;
+    spi->DATA[index] = (SPI_INSTRUCTION_RDID << 24);*/
+    spi->DATA[3] = (SPI_INSTRUCTION_RDID << 24);
     spi_transaction(spi);
 }
 

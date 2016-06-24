@@ -56,7 +56,8 @@ sl_gpio_led_blink_flash: sl_spi_rom
 	$(LD) -T $(GIT_HOME)/firmware/sandbox/blink.ld blink.o -o blink.elf
 	$(STRIP) blink.elf -o blink.elf.strip
 	$(OBJCOPY) -O binary blink.elf blink.bin
-	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.bin blink_bge.bin
+	sh $(GIT_HOME)/verif/tools/append_size.sh blink.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 blink.bin.output blink_bge.bin
 	rm -f blink.flash
 	xxd -c 1 -p blink_bge.bin >> blink.flash
 	cp blink.flash mem_Q128_bottom.vmf
