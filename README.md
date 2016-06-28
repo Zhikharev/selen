@@ -12,7 +12,7 @@ Target platfrom FPGA Spartan-6 (see main block diagram https://github.com/Zhikha
 
 Project includes SystemVerilog UVM 1.2 testbenchs for cache-controller and risc-v core. We introduce our custom, easy to use ISA simulator, which works good with SystemVerilig testbench. And the last, but not the least, you can find full system testbench and try to run different C/C++ programms. 
 
-You can search for tag v1.0-alpha and try the initial version of Selen project in your FPGA.
+You can search for tag v1.0 and try the initial version of Selen project in your FPGA with booting programm from SPI flash memory.
 
 <img src="http://www.xda-developers.com/wp-content/uploads/2016/01/riscv-blog-logo.png">
 <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcR5ojY1hvgnKv5paAHNRG-_s-mZUgI-eqFm6e9j_gn8IIR2Ylms">
