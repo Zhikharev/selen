@@ -9,7 +9,16 @@ STRIP   = riscv32-unknown-elf-strip
 
 include $(BENCH_HOME)/../../rtl/top/Makefrag
 include $(BENCH_HOME)/../tools/Makefile.global
+
+VLOG_OPTS = \
+	+incdir+$(UVM_HOME)/src -timescale=1ns/1ps +define+USING_VCS  \
+	-sverilog $(LINT) +nospecify +notimingchecks -l vlogan.log \
+	$(RTL_SRC) $(VCS_RTL_INC) $(RTL_DEFINE) $(MODEL_SRC) $(TB_DEFINES)
+
 include $(BENCH_HOME)/Makefrag
+
+#ELAB_OPTS += -cm
+#RUN_OPTS  += -cm
 
 rom_image:
 	$(AS) $(GIT_HOME)/firmware/sl_ram_jmp.c -o sl_ram_jmp.elf
@@ -99,3 +108,29 @@ sl_spi_rom:
 spi_flash_init:
 	cp $(GIT_HOME)/verif/system/mem_Q128_bottom.vmf mem_Q128_bottom.vmf
 	cp $(GIT_HOME)/verif/models/N25Q128A13E_VG12/sim/sfdp.vmf sfdp.vmf
+
+#p_1.7
+
+RISCV_GCC_OPTS  = -mcmodel=medany -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -march=RV32I
+BMARKS_DEFS     = -DPREALLOCATE=1 -DHOST_DEBUG=0
+RISCV_LINK_OPTS ?= -nostdlib -nostartfiles -ffast-math -lc -lgcc
+ENCODING_H      = $(RISCV)/include/spike
+
+dhrystone:
+	$(CCX) $(RISCV_GCC_OPTS) $(BMARKS_DEFS) -I$(ENCODING_H) \
+				 -c $(GIT_HOME)/verif/system/tests/dhrystone/syscalls.c -o syscalls.o
+	$(CCX) $(RISCV_GCC_OPTS) $(BMARKS_DEFS) \
+				 -c $(GIT_HOME)/verif/system/tests/dhrystone/dhrystone.c -o dhrystone.o
+	$(CCX) $(RISCV_GCC_OPTS) $(BMARKS_DEFS) -I$(ENCODING_H) \
+				 -c $(GIT_HOME)/verif/system/tests/dhrystone/dhrystone_main.c -o dhrystone_main.o
+	$(CCX) $(RISCV_GCC_OPTS) $(BMARKS_DEFS) -I$(ENCODING_H) -D__ASSEMBLY__=1 \
+	       -c $(GIT_HOME)/verif/system/tests/dhrystone/crt.S  -o crt.o
+	$(CCX) -T $(GIT_HOME)/verif/system/tests/dhrystone/test.ld \
+		syscalls.o dhrystone.o dhrystone_main.o crt.o -o dhrystone.riscv $(RISCV_LINK_OPTS)
+
+dhrystone_ram: dhrystone
+	$(OBJCOPY) -O binary dhrystone.riscv dhrystone.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 dhrystone.bin ram_bge.bin
+	rm -f ram_image.v
+	xxd -c 4 -p ram_bge.bin >> ram_image.v
+
