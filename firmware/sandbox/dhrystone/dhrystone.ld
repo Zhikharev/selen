@@ -14,11 +14,6 @@ SECTIONS
 {
   . = 0x00100000;
 
-  .text : {
-    startup.o(.text)
-    *(.text)
-  }
-
   .ro : {
   /* code segment */
    startup.o (.text)
