@@ -8,6 +8,7 @@ ENTRY( _start )
     elf32-little elf32-big
     plugin srec symbolsrec verilog tekhex binary ihex
 */
+
 OUTPUT_FORMAT("elf32-littleriscv")
 
 SECTIONS

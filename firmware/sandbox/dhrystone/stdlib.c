@@ -5,6 +5,8 @@ typedef __SIZE_TYPE__ size_t;
 typedef __UINT8_TYPE__ uint8_t;
 typedef __UINT32_TYPE__ uint32_t;
 
+typedef __PTRDIFF_TYPE__ ptrdiff_t;
+
 #define assert(pred) if(!(pred)) asm ("j _exit\n")
 
 #define NULL 0
@@ -69,24 +71,25 @@ clock_t	clock()
 }
 
 
-char *heap_end = 0;
-size_t _sbrk(int incr) {
-    extern char heap_low; /* Defined by the linker */
-    extern char heap_top; /* Defined by the linker */
-    char *prev_heap_end;
+void* heap_end = 0;
+
+void* _sbrk(ptrdiff_t incr) {
+    extern void* heap_low; /* Defined by the linker */
+    extern void* heap_top; /* Defined by the linker */
+    void* prev_heap_end;
 
     if (heap_end == 0) {
-        heap_end = &heap_low;
+        heap_end = heap_low;
     }
     prev_heap_end = heap_end;
 
-    if (heap_end + incr > &heap_top) {
+    if (heap_end + incr > heap_top) {
         /* Heap and stack collision */
-        return (size_t)0;
+        return (void*)-1;
     }
 
     heap_end += incr;
-    return (size_t) prev_heap_end;
+    return prev_heap_end;
 }
 
 void free(void* ptr)
@@ -94,8 +97,8 @@ void free(void* ptr)
     /*TODO:*/
 }
 
-/* An horrible dummy malloc */
-void *malloc(size_t size)
+/* FIXME: An horrible dummy malloc */
+void *malloc(const size_t size)
 {
    void *p = (void*)_sbrk (0);
 
