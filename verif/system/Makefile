@@ -134,3 +134,8 @@ dhrystone_ram: dhrystone
 	rm -f ram_image.v
 	xxd -c 4 -p ram_bge.bin >> ram_image.v
 
+dhr_ram:
+	$(OBJCOPY) -O binary dhrystone.elf dhrystone.bin
+	$(OBJCOPY) -I binary -O binary --reverse-bytes=4 dhrystone.bin ram_bge.bin
+	rm -f ram_image.v
+	xxd -c 4 -p ram_bge.bin >> ram_image.v

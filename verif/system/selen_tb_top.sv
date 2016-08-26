@@ -57,7 +57,9 @@ module selen_tb_top ();
 					@(negedge clk);
 				end
 				while(!`CORE_PATH.d_req_ack);
-				if($isunknown(`CORE_PATH.d_ack_rdata)) #100 $fatal("Found X on d_ack_rdata after read operation");
+				if(!$test$plusargs("NO_FATAL_ON_X")) begin
+					if($isunknown(`CORE_PATH.d_ack_rdata)) #100 $fatal("Found X on d_ack_rdata after read operation");
+				end
 			end
 		end
 	end
