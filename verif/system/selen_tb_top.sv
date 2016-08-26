@@ -16,6 +16,8 @@
 `define CLK_HALF_TIME 16ns
 `endif
 
+`define CORE_PATH selen_top.cpu_cluster.core
+
 module selen_tb_top ();
 
 	logic clk;
@@ -45,6 +47,19 @@ module selen_tb_top ();
 		rst = 1;
 		repeat(5) @(posedge clk);
 		rst = 0;
+	end
+
+	initial begin
+		forever begin
+			@(negedge clk);
+			if(`CORE_PATH.d_req_val && `CORE_PATH.d_req_cop inside {0, 3}) begin
+				do begin
+					@(negedge clk);
+				end
+				while(!`CORE_PATH.d_req_ack);
+				if($isunknown(`CORE_PATH.d_ack_rdata)) #100 $fatal("Found X on d_ack_rdata after read operation");
+			end
+		end
 	end
 
 	initial begin
