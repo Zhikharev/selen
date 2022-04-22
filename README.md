@@ -17,4 +17,4 @@ You can search for tag v1.0 and try the initial version of Selen project in your
 <img src="http://www.xda-developers.com/wp-content/uploads/2016/01/riscv-blog-logo.png">
 <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcR5ojY1hvgnKv5paAHNRG-_s-mZUgI-eqFm6e9j_gn8IIR2Ylms">
 
-For cooperation or any questions please contact gregory.zhiharev@gmail.com
+
